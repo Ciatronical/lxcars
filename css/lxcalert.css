@@ -1,0 +1,42 @@
+/*
+ * alert.js - javascript alert replacement v2.0
+ *
+ * (c) 2009 Naden Badalgogtapeh - http://www.naden.de/blog/javascript-alert
+ *
+ */
+div.alert {
+  font-family: Arial;
+  border: 1px solid #222222;
+  background-color: #f2f2f2;
+  padding: 5px;
+  display: none;
+  position: absolute;
+  display: block;
+}
+div.alert div.title {
+  font-family: Arial;
+  font-weight: bold;
+  background-color: #666;
+  color: #fff;
+  padding: 2px;
+}
+div.alert div.body {
+  padding: 5px 0;
+  font-family: Arial;
+}
+div.alert div.button {
+  text-align: center;
+}
+div.alert div.button a:link, 
+div.alert div.button a:active, 
+div.alert div.button a:visited {
+  padding: 2px 4px 2px 4px;
+  background-color: #666;
+  text-decoration: none;
+  font-weight: bold;
+  color: #fff;
+  border: 1px solid #f2f2f2;
+}
+div.alert div.button a:hover {
+  border: 1px solid #333;
+}
