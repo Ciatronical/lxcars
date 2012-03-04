@@ -7,7 +7,6 @@
 include_once("../inc/stdLib.php");
 include_once("../inc/FirmenLib.php");
 include_once("../inc/db.php");
-//include_once("../inc/conf.php");
 include_once("inc/config.php");
 
 
@@ -187,13 +186,12 @@ function NewCar($data,$dbarray,$tbname){		//schreibt Daten aus data in die Felde
 	return $rsid[0]['max'];	
 }
 */
-function lxc2db( $parastr ){
-	global $arch;	
+function lxc2db( $parastr ){	
 	$rsdata = array();
 	$ret = -10;
 	$db_name = "lxcars";
 	//$command = "./lxc2db -d ".$_SESSION['dbname']." ".$parastr;
-	$command = "./lxc2db-".$arch." -d ".$db_name." ".$parastr;	
+	$command = "./lxc2db -d ".$db_name." ".$parastr;	
 	exec($command, $rsdata, $ret );
 	switch( $ret ){
 		case 0: 

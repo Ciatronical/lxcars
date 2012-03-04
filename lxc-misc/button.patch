@@ -1,0 +1,24 @@
+From 3e7b299faf0da9c055cd49456e948ba2e4bd16d3 Mon Sep 17 00:00:00 2001
+From: Ronny Kumke <ronny@lxcars.de>
+Date: Sun, 4 Mar 2012 01:52:59 +0000
+Subject: [PATCH] lccars-button
+
+---
+ tpl/firma1.tpl |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/tpl/firma1.tpl b/tpl/firma1.tpl
+index c9b1980..c66e3e3 100644
+--- a/tpl/firma1.tpl
++++ b/tpl/firma1.tpl
+@@ -173,6 +173,7 @@
+ 				&nbsp;
+ 				<a href="#" onCLick="anschr(1);" title=".:print label:."><img src="image/brief.png" alt=".:print label:." border="0" /></a><br>
+ 				<br />
++				<a href="lxcars/lxcmain.php?owner={FID}&task=1" title="KFZ-Daten" style="visibility:{zeige};"><img src="./lxcars/image/lxcmain.png" alt="Cars" border="1" /></a>
+ 				<a href="extrafelder.php?owner={Q}{FID}" target="_blank" title=".:extra data:." style="visibility:{zeigeextra};"><img src="image/extra.png" alt="Extras" border="0" /></a>
+ 				&nbsp;
+ 				<a href="timetrack.php?tab={Q}&fid={FID}&name={Fname1}" title=".:timetrack:."><img src="image/timer.png" alt="Stoppuhr" border="0" /></a><br />
+-- 
+1.7.9
+
