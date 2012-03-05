@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set +e
 
 DIR_CRM=/usr/lib/lx-office-crm
 DIR_ERP=/usr/lib/lx-office-erp

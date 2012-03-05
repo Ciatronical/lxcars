@@ -1,6 +1,6 @@
 #!/bin/bash
 #set -x
-
+set +e
 ## Begin: an System, Installation anpassen
 DIR_LxCars=/usr/lib/lx-office-crm/lxcars
 DIR_ERP=/usr/lib/lx-office-erp
