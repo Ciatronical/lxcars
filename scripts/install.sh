@@ -4,9 +4,8 @@
 ## Begin: an System, Installation anpassen
 DIR_LxCars=/usr/lib/lx-office-crm/lxcars
 DIR_ERP=/usr/lib/lx-office-erp
+DIR_CRM=/usr/lib/lx-office-crm
 ## END
-
-
 
 echo "Willkommen bei der LxCars-Installation"
 echo "Verzeichnis LxCars: $DIR_LxCars"
@@ -75,8 +74,8 @@ cp $DIR_LxCars/image/icons/32x32/*  $DIR_ERP/image/icons/32x32/
 chown -R www-data: $DIR_LxCars
 
 ## Kfz-Button in Kundenmaske
-patch -p1 < $DIR_LxCars/lxc-misc/button.patch -b
-patch -p1 < $DIR_LxCars/lxc-misc/stdLib.patch -b
+patch -p1 $DIR_CRM/tpl/firma1.tpl < $DIR_LxCars/lxc-misc/button.patch -b
+patch -p1 $DIR_CRM/inc/stdLib.php < $DIR_LxCars/lxc-misc/stdLib.patch -b
  
 echo "done!!"
 

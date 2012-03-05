@@ -18,7 +18,7 @@ PG_VER=$(psql -V | sed '1q' | sed 's/.* \([6-9]\+\.[0-9]\+\).*/\1/')
 
 echo "Sichere Lx-Office ..."
 
-## Prüfen ob Verzeichnisse existiert, wenn nicht dann erstellen
+## Prüfen ob Verzeichnisse existiert, wenn nich dann erstellen
 if [ -d $DIR ]; then
  	echo "Verzeichnis \"$DIR\" prüfen....OK"
 else
