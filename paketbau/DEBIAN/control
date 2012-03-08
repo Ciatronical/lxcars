@@ -1,0 +1,14 @@
+Package: lxcars
+Version: 0
+Architecture: all
+Section: univers/web
+Priority: optional
+Installed-Size: 0
+Maintainer: Ronny Kumke <ronny@lxcars.de>
+Depends: lx-office-crm (>=1.4.2), sudo, libphp-snoopy, libpqxx-dev, postgresql-contrib
+Recommends: lx-office-crm (=1.5.0)  
+Suggests: evince 
+Description: lxcars ist eine Erweiterung zum Paket lx-office-crm fur Kfz-Werkstatt, Autohaus, Reifendienst, etc.
+ Die Anwendung ist in C++, PHP, JavaScript geschrieben und ist in ständiger Weiterentwicklung.
+ URL: http://lxcars.de, http://lx-office.org
+ 
