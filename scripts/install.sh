@@ -25,10 +25,10 @@ echo "************************************************"
 /usr/bin/sudo -u postgres createdb lxcars
 if [ $(uname -i) == x86_64 ]; then
    echo "64Bit-Version wird installiert"
-   ln -s $DIR_LxCars/lxc2db-x86_64 $DIR_LxCars/lxc2db
+   ln -sf $DIR_LxCars/lxc2db-x86_64 $DIR_LxCars/lxc2db
 else
    echo "32Bit-Version wird installiert"
-   ln -s $DIR_LxCars/lxc2db-i386 $DIR_LxCars/lxc2db
+   ln -sf $DIR_LxCars/lxc2db-i386 $DIR_LxCars/lxc2db
 fi
 
 /usr/bin/sudo -u www-data $DIR_LxCars/lxc2db -d lxcars -i
@@ -43,7 +43,7 @@ if [ -f $DIR_ERP/menu.ini.orig ]; then
    echo "Error menue.ini.orig existiert bereits"
 else
  	mv $DIR_ERP/menu.ini $DIR_ERP/menu.ini.orig
-	ln -s $DIR_LxCars/lx-office-erp/menu.ini  $DIR_ERP/menu.ini
+	ln -sf $DIR_LxCars/lx-office-erp/menu.ini  $DIR_ERP/menu.ini
 	echo "menue.ini als menue.ini.oirg gesichert"
 fi
 
@@ -62,7 +62,7 @@ if [ -f $DIR_ERP/image/lx-office-erp.png.orig ]; then
  	echo "Error lx-office-erp.png.orig existiert bereits"
 else
  	mv $DIR_ERP/image/lx-office-erp.png $DIR_ERP/image/lx-office-erp.png.orig
-	ln -s $DIR_LxCars/image/lx-office-erp.png $DIR_ERP/image/lx-office-erp.png
+	ln -sf $DIR_LxCars/image/lx-office-erp.png $DIR_ERP/image/lx-office-erp.png
 	echo "lx-office-erp.png als lx-office-erp.png.orig gesichert"
 fi 
  
