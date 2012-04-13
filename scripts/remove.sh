@@ -73,10 +73,6 @@ else
 fi 
 
 
-## Link für Architektur löschen
-rm $DIR_CRM/lxcars/lxc2db
-
-
 echo "done!!"
 
 exit 0

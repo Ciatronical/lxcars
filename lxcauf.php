@@ -65,6 +65,9 @@ switch( $task ){
 	<form name="extra" action="lxcauf.php?task=2&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
 	<input type="submit" name="neuer_auftrag" value="Neuer Auftrag">
 	</form>
+	<form name="back" action="lxcmain.php?task=3&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
+	<input type="submit"  value="zurück">
+	</form>
 	</html>
 	<?php	
 	break;
