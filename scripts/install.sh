@@ -10,7 +10,7 @@ DIR_CRM=/usr/lib/lx-office-crm
 echo "Willkommen bei der LxCars-Installation"
 echo "Verzeichnis LxCars: $DIR_LxCars"
 echo "Verzeichnis ERP: $DIR_ERP"
-sleep 3
+
 
 echo "************************************************"
 echo "Erzeuge Datenbankbenutzer www-data"
@@ -31,7 +31,10 @@ else
    ln -sf $DIR_LxCars/lxc2db-i386 $DIR_LxCars/lxc2db
 fi
 
-/usr/bin/sudo -u www-data $DIR_LxCars/lxc2db -d lxcars -i
+
+if [ !$1 = -s ]; then  
+	/usr/bin/sudo -u www-data $DIR_LxCars/lxc2db -d lxcars -i
+fi
 
 
 ## Prufen ob schon *.orig-Files existieren
