@@ -32,7 +32,9 @@ else
 fi
 
 
-if [ !$1 = -s ]; then  
+if [ $1 = -s ]; then  
+	echo "Achtung Datenbank lxcars wird nicht mit Datensätzen gefüllt"
+else
 	/usr/bin/sudo -u www-data $DIR_LxCars/lxc2db -d lxcars -i
 fi
 
