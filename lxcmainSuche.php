@@ -14,9 +14,6 @@ $Q="C";
 $bgcol[1]="#ddddff";
 $bgcol[2]="#ddffdd";
 
-//print_r($_SESSION["stylesheet"]);
-
-//$formdata = array('Q'=>$Q);
 $formdata = $_POST;
 
 if( $pos = strpos( $formdata['c_ow'], " -> " ) ){
@@ -34,15 +31,15 @@ $t = new Template($base);
 if( !$was[reset] ){
 	$t->set_var($formdata);
 }
+else {
+	$t->set_var(array('ERPCSS' => $_SESSION["stylesheet"]));
+}
 $t->set_file(array("tpl-file" => "lxcmainSuche.tpl"));
 $t->set_block("tpl-file","Liste","Block");
 
 if($_POST["suche"]) {
-	 
-	//print_r( $was );
-	 
+
 	$rs = sucheCars( $was ); 
-	//print_r($_POST);
 	
 	if($_POST["filter"]){
 		//echo "filter wurde gepostet";
