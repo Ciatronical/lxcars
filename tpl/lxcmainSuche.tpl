@@ -1,8 +1,7 @@
 <!-- $Id$ -->
 <html>
-	<head><title></title>
-	<link type="text/css" REL="stylesheet" HREF="../css/main.css"></link>
-
+	<head><title>LxCars - Kfz suchen</title>
+	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>

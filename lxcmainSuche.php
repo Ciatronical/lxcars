@@ -14,6 +14,7 @@ $Q="C";
 $bgcol[1]="#ddddff";
 $bgcol[2]="#ddffdd";
 
+//print_r($_SESSION["stylesheet"]);
 
 //$formdata = array('Q'=>$Q);
 $formdata = $_POST;
@@ -26,6 +27,7 @@ if( $pos = strpos( $formdata['c_ln'], " -> " ) ){
 	$formdata['c_ln'] = substr( $formdata['c_ln'], 0, $pos );
 }
 $was = $formdata;
+$formdata['ERPCSS'] = $_SESSION["stylesheet"];
 //print_r($was);
 $formdata['Q'] = "C";// kann weg??
 $t = new Template($base);
@@ -131,20 +133,21 @@ if ($rs && ($i < $listLimit)){//
 		else { 
 			$zeile += $tst;
 		}
-		$t->set_var(array(Q => $Q,
-                        ID => $zeile["id"],
-                        LineCol => $bgcol[($i%2+1)],
-                        KdNr => ($Q=="C")?$zeile["customernumber"]:$zeile["vendornumber"],
-                        Name => $zeile["name"],
-                        Plz => $zeile["zipcode"],
-                        Ort => $zeile["city"],
-                        Strasse => $zeile["street"],
-                        Telefon => $zeile["phone"],
-                        eMail => $zeile["email"],
-                        KZ => $zeile["c_ln"],
-                        CarID => $zeile["c_id"],
-                        Herst => $zeile["c_m"],
-                        CarTyp => $zeile["c_t"]));// end set_var
+		$t->set_var(array(Q 			=> $Q,
+                        ID 		=> $zeile["id"],
+                        LineCol 	=> $bgcol[($i%2+1)],
+                        KdNr 		=> ($Q=="C")?$zeile["customernumber"]:$zeile["vendornumber"],
+                        Name 		=> $zeile["name"],
+                        Plz 		=> $zeile["zipcode"],
+                        Ort 		=> $zeile["city"],
+                        Strasse 	=> $zeile["street"],
+                        Telefon 	=> $zeile["phone"],
+                        eMail 	=> $zeile["email"],
+                        KZ 		=> $zeile["c_ln"],
+                        CarID 	=> $zeile["c_id"],
+                        Herst 	=> $zeile["c_m"],
+                        ERPCSS  	=> $_SESSION["stylesheet"],
+                        CarTyp 	=> $zeile["c_t"]));// end set_var
  		$t->parse("Block","Liste",true);
      	$i++;
      	
