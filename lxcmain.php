@@ -4,8 +4,8 @@
 ***             geschrieben von Ronny Kumke ronny@lxcars.de Artistic License 2               ***
 ***********************************************************************************************/             
 ob_start();
-require('Smarty.class.php');
-$smarty = new Smarty;
+//require('Smarty.class.php');
+//$smarty = new Smarty;
 include_once( "../inc/stdLib.php" );
 include_once( "../inc/db.php" );
 include( "../inc/template.inc" );
