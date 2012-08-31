@@ -14,49 +14,33 @@
    <script language="JavaScript">
 	<!--
 	$(function() {
-	$("#ac0").autocomplete('lxcHoleKZ.php', { minChars:2 });
-	$("#ac1").autocomplete('lxcHoleKunden.php', { minChars:3 });
+		$("#ac0").autocomplete('lxcHoleKZ.php', { minChars:2 });
+
+	});
 	
-
-	$("#flush").click(function() {
-		var ac = $("#ac1").data('autocompleter');
-		if (ac && $.isFunction(ac.cacheFlush)) {
-			ac.cacheFlush();
-		} else {
-			alert('Error flushing cache');
-		}
-	});
-
-	$("#ac3").autocomplete({
-		url: 'lxcHoleKunden.php',
-		sortFunction: function(a, b, filter) {
-			var f = filter.toLowerCase();
-			var fl = f.length;
-			var a1 = a.value.toLowerCase().substring(0, fl) == f ? '0' : '1';
-			var a1 = a1 + String(a.data[0]).toLowerCase();
-			var b1 = b.value.toLowerCase().substring(0, fl) == f ? '0' : '1';
-			var b1 = b1 + String(b.data[0]).toLowerCase();
-			if (a1 > b1) {
-				return 1;
+	$(function(){
+		var owner = '1';
+		$("#ac1").autocomplete({
+			url: 'lxc_ac.php',
+			inputClass: 'acInputOwner',
+			extraParams: { owner: owner },
+			onItemSelect: function(){
+				$("#suchen").focus(); 
 			}
-			if (a1 < b1) {
-				return -1;
-			}
-			return 0;
-		},
-		showResult: function(value, data) {
-			return '<span style="color:red">' + value + '</span>';
-		},
-		onItemSelect: function(item) {
-		    var text = 'You selected <b>' + item.value + '</b>';
-		    if (item.data.length) {
-		        text += ' <i>' + item.data.join(', ') + '</i>';
-		    }
-		    $("#last_selected").html(text);
-		},
-		maxItemsToShow: 5
 		});
-	});
+	});	
+	
+		$(function(){
+		var kz = '1';
+		$("#ac0").autocomplete({
+			url: 'lxc_ac.php',
+			inputClass: 'acInputOwner',
+			extraParams: { kz: kz },
+			onItemSelect: function(){
+				$("#suchen").focus(); 
+			}
+		});
+	});	
 				 		 
 	function call_lxc_auf (owner,c_id,a_id) {
 		Frame=eval("parent.main_window");
@@ -98,7 +82,7 @@
 		<span class="leftfeld"><input type="text" name="c_ln" size="22" maxlength="10" value="{c_ln}" tabindex="1" id="ac0" autocomplete="off"></span>
 	</div>
 	 <div class="zeile">
-		<span class="label">Kundenname</span>
+		<span class="label">Kundenname </span>
 		<span class="leftfeld"><input type="text" name="c_ow" size="22" maxlength="16" value="{c_ow}" tabindex="2" id="ac1" autocomplete="off"></span>
 	</div>
 	 <div class="zeile">

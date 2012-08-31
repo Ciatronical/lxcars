@@ -31,6 +31,9 @@ if( isset( $_GET['owner'] ) ){
 if( isset( $_GET['g_art'] ) ){
 	$mode = 4;
 }
+if( isset( $_GET['kz'] ) ){
+	$mode = 5;
+}
 
 switch( $mode ){
 	case 0:   //Plz vervollständigen und zurückgeben
@@ -82,6 +85,15 @@ switch( $mode ){
 			$rs = $db->getall($sql);
 			foreach( $rs as $value ){
 				echo $value['c_gart']."\n";
+			}
+	break;
+	case 5:
+			include("inc/lxcLib.php");
+			$sql = "SELECT c_ln, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['q']."%'";
+			$rs = $db->getAll( $sql );
+			//print_r( $rs );
+			foreach( $rs as $value ){
+				echo $value['c_ln'].' -> '.$value['name']."\n";
 			}
 	break;
 }// switch	zz
