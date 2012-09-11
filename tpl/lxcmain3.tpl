@@ -1,7 +1,7 @@
 <!-- $Id$ -->
 <html>
 <head><title>Fahrzeudaten  anzeigen von {ln} mit der ID {c_id}</title>
-	<link type="text/css" REL="stylesheet" HREF="../css/main.css"></link>
+	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
 
@@ -17,6 +17,8 @@
 			url: 'lxc_ac.php',
 			inputClass: 'acInputOwner',
 			extraParams: { owner: owner },
+			maxItemsToShow: 9,
+			minChars: 3,
 			onItemSelect: function(){
 				$("#speichern").focus(); 
 			}

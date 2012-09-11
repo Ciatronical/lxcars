@@ -92,7 +92,7 @@ switch( $task ){
 				$g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
 			}
 			$g_art_drop.='</select>';
-			$t->set_var( array( owner => $owner, c_text =>"Kommentar eingeben", xajax_out => $xajax->printJavascript("../".XajaxPath), g_art_drop=>$g_art_drop ) );	
+			$t->set_var( array( owner => $owner, c_text =>"Kommentar eingeben", xajax_out => $xajax->printJavascript("../".XajaxPath), g_art_drop=>$g_art_drop, ERPCSS=>$_SESSION["stylesheet"] ) );	//$formdata['ERPCSS'] = $_SESSION["stylesheet"];
 			echo "<p class=\"listtop\">Fahrzeug anlegen durch: ".$e_id."</p>";
 			$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));
 			$t->pparse("out",array("tpl-file"));
@@ -121,9 +121,10 @@ switch( $task ){
 		if( $readonly != "" ){
 			$miscarray["mkbdrop"] = "";
 		}
-		if($miscarray['cm']) {echo "<p class=\"listtop\">Fahrzeugdaten ".$miscarray['ln']."</p>";}
+		if($miscarray['cm']) {echo "<p class=\"listtop\">Fahrzeugdaten ".$miscarray['c_ln']."</p>";}//Warum funzt listtop nicht???
 			else {echo "<p class=\"listtop\">Fahrzeug existiert nicht in der KBA-Datenbank"."</p>";}
-		$$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath);
+		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
+		$$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath); //Doppelt $$ RICHTIG??
 		$t->set_var($miscarray);						
 		$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));
 		$t->pparse("out",array("tpl-file"));

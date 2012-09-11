@@ -13,10 +13,6 @@
    <script type='text/javascript' src='../inc/help.js'></script>
    <script language="JavaScript">
 	<!--
-	$(function() {
-		$("#ac0").autocomplete('lxcHoleKZ.php', { minChars:2 });
-
-	});
 	
 	$(function(){
 		var owner = '1';
@@ -24,6 +20,8 @@
 			url: 'lxc_ac.php',
 			inputClass: 'acInputOwner',
 			extraParams: { owner: owner },
+			maxItemsToShow: 9,
+			minChars: 3,
 			onItemSelect: function(){
 				$("#suchen").focus(); 
 			}
@@ -36,6 +34,8 @@
 			url: 'lxc_ac.php',
 			inputClass: 'acInputOwner',
 			extraParams: { kz: kz },
+			maxItemsToShow: 9,
+			minChars: 1,
 			onItemSelect: function(){
 				$("#suchen").focus(); 
 			}
@@ -135,7 +135,7 @@
 			<div class="zeile">
 			<b>{Msg}</b><br>
 			<input type="checkbox" name="filter" value="1" tabindex="42">Erzeuge Datei mit Mann-Filter-Nummern<br>
-			<input type="submit" class="anzeige" name="suche" value="suchen" tabindex="43">&nbsp;
+			<input type="submit" class="anzeige" name="suche" value="suchen" tabindex="43" id="suchen">&nbsp;
 			<input type="submit" class="clear" name="reset" value="löschen" tabindex="44"> &nbsp;
 			<input type="button" name="rep" value="Report" onClick="report()" tabindex="45"> &nbsp;
 			<input type="button" name="geo" value="GeoDB" onClick="surfgeo()" tabindex="46" style="visibility:{GEOS}"> &nbsp;

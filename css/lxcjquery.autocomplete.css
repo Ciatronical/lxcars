@@ -20,7 +20,7 @@
 .acResults {
 	padding: 0px;
 	border: 1px solid WindowFrame;
-	background-color: Window;
+	background-color: FFF;
 	overflow: hidden;
 }
 

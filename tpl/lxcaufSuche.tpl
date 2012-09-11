@@ -1,56 +1,42 @@
 <!-- $Id$ -->
 <html>
 	<head><title>hgggtnik</title>
-	<link type="text/css" REL="stylesheet" HREF="../css/main.css"></link>
+	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
 	<script type='text/javascript' src='inc/help.js'></script>
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
    <script language="JavaScript">
 	<!--
-	$(function() {
-	$("#ac0").autocomplete('lxcHoleKZ.php',{ minChars:2 });
-	$("#ac1").autocomplete('lxcHoleKunden.php', { minChars:3 });
-
-	$("#flush").click(function() {
-		var ac = $("#ac1").data('autocompleter');
-		if (ac && $.isFunction(ac.cacheFlush)) {
-			ac.cacheFlush();
-		} else {
-			alert('Error flushing cache');
-		}
-	});
-
-	$("#ac2").autocomplete({
-		url: 'lxcHoleKunden.php',
-		sortFunction: function(a, b, filter) {
-			var f = filter.toLowerCase();
-			var fl = f.length;
-			var a1 = a.value.toLowerCase().substring(0, fl) == f ? '0' : '1';
-			var a1 = a1 + String(a.data[0]).toLowerCase();
-			var b1 = b.value.toLowerCase().substring(0, fl) == f ? '0' : '1';
-			var b1 = b1 + String(b.data[0]).toLowerCase();
-			if (a1 > b1) {
-				return 1;
+    $(function(){
+		var owner = '1';
+		$("#ac1").autocomplete({
+			url: 'lxc_ac.php',
+			inputClass: 'acInputOwner',
+			extraParams: { owner: owner },
+			maxItemsToShow: 9,
+			minChars: 3,
+			onItemSelect: function(){
+				$("#suchen").focus(); 
 			}
-			if (a1 < b1) {
-				return -1;
-			}
-			return 0;
-		},
-		showResult: function(value, data) {
-			return '<span style="color:red">' + value + '</span>';
-		},
-		onItemSelect: function(item) {
-		    var text = 'You selected <b>' + item.value + '</b>';
-		    if (item.data.length) {
-		        text += ' <i>' + item.data.join(', ') + '</i>';
-		    }
-		    $("#last_selected").html(text);
-		},
-		maxItemsToShow: 5
 		});
-	});
+	});		
+    		
+        $(function(){
+		var kz = '1';
+		$("#ac0").autocomplete({
+			url: 'lxc_ac.php',
+			inputClass: 'acInputOwner',
+			extraParams: { kz: kz },
+			maxItemsToShow: 9,
+			minChars: 1,
+			onItemSelect: function(){
+				$("#suchen").focus(); 
+			}
+		});
+	});	
+
+
 				 
 	function call_lxc_auf (owner,c_id,a_id,b) {
 		Frame=eval("parent.main_window");
@@ -106,7 +92,7 @@
 												 <option value="4" {lxc_a_status4}>nicht abgerechnet</select><br><br>
 			<input type="checkbox" name="selbstgeschrieben" value="checked='checked'" {selbstgeschrieben} tabindex="42">selbst geschrieben<br>
 			<input type="checkbox" name="selbstgeschraubt" value="checked='checked'" {selbstgeschraubt} tabindex="42">selbst geschraubt<br><br>
-			<input type="submit" class="anzeige" name="suche" value="suchen" tabindex="43">&nbsp;&nbsp;
+			<input type="submit" class="anzeige" name="suche" value="suchen" tabindex="43" id="suchen">&nbsp;&nbsp;
 			<input type="submit" class="clear" name="reset" value="löschen" tabindex="44"> &nbsp;</span>
 			
 	</div>

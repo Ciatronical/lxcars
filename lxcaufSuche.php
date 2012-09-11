@@ -63,7 +63,7 @@ if( $formdata[lxc_a_status] == "selected" ){
 //print_r( $formdata );
 $rs = SucheAuftrag( $formdata );
 
-
+$formdata['ERPCSS'] = $_SESSION["stylesheet"];
 //print_r( $rs );
 $t = new Template($base);
 $t->set_file(array("tpl-file" => "lxcaufSuche.tpl"));
