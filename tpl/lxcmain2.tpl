@@ -1,6 +1,6 @@
 <html>
 <head><title>Neues Fahrzeug </title>
-	<link type="text/css" REL="stylesheet" HREF="../css/main.css"></link>
+	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>

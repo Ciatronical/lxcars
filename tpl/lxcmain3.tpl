@@ -1,7 +1,7 @@
 <!-- $Id$ -->
 <html>
 <head><title>Fahrzeudaten  anzeigen von {ln} mit der ID {c_id}</title>
-	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
+	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
 
@@ -53,6 +53,8 @@
 
 </head>
 <body onload="checkhu(document.car.c_hu.value)">
+<p class="listtop">{msg}</p>
+
 <left>
 
 

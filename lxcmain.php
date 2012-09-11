@@ -121,8 +121,12 @@ switch( $task ){
 		if( $readonly != "" ){
 			$miscarray["mkbdrop"] = "";
 		}
-		if($miscarray['cm']) {echo "<p class=\"listtop\">Fahrzeugdaten ".$miscarray['c_ln']."</p>";}//Warum funzt listtop nicht???
-			else {echo "<p class=\"listtop\">Fahrzeug existiert nicht in der KBA-Datenbank"."</p>";}
+		if($miscarray['cm']){
+		    $miscarray['msg'] = "Fahrzeugdaten ".$miscarray['c_ln'];
+		}
+		else{
+		    $miscarray['msg'] = "Fahrzeug existiert nicht in der KBA-Datenbank";
+		}
 		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
 		$$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath); //Doppelt $$ RICHTIG??
 		$t->set_var($miscarray);						
