@@ -127,9 +127,11 @@ function HoleAuftragsDaten($a_id) {//Gibt alle Daten des Auftrags mit der a_id z
 	global $db;
 	global $tbauf;
 	global $tbpos;
-	$selectstring = "lxc_a_c_id, lxc_a_init_time, lxc_a_finish_time, lxc_a_modified_from, lxc_a_modified_on, lxc_a_km, lxc_a_status, lxc_a_text";
+	$selectstring = "lxc_a_c_id,EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)), lxc_a_finish_time, lxc_a_modified_from, lxc_a_km, lxc_a_status, lxc_a_text, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_modified_on))AS modified_time";
 	$sql = "select $selectstring from $tbauf where lxc_a_id = $a_id ORDER BY lxc_a_id ";
 	$rs=$db->getall($sql);
+	$rs[0]['lxc_a_modified_on'] = ts2gerdate($rs[0]['modified_time']);
+	$rs[0]['lxc_a_init_time'] = ts2gerdate( $rs[0]['date_part'] );
 	return $rs;
 } 
 
@@ -147,10 +149,9 @@ function HoleAuftragsPositionen($a_id){//
 	return $rspos;
 }
 
-function UpdateAuftragsDaten($a_id) {//Verandert 
+function UpdateAuftragsDaten($a_id,$a_data) {
 	global $db;
 	global $tbauf;
-	global $a_data;
 	$a_dbarray=array('lxc_a_finish_time', 'lxc_a_km', 'lxc_a_modified_from', 'lxc_a_modified_on', 'lxc_a_status', 'lxc_a_text');
 	$wherestring = "lxc_a_id = $a_id"; 
 	$rs=$db->update($tbauf,$a_dbarray,$a_data,$wherestring);

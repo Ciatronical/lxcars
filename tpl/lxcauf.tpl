@@ -1,6 +1,7 @@
 <html>
 <head><title>Auftragb {ln} mit der ID {c_id}</title>
-	<link type="text/css" REL="stylesheet" HREF="../css/main.css"></link>
+	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
+
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	<style type="text/css">
 	.inp { width:130px }	
@@ -12,7 +13,7 @@
 <left>
 
 <h4></h4>
-<p class="listtop">Auftrag mit der Nummer {a_id}</p>
+<p class="listtop">Auftrag mit dem Kennzeichen: {ln}</p>
 <form name="lxcauf" action="lxcauf.php?task=3" method="post" onSubmit="">
 <input type="hidden" name="c_id" value="{c_id}">
 <input type="hidden" name="a_id" value="{a_id}">
@@ -21,8 +22,8 @@
 
 
 <table class="klein">
-<tr><td >Kennzeichen:</td><td>{ln}</td><td>Auftraggeber:</td><td>{ownerstring}</td></tr>
-<tr><td>Fertigstellung</td><td><input type="text" name="lxc_a_finish_time" size="22" value="{lxc_a_finish_time}"></td><td>KM-Stand</td><td><input type="text" name="lxc_a_km" size="8" value="{lxc_a_km}"></td></tr>
+<tr><td>Auftragnummer:</td><td>{a_id}</td><td>Auftraggeber:</td><td>{ownerstring}</td></tr>
+<tr><td>Fertigstellung:</td><td><input type="text" name="lxc_a_finish_time" size="22" value="{lxc_a_finish_time}"></td><td>KM-Stand</td><td><input type="text" name="lxc_a_km" size="8" value="{lxc_a_km}"></td></tr>
 <tr><td>bearbeitet von:</td><td>{lxc_a_modified_from}</td><td>bearbeitet am:</td><td>{lxc_a_modified_on}</td></tr>
 <tr><td>erstellt am:</td><td>{lxc_a_init_time}</td><td>Status:</td><td><select name="lxc_a_status">
 																						<option value="1" {lxc_a_status1}>angenommen
