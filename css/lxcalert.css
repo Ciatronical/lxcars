@@ -12,6 +12,7 @@ div.alert {
   display: none;
   position: absolute;
   display: block;
+  z-index:2;
 }
 div.alert div.title {
   font-family: Arial;
@@ -40,3 +41,6 @@ div.alert div.button a:visited {
 div.alert div.button a:hover {
   border: 1px solid #333;
 }
+
+
+

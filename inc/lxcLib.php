@@ -162,31 +162,11 @@ function UpdatePosition($pos_id,$posdata){
 	global $tbpos;
 	$posdata[4] = Float2DB( $posdata[4] );
 	$posdata[6] = Float2DB( $posdata[6] );
-	$p_dbarray=array('lxc_a_pos_todo','lxc_a_pos_doing','lxc_a_pos_parts','lxc_a_pos_time','lxc_a_pos_status','lxc_a_pos_ctime','lxc_a_pos_emp');
+	$p_dbarray=array('lxc_a_pos_todo','lxc_a_pos_doing','lxc_a_pos_parts','lxc_a_pos_ctime','lxc_a_pos_status','lxc_a_pos_time','lxc_a_pos_emp');
 	$wherestring = "lxc_a_pos_id = $pos_id"; 
 	$rs=$db->update($tbpos,$p_dbarray,$posdata,$wherestring);
 }
-/*	
-function NewCar($data,$dbarray,$tbname){		//schreibt Daten aus data in die Felder der tbname die in dbarray stehen und gibt die c_id zurück
-	global $db;
-	$dbstring = implode(",",$dbarray);
-	foreach($data as $key=>$value){          	//prüft ob es sich um einen String handelt (die müssen mit Hochkomma in die BD)
-		if(!is_int($value)){
-			$data[$key]='\''.$value.'\'';
-			}
-		else{
-			$data[$key]=$value;
-			}	
-		}
-	$datastring=implode(",",$data);
-	$sql="insert into $tbname ( $dbstring ) values ( $datastring )";//statt $datastring kann wohl auch der dataarray an $sql ueberge
-	echo "TTTTTTTTTTTTTTTTTT ".$sql." ende";	
-	$rc=$db->query($sql);	
-	$sql = "select MAX(c_id) from $tbname ";//die letzte id auswählen
-	$rsid=$db->getall($sql);
-	return $rsid[0]['max'];	
-}
-*/
+
 function lxc2db( $parastr ){	
 	$rsdata = array();
 	$ret = -10;
@@ -792,7 +772,7 @@ function UniqueKz( $kz, $c_id ){
 		//$objResponse->alert("c_id: ".$c_id."sql_cid: ".$rs[0][c_id]);
 		return $objResponse;
 	}
-	elseif( XajaxVer == "05" ){
+	elseif( XajaxVer == "05" ){//Ist das so richtig?
 		$objResponse->setReturnValue(true);
 		return $objResponse;
 	}
@@ -809,10 +789,39 @@ function UniqueFin( $fin, $c_id ){
 		$objResponse->alert("Ein Datensatz mit dieer FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln].".");
 		return $objResponse;
 	}
-	elseif( XajaxVer == "05" ){
+	elseif( XajaxVer == "05" ){//Ist das so richtig?
 		$objResponse->setReturnValue(true);
 		return $objResponse;
 	}
 }
-	
+
+function NeuerFhzTyp( $data ){
+    global $db;
+    echo "Fkt neue Typ </br>";
+    print_r( $data );
+    
+    
+}
+
+function GetFhzTyp( $hsn, $tsn ){
+    echo "Hole TypnDaten!";
+    global $db;
+    $sql = "select * from customer WHERE id = 1";
+    $rs = $db->getall( $sql );    
+    
+    
+    
+    return $rs;//array( 'tets' => 'Eintest' );    
+    
+    
+}
+
+function UpdateFhzTyp( $Typn_id ){
+    echo "Update FahrzeugTyp";
+    
+}
+
+
+
+
 ?>

@@ -125,7 +125,8 @@ switch( $task ){
 		    $miscarray['msg'] = "Fahrzeugdaten ".$miscarray['c_ln'];
 		}
 		else{
-		    $miscarray['msg'] = "Fahrzeug existiert nicht in der KBA-Datenbank";
+		    $miscarray['msg'] = "FahrzeugTyp existiert nicht in der KBA-Datenbank! Kann jedoch angelegt werden.";
+		    $miscarray['FhzTypNeu'] = '<input tabindex="22" type="button" name="auftrag" onClick="FhzTypNeu(document.car.c_id.value,document.car.owner.value,document.car.c_2.value,document.car.c_3.value);" value="Neue FahrzeugTyp">&nbsp;&nbsp;&nbsp;';
 		}
 		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
 		$$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath); //Doppelt $$ RICHTIG??

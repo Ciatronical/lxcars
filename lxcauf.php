@@ -40,7 +40,7 @@ switch( $task ){
 	           }
 	           //-->
 	       </script>
-	       <p class="listtop">Aufträge des Fahrzeugs <?echo $cd['c_ln'];?></p>
+	       <p class="listtop">Aufträge des Fahrzeugs: <?echo $cd['c_ln'];?></p>
     <?php
     echo "<table class=\"liste\">\n";
     echo "<tr class='bgcol3'><th>Auftragstext</th><th class='bgcol3'>Datum</th><th class='bgcol3'>Status</th><th class='bgcol3'>Auftragsnummer</th><th></th></tr>\n";
@@ -69,7 +69,7 @@ switch( $task ){
 
 	case 2:  
 	$a_id = NeuerAuftrag( $c_id );
-        echo "<p class=\"listtop\">Neuer Auftrag wird erzeugt </p> ".$c_id;
+        $msg = "Neuer";
 
 	case 3: 
         $gruppen=getGruppen();
@@ -79,7 +79,8 @@ switch( $task ){
         if( !$schrauber ){
 	       echo "<b>Gruppe Werkstatt nicht angelegt oder ihr sind keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
         }
-         array_unshift( $schrauber, array(id => 0, name => "Monteur") );
+        array_unshift( $schrauber, array(id => 0, name => "Monteur") );
+        $schrauber = array_reverse( $schrauber );
 		if( $_POST[update] || $_POST[printa] ){
 			$mem = 0;
 			$mytimestamp = mktime();
@@ -118,7 +119,7 @@ switch( $task ){
 	}	
     $ad = HoleAuftragsDaten( $a_id );
     $stat = "lxc_a_status".$ad[0]['lxc_a_status'];
-    $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"]);
+    $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
     if($ad) {
 	   $tpl_array+=$ad[0];
     }

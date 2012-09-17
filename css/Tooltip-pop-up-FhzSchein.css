@@ -1,0 +1,98 @@
+
+td.info {
+    position:relative;
+    z-index:1;
+    color:#1E0047;
+    text-decoration:none;
+}
+
+td.info:hover {
+    z-index:2;
+    background-color:#3466ee;
+}
+
+td.info span {
+    display: none;
+}
+
+td.info:hover span {
+    display:block;
+    position:absolute;
+    top:60px;
+    width:600px;
+    height: 292px;
+    border-width:1px;
+    border-style:solid;
+    border-color:000;
+}
+
+td.infoleft:hover span {
+    left:200px;
+}
+td.inforight:hover span {
+    left:500px;
+}
+
+td.inforightright:hover span {
+    left:700px;
+}
+
+td.FahrzeuscheinZu2:hover span {
+    background: url(../image/FahrzeugscheinZu2.gif);
+}
+td.FahrzeuscheinZu3:hover span {
+    background: url(../image/FahrzeugscheinZu3.gif);
+}
+td.FahrzeuscheinAbg:hover span {
+    background: url(../image/FahrzeugscheinAbg.gif);
+}
+td.FahrzeuscheinHub:hover span {
+    background: url(../image/FahrzeugscheinHub.gif);
+}
+td.FahrzeuscheinArt:hover span {
+    background: url(../image/FahrzeugscheinArt.gif);
+}
+td.FahrzeuscheinMasse:hover span {
+    background: url(../image/FahrzeugscheinMasse.gif);
+}
+td.FahrzeuscheinReifen:hover span {
+    background: url(../image/FahrzeugscheinReifen.gif);
+}
+td.FahrzeuscheinHerst:hover span {
+    background: url(../image/FahrzeugscheinHerst.gif);
+}
+td.FahrzeuscheinTyp:hover span {
+    background: url(../image/FahrzeugscheinTyp.gif);
+}
+td.FahrzeuscheinBez:hover span {
+    background: url(../image/FahrzeugscheinBez.gif);
+}
+td.FahrzeuscheinLeist:hover span {
+    background: url(../image/FahrzeugscheinLeist.gif);
+}
+td.FahrzeuscheinKraftstoff:hover span {
+    background: url(../image/FahrzeugscheinKraftstoff.gif);
+}
+td.FahrzeuscheinVmax:hover span {
+    background: url(../image/FahrzeugscheinVmax.gif);
+}
+td.FahrzeuscheinFin:hover span {
+    background: url(../image/FahrzeugscheinFin.gif);
+}
+td.FahrzeuscheinHu:hover span {
+    background: url(../image/FahrzeugscheinHu.gif);
+}
+td.FahrzeuscheinBj:hover span {
+    background: url(../image/FahrzeugscheinBj.gif);
+}
+
+
+
+
+
+
+
+
+
+
+

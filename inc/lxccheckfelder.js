@@ -27,6 +27,14 @@ function myclose(param){
 			uri="../firma1.php?Q=C&id=" +  param;
 			Frame.location.href=uri;
 			}
+function typclose(owner,c_id,task){
+	Frame=eval("parent.main_window");
+    uri1="lxcmain.php?owner=" + owner;
+    uri2="&c_id=" + c_id;
+    uri3="&task=" + task;
+	uri=uri1+uri2+uri3;
+	Frame.location.href=uri;
+}
 function lxc_auf(c_id,owner,task){
 			Frame=eval("parent.main_window");
 			//alert(param);
@@ -34,6 +42,15 @@ function lxc_auf(c_id,owner,task){
 			uri2="&owner=" + owner;
 			uri3="&task=" + task;
 			uri=uri1+uri2+uri3;
+			Frame.location.href=uri;
+			}
+function FhzTypNeu(c_id,owner,hsn,tsn){
+			Frame=eval("parent.main_window");
+			uri1="FhzTyp.php?c_id=" +  c_id;
+			uri2="&owner=" + owner;
+			uri3="&hsn=" + hsn;
+			uri4="&tsn=" + tsn;
+			uri=uri1+uri2+uri3+uri4;
 			Frame.location.href=uri;
 			}
 function zeigeMotor( owner, c_id, mkbinput ){

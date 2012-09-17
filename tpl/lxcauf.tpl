@@ -13,7 +13,7 @@
 <left>
 
 <h4></h4>
-<p class="listtop">Auftrag mit dem Kennzeichen: {ln}</p>
+ <p class="listtop">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
 <form name="lxcauf" action="lxcauf.php?task=3" method="post" onSubmit="">
 <input type="hidden" name="c_id" value="{c_id}">
 <input type="hidden" name="a_id" value="{a_id}">
@@ -39,12 +39,14 @@
 
 <!-- BEGIN pos_block -->
 <tr><th colspan="4"><textarea name="lxc_a_pos_todo___{posid}" cols="22" rows="2">{lxc_a_pos_todo}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_doing___{posid}" cols="22" rows="2">{lxc_a_pos_doing}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_parts___{posid}" cols="22" rows="2">{lxc_a_pos_parts}</textarea></th><td>
-<b class="zeit"> Gebr. Zeit </b><input type="text" name="lxc_a_pos_finish_time___{posid}" size="1" value="{lxc_a_pos_time}">
+<b class="zeit">Vorg. Zeit </b><input type="text" name="lxc_a_pos_finish_ctime___{posid}" size="1" value="{lxc_a_pos_ctime}">
 <select class="inp" name="lxc_a_pos_status___{posid}">
 <option value="1" {lxc_a_pos_status1{posid}}>gelesen
 <option value="2" {lxc_a_pos_status2{posid}}>bearbeitet
 <option value="3" {lxc_a_pos_status3{posid}}>geprüft
-</select></br><b class="zeit">Vorg. Zeit </b><input type="text" name="lxc_a_pos_finish_ctime___{posid}" size="1" value="{lxc_a_pos_ctime}">
+</select></br>
+<b class="zeit"> Gebr. Zeit </b><input type="text" name="lxc_a_pos_finish_time___{posid}" size="1" value="{lxc_a_pos_time}">
+
 
 <select class="inp" name="lxc_a_pos_emp___{posid}">
 	{lxc_schauber_auswahl}
