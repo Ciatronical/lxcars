@@ -99,7 +99,7 @@
 <input id="speichern" tabindex="20" type="submit" name="update" value="speichern">&nbsp;&nbsp;&nbsp;
 <input tabindex="21" type="button" name="close" onClick="myclose(document.car.owner.value);" value="schlie&szlig;en">&nbsp;&nbsp;&nbsp;
 <input tabindex="22" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);" value="   Auftrag   ">&nbsp;&nbsp;&nbsp;
-{FhzTypNeu}
+<input tabindex="22" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');" value="KBA DB bearbeiten" style="visibility:{FhzTypVis}">&nbsp;&nbsp;&nbsp;
 
 </form>
 </left>

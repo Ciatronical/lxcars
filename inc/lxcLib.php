@@ -65,18 +65,20 @@ function  CheckLxCars(){ //Legt beim ersten Aufruf der Datenbank die benötigten
 			echo "Statement: ".$sok1."</br>";
 		}
 	}
-	// So nun schauen wir noch ob lxc2db funtioniert, falls nicht wird es installiert..
-	$rs = lxc2db( "-C 0600 300" );
-	if( !$rs || $rs == -1 ){
-		echo "****************>";
-		echo "*********************  lxc2db-Installation  *************************************** </br>";
-		echo "*************************************************************************************************** </br>";
-		echo "***************** Dauert einige Minuten........".$rs."*********************************************** </br>";
-		echo "*************************************************************************************************** </br>";
-		flush();
-		$erg = lxc2db( "-i" );
-	}	
-
+		if( $rs[$last]['version'] == "1.4.3-2" ){
+		echo "Update erfolgt </br>";
+		echo "Zusätzliche Tabellen werden angelegt </br>";
+		$sql = file_get_contents("lxc-misc/lxc-update-03.sql");
+		$statement = explode(";", $sql );
+		$sm0 = '/\/\*.{0,}\*\//';// SuchMuster ' /* bla */ '
+		$sm1 = '/--.{0,}\n/';    // SuchMuster ' --bla \n '
+		foreach( $statement as $key=>$value ){
+			$sok0 = preg_replace( $sm0, '',$statement[$key] );
+			$sok1 = preg_replace( $sm1, '',$sok0 );
+			$rc=$db->query( $sok1 );
+			echo "Statement: ".$sok1."</br>";
+		}
+	}
 }
 
 
@@ -89,6 +91,7 @@ function NeuerAuftrag($c_id){//erzeugt einen neuen Auftrag,eine neuePosition und
 	$sql="insert into $tbauf (lxc_a_c_id, lxc_a_text)  values ($c_id, 'Bemerkungen zum Auftrag')";
 	$rc=$db->query($sql);
 	$sql = "select MAX(lxc_a_id) from ".$tbauf;//die letzte Auftrags_id auswählen
+	//ToDo!! kann das insert gleich zurückgeben!!!
 	$rsid=$db->getall($sql);
 	$a_id=$rsid[0]['max'];
 	$sql="insert into $tbpos (lxc_a_pos_aid, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts)  values ($a_id, 'Arbeitstext', 'Antworttext Werkstatt', 'Ersatzteile')";
@@ -212,6 +215,7 @@ function NeuesAuto( $cardata ){ //erzeugt einen neuen Datensatz in der Tabelle l
 	$fields = array_keys( $cardata );	
 	$values = array_values( $cardata );
 	$rc = $db->insert( $tbname, $fields, $values );
+	//Kann insert gleich zurückgeben
 	$sql = "select MAX(c_id) from $tbname ";//die letzte id auswählen
 	$rsid = $db->getall( $sql );
 	return $rsid[0]['max'];	
@@ -797,31 +801,37 @@ function UniqueFin( $fin, $c_id ){
 
 function NeuerFhzTyp( $data ){
     global $db;
-    echo "Fkt neue Typ </br>";
-    print_r( $data );
-    
-    
+    $tb = "lxc_mykba";
+    $fields = array_keys( $data );	
+	$values = array_values( $data );
+    $rc = $db->insert( $tb, $fields, $values );    
 }
 
 function GetFhzTyp( $hsn, $tsn ){
-    echo "Hole TypnDaten!";
     global $db;
-    $sql = "select * from customer WHERE id = 1";
+    $sql = "SELECT * from lxc_mykba WHERE hsn = '$hsn' AND tsn = '$tsn'";
     $rs = $db->getall( $sql );    
-    
-    
-    
-    return $rs;//array( 'tets' => 'Eintest' );    
-    
-    
+    return $rs[0];    
 }
 
-function UpdateFhzTyp( $Typn_id ){
-    echo "Update FahrzeugTyp";
-    
+function UpdateFhzTyp( $data ){
+    global $db;
+	$tb = "lxc_mykba";
+	unset( $data['owner'], $data['c_id'],$data['ERPCSS'], $data['update'] );
+	$wherestring = "id = ".array_pop( $data ); 
+	$fields = array_keys( $data );	
+	$values = array_values( $data );
+	$rs = $db -> update( $tb, $fields, $values, $wherestring );
 }
 
-
+function CleanArray( $array ){
+    foreach($array as $key => $value) {
+        if($value == '') {
+            unset( $array[$key] );
+        }   
+    }   
+    return $array;
+} 
 
 
 ?>

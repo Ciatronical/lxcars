@@ -118,6 +118,7 @@ switch( $task ){
 		$miscarray = ShowCar( $c_id );
 		$miscarray["visibility"] = $visibility;
 		$miscarray["readonly"] = $readonly;
+		$miscarray['FhzTypVis'] = 'hidden';
 		if( $readonly != "" ){
 			$miscarray["mkbdrop"] = "";
 		}
@@ -126,7 +127,7 @@ switch( $task ){
 		}
 		else{
 		    $miscarray['msg'] = "FahrzeugTyp existiert nicht in der KBA-Datenbank! Kann jedoch angelegt werden.";
-		    $miscarray['FhzTypNeu'] = '<input tabindex="22" type="button" name="auftrag" onClick="FhzTypNeu(document.car.c_id.value,document.car.owner.value,document.car.c_2.value,document.car.c_3.value);" value="Neue FahrzeugTyp">&nbsp;&nbsp;&nbsp;';
+		    $miscarray['FhzTypVis'] = 'visible';
 		}
 		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
 		$$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath); //Doppelt $$ RICHTIG??

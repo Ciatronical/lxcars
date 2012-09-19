@@ -17,37 +17,28 @@ $emp = $_SESSION["employee"];
 
 
 $TypDaten = compact( 'c_id', 'owner', 'hsn', 'tsn', 'ERPCSS', 'emp' );
+$TypDatenNeu = compact( 'hsn', 'tsn', 'emp' );
 $TypDaten = array_merge( $TypDaten, $_POST );
-print_r( $TypDaten );
-$tmp = GetFhzTyp( $hsn, $tsn  );
-echo "TSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
-print_r( $tmp );
-$TypDaten = array_merge( $TypDaten, GetFhzTyp( $hsn, $tsn  ) );
-
-
-print_r( $TypDaten );
-
-if( !$TypDaten['hersteller'] ){
-    $Typn_id = NeuerFhzTyp( $hsn, $tsn ); 
+//print_r( $TypDaten );
+if( is_array( GetFhzTyp( $hsn, $tsn  ) ) ){ 
+    $TypDaten = array_merge(  $TypDaten,  CleanArray(GetFhzTyp( $hsn, $tsn  )) );
 }
-if( $_POST['update'] ){
+
+//print_r( $TypDaten );
+
+if( !$TypDaten['id'] ){
+    $Typn_id = NeuerFhzTyp( $TypDatenNeu ); 
+}
+if( $TypDaten['update'] ){
     UpdateFhzTyp( $TypDaten );
 }
-
-
-
-    
-
-
-
-
 
 //$TypDaten = array( ERPCSS => $_SESSION["stylesheet"], owner => $owner, c_id => $c_id  );
 
 
 //$TypDaten = array_merge(  $TypDaten, array( ERPCSS => $_SESSION["stylesheet"], owner => $owner, c_id => $c_id  ) );
 //$TypDaten = array( ERPCSS => $_SESSION["stylesheet"], owner => $owner, c_id => $c_id  ) ;
-print_r( $TypDaten );
+//print_r( $TypDaten );
 $t = new Template( $base );
 $t->set_var( $TypDaten );	
 $t->set_file(array("tpl-file" => "FhzTyp.tpl"));

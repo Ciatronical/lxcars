@@ -44,7 +44,7 @@ function lxc_auf(c_id,owner,task){
 			uri=uri1+uri2+uri3;
 			Frame.location.href=uri;
 			}
-function FhzTypNeu(c_id,owner,hsn,tsn){
+function FhzTyp(c_id,owner,hsn,tsn){
 			Frame=eval("parent.main_window");
 			uri1="FhzTyp.php?c_id=" +  c_id;
 			uri2="&owner=" + owner;
