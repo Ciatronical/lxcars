@@ -2,6 +2,7 @@
 <html>
 	<head><title>LxCars - Kfz suchen</title>
 	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
+	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
@@ -145,13 +146,15 @@
 		</form>
 	</span>
 	 <span style="position:absolute; left:28em; top:3.0em; border: 0px solid black;">
-	<table><tr><td valign="top">
+	
 
 <table>
 <!-- BEGIN Liste -->
 	<tr>
-		<td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showK({ID});" class="mini" > {Name} {Ort}</td><td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showCar({CarID});" class="mini">{KZ} {Herst} {CarTyp}</td></tr>
+		<td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showK({ID});" class="mini" > {Name} {Ort}</td><td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showCar({CarID});" class="mini">{KZ} {Herst} {CarTyp}</td>
+    </tr>
 <!-- END Liste -->
+
 </table>
 {report}
 </td>

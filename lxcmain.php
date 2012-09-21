@@ -122,7 +122,7 @@ switch( $task ){
 		if( $readonly != "" ){
 			$miscarray["mkbdrop"] = "";
 		}
-		if($miscarray['cm']){
+		if($miscarray['kba']){
 		    $miscarray['msg'] = "Fahrzeugdaten ".$miscarray['c_ln'];
 		}
 		else{

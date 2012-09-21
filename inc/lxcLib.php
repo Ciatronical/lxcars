@@ -267,11 +267,12 @@ function GetCars($owner){	//Zeigt Fahrzeuge des Owners ("Kennzeichen", "Herstell
 global $db;	
 global $bgcol;
 global $tbkba;
-global $tbname;// ToDo: die Nicht-PHP-Zeilen können beim Aufruf von der Funktion stehen, etwa so $rs = GetCars($owner);
+global $tbname;
 	?>
 	<html>
 	<head><title>Fahrzeug auswaehlen</title>
-	<link REL="stylesheet" HREF="../css/main.css" TYPE="text/css" TITLE="Lx-System stylesheet">
+	<link type="text/css" REL="stylesheet" HREF="../../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
+    <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
 	</head>
 	<body onLoad="document.suche.swort.focus()";>
    <script language="JavaScript">
@@ -293,49 +294,52 @@ global $tbname;// ToDo: die Nicht-PHP-Zeilen können beim Aufruf von der Funktio
 	$rs=$db->getAll($sql);
 	
 	echo "<table class=\"liste\">\n";
-	echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th></th></tr>\n";
+	echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">Fhz Art</th><th></th></tr>\n";
 	$i=0;
-	if ($rs){
-		foreach($rs as $row) {
-			$z2=$rs[$i]['c_2'];//echo " z2 = ".$z2;
+	if( $rs ){ //ToDo Lesbarkeit verbessern!!
+        foreach($rs as $row) {
+            $z2=$rs[$i]['c_2'];//echo " z2 = ".$z2;
 			$z3=$rs[$i]['c_3'];//echo " z3 = ".$z3;
-			$z3=substr($z3,0,3);//
-			//echo " i=  ".$index;
-			//echo " KBAName = ".$tbkba;
-   		//Änderung      $sql="select amther, amttyp, name from $tbkba where zu2 = '$z2' AND zu3 = '$z3' ";
-   		//Ändereung     $rskba=$db->getall($sql);
-   		if( $rs[$i]['c_t'] == "" ){
-   			//echo "</br> c_t".$rs[$i]['c_t']."  </br>";
- 				$rskba = lxc2db( "-C ".$z2." ".$z3 );
+			$z3=substr($z3,0,3);
+			$art = "Pkw";
+            if( $rs[$i]['c_t'] == "" ){
+                $rskba = lxc2db( "-C ".$z2." ".$z3 );
 				$herst = ($rskba != -1)?($rskba[0][1]):("Keine Daten gefunden");
 				$typ = ($rskba != -1)?($rskba[0][2]):("Keine Daten gefunden");
-				$name = ($rskba != -1)?($rskba[0][3]):("Keine Daten gefunden");				
+				$name = ($rskba != -1)?($rskba[0][3]):("Keine Daten gefunden");		
+				if( $rskba == -1 ){
+				    $rs_mykba = GetFhzTyp( $z2, $z3 );
+				    $herst = $rs_mykba['hersteller'] != '' ? $rs_mykba['hersteller'] : "Keine Daten eingetragen";
+				    $art = $rs_mykba['klasse_aufbau'] != '' ? $rs_mykba['klasse_aufbau'] : "???";;
+				    $name = $rs_mykba['typ'] != '' ?  $rs_mykba['typ'] : "Keine Daten eingetragen";
+				    $typ = $rs_mykba['bezeichung'];
 				}		
+			}		
 			else{
 				//echo "</br> Suche nach Typnr  </br>";
 				$rskba = lxc2db( "-T ".$rs[$i]['c_t']	);	
 				$herst = ($rskba != -1)?($rskba[0][4]):("Keine Daten gefunden");
 				$typ = ($rskba != -1)?($rskba[0][5]):("Keine Daten gefunden");
-				$name = ($rskba != -1)?($rskba[0][6]):("Keine Daten gefunden");		 	
+				$name = ($rskba != -1)?($rskba[0][6]):("Keine Daten gefunden");	
+	 	
 			}
 			echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'onClick='showD(\"$owner\",".$row["c_id"].");'>".
 					"<td class=\"liste\">".$row["c_ln"]."</td><td class=\"liste\">".$herst."</td>".                                           
-					"<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$row["c_id"]."</td></tr>\n";
+					"<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$art."</td></tr>\n";
 			$i++;
 		}
 		echo "</table>\n";
 	}
 	else{ //echo "Kein Fahrzeug vorhanden..  starte cars.php?task=2 Fahrzeug anlegen";
-			//echo $_SERVER['PHP-SELF'];
-			//print_r($_SERVER);
-			//exec($_SERVER['SCRIPT_FILENAME']);	
-			header("Location: lxcmain.php?owner=$owner&task=2");//bei ev. Problemen ganzen Pfad angeben
+	    header("Location: lxcmain.php?owner=$owner&task=2");//bei ev. Problemen ganzen Pfad angeben
 	}	
 	?>	
 	<form name="extra" action="lxcmain.php?task=2&owner=<?echo $owner;?>" method="post" >
-	<input type="submit" name="newcar" value="Neues Auto">
+	   <input type="submit" name="newcar" value="Neues Auto">
 	</form>
-	
+	<form name="close" action="../firma1.php?Q=C&id=<?echo $owner;?>" method="post">
+	   <input type="submit" name="back" value="Zurück">
+	</form>
 		</html>
 	<?php	
 }	
@@ -444,7 +448,7 @@ function ShowCar( $c_id ){  //fragt die DB an, schreibt, die Daten nach c_t und 
 	$lxc_data = lxc2db( "-T ".$rs[0]['c_t']);	
 	// Motorkennbuchstabenauswahl ... 	
 
-	if( $lxc_data ){	
+	if( $lxc_data ){//ToDo geht einfacher??	
 		foreach( $lxc_data as $key => $value ){
 			$mkb[$key] = $value[29];
 		}
@@ -471,9 +475,32 @@ function ShowCar( $c_id ){  //fragt die DB an, schreibt, die Daten nach c_t und 
 			}
 	$g_art_drop.='</select>';
 	$rskba = lxc2db( "-KBA ".$rs[0]['c_2']." ".substr( $rs[0]['c_3'],0,3 ) );
+	$kba = true;
+	$vmax = $rskba[0][0];
+	$radstand = $rskba[0][2];
+	$masse = $rskba[0][1];
+	if( $rskba == -1 ){
+	    $kba = false;//für den MyKBA Button
+	    $mykba = GetFhzTyp( $rs[0]['c_2'], substr( $rs[0]['c_3'],0,3 ) );
+	    $lxc_data[0][4] = $mykba['hersteller'];
+	    $lxc_data[0][5] = $mykba['bezeichung'];
+	    $lxc_data[0][6] = $mykba['typ'];
+	    $lxc_data[0][30] = $mykba['ventile'];
+	    $ks = $mykba['kraftstoff'];
+	    $lxc_data[0][13] = $mykba['zylinder'];
+	    $vmax = $mykba['geschwindigkeit'];
+	    $lxc_data[0][9] = $mykba['leistung_drehz'];
+	    $lxc_data[0][12] = $mykba['hubraum_ccm'];
+	    $radstand = $mykba['radstand'];
+	    $masse = $mykba['masse_leer'];
+	    
+	    
+	    
+	};
 	$c_fin=substr($rs[0]['c_fin'],0,17);
 	$c_d=db2date($rs[0]['c_d']);
 	$c_hu=db2date($rs[0]['c_hu']);
+	
 	$chk_c_ln = ( $rs[0]['chk_c_ln'] == 't' ) ? ( 'checked="checked"' ) : ( '' );
 	$chk_c_2 = ( $rs[0]['chk_c_2'] == 't' ) ? ( 'checked="checked"' ) : ( '' );
 	$chk_c_3 = ( $rs[0]['chk_c_3'] == 't' ) ? ( 'checked="checked"' ) : ( '' );
@@ -487,10 +514,10 @@ function ShowCar( $c_id ){  //fragt die DB an, schreibt, die Daten nach c_t und 
 	$retarray = array(ownerstring=>$ownerarray['name'], street=>$ownerarray['street'], city=>$ownerarray['city'],phone=>$ownerarray['phone'], mobile=>$ownerarray['fax'],
 							owner=>$rs[0]['c_ow'], task=>$task, c_id=>$c_id, c_ln=>$rs[0]['c_ln'],c_2=>$rs[0]['c_2'],c_3=>$rs[0]['c_3'],c_em=>$rs[0]['c_em'],c_color=>$rs[0]['c_color'],c_gart=>$rs[0]['c_gart'],
 							cm=>$lxc_data[0][4],ct=>$lxc_data[0][5]." ".$lxc_data[0][6], c_d=>$c_d, c_hu=>$c_hu, fin=>$c_fin,cn=>$rs[0]['c_fin'][17],c_st=>$rs[0]['c_st'],c_t => $rs[0]['c_t'],
-							bj=>$lxc_data[0][7]." - ".$lxc_data[0][8],vent=>$lxc_data[0][30],drehm=>$lxc_data[0][33],verd=>$lxc_data[0][32],ks=>$lxc_data[0][31],mkbdrop=>$drop, g_art_drop=>$g_art_drop,
+							bj=>$lxc_data[0][7]." - ".$lxc_data[0][8],vent=>$lxc_data[0][30],drehm=>$lxc_data[0][33],verd=>$lxc_data[0][32],mkbdrop=>$drop, g_art_drop=>$g_art_drop,
 							c_wt=>$rs[0]['c_wt'],c_st_l=>$rs[0]['c_st_l'],c_wt_l=>$rs[0]['c_wt_l'],c_st_z=>$rs[0]['c_st_z'],c_wt_z=>$rs[0]['c_wt_z'],c_text=>$rs[0]['c_text'],peff=>$lxc_data[0][9]." kW / ".$lxc_data[0][10]." PS",vh=>$lxc_data[0][12]." ccm",
-							mottyp=>"reihe",zyl=>$lxc_data[0][13],ks=>$ks,vmax=>$rskba[0][0]." km/h",mmax=>$rskba[0][1]." kg",c_e_string=>$rs[0]['c_e_id'],mdate=>$c_mt,mkb=>$mkbtpl,radstand=>$rskba[0][2], chk_c_ln=>$chk_c_ln, chk_c_2=>$chk_c_2, chk_c_3=>$chk_c_3,
-							chk_c_em=>$chk_c_em, chk_c_hu=>$chk_c_hu, chk_fin=>$chk_fin );
+							mottyp=>"reihe",zyl=>$lxc_data[0][13],ks=>$ks,vmax=>$vmax." km/h",mmax=>$masse." kg",c_e_string=>$rs[0]['c_e_id'],mdate=>$c_mt,mkb=>$mkbtpl,radstand=>$radstand, chk_c_ln=>$chk_c_ln, chk_c_2=>$chk_c_2, chk_c_3=>$chk_c_3,
+							chk_c_em=>$chk_c_em, chk_c_hu=>$chk_c_hu, chk_fin=>$chk_fin, kba => $kba );
 	return $retarray;
 }   
    
@@ -799,7 +826,7 @@ function UniqueFin( $fin, $c_id ){
 	}
 }
 
-function NeuerFhzTyp( $data ){
+function NewFhzTyp( $data ){
     global $db;
     $tb = "lxc_mykba";
     $fields = array_keys( $data );	
@@ -817,11 +844,11 @@ function GetFhzTyp( $hsn, $tsn ){
 function UpdateFhzTyp( $data ){
     global $db;
 	$tb = "lxc_mykba";
-	unset( $data['owner'], $data['c_id'],$data['ERPCSS'], $data['update'] );
-	$wherestring = "id = ".array_pop( $data ); 
+	unset( $data['owner'], $data['c_id'],$data['ERPCSS'], $data['update'], $data['msg'] );
+    $wherestring = "id = ".array_shift( $data ); 
 	$fields = array_keys( $data );	
 	$values = array_values( $data );
-	$rs = $db -> update( $tb, $fields, $values, $wherestring );
+	$rs = $db->update( $tb, $fields, $values, $wherestring );
 }
 
 function CleanArray( $array ){

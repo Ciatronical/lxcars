@@ -64,6 +64,7 @@
 <form name="car" action="FhzTyp.php" method="post" onSubmit="return checkfelder();">
 <input type="hidden" name="owner" value="{owner}">
 <input type="hidden" name="c_id" value="{c_id}">
+<input type="hidden" name="id" value="{id}">
 
 
 
