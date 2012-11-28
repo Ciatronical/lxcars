@@ -12,29 +12,30 @@ echo "Verzeichnis LxCars: $DIR_LxCars"
 echo "Verzeichnis ERP: $DIR_ERP"
 
 
-echo "************************************************"
-echo "Erzeuge Datenbankbenutzer www-data"
-echo "************************************************" 
-echo ""
-## Rolle www-data fur lxc2db erstellen
-/usr/bin/sudo -u postgres createuser -s www-data
-echo "************************************************"
-echo "Erzeuge Datenbank lxcars"
-echo "************************************************" 
-## Datenbank für lxc2db erstellen
-/usr/bin/sudo -u postgres createdb lxcars
-if [ $(uname -i) == x86_64 ]; then
-   echo "64Bit-Version wird installiert"
-   ln -sf $DIR_LxCars/lxc2db-x86_64 $DIR_LxCars/lxc2db
-else
-   echo "32Bit-Version wird installiert"
-   ln -sf $DIR_LxCars/lxc2db-i386 $DIR_LxCars/lxc2db
-fi
 
 
-if [ $1 == -s ]; then  ## für short
+
+if [ "$1" = "-f" ]; then  ## für fast
 	echo "Achtung Datenbank lxcars wird nicht mit Datensätzen gefüllt"
 else
+    echo "************************************************"
+    echo "Erzeuge Datenbankbenutzer www-data"
+    echo "************************************************" 
+    echo ""
+    ## Rolle www-data fur lxc2db erstellen
+    /usr/bin/sudo -u postgres createuser -s www-data
+    echo "************************************************"
+    echo "Erzeuge Datenbank lxcars"
+    echo "************************************************" 
+    ## Datenbank für lxc2db erstellen
+    /usr/bin/sudo -u postgres createdb lxcars
+    if [ $(uname -i) == x86_64 ]; then
+        echo "64Bit-Version wird installiert"
+        ln -sf $DIR_LxCars/lxc2db-x86_64 $DIR_LxCars/lxc2db
+    else
+        echo "32Bit-Version wird installiert"
+        ln -sf $DIR_LxCars/lxc2db-i386 $DIR_LxCars/lxc2db
+    fi
 	/usr/bin/sudo -u www-data $DIR_LxCars/lxc2db -d lxcars -i
 fi
 
@@ -43,32 +44,15 @@ fi
 ## wenn nicht CRM-Files in *.orig umbenennen 
 ## fur selbige - Links zu den entsprechenden von LxCars erweiterten Dateien erzeugen 
 
-## Menue erstellen 
-if [ -f $DIR_ERP/menu.ini.orig ]; then
-   echo "Error menue.ini.orig existiert bereits"
-else
- 	mv $DIR_ERP/menu.ini $DIR_ERP/menu.ini.orig
-	ln -sf $DIR_LxCars/lx-office-erp/menu.ini  $DIR_ERP/menu.ini
-	echo "menue.ini als menue.ini.oirg gesichert"
-fi
 
-
-## AutoComplete 
-#if [ -f /usr/lib/lx-office-crm/tpl/firmen3.tpl.orig ]; then
-# 	echo "Error firmen3.tpl.orig existiert bereits"
-# 	else
-# 		mv /usr/lib/lx-office-crm/tpl/firmen3.tpl /usr/lib/lx-office-crm/tpl/firmen3.tpl.orig
-#		ln -s $DIR_LxCars/tpl/firmen3.tpl  /usr/lib/lx-office-crm/tpl/firmen3.tpl 
-#	echo "firmen3.tpl als firmen3.tpl.orig gesichert"
-# fi
 
 ## Logo
-if [ -f $DIR_ERP/image/lx-office-erp.png.orig ]; then
- 	echo "Error lx-office-erp.png.orig existiert bereits"
+if [ -f $DIR_ERP/image/kivitendo.png.orig ]; then
+ 	echo "Error kivitendo.png.orig existiert bereits"
 else
- 	mv $DIR_ERP/image/lx-office-erp.png $DIR_ERP/image/lx-office-erp.png.orig
-	ln -sf $DIR_LxCars/image/lx-office-erp.png $DIR_ERP/image/lx-office-erp.png
-	echo "lx-office-erp.png als lx-office-erp.png.orig gesichert"
+ 	mv $DIR_ERP/image/kivitendo.png $DIR_ERP/image/kivitendo.png.orig
+	ln -sf $DIR_LxCars/image/kivitendo.png $DIR_ERP/image/kivitendo.png
+	echo "kivitendo.png als kivitendo.png.orig gesichert"
 fi 
  
 ## Bilchen furs Menu
@@ -80,7 +64,9 @@ chown -R www-data: $DIR_LxCars
 
 ## Kfz-Button in Kundenmaske
 patch -p1 $DIR_CRM/tpl/firma1.tpl < $DIR_LxCars/lxc-misc/button.patch -b
-patch -p1 $DIR_CRM/inc/stdLib.php < $DIR_LxCars/lxc-misc/stdLib.patch -b
+
+## Menü erzeugen
+patch -p1 $DIR_ERP/menu.ini < $DIR_LxCars/lxc-misc/menu.ini.patch -b
  
 echo "done!!"
 

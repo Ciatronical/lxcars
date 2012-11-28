@@ -1,0 +1,33 @@
+--- ../../../lx-office-erp/menu.ini.orig	2012-11-27 19:54:36.456753240 +0100
++++ ../lx-office-erp/menu.ini	2012-11-28 01:55:06.593375453 +0100
+@@ -1,3 +1,30 @@
++[LxCars]
++
++[LxCars--Schnellsuche]
++ACCESS=crm_other
++module=crm/lxcars/lxcgetData.php
++
++[LxCars--KfzSuchen]
++ACCESS=crm_other
++module=crm/lxcars/lxcmainSuche.php
++
++[LxCars--AuftragSuchen]
++ACCESS=crm_other
++module=crm/lxcars/lxcaufSuche.php
++
++[LxCars--MotorSuchen]
++ACCESS=crm_other
++module=crm/lxcars/lxcmotSuche.php
++
++[LxCars--KundeNeu]
++ACCESS=crm_new
++module=crm/firmen3.php
++Q=C
++
++[LxCars--AufgabenZeigen]
++module=todo.pl
++action=show_todo_list
++
+ [CRM]
+ 
+ [CRM--Schnellsuche]

@@ -123,11 +123,15 @@ switch( $task ){
     if($ad) {
 	   $tpl_array+=$ad[0];
     }
+    if( $pos[$n]['lxc_a_pos_todo'] != "" ){ 
+        NeuePosition($a_id);
+    }
     $pos = HoleAuftragsPositionen( $a_id );
     $n = count($pos) - 1;
     if( $pos[$n]['lxc_a_pos_todo'] != "" ){ 
         NeuePosition($a_id);
-    }      
+    }  
+    $pos = HoleAuftragsPositionen( $a_id );
     $ta = new Template( $base );
     $ta->set_file( array( "tpl-file" => "lxcauf.tpl" ) );
     $ta->set_var( $tpl_array );

@@ -146,7 +146,7 @@
 		</form>
 	</span>
 	 <span style="position:absolute; left:28em; top:3.0em; border: 0px solid black;">
-	
+	<table><tr><td valign="top">
 
 <table>
 <!-- BEGIN Liste -->
