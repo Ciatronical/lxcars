@@ -1,8 +1,10 @@
 <html>
 <head><title>Neues Fahrzeug </title>
+    {STYLESHEETS}
 	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
+	{JAVASCRIPTS}
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
@@ -32,13 +34,14 @@
 		</script>
 </head>
 <body onload="document.car.c_ln.focus()">
+{PRE_CONTENT}
+{START_CONTENT}
 <p ></p>
 <left>
-<h4>Daten sorgf&auml;ltig eintragen!</h4>
 <form name="car" action="lxcmain.php?task=2&owner={owner}&c_id={c_id}" method="post" onSubmit="return checkfelder();">
 <input type="hidden" name="owner" value="{owner}">
 <input type="hidden" name="c_id" value="{c_id}">
-
+{MSG}
 <table>
 <tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" size="22"  maxlength="9" value="{c_ln}" title="Kennzeichen eingeben" onblur="xajax_UniqueKz(this.value,document.car.c_id.value)"><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" checked="checked" title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td></tr>
 <tr><td>HSN (2.1)</td><td><input tabindex="2" type="text" name="c_2" size="22" maxlength="4" value="{c_2}" title="Herstellerschl&uuml;ssel aus dem Fahrzeugschein"><input tabindex="-1" type="checkbox" name="chk_c_2" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
@@ -66,5 +69,6 @@
 <input tabindex="22" type="button" onClick="myclose(document.car.owner.value);" value="schlie&szlig;en">
 </form>
 </left>
+{END_CONTENT}
 </body>
 </html>

@@ -2,24 +2,21 @@
 // $Id$
 	require_once("../inc/stdLib.php");
 	include_once("../inc/crmLib.php");
+	$menu =  $_SESSION['menu'];
 	
 ?>
 <html>
 <head><title></title>
-<link type="text/css" REL="stylesheet" HREF="../../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
-    <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
+<?php echo $menu['stylesheets']; ?>
+<link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
+<?php echo $menu['javascripts']; ?>
 </head>
 <body onLoad="document.suche.swort.focus()";>
 <?php	
-//print_r($_POST);echo "=Post\n ";
-//print_r($_GET);
-
+echo $menu['pre_content'];
+echo $menu['start_content'];
 $telnum=($_GET["telnum"])?$_GET["telnum"]:$_POST["telnum"];
-
-//if( $telnum ){ echo "Telefonummer:".$telnum;}
-
 if ($_POST["adress"]) {
-//erstes if begin
 	include("../inc/FirmenLib.php");
 	include("../inc/persLib.php");
 	include("../inc/UserLib.php");
@@ -28,9 +25,7 @@ if ($_POST["adress"]) {
 	$viele="Zu viele Treffer. Bitte einschr&auml;nken.";
 	$found=false;
 	
-	$suchwort=mkSuchwort($_POST["swort"]);
-	//print_r($suchwort);
-	//echo "Das Suchwort lautet: ".$suchwort; 
+	$suchwort=mkSuchwort($_POST["swort"]); 
 	$anzahl=0;
 	$db->debug=0;
 	$keineFirma=0;
@@ -58,19 +53,17 @@ if ($_POST["adress"]) {
 ?>
 <script language="JavaScript">
 <!--
-	function showD (src,id) {
-		Frame=eval("parent.main_window");
+	function showD( src, id ){
 		if      (src=="C") {	uri="../firma1.php?Q=C&id=" + id }
 		else if (src=="V") {	uri="../firma1.php?Q=V&id=" + id; }
 		else if (src=="E") {	uri="../user1.php?id=" + id; }
 		else if (src=="K") {	uri="../kontakt.php?id=" + id; }
-		Frame.location.href=uri;
+		location.href=uri;
 	}
-	function showCar (c_id){
-		if (c_id) {
-			Frame=eval("parent.main_window");
+	function showCar( c_id ){
+		if( c_id ){
 			uri="lxcmain.php?task=3&c_id=" + c_id;
-			Frame.location.href=uri;
+			location.href=uri;
 		}
 	}
 //-->
@@ -159,27 +152,22 @@ if($_POST['sauto']){
 		//echo "Autosuche...".$_POST["sauto"];
 }
 if($keineFirma){
-
-//include("inc/FirmenLib.php");
-	include("lxcars/inc/lxcLib.php");
+    include("lxcars/inc/lxcLib.php");
 	$result=GetOwner($_POST['swort']);
 	if ($result){
 		echo "<table class=\"liste\">\n";
 		echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
-		foreach($result as $row) {
+		foreach( $result as $row ){
 			echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\"  onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'>".
 					"<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
 					"<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
 			$i++;
-		}//end foreach
+		}
 		echo "</table>\n";
 	}//end if
 	else {echo "!!!Kennzeichen nicht vergeben!!!";}
 		//echo "Autosuche...".$_POST["sauto"];
 }
-	
-	
-
 
 $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
 $formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.'</form>" method="post">';
@@ -189,7 +177,7 @@ $formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
 $formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
 $formular .= '<span class="liste">Suchbegriff</span></form>';
 print $formular;
-	
+echo $menu['end_content'];	
 ?>	
 
 

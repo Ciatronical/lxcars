@@ -263,22 +263,25 @@ function UpdateTypNr( $c_id, $c_t ){
 	$rc=$db->query($sql);
 }
 	 
-function GetCars($owner){	//Zeigt Fahrzeuge des Owners ("Kennzeichen", "Hersteller", "Typ","c_id") enthaelt
-global $db;	
-global $bgcol;
-global $tbkba;
-global $tbname;
+function GetCars( $owner ){	//Zeigt Fahrzeuge des Owners ("Kennzeichen", "Hersteller", "Typ","c_id") enthaelt
+    global $db;	
+    global $bgcol;
+    global $tbkba;
+    global $tbname;
+    $menu =  $_SESSION['menu'];
 	?>
 	<html>
 	<head><title>Fahrzeug auswaehlen</title>
-	<link type="text/css" REL="stylesheet" HREF="../../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
-    <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
+	    <?php echo $menu['stylesheets']; ?> 
+        <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
+        <?php echo $menu['javascripts']; ?>
 	</head>
-	<body onLoad="document.suche.swort.focus()";>
+	<body>
+	<?php echo $menu['pre_content']; ?> 
+	<?php echo $menu['start_content']; ?> 
    <script language="JavaScript">
 	<!--
-	function showD (owner,c_id) {
-		Frame=eval("parent.main_window");
+	function showD( owner, c_id ){
 		uri1="lxcmain.php?owner=" + owner;
 		uri2="&c_id=" + c_id;
 		uri3="&task=3"
@@ -340,7 +343,9 @@ global $tbname;
 	<form name="close" action="../firma1.php?Q=C&id=<?echo $owner;?>" method="post">
 	   <input type="submit" name="back" value="Zurück">
 	</form>
-		</html>
+	<?php echo $menu['end_content']; ?> 
+	</body>
+	</html>
 	<?php	
 }	
 

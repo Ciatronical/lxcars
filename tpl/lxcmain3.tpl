@@ -1,11 +1,12 @@
 <!-- $Id$ -->
 <html>
 <head><title>Fahrzeudaten  anzeigen von {ln} mit der ID {c_id}</title>
-	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
+    {STYLESHEETS}
+	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}/main.css"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
     <link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
-
+    {JAVASCRIPTS}
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
@@ -54,6 +55,8 @@
 
 </head>
 <body onload="checkhu(document.car.c_hu.value)">
+{PRE_CONTENT}
+{START_CONTENT}
 <p class="listtop">{msg}</p>
 
 <left>
@@ -103,6 +106,6 @@
 
 </form>
 </left>
-
+{END_CONTENT}
 </body>
 </html>

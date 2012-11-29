@@ -1,8 +1,10 @@
 <!-- $Id$ -->
 <html>
-	<head><title>hgggtnik</title>
-	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
+	<head><title></title>
+	{STYLESHEETS}
+	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}/main.css"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
+	{JAVASCRIPTS}
 	<script type='text/javascript' src='inc/help.js'></script>
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
@@ -53,6 +55,8 @@
 		
 	</head>
    <body>
+   {PRE_CONTENT}
+   {START_CONTENT}
    <p class="listtop"  onClick="help('SuchFirma');"> Suche nach Aufträgen und verknüpften Daten</p>
    <span style="position:absolute; left:1em; top:3.0em; border: 0px solid black;">
   	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="post">
@@ -108,6 +112,7 @@
 </div>
 </form>
 </span>
+{END_CONTENT}
 </body>
 
 

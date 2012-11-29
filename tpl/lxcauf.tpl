@@ -1,19 +1,19 @@
 <html>
 <head><title>Auftragb {ln} mit der ID {c_id}</title>
+    {STYLESHEETS}
 	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
-
+    {JAVASCRIPTS}
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	<style type="text/css">
-	.inp { width:130px }	
-	.zeit { width:200pt;border: 1px solid #000000; margin-right: 5px }	
-
-</style>
+	   .inp { width:130px }	
+	   .zeit { width:200pt;border: 1px solid #000000; margin-right: 5px }	
+    </style>
 </head>
 <body>
+{PRE_CONTENT}
+{START_CONTENT}
 <left>
-
-<h4></h4>
- <p class="listtop">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
+<p class="listtop">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
 <form name="lxcauf" action="lxcauf.php?task=3" method="post" onSubmit="">
 <input type="hidden" name="c_id" value="{c_id}">
 <input type="hidden" name="a_id" value="{a_id}">
@@ -69,5 +69,6 @@
 
 </form>
 </left>
+{END_CONTENT}
 </body>
 </html>

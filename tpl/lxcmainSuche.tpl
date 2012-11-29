@@ -1,9 +1,10 @@
 <!-- $Id$ -->
 <html>
 	<head><title>LxCars - Kfz suchen</title>
-	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}"></link>
-	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
-	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">
+	{STYLESHEETS}
+    <link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}/main.css"></link>
+    <link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">
+    {JAVASCRIPTS}
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
 	<script language="JavaScript" type="text/javascript">
@@ -44,8 +45,7 @@
 	});	
 				 		 
 	function call_lxc_auf (owner,c_id,a_id) {
-		Frame=eval("parent.main_window");
-		uri1="lxcauf.php?owner=" + owner;
+        uri1="lxcauf.php?owner=" + owner;
 		uri2="&c_id=" + c_id;
 		uri3="&task=3"
 		uri4="&a_id=" + a_id;
@@ -54,9 +54,8 @@
 	}
 	function showK (id) {
 		if (id) {
-			Frame=eval("parent.main_window");
 			uri="../firma1.php?Q={Q}&id=" + id;
-			Frame.location.href=uri;
+			location.href=uri;
 		}
 	}
 	function chngSerial(site) {
@@ -64,9 +63,8 @@
 	}
 	function showCar (c_id){
 		if (c_id) {
-			Frame=eval("parent.main_window");
 			uri="lxcmain.php?task=3&c_id=" + c_id;
-			Frame.location.href=uri;
+			location.href=uri;
 		}
 	}
 			 
@@ -74,8 +72,10 @@
 	//-->
 	</script>
    <body onLoad="document.erwsuche.c_hu_gg.focus();">
+   {PRE_CONTENT}
+   {START_CONTENT}
    <p class="listtop" onClick="help('SuchFirma');"> Suche nach Fahrzeugen und verkn&uuml;pften Daten</p>
-   <span style="position:absolute; left:1em; top:3.0em; border: 0px solid black;">
+   <span style="position:absolute; left:1em; top:5.0em; border: 0px solid black;">
   	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="post">
   	<input type="hidden" name="felder" value="">
    <div class="zeile">
@@ -145,7 +145,7 @@
 			</div>
 		</form>
 	</span>
-	 <span style="position:absolute; left:28em; top:3.0em; border: 0px solid black;">
+	 <span style="position:absolute; left:28em; top:5.0em; border: 0px solid black;">
 	<table><tr><td valign="top">
 
 <table>
@@ -179,5 +179,6 @@
 </td></tr></table>	 
 	 
 	 </span>
+	 {END_CONTENT}
 	</body>
 	

@@ -22,47 +22,45 @@ function kz_to_lks(kz){
 }
 
 
-function myclose(param){ 
-			Frame=eval("parent.main_window");
-			uri="../firma1.php?Q=C&id=" +  param;
-			Frame.location.href=uri;
-			}
-function typclose(owner,c_id,task){
-	Frame=eval("parent.main_window");
-    uri1="lxcmain.php?owner=" + owner;
+function myclose( param ){ 
+    uri="../firma1.php?Q=C&id=" +  param;
+	location.href=uri;
+}
+
+function typclose( owner, c_id, task ){
+	uri1="lxcmain.php?owner=" + owner;
     uri2="&c_id=" + c_id;
     uri3="&task=" + task;
 	uri=uri1+uri2+uri3;
-	Frame.location.href=uri;
+	location.href=uri;
 }
-function lxc_auf(c_id,owner,task){
-			Frame=eval("parent.main_window");
-			//alert(param);
-			uri1="lxcauf.php?c_id=" +  c_id;
-			uri2="&owner=" + owner;
-			uri3="&task=" + task;
-			uri=uri1+uri2+uri3;
-			Frame.location.href=uri;
-			}
-function FhzTyp(c_id,owner,hsn,tsn){
-			Frame=eval("parent.main_window");
-			uri1="FhzTyp.php?c_id=" +  c_id;
-			uri2="&owner=" + owner;
-			uri3="&hsn=" + hsn;
-			uri4="&tsn=" + tsn;
-			uri=uri1+uri2+uri3+uri4;
-			Frame.location.href=uri;
-			}
+
+function lxc_auf( c_id, owner, task ){
+    uri1="lxcauf.php?c_id=" +  c_id;
+	uri2="&owner=" + owner;
+	uri3="&task=" + task;
+    uri=uri1+uri2+uri3;
+	location.href=uri;
+}
+
+function FhzTyp( c_id, owner, hsn, tsn ){
+    uri1="FhzTyp.php?c_id=" +  c_id;
+	uri2="&owner=" + owner;
+	uri3="&hsn=" + hsn;
+	uri4="&tsn=" + tsn;
+	uri=uri1+uri2+uri3+uri4;
+	location.href=uri;
+}
+
 function zeigeMotor( owner, c_id, mkbinput ){
-			Frame=eval("parent.main_window");
-			uri1="lxcmotSuche.php?c_id=" +  c_id;
-			uri2="&owner=" + owner;
-			uri3="&mkbinput=" + mkbinput;
-			uri=uri1+uri2+uri3;
-			Frame.location.href=uri;
-			}
-function lxcaufschliessen(owner,c_id,task,b){
-	Frame=eval("parent.main_window");
+    uri1="lxcmotSuche.php?c_id=" +  c_id;
+	uri2="&owner=" + owner;
+    uri3="&mkbinput=" + mkbinput;
+	uri=uri1+uri2+uri3;
+    location.href=uri;
+}
+
+function lxcaufschliessen( owner, c_id, task, b){
 	if(b==1){
 		uri="lxcaufSuche.php"
 	}
@@ -72,52 +70,54 @@ function lxcaufschliessen(owner,c_id,task,b){
 		uri3="&task=" + task;
 		uri=uri1+uri2+uri3;
 	}
-	Frame.location.href=uri;
+	location.href=uri;
 }
-function lxcaufdrucken(a_id){
-			Frame=eval("parent.main_window");
-			uri="lxcaufPrt.php?a_id=" + a_id;
-			alert(uri);
-			Frame.location.href=uri;
-			}
+
+function lxcaufdrucken( a_id ){
+    uri="lxcaufPrt.php?a_id=" + a_id;
+	//alert(uri);
+	location.href=uri;
+}
+
 function lxcchown(c_id){
-			Frame=eval("parent.main_window");
-			uri="lxcChown.php?c_id=" + c_id;
-			Frame.location.href=uri;
-			}
+    uri="lxcChown.php?c_id=" + c_id;
+}
 			
-function mann(zu2,zu3){
-			Frame=eval("parent.main_window");
-			//alert(param);
-			var zu3sub = zu3.substring(0, 3);
-			uri1="http://www.mann-hummel.com/mf_prodkata_eur/index.html?ktlg_page=5&ktlg_lang=2&ktlg_05_szu2=" + zu2; 
-			uri2="&ktlg_05_szu3=" + zu3sub;
-			uri=uri1+uri2;
-			Frame.location.href=uri;
-			}
-function bmw(zu2,fin){
-			Frame=eval("parent.main_window");
-			if( zu2 != "0005" ){alert("Das ist kein BMW!"); return;};
-			
-			var finsub = fin.substring(10, 17);
-			uri1="http://www.realoem.com/bmw/select.do?vin=" + finsub; 
-			Frame.location.href=uri1;
-			}
+function mann( zu2, zu3 ){
+    var zu3sub = zu3.substring(0, 3);
+	uri1="http://www.mann-hummel.com/mf_prodkata_eur/index.html?ktlg_page=5&ktlg_lang=2&ktlg_05_szu2=" + zu2; 
+	uri2="&ktlg_05_szu3=" + zu3sub;
+	uri=uri1+uri2;
+	location.href=uri;
+}
+
+function bmw( zu2, fin ){
+    if( zu2 != "0005" ){alert("Das ist kein BMW!"); return;};
+    var finsub = fin.substring(10, 17);
+	uri1="http://www.realoem.com/bmw/select.do?vin=" + finsub; 
+	location.href=uri1;
+}
+
 function kbaToAutoData(zu2,zu3){
 	alert("KBA wird zu AutoData uebergebn zu2 = "+ zu2 +" und zu3 = "+zu3);
 }
+
 function kbaToCoParts(zu2,zu3){
 	alert("KBA wird zu CoParts uebergebn zu2 = "+ zu2 +" und zu3 = "+zu3);
 }
+
 function kbaToEsi(zu2,zu3){
 	alert("KBA wird zu EsiTronic uebergebn zu2 = "+ zu2 +" und zu3 = "+zu3);
 }
+
 function kbaToEtKa(zu2,zu3){
 	alert("FIN wird zu Etka uebergebn zu2 = "+ zu2 +" und zu3 = "+zu3);
 }
+
 function kbaToTecDoc(zu2,zu3){
 	alert("KBA wird zu TecDoc uebergebn zu2 = "+ zu2 +" und zu3 = "+zu3);
 }
+
 function feinstaub(){
 	fenster = window.open( "",
 		"LxCars - Feinstaubplakette ermitteln", // Name des neuen Fensters
@@ -149,7 +149,8 @@ function checkfelder(){
 			respFin = xajax.call('UniqueFin',{mode:'synchronous',parameters:[document.car.fin.value,document.car.c_id.value]});					
 			return respKz && respFin;
 }
-function checkhu(param){
+
+function checkhu( param ){
 	hudate=param;
 	var jetzt = new Date();
 	Tag = hudate.substr(0,2);
@@ -159,11 +160,7 @@ function checkhu(param){
 	if(Date.parse(USDatum) < jetzt.getTime() && document.car.chk_c_hu.checked){myalert('<em><b>Achtung!</b></em>', '<b>Die Hauptuntersuchung ist fällig!</b> Sofort handeln! Kunden benachrichtigen!', {left:30, top:20, width:300, height:100});return false}
 }
 
-
-
-
-
-function checkfin(fin,cn){
+function checkfin( fin, cn ){
  	sum = 0;
 	if(cn=='-'){return true;}	
 	if(cn==''){return false;}
@@ -177,7 +174,8 @@ function checkfin(fin,cn){
 	if(cn==checkchar){return true;}
 	else{return false;}
 }
-function EBtoNum(fin){
+
+function EBtoNum( fin ){
 	if(fin=='O'||fin=='0'){return 0;}	
 	if(fin=='A'||fin=='J'||fin=='1'){return 1;}
 	if(fin=='B'||fin=='K'||fin=='S'||fin=='2'){return 2;}

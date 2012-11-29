@@ -1,19 +1,25 @@
 <?php
 ob_start();//kann in neueren php-Versionen entfallen
+include("../inc/stdLib.php");
+$menu =  $_SESSION['menu'];
 ?>
 <html>
 <head><title></title>
-<link REL="stylesheet" HREF="../css/main.css" TYPE="text/css" TITLE="Lx-System stylesheet">
+<?php echo $menu['stylesheets']; ?>
+<link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
+<?php echo $menu['javascripts']; ?>
+
 </head>
 <body onLoad="document.suche.mkbinput.focus()";>
-<script language="JavaScript">
-<!--
-	function showMot( motnr, mkbinput ){
-		Frame=eval("parent.main_window");
-		uri1="lxcmotSuche.php?motnr=" + motnr;
+        <?php echo $menu['pre_content']; ?>   
+        <?php echo $menu['start_content']; ?> 
+    <script language="JavaScript">
+    <!--
+    function showMot( motnr, mkbinput ){
+        uri1="lxcmotSuche.php?motnr=" + motnr;
 		uri2="&mkbinput=" + mkbinput;
 		uri=uri1+uri2
-		Frame.location.href=uri;
+		location.href=uri;
 	}
 //-->
 </script>
@@ -65,6 +71,7 @@ else{
 	}//end if
 }//else
 ?>
+<?php echo $menu['end_content']; ?> 
 </body>
 <?php
 ob_end_flush();//kann in neueren php-Versionen entfallen

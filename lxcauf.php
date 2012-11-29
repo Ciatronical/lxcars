@@ -20,17 +20,20 @@ if( !$task ) $task=1;
 switch( $task ){
 	case 1://Alle Aufträge anzeigen
 	$rs = HoleAuftraege( $c_id );
+	$menu =  $_SESSION['menu'];
 	?>
 	<html>
         <head><title>Auftrag auswaehlen</title>
-            <link type="text/css" REL="stylesheet" HREF="../../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
-            <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>"></link>
+        <?php echo $menu['stylesheets']; ?>
+        <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
+        <?php echo $menu['javascripts']; ?>
         </head>
         <body>
+        <?php echo $menu['pre_content']; ?>   
+        <?php echo $menu['start_content']; ?>     
             <script language="JavaScript">
                 <!--
-                function call_lxc_auf (owner,c_id,a_id) {
-                    Frame=eval("parent.main_window");
+                function call_lxc_auf( owner, c_id, a_id ){
                     uri1="lxcauf.php?owner=" + owner;
                     uri2="&c_id=" + c_id;
                     uri3="&task=3"
@@ -63,6 +66,8 @@ switch( $task ){
 	   <form name="back" action="lxcmain.php?task=3&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
 	       <input type="submit"  value="zurück">
 	   </form>
+	<?php echo $menu['end_content']; ?>      
+	</body>
 	</html>
 	<?php
     if( $i > 0 ) break 1; 
@@ -133,6 +138,13 @@ switch( $task ){
     }  
     $pos = HoleAuftragsPositionen( $a_id );
     $ta = new Template( $base );
+    $menu =  $_SESSION['menu']; 
+    $ta->set_var( array(
+        JAVASCRIPTS   => $menu['javascripts'],
+        STYLESHEETS   => $menu['stylesheets'],
+        PRE_CONTENT   => $menu['pre_content'],
+        START_CONTENT => $menu['start_content'],
+        END_CONTENT   => $menu['end_content'] ) );
     $ta->set_file( array( "tpl-file" => "lxcauf.tpl" ) );
     $ta->set_var( $tpl_array );
     $ta->set_block( "tpl-file","pos_block","blockersatz" );

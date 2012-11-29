@@ -38,6 +38,13 @@ else{
 $xajax->processRequest();
 
 $t = new Template( $base );
+$menu =  $_SESSION['menu']; 
+$t->set_var( array(
+    JAVASCRIPTS   => $menu['javascripts'],
+    STYLESHEETS   => $menu['stylesheets'],
+    PRE_CONTENT   => $menu['pre_content'],
+    START_CONTENT => $menu['start_content'],
+    END_CONTENT   => $menu['end_content'] ) );
 
 $chk_c_ln = $_POST[chk_c_ln] ? "true" : "false" ;
 $chk_c_2 = $_POST[chk_c_2] ? "true" : "false" ;
@@ -92,8 +99,9 @@ switch( $task ){
 				$g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
 			}
 			$g_art_drop.='</select>';
-			$t->set_var( array( owner => $owner, c_text =>"Kommentar eingeben", xajax_out => $xajax->printJavascript("../".XajaxPath), g_art_drop=>$g_art_drop, ERPCSS=>$_SESSION["stylesheet"] ) );	//$formdata['ERPCSS'] = $_SESSION["stylesheet"];
-			echo "<p class=\"listtop\">Fahrzeug anlegen durch: ".$e_id."</p>";
+			$msg = "<p class=\"listtop\">Fahrzeug anlegen durch: ".$e_id."</p>";
+			$t->set_var( array( owner => $owner, c_text =>"Kommentar eingeben", xajax_out => $xajax->printJavascript("../".XajaxPath), g_art_drop=>$g_art_drop, ERPCSS=>$_SESSION["stylesheet"], MSG=>$msg ) );	//$formdata['ERPCSS'] = $_SESSION["stylesheet"];
+			
 			$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));
 			$t->pparse("out",array("tpl-file"));
 		}
