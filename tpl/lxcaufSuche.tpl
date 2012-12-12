@@ -5,7 +5,6 @@
 	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}/main.css"></link>
 	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
 	{JAVASCRIPTS}
-	<script type='text/javascript' src='inc/help.js'></script>
 	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
 	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
    <script language="JavaScript">
@@ -57,8 +56,8 @@
    <body>
    {PRE_CONTENT}
    {START_CONTENT}
-   <p class="listtop"  onClick="help('SuchFirma');"> Suche nach Aufträgen und verknüpften Daten</p>
-   <span style="position:absolute; left:1em; top:3.0em; border: 0px solid black;">
+   <p class="listtop"> Suche nach Aufträgen und verknüpften Daten</p>
+   
   	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="get">
   	<input type="hidden" name="felder" value="">
    <div class="zeile">
@@ -100,9 +99,7 @@
 			<input type="submit" class="clear" name="reset" value="löschen" tabindex="44"> &nbsp;</span>
 			
 	</div>
-</form>
-</span>
-&nbsp;&nbsp;
+</form> 
 <table class="mini">
 	<tr class='bgcol3'><th>Kennzeichen</th><th>Besitzer</th><th>Auftragsdatum</th><th>Erster Arbeitstext</th><th>Auftr.-Nr.</th></tr>
 	<!-- BEGIN Liste -->
@@ -110,8 +107,7 @@
 	<!-- END Liste -->
 </table>
 </div>
-</form>
-</span>
+
 {END_CONTENT}
 </body>
 
