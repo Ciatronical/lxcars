@@ -59,7 +59,7 @@
    {START_CONTENT}
    <p class="listtop"  onClick="help('SuchFirma');"> Suche nach Aufträgen und verknüpften Daten</p>
    <span style="position:absolute; left:1em; top:3.0em; border: 0px solid black;">
-  	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="post">
+  	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="get">
   	<input type="hidden" name="felder" value="">
    <div class="zeile">
 		<span class="label">Kennzeichen</span>
