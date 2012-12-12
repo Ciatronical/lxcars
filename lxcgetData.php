@@ -16,7 +16,7 @@
 echo $menu['pre_content'];
 echo $menu['start_content'];
 $telnum=($_GET["telnum"])?$_GET["telnum"]:$_POST["telnum"];
-if ($_POST["adress"]) {
+if ($_GET["adress"]) {
 	include("../inc/FirmenLib.php");
 	include("../inc/persLib.php");
 	include("../inc/UserLib.php");
@@ -25,7 +25,7 @@ if ($_POST["adress"]) {
 	$viele="Zu viele Treffer. Bitte einschr&auml;nken.";
 	$found=false;
 	
-	$suchwort=mkSuchwort($_POST["swort"]); 
+	$suchwort=mkSuchwort($_GET["swort"]); 
 	$anzahl=0;
 	$db->debug=0;
 	$keineFirma=0;
@@ -103,16 +103,16 @@ if ($_POST["adress"]) {
 		echo $msg;
 	};
 	echo "<br>";
-} else if ($_POST["kontakt"]){
+} else if ($_GET["kontakt"]){
 ?>
 <script language="JavaScript">
-	sw="<?= $_POST["swort"]; ?>";
+	sw="<?= $_GET["swort"]; ?>";
 	if (sw != "") 
 		F1=open("suchKontakt.php?suchwort="+sw+"&Q=S","Suche","width=400, height=400, left=100, top=50, scrollbars=yes");
 </script>			
 
 <? }
-if($_POST['sauto']){
+if($_GET['sauto']){
 	?><script language="JavaScript">
 	<!--
 	function showD (src,id) {
@@ -136,7 +136,7 @@ if($_POST['sauto']){
 	<?
 	//include("inc/FirmenLib.php");
 	include("inc/lxcLib.php");
-	$result=GetOwner($_POST['swort']);
+	$result=GetOwner($_GET['swort']);
 	if ($result){
 		echo "<table class=\"liste\">\n";
 		echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
@@ -149,11 +149,11 @@ if($_POST['sauto']){
 		echo "</table>\n";
 	}//end if
 	else {echo "!!!Kennzeichen nicht vergeben!!!";}
-		//echo "Autosuche...".$_POST["sauto"];
+		//echo "Autosuche...".$_GET["sauto"];
 }
 if($keineFirma){
     include("lxcars/inc/lxcLib.php");
-	$result=GetOwner($_POST['swort']);
+	$result=GetOwner($_GET['swort']);
 	if ($result){
 		echo "<table class=\"liste\">\n";
 		echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
@@ -166,11 +166,11 @@ if($keineFirma){
 		echo "</table>\n";
 	}//end if
 	else {echo "!!!Kennzeichen nicht vergeben!!!";}
-		//echo "Autosuche...".$_POST["sauto"];
+		//echo "Autosuche...".$_GET["sauto"];
 }
 
 $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
-$formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.'</form>" method="post">';
+$formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.'</form>" method="get">';
 $formular .= '<input type="text" name="swort" size="20">';  
 $formular .= '<input type="submit" name="adress" value="Kunde o. Lief.">';
 $formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
