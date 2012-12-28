@@ -1,14 +1,14 @@
 <?php
-/*********************>>> LxCars Auftrag <<<******************/
-/* written by Ronny Kumke LxCars in April 2010 */
 /*************************************************************/
-
+/************************ LxCars Auftrag *********************/
+/************** ronny@lxcars.de, April 2010 ******************/
+/*************************************************************/
 include_once("../inc/db.php");
 include_once("inc/lxcLib.php");
 include_once("../inc/template.inc");
 include_once("../inc/UserLib.php");
+
 ob_start();
-//print_r($_GET);
 $task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
 $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"]; 
 $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
@@ -18,9 +18,10 @@ $cd = ShowCar( $c_id );//Fahrzeugdaten holen
 if( !$task ) $task=1; 
 
 switch( $task ){
-	case 1://Alle Aufträge anzeigen
+    case 1://Alle Aufträge anzeigen
 	$rs = HoleAuftraege( $c_id );
 	$menu =  $_SESSION['menu'];
+	if( $rs ){
 	?>
 	<html>
         <head><title>Auftrag auswaehlen</title>
@@ -43,37 +44,35 @@ switch( $task ){
 	           }
 	           //-->
 	       </script>
-	       <p class="listtop">Aufträge des Fahrzeugs: <?echo $cd['c_ln'];?></p>
-    <?php
-    echo "<table class=\"liste\">\n";
-    echo "<tr class='bgcol3'><th>Auftragstext</th><th class='bgcol3'>Datum</th><th class='bgcol3'>Status</th><th class='bgcol3'>Auftragsnummer</th><th></th></tr>\n";
-    $i = 0;
-	$status = array( 'Michael', 'angenommen', 'bearbeitet', 'abgerechnet' );//Zum Gedenken an Michael Gartenschläger
-	if( $rs ){
+        <p class="listtop">Aufträge des Fahrzeugs: <?echo $cd['c_ln'];?></p>
+        <?php
+        echo "<table class=\"liste\">\n";
+        echo "<tr class='bgcol3'><th>Auftragstext</th><th class='bgcol3'>Datum</th><th class='bgcol3'>Status</th><th class='bgcol3'>Auftragsnummer</th><th></th></tr>\n";
+        $i = 0;
+        $status = array( 'Michael', 'angenommen', 'bearbeitet', 'abgerechnet' );//Zum Gedenken an Michael Gartenschläger
+	
 		foreach( $rs as $row ){
-			echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'onClick='call_lxc_auf(\"$owner\",\"$c_id\",".$row["lxc_a_id"].");'>".
+            echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'onClick='call_lxc_auf(\"$owner\",\"$c_id\",".$row["lxc_a_id"].");'>".
 					"<td class=\"liste\">".$row["lxc_a_pos_todo"]."</td><td class=\"liste\">".$row['to_char']."</td>".                                           
 					"<td class=\"liste\">".$status[$row['lxc_a_status']]."</td><td class=\"liste\">".$row["lxc_a_id"]."</td></tr>\n";
 			$i++;
-		}
-		echo "</table>\n";
-	}
-	
-	?>	
+        }
+        echo "</table>\n";
+        ?>	
         <form name="extra" action="lxcauf.php?task=2&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
             <input type="submit" name="neuer_auftrag" value="Neuer Auftrag">
-	   </form>
-	   <form name="back" action="lxcmain.php?task=3&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
-	       <input type="submit"  value="zurück">
-	   </form>
-	<?php echo $menu['end_content']; ?>      
-	</body>
-	</html>
-	<?php
-    if( $i > 0 ) break 1; 
+        </form>
+	    <form name="back" action="lxcmain.php?task=3&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
+            <input type="submit"  value="zurück">
+        </form>
+        <?php } echo $menu['end_content']; ?>      
+	    </body>
+	    </html>
+	    <?php
+        if( $i > 0 ) break 1; 
 
-	case 2:  
-	$a_id = NeuerAuftrag( $c_id );
+    case 2:  
+        $a_id = NeuerAuftrag( $c_id );
         $msg = "Neuer";
 
 	case 3: 
@@ -90,11 +89,9 @@ switch( $task ){
 			$mem = 0;
 			$mytimestamp = mktime();
 			$mts = date("d.m.Y H:i:s",$mytimestamp);	
-			/***************gepostete Auftragsdaten (ohne pOSOTIONEN)***************************************************************************/
 			$a_data = array( $_POST['lxc_a_finish_time'], $_POST['lxc_a_km'], $_SESSION['employee'], $mts, $_POST['lxc_a_status'], $_POST['lxc_a_text']);
 			UpdateAuftragsDaten( $a_id, $a_data  );
 			$zaehler = 0;
-			//print_r($_POST );
 			foreach( $_POST as $key => $value ){
 				if( strrpos( $key, "___" ) ){//StingPosition()  (sind drei Underlines enthalten?
 					$zaehler++;					
@@ -104,18 +101,11 @@ switch( $task ){
 						$zaehler = 0;
 						
                         $poscontent['7'] = $schrauber[$poscontent['7']]['name'];
-                        //echo "PoSContent7: ".$poscontent['7']."</br>";
-						//$posdata['SelectedSchrauber'] = $value['name'];
 						UpdatePosition( $geteilt[1], $poscontent );
 					}
 				}
 			}
-	
-            /*Hier entscheidet sich ob eine neue Position erzeugt wird*/
-            /*Es müssen genau n+1 Positionen angezeigt werden*/
-            /* Was passiert wenn eine Position leer ist? wenn diese nicht am Ende steht??*/
-
-		if( $_POST[printa]== "drucken" ){
+        if( $_POST[printa]== "drucken" ){
 			header("Location: lxcaufPrt.php?a_id=$a_id&pdf=0&owner=".$owner."&c_id=".$c_id);
 		}
 		if( $_POST[printa] == "Pdf"){
