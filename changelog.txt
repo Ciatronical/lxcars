@@ -1,0 +1,34 @@
+Ronny Kumke (29):
+      init
+      Installation verbessert
+      install.sh verbessert, stdLib gepatcht
+      Installation absolter Pfad patch
+      Installation bricht bei Error nicht ab
+      Paketbau ernerert
+      Installation verbessert
+      BackButton Auftragsauswahl
+      menu.ini gefixt
+      install.sh Parameter -s eingeführt
+      install.sh Fehler beseitigt
+      CSS Fehler in der Suche beseitigt
+      2. CSS Fehler in der Suche beseitigt
+      autocomplete-files zusammengefügt
+      Fehler unärer Operator Installationsscript
+      CSS Fehler, Autocomplete MaxShowItem
+      Fehler CSS include beseitigt
+      .gitignore für lxo-dasi.sh hinzugefügt
+      Auftragbearbeitung komplett überarbeitet
+      FhzSchein Bilder, Auftrag-Verbesserung, Part1 myKBA
+      Eigene KBA DB Ver01
+      Eigene KBA DB Ver02
+      Installation an Namen Kivitendo angepasst, Parameter f --fast hintzgefügt
+      Template an NoFrame angepasst
+      Zurück-Button des Browsers für Schnellsuche nutzbar machen
+      Zurück in Auftragssuche ermöglichen, Code aufgeräumt
+      Etwas Kosmetik in Auftragssuche
+      Doppeltes Menü bei erstem Auftrag beseitigt
+      Installationsanleitung hinzugefügt. Version 1.5.5
+
+root (1):
+      smarty Fehler beseitigt
+
