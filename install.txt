@@ -1,0 +1,29 @@
+Installationsanleitung für LxCars 1.5.5
+
+Voraussetzung für LxCars sind Kivitendo, ERP  >= Ver. 3.0.0 und CRM >= Ver. 1.5.5 vorzugsweise unter Debian oder Ubuntu.
+LxCars kann unter allen unixoiden Betriebssystemen installiert werden. 
+Für die Installation unter Windows oder MacOS wird zusätzlich Virtualbox benötigt.
+
+LxCars funktioniert ausschließlich mit Postgresql 8.4.
+
+Pakete: sudo libphp-snoopy libpqxx-dev  postgresql-contrib-8.4
+Achtung es wird zZ. das Paket libpqxx-2.6.9 benötigt, welches insbesondere bei neueren Ubuntuversionen durch libpqxx-3 ersetzt wurde.
+Das Paket libpqxx-2.6.9 kann zu hier: http://packages.ubuntu.com/de/lucid/libpqxx-2.6.9ldbl-dbg
+geladen und mit dpkg -i Paketname installiert werden.
+
+cd /usr/lib/lx-office-crm
+git clone git://lxcars.org/lxcars.git oder wget lxcars.tgz, tar xzvf lxcars.tgz
+lxcars/scrips/install.sh ausführen
+Besitzer in www-data: ändern (chown -R www-data: *)
+git pull  zum aktualisieren
+Ein Drucker kann in lxcars/inc/config.php angegeben werden.
+
+Unter CRM->Admin sind nun die Gruppen Admin und Werkstatt anzulegen und diesen jeweils mindestens ein Benutzer zuzuweisen.
+
+Bei Problemen:
+su postgres
+./lxc2db
+Datenbank braucht nicht angegeben zu werden.
+
+Bei Fragen oder Problemen 
+ronny@lxcars.de
