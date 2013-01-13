@@ -1,36 +1,103 @@
 <?php
-// $Id$
-	require_once("../inc/stdLib.php");
-	include_once("../inc/crmLib.php");
-	$menu =  $_SESSION['menu'];
-	
+ob_start(); 
+require_once("../inc/stdLib.php");
+include("../inc/crmLib.php");
+$menu = $_SESSION['menu'];
 ?>
 <html>
 <head><title></title>
-<?php echo $menu['stylesheets']; ?>
-<link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
-<?php echo $menu['javascripts']; ?>
+    <script language="JavaScript">
+	<!--
+	function showD (src,id) {
+		if      (src=="C") {	uri="../firma1.php?Q=C&id=" + id }
+		else if (src=="V") {	uri="../firma1.php?Q=V&id=" + id; }
+		else if (src=="E") {	uri="../user1.php?id=" + id; }
+		else if (src=="K") {	uri="../kontakt.php?id=" + id; }
+		window.location.href=uri;
+	}
+	function showCar (c_id){
+		if (c_id) {
+			uri="lxcmain.php?task=3&c_id=" + c_id;
+			window.location.href=uri;
+		}
+	}
+    //-->
+	</script>
+<?php 
+    echo $menu['stylesheets'].'
+    <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">
+    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
+    if ($feature_ac) { 
+        echo '   
+    <style>
+        .ui-autocomplete-category {
+            font-weight: bold;
+            padding: .2em .4em;
+            margin: .8em 0 .2em;
+            line-height: 1.5;
+        }
+    </style>
+    <script>
+        $(function() {
+            $("#dialog").dialog();
+        });
+        $.widget("custom.catcomplete", $.ui.autocomplete, {
+            _renderMenu: function(ul,items) {
+                var that = this,
+                currentCategory = "";
+                $.each( items, function( index, item ) {
+                    if ( item.category != currentCategory ) {
+                        ul.append( "<li class=\'ui-autocomplete-category\'>" + item.category + "</li>" );
+                        currentCategory = item.category;
+                    }
+                    that._renderItemData(ul,item);
+                });
+             }
+         });     
+    </script>            
+    <script language="JavaScript"> 
+        $(function() {
+            $("#ac0").catcomplete({                          
+                source: "lxc_ac.php?case=fastsearch",                            
+                minLength: '.$feature_ac_minLength.',                            
+                delay: '.$feature_ac_delay.',
+                select: function(e,ui) {
+                    $("#adress").click();
+                }
+            });
+        });
+    </script>'; 
+    }//end feature_ac 
+    ?> 
 </head>
-<body onLoad="document.suche.swort.focus()";>
-<?php	
+<body onload=$("#ac0").focus().val('<?php echo preg_replace("#[ ].*#",'',$_GET['swort']);?>');>
+<?php //wichtig: focus().val('ohneLeerZeichen')
 echo $menu['pre_content'];
 echo $menu['start_content'];
-$telnum=($_GET["telnum"])?$_GET["telnum"]:$_POST["telnum"];
+$msg=    '<div id="dialog" title="Kein Suchbegriff eingegeben">
+	          <p>Bitte geben Sie mindestens ein Zeichen ein.</p>
+	      </div>';
+$viele=  '<div id="dialog" title="Zu viele Suchergebnisse">
+	          <p>Die Suche ergibt zu viele Resultate.</br> Bitte geben mehr Zeichen ein.</p>
+	      </div>';
+$keine=  '<div id="dialog" title="Nichts gefunden">
+              <p>Dieser Suchbegriff ergibt kein Resultat.</br>Bitte überprüfen Sie die Schreibweise!</p>
+          </div>';
+$keinFhz='<div id="dialog" title="Fahrzeug nicht gefunden">
+              <p>Es wurde kein Fahrzeug gefunden.</br>Bitte überprüfen Sie die Schreibweise!</p>
+          </div>';   
 if ($_GET["adress"]) {
-	include("../inc/FirmenLib.php");
-	include("../inc/persLib.php");
-	include("../inc/UserLib.php");
-	
-	$msg="Leider nichts gefunden!";
-	$viele="Zu viele Treffer. Bitte einschr&auml;nken.";
+	include("inc/FirmenLib.php");
+	include("inc/persLib.php");
+	include("inc/UserLib.php");    
 	$found=false;
-	
-	$suchwort=mkSuchwort($_GET["swort"]); 
+	$suchwort=mkSuchwort($_GET["swort"]);
 	$anzahl=0;
 	$db->debug=0;
-	$keineFirma=0;
-	$rsE=getAllUser($suchwort);
-	if (chkAnzahl($rsE,$anzahl)) {
+    $rsE=getAllUser($suchwort);
+	if (chkAnzahl($rsE,$anzahl) && $_GET["swort"]) {
 		$rsV=getAllFirmen($suchwort,true,"V");	
 		if (chkAnzahl($rsV,$anzahl)) {
 			$rsC=getAllFirmen($suchwort,true,"C");
@@ -39,7 +106,7 @@ if ($_GET["adress"]) {
 				if (!chkAnzahl($rsK,$anzahl)) {
 					$msg=$viele;
 				} else {
-					if ($anzahl===0) {$msg="Kein Kunde gefunden! Suche Kennzeichen";$keineFirma=1;}
+					if ($anzahl===0) {$keineFirma=1;}
 				} 
 			} else {
 				$msg=$viele;
@@ -47,30 +114,13 @@ if ($_GET["adress"]) {
 		} else {
 			$msg=$viele;
 		}
-	} else {
-			$msg=$viele;
-	}
-?>
-<script language="JavaScript">
-<!--
-	function showD( src, id ){
-		if      (src=="C") {	uri="../firma1.php?Q=C&id=" + id }
-		else if (src=="V") {	uri="../firma1.php?Q=V&id=" + id; }
-		else if (src=="E") {	uri="../user1.php?id=" + id; }
-		else if (src=="K") {	uri="../kontakt.php?id=" + id; }
-		location.href=uri;
-	}
-	function showCar( c_id ){
-		if( c_id ){
-			uri="lxcmain.php?task=3&c_id=" + c_id;
-			location.href=uri;
-		}
-	}
-//-->
-</script>
-<p class="listtop">Suchergebnis</p>
-<?
-	if ($anzahl>0) {
+	} 
+    if ($anzahl>0) {
+        if ($anzahl==1 && $rsC) header("Location: ../firma1.php?Q=C&id=".$rsC[0]['id']); 
+        if ($anzahl==1 && $rsV) header("Location: ../firma1.php?Q=V&id=".$rsV[0]['id']); 
+        if ($anzahl==1 && $rsK) header("Location: ../kontakt.php?id=".$rsK[0]['id']); 
+        if ($anzahl==1 && $rsE) header("Location: ../user.php?id=".$rsE[0]['id']); 
+        echo '<p class="listtop">Suchergebnis</p>'; 
 		echo "<table class=\"liste\">\n";
 		echo "<tr class='bgcol3'><th>KD-Nr</th><th class=\"liste\">Name</th><th class=\"liste\">Anschrift</th><th class=\"liste\">Telefon</th><th></th></tr>\n";
 		$i=0;
@@ -98,88 +148,71 @@ if ($_GET["adress"]) {
 				"<td class=\"liste\">".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td class=\"liste\">".$row["workphone"]."</td><td class=\"liste\">U</td></tr>\n";
 			$i++;
 		}
-		echo "</table>\n";
-        } else {
-		echo $msg;
-	};
-	echo "<br>";
-} else if ($_GET["kontakt"]){
+        echo "</table>\n";
+        }  
+        echo "<br>"; 
+    } else if ($_GET["kontakt"]) {
 ?>
 <script language="JavaScript">
-	sw="<?= $_GET["swort"]; ?>";
+	sw="<?php echo  $_GET["swort"]; ?>";
 	if (sw != "") 
 		F1=open("suchKontakt.php?suchwort="+sw+"&Q=S","Suche","width=400, height=400, left=100, top=50, scrollbars=yes");
-</script>			
-
+</script>	
 <? }
 if($_GET['sauto']){
-	?><script language="JavaScript">
-	<!--
-	function showD (src,id) {
-		Frame=eval("parent.main_window");
-		if      (src=="C") {	uri="firma1.php?Q=C&id=" + id }
-		else if (src=="V") {	uri="firma1.php?Q=V&id=" + id; }
-		else if (src=="E") {	uri="user1.php?id=" + id; }
-		else if (src=="K") {	uri="kontakt.php?id=" + id; }
-		Frame.location.href=uri;
-	}
-	function showCar (c_id){
-		if (c_id) {
-			Frame=eval("parent.main_window");
-			uri="lxcmain.php?task=3&c_id=" + c_id;
-			Frame.location.href=uri;
-		}
-	}
-		
-		//-->
-	</script>
-	<?
-	//include("inc/FirmenLib.php");
 	include("inc/lxcLib.php");
 	$result=GetOwner($_GET['swort']);
-	if ($result){
-		echo "<table class=\"liste\">\n";
-		echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
-		foreach($result as $row) {
-			echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\"  onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'>".
-					"<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					"<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
-			$i++;
-		}//end foreach
-		echo "</table>\n";
+    if ($result){
+	    if (!chkAnzahl($result,$anzahl)) {
+            echo $viele; 
+        } else {
+            if ($anzahl==0) {$msg = $keine;echo $msg;}
+            if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
+            echo '<p class="listtop">Suchergebnis</p>'; 
+		    echo "<table class=\"liste\">\n";
+		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
+		    foreach($result as $row) {
+			    echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\"  onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'>".
+					    "<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
+					    "<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+			    $i++;
+		    }//end foreach
+		   echo "</table>\n";
+        }
 	}//end if
-	else {echo "!!!Kennzeichen nicht vergeben!!!";}
-		//echo "Autosuche...".$_GET["sauto"];
+	else echo $keinFhz; 
 }
 if($keineFirma){
     include("lxcars/inc/lxcLib.php");
 	$result=GetOwner($_GET['swort']);
-	if ($result){
-		echo "<table class=\"liste\">\n";
-		echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
-		foreach( $result as $row ){
-			echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\"  onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'>".
-					"<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					"<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
-			$i++;
+    if ($result){
+        if (!chkAnzahl($result,$anzahl)) {
+            $msg=$viele; echo $msg;
+        } else {
+            if ($anzahl==0) {$msg = $keine;echo $msg;}
+            if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
+	        echo '<p class="listtop">Suchergebnis</p>'; 
+		    echo "<table class=\"liste\">\n";
+		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
+		    foreach( $result as $row ){
+			    echo 	"<tr onMouseover=\"this.bgColor='#0033FF';\"  onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" bgcolor='".$bgcol[($i%2+1)]."'>".
+				    	"<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
+					    "<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+			    $i++;
+	    	} 
+		    echo "</table>\n";
 		}
-		echo "</table>\n";
 	}//end if
-	else {echo "!!!Kennzeichen nicht vergeben!!!";}
-		//echo "Autosuche...".$_GET["sauto"];
-}
-
-$formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
-$formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.'</form>" method="get">';
-$formular .= '<input type="text" name="swort" size="20">';  
-$formular .= '<input type="submit" name="adress" value="Kunde o. Lief.">';
-$formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
-$formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
-$formular .= '<span class="liste">Suchbegriff</span></form>';
-print $formular;
-echo $menu['end_content'];	
-?>	
-
-
-
-
+	else echo $keinFhz; 
+}		
+    $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
+    $formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.' method="get">';
+    $formular .= '<input type="text" name="swort" size="20" id="ac0" autocomplete="off">';  
+    $formular .= '<input type="submit" name="adress" id="adress" value="Kunde o. Lief.">';
+    $formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
+    $formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
+    $formular .= '<span class="liste">Suchbegriff</span></form>';
+    print $formular;
+    echo $menu['end_content'];
+    ob_end_flush(); 
+?>

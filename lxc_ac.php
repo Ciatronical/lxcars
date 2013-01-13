@@ -3,7 +3,7 @@
 ***           AutoComplete für die Postleitzahlen Kunde / Lieferanten neu                 ***
 ***           geschrieben Ende Januar 2010 von Ronny Kumke ronny@lxcars.de                ***
 ********************************************************************************************/
-
+//ToDo: switch durch if ersetzen
 
 require_once( "../inc/db.php" );
 require_once( "../inc/stdLib.php" );
@@ -34,7 +34,9 @@ if( isset( $_GET['g_art'] ) ){
 if( isset( $_GET['kz'] ) ){
 	$mode = 5;
 }
-
+if( $_GET['case']=='fastsearch' ){
+	$mode = 6;
+}
 switch( $mode ){
 	case 0:   //Plz vervollständigen und zurückgeben
 		if( $acSrc == "localdb" || $acSrc == "localdb,geodb" ){
@@ -96,6 +98,37 @@ switch( $mode ){
 				echo $value['c_ln'].' -> '.$value['name']."\n";
 			}
 	break;
+    case 6:
+        if (empty($_GET['term'])) exit;
+        require_once("../inc/crmLib.php"); 
+        require_once("../inc/FirmenLib.php"); 
+        require_once("../inc/persLib.php"); 
+        $suchwort = mkSuchwort($_GET['term']); 
+        $rsC = getAllFirmen($suchwort,true,"C"); 
+        $rsV = getAllFirmen($suchwort,true,"V"); 
+        $rsK = getAllPerson($suchwort); 
+        $sql = "SELECT c_ln, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
+		$rsFhz = $db->getAll( $sql );
+        $rs = array(); 
+        foreach ( $rsC as $key => $value ) { 
+            if (count($rs) > 11) break;
+            array_push($rs,array('label'=>$value['name'],'category'=>'')); 
+        } 
+        foreach ( $rsV as $key => $value ) {
+            if (count($rs) > 11) break; 
+            array_push($rs,array('label'=>$value['name'],'category'=>'Lieferanten'));//ToDo translate 
+        } 
+        foreach ( $rsK as $key => $value ) {
+            if (count($rs) > 11) break;  
+            array_push($rs,array('label'=>$value['cp_givenname']." ".$value['cp_name'],'category'=>'Personen'));//ToDo translate 
+        } 
+        foreach ( $rsFhz as $key => $value ) {
+            if (count($rs) > 11) break;  
+            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge'));//ToDo translate 
+        } 
+        echo json_encode($rs); 
+	break;	
+	
 }// switch	zz
 
 
