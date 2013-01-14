@@ -25,10 +25,10 @@ if( isset( $_GET['street'] ) ){
 	$mode = 2;
 }
 
-if( isset( $_GET['owner'] ) ){
+if( $_GET['case']=='owner' ){
 	$mode = 3;
 }
-if( isset( $_GET['g_art'] ) ){
+if( $_GET['case']=='g_art' ){
 	$mode = 4;
 }
 if( isset( $_GET['kz'] ) ){
@@ -72,21 +72,30 @@ switch( $mode ){
 		}
 	break;
 	case 3:
+        //Owner
+	    if (empty($_GET['term'])) exit;//ToDo  nach oben 
 		include_once( "../inc/crmLib.php" );
 		include_once( "../inc/FirmenLib.php" );
-		$suchwort = mkSuchwort( "%".$q );
+		$suchwort = mkSuchwort( "%".$_GET['term'] );
 		$rsC = getAllFirmen( $suchwort, true,"C" );
+		$rs = array();
 		foreach( $rsC as $key => $value ){
-			//echo "test\n";
-			echo $value['name'].' -> '.$value['city']."\n";
+		if (count($rs) > 11) break;;
+			//echo $value['name'].' -> '.$value['city']."\n"
+			array_push($rs,array('label'=>$value['name']." aus ".$value['city'],'value'=>$value['name']));
+			echo json_encode($rs); 
 		}
 	break;
 	case 4:
-			$sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' AND c_gart ILIKE '".$q."%' GROUP BY c_gart ORDER BY count DESC";
-			//echo $sql;			
-			$rs = $db->getall($sql);
-			foreach( $rs as $value ){
-				echo $value['c_gart']."\n";
+        //Getriebe
+            if (empty($_GET['term'])) exit;//ToDo  nach oben 
+			$sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' AND c_gart ILIKE '".$_GET['term']."%' GROUP BY c_gart ORDER BY count DESC";			
+			$rsG = $db->getall($sql);
+			$rs = array();
+			foreach( $rsG as $value ){
+				//echo $value['c_gart']."\n";
+				array_push($rs,array('value'=>$value['c_gart']));
+				echo json_encode($rs); 
 			}
 	break;
 	case 5:

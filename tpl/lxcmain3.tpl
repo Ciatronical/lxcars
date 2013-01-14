@@ -3,40 +3,35 @@
 <head><title>Fahrzeudaten  anzeigen von {ln} mit der ID {c_id}</title>
     {STYLESHEETS}
 	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}/main.css"></link>
-	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
-    <link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
-    {JAVASCRIPTS}
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
-	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
-	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
 	{xajax_out}
+    <link rel="stylesheet" type="text/css" href="../jquery-ui/themes/base/jquery-ui.css"> 
+    <script type="text/javascript" src="../jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="../jquery-ui/ui/jquery-ui.js"></script> 
+
 	<script language="JavaScript">
 	<!--
-	$(function(){
-		var owner = '1';
-		$("#ac1").autocomplete({
-			url: 'lxc_ac.php',
-			inputClass: 'acInputOwner',
-			extraParams: { owner: owner },
-			maxItemsToShow: 9,
-			minChars: 3,
-			onItemSelect: function(){
-				$("#speichern").focus(); 
-			}
-		});
-	});
-	$(function(){
-		var g_art = '1';
-		$("#ac2").autocomplete({
-			url: 'lxc_ac.php',
-			inputClass: 'acInputG_art',
-			extraParams: { g_art: g_art },
-			onItemSelect: function(){
-				$("#c_st").focus(); 
-			}
-		});
-	});			 
+    $(function() {
+        $("#ac1").autocomplete({                          
+            source: "lxc_ac.php?case=owner",                            
+            minLength: '3',                            
+            delay: '5',
+            select: function(e,ui) {
+                $("#speichern").focus();
+            }
+        });
+    });
+    $(function() {
+        $("#ac2").autocomplete({                          
+            source: "lxc_ac.php?case=g_art",                                                        
+            delay: '0',
+            select: function(e,ui) {
+                $("#c_st").focus();
+            }
+        });
+    });		 
 	function call_lxc_auf( owner,c_id,a_id ){
 		Frame=eval("parent.main_window");
 		uri1="lxcauf.php?owner=" + owner;
@@ -45,7 +40,21 @@
 		uri4="&a_id=" + a_id;
 		uri=uri1+uri2+uri3+uri4;
 		location.href=uri;
-	}		
+	}	
+	 $(function() {
+        $("#c_hu").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "dd.mm.yy"
+        });
+    });	
+    $(function() {
+        $("#c_d").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "dd.mm.yy"
+        });
+    });	
 	//-->
 	</script>
 <style type="text/css">
@@ -81,8 +90,8 @@
 <tr><td class="info infoleft FahrzeuscheinZu2">HSN (2.1)<span></span></td><td><input tabindex="2" type="text" name="c_2" size="12" maxlength="4" value="{c_2}" title="Herstellerschlüssel aus dem Fahrzeugschein" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_2" value="true" {chk_c_2}  title="Eingabe prüfen"></td><td class="info inforightright FahrzeuscheinHerst">Hersteller:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{cm}" title="Automarke" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinZu3">TSN (2.2)<span></span></td><td><input  tabindex="3" type="text" name="c_3" size="12" maxlength="9" value="{c_3}" title="Typschlüssel aus dem Fahrzeugschein" {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_3" value="true" {chk_c_3} title="Eingabe prüfen"></td><td class="info inforightright FahrzeuscheinTyp">Typ:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{ct}" title="Typ/Variante" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinAbg">Emissionsklasse<span></span></td><td><input tabindex="4" type="text" name="c_em" size="12" maxlength="6" value="{c_em}" title="Fahrzeugschein Seite zwei, mitte,Feld 14" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_em" value="true" {chk_c_em} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="feinstaub()"></td><td class="info inforightright FahrzeuscheinHub">Hubraum:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{vh}" title="Zylindervolumen" readonly="readonly"></td></tr>
-<tr><td class="info infoleft FahrzeuscheinBj">Datum Zulassung<span></span></td><td><input tabindex="5" type="text" name="c_d" size="12" maxlength="10" value="{c_d}" title="Fahrzeugschein Seite zwei, oben links, Feld B" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_d" value="chk_c_d" checked="checked" readonly="readonly" title="Eingabe wird geprüft"></td><td>Bj. von - bis: </td><td><input tabindex="-1" type="text" size="29" value="{bj}" title="Zeitraum in dem das Fahrzeug produziert wurde" readonly="readonly"></td></tr>
-<tr><td class="info infoleft FahrzeuscheinHu">Datum HU+AU<span></span></td><td><input tabindex="6" type="text" name="c_hu" size="12" maxlength="10" value="{c_hu}" title="Stempel Fahrzeugscheinrückseite oder vom Fahrzeug ablesen" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_hu" value="chk_c_hu" {chk_c_hu} title="Fälligkeit der HU wird geprüft"></td><td  class="info inforightright FahrzeuscheinLeist">Leistung:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{peff}" title="Pferdchen" readonly="readonly"></td></tr>
+<tr><td class="info infoleft FahrzeuscheinBj">Datum Zulassung<span></span></td><td><input tabindex="5" type="text" id="c_d" name="c_d" size="12" maxlength="10" value="{c_d}" title="Fahrzeugschein Seite zwei, oben links, Feld B" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_d" value="chk_c_d" checked="checked" readonly="readonly" title="Eingabe wird geprüft"></td><td>Bj. von - bis: </td><td><input tabindex="-1" type="text" size="29" value="{bj}" title="Zeitraum in dem das Fahrzeug produziert wurde" readonly="readonly"></td></tr>
+<tr><td class="info infoleft FahrzeuscheinHu">Datum HU+AU<span></span></td><td><input tabindex="6" type="text" id="c_hu" name="c_hu" size="12" maxlength="10" value="{c_hu}" title="Stempel Fahrzeugscheinrückseite oder vom Fahrzeug ablesen" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_hu" value="chk_c_hu" {chk_c_hu} title="Fälligkeit der HU wird geprüft"></td><td  class="info inforightright FahrzeuscheinLeist">Leistung:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{peff}" title="Pferdchen" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinFin">FIN+Pr&uuml;fziffer<span></span> </td><td><input tabindex="7" type="text" name="fin" size="24" maxlength="17" value="{fin}" title="Fahrzeugschein Seite 2 und im Fhz" onchange="xajax_UniqueFin(this.value,document.car.c_id.value)" {readonly}><input tabindex="8" type="text" name="cn" size="1" maxlength="1" value="{cn}" title="Fahrzeugschein Seite 2, Feld 3 (falls unbekannt - eingeben)" {readonly}><input tabindex="-1" type="checkbox" name="chk_fin" value="true" {chk_fin} title="Eingabe prüfen"></td><td>Drehmoment:</td><td><input tabindex="-1" type="text" size="29" value="{drehm}" title="falls bekannt" readonly="readonly"></td></tr>
 <tr><td>Motorcode</td><td><input tabindex="9" type="text" name="mkb" size="12" maxlength="22" value="{mkb}" title="Steht meist auf dem Motor"  {readonly}>{mkbdrop} <input type="button" name="InfoMotor" value="Info" onclick="zeigeMotor(document.car.owner.value, document.car.c_id.value, document.car.mkb.value);"></td><td>Verdichtung:</td><td title="Kompressionsverh&auml;ltnis"><input tabindex="-1" type="text" size="29" value="{verd}" title="Kompressionsverh&auml;ltnis" readonly="readonly"></td></tr>
 <tr><td>Farbnummer</td><td><input tabindex="11" type="text" name="c_color" size="12" maxlength="22" value="{c_color}" title="Fahrzeugschein Seite 3, Feld R" {readonly}></td><td>Ventile:</td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{vent}" title="Anzahl der Ventile" readonly="readonly"></td></tr>
