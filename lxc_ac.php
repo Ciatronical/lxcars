@@ -31,7 +31,7 @@ if( $_GET['case']=='owner' ){
 if( $_GET['case']=='g_art' ){
 	$mode = 4;
 }
-if( isset( $_GET['kz'] ) ){
+if( $_GET['case']=='kz' ){
 	$mode = 5;
 }
 if( $_GET['case']=='fastsearch' ){
@@ -81,31 +81,34 @@ switch( $mode ){
 		$rs = array();
 		foreach( $rsC as $key => $value ){
 		if (count($rs) > 11) break;;
-			//echo $value['name'].' -> '.$value['city']."\n"
-			array_push($rs,array('label'=>$value['name']." aus ".$value['city'],'value'=>$value['name']));
-			echo json_encode($rs); 
+			array_push($rs,array('label'=>$value['name']." aus ".$value['city'],'value'=>$value['name']));	
 		}
+		echo json_encode($rs); 
 	break;
 	case 4:
         //Getriebe
-            if (empty($_GET['term'])) exit;//ToDo  nach oben 
-			$sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' AND c_gart ILIKE '".$_GET['term']."%' GROUP BY c_gart ORDER BY count DESC";			
-			$rsG = $db->getall($sql);
-			$rs = array();
-			foreach( $rsG as $value ){
-				//echo $value['c_gart']."\n";
-				array_push($rs,array('value'=>$value['c_gart']));
-				echo json_encode($rs); 
-			}
+        if (empty($_GET['term'])) exit;//ToDo  nach oben 
+        $sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' AND c_gart ILIKE '".$_GET['term']."%' GROUP BY c_gart ORDER BY count DESC";			
+		$rsG = $db->getall($sql);
+		$rs = array();
+		foreach( $rsG as $value ){
+		    if (count($rs) > 11) break;
+            array_push($rs,array('value'=>$value['c_gart']));
+        }
+		echo json_encode($rs); 
 	break;
 	case 5:
-			include("inc/lxcLib.php");
-			$sql = "SELECT c_ln, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['q']."%'";
-			$rs = $db->getAll( $sql );
+        if (empty($_GET['term'])) exit;//ToDo  nach oben 	
+		include("inc/lxcLib.php");
+		$rs = array();
+		$sql = "SELECT c_ln, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
+		$rsLn = $db->getAll( $sql );
 			//print_r( $rs );
-			foreach( $rs as $value ){
-				echo $value['c_ln'].' -> '.$value['name']."\n";
-			}
+		foreach( $rsLn as $value ){
+			if (count($rs) > 11) break;
+			array_push($rs,array('label'=>$value['c_ln']." von ".$value['name'],'value'=>$value['c_ln']));	
+		}
+		echo json_encode($rs);
 	break;
     case 6:
         if (empty($_GET['term'])) exit;

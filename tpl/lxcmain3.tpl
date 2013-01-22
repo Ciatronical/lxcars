@@ -17,7 +17,7 @@
         $("#ac1").autocomplete({                          
             source: "lxc_ac.php?case=owner",                            
             minLength: '3',                            
-            delay: '5',
+            delay: '0',
             select: function(e,ui) {
                 $("#speichern").focus();
             }
