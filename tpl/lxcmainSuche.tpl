@@ -3,10 +3,10 @@
 	<head><title>LxCars - Kfz suchen</title>
 	{STYLESHEETS}
     <link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}/main.css"></link>
-    <link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">
     {JAVASCRIPTS}
-	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
-	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
+    <link rel="stylesheet" type="text/css" href="../jquery-ui/themes/base/jquery-ui.css"> 
+    <script type="text/javascript" src="../jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="../jquery-ui/ui/jquery-ui.js"></script> 
 	<script language="JavaScript" type="text/javascript">
   		function report() {
   			f1=open("report.php?tab={Q}","Report","width=600; height=300; left=100; top=100");
@@ -16,33 +16,26 @@
    <script language="JavaScript">
 	<!--
 	
-	$(function(){
-		var owner = '1';
-		$("#ac1").autocomplete({
-			url: 'lxc_ac.php',
-			inputClass: 'acInputOwner',
-			extraParams: { owner: owner },
-			maxItemsToShow: 9,
-			minChars: 3,
-			onItemSelect: function(){
-				$("#suchen").focus(); 
-			}
-		});
-	});	
-	
-		$(function(){
-		var kz = '1';
-		$("#ac0").autocomplete({
-			url: 'lxc_ac.php',
-			inputClass: 'acInputOwner',
-			extraParams: { kz: kz },
-			maxItemsToShow: 9,
-			minChars: 1,
-			onItemSelect: function(){
-				$("#suchen").focus(); 
-			}
-		});
-	});	
+    $(function() {
+        $("#ac1").autocomplete({                          
+            source: "lxc_ac.php?case=owner",                            
+            minLength: '3',                            
+            delay: '0',
+            select: function(e,ui) {
+                $("#suchen").focus();
+            }
+        });
+    });
+    $(function() {
+        $("#ac0").autocomplete({                          
+            source: "lxc_ac.php?case=kz",                            
+            minLength: '1',                            
+            delay: '0',
+            select: function(e,ui) {
+                $("#suchen").focus();
+            }
+        });
+    });		
 				 		 
 	function call_lxc_auf (owner,c_id,a_id) {
         uri1="lxcauf.php?owner=" + owner;
@@ -67,9 +60,7 @@
 			location.href=uri;
 		}
 	}
-			 
-			
-	//-->
+    //-->
 	</script>
    <body onLoad="document.erwsuche.c_hu_gg.focus();">
    {PRE_CONTENT}
