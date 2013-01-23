@@ -76,6 +76,12 @@ switch( $task ){
         $msg = "Neuer";
 
 	case 3: 
+	    $_POST['lxc_a_km'] = $_POST['lxc_a_km'] == '' ? '0' : $_POST['lxc_a_km'];
+        if( $_POST['lxc_a_km'] == '0' ) {
+            $jqmsg = '<div id="dialog" title="Kilometerstand fehlt">
+	                     <p>Bitte geben Sie den Stand des Wegstreckenzählers ein.</p>
+	                  </div>';
+	    }        
         $gruppen=getGruppen();
         foreach($gruppen as $key=>$value){
             if($gruppen[$key]['grpname']=="Werkstatt") {$schrauber=getMitglieder($gruppen[$key]['grpid']);}
@@ -134,7 +140,9 @@ switch( $task ){
         STYLESHEETS   => $menu['stylesheets'],
         PRE_CONTENT   => $menu['pre_content'],
         START_CONTENT => $menu['start_content'],
-        END_CONTENT   => $menu['end_content'] ) );
+        END_CONTENT   => $menu['end_content'],
+        BASEPATH      => $_SESSION['basepath'],
+        JQMSG           => $jqmsg ) );
     $ta->set_file( array( "tpl-file" => "lxcauf.tpl" ) );
     $ta->set_var( $tpl_array );
     $ta->set_block( "tpl-file","pos_block","blockersatz" );

@@ -1,8 +1,15 @@
 <html>
 <head><title>Auftragb {ln} mit der ID {c_id}</title>
     {STYLESHEETS}
+    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
 	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
-    {JAVASCRIPTS}
+    <link rel="stylesheet" type="text/css" href="{BASEPATH}crm/jquery-ui/themes/base/jquery-ui.css"> 
+    <script>
+        $(function() {
+            $( "#dialog" ).dialog();
+        });
+    </script>
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	<style type="text/css">
 	   .inp { width:130px }	
@@ -10,6 +17,8 @@
     </style>
 </head>
 <body>
+
+{JQMSG}
 {PRE_CONTENT}
 {START_CONTENT}
 <left>
@@ -23,7 +32,8 @@
 
 <table class="klein">
 <tr><td>Auftragnummer:</td><td>{a_id}</td><td>Auftraggeber:</td><td>{ownerstring}</td></tr>
-<tr><td>Fertigstellung:</td><td><input type="text" name="lxc_a_finish_time" size="22" value="{lxc_a_finish_time}"></td><td>KM-Stand</td><td><input type="text" name="lxc_a_km" size="8" value="{lxc_a_km}"></td></tr>
+<tr><td>Fertigstellung:</td><td><input type="text" name="lxc_a_finish_time" size="22" value="{lxc_a_finish_time}"></td><td>KM-Stand</td>
+<td><input type="text" name="lxc_a_km" size="8" value="{lxc_a_km}"></td></tr>
 <tr><td>bearbeitet von:</td><td>{lxc_a_modified_from}</td><td>bearbeitet am:</td><td>{lxc_a_modified_on}</td></tr>
 <tr><td>erstellt am:</td><td>{lxc_a_init_time}</td><td>Status:</td><td><select name="lxc_a_status">
 																						<option value="1" {lxc_a_status1}>angenommen
