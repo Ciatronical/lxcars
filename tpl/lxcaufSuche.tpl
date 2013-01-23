@@ -53,28 +53,28 @@
   	<input type="hidden" name="felder" value="">
    <div class="zeile">
 		<span class="label">Kennzeichen</span>
-		<span class="leftfeld"><input type="text" name="c_ln" size="22" maxlength="10" value="{c_ln}" tabindex="1" id="ac0" autocomplete="off" ></span>
+		<span class="leftfeld"><input type="text" name="c_ln" size="16" maxlength="10" value="{c_ln}" tabindex="1" id="ac0" autocomplete="off" ></span>
 	</div>
 	 <div class="zeile">
 		<span class="label">Kundenname</span>
-		<span class="leftfeld"><input type="text" name="c_ow" size="22" maxlength="22" value="{c_ow}" tabindexx="2" id="ac1" autocomplete="off" ></span>
+		<span class="leftfeld"><input type="text" name="c_ow" size="16" maxlength="22" value="{c_ow}" tabindexx="2" id="ac1" autocomplete="off" ></span>
 	</div>
 	
 	 <div class="zeile">
 		<span class="label">Arbeitstext</span>
-		<span class="leftfeld"><input type="text" name="lxc_a_pos_todo" size="22" maxlength="10" value="{lxc_a_pos_todo}" tabindex="3"></span>
+		<span class="leftfeld"><input type="text" name="lxc_a_pos_todo" size="16" maxlength="32" value="{lxc_a_pos_todo}" tabindex="3"></span>
 	</div>
 	 <div class="zeile">
 		<span class="label">Antworttext</span>
-		<span class="leftfeld"><input type="text" name="lxc_a_pos_doing" size="22" maxlength="10" value="{lxc_a_pos_doing}" tabindex="4"></span>
+		<span class="leftfeld"><input type="text" name="lxc_a_pos_doing" size="16" maxlength="32" value="{lxc_a_pos_doing}" tabindex="4"></span>
 	</div>
 	<div class="zeile">
-		<span class="label">Datum von</span>
-		<span class="leftfeld"><input type="text" name="c_d_gg" size="22" maxlength="10" value="{c_d_gg}" tabindex="6"> bis 
-		<input type="text" name="c_d_kg" size="22" maxlength="10" value="{c_d_kg}" tabindex="7"></span>
+		<span class="label">Datum von / bis</span>
+		<span class="leftfeld"><input type="text" name="c_d_gg" size="4" maxlength="10" value="{c_d_gg}" tabindex="6"> &nbsp;/&nbsp;
+		<input type="text" name="c_d_kg" size="4" maxlength="10" value="{c_d_kg}" tabindex="7"></span>
 	<div class="zeile">
 		<span class="label">Bemerkungen</span>
-		<span class="leftfeld"><input type="text" name="lxc_a_text" size="22" maxlength="22" value="{lxc_a_text}" tabindex="15"></span>
+		<span class="leftfeld"><input type="text" name="lxc_a_text" size="16" maxlength="22" value="{lxc_a_text}" tabindex="15"></span>
 	</div>
 	<div class="zeile">
 			<span class="label">Status</span>

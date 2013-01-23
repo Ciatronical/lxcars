@@ -71,57 +71,57 @@
   	<input type="hidden" name="felder" value="">
    <div class="zeile">
 		<span class="label">Kennzeichen</span>
-		<span class="leftfeld"><input type="text" name="c_ln" size="22" maxlength="10" value="{c_ln}" tabindex="1" id="ac0" autocomplete="off"></span>
+		<span class="leftfeld"><input type="text" name="c_ln" size="16" maxlength="10" value="{c_ln}" tabindex="1" id="ac0" autocomplete="off"></span>
 	</div>
 	 <div class="zeile">
 		<span class="label">Kundenname </span>
-		<span class="leftfeld"><input type="text" name="c_ow" size="22" maxlength="16" value="{c_ow}" tabindex="2" id="ac1" autocomplete="off"></span>
+		<span class="leftfeld"><input type="text" name="c_ow" size="16" maxlength="16" value="{c_ow}" tabindex="2" id="ac1" autocomplete="off"></span>
 	</div>
 	 <div class="zeile">
 		<span class="label">HSN (2.1)</span>
-		<span class="leftfeld"><input type="text" name="c_2" size="22" maxlength="4" value="{c_2}" tabindex="3"></span>
+		<span class="leftfeld"><input type="text" name="c_2" size="6" maxlength="4" value="{c_2}" tabindex="3"></span>
 	</div>
 	 <div class="zeile">
 		<span class="label">TSN (2.2)</span>
-		<span class="leftfeld"><input type="text" name="c_3" size="22" maxlength="10" value="{c_3}" tabindex="4"></span>
+		<span class="leftfeld"><input type="text" name="c_3" size="6" maxlength="10" value="{c_3}" tabindex="4"></span>
 	</div>
 	 <div class="zeile">
 		<span class="label">Emissionsklasse</span>
-		<span class="leftfeld"><input type="text" name="c_em" size="22" maxlength="6" value="{c_em}" tabindex="5"></span>
+		<span class="leftfeld"><input type="text" name="c_em" size="6" maxlength="6" value="{c_em}" tabindex="5"></span>
 	</div>
 	 <div class="zeile">
-		<span class="label">Baujahr von</span>
-		<span class="leftfeld"><input type="text" name="c_d_gg" size="8" maxlength="10" value="{c_d_gg}" tabindex="6"> bis 
-		<input type="text" name="c_d_kg" size="8" maxlength="10" value="{c_d_kg}" tabindex="7"></span>
+		<span class="label">Baujahr von / bis</span>
+		<span class="leftfeld"><input type="text" name="c_d_gg" size="4" maxlength="10" value="{c_d_gg}" tabindex="6"> &nbsp;/&nbsp;
+		<input type="text" name="c_d_kg" size="4" maxlength="10" value="{c_d_kg}" tabindex="7"></span>
 	</div>
 	 <div class="zeile">
-		<span class="label">HU+AU von</span>
-		<span class="leftfeld"><input type="text" name="c_hu_gg" size="8" maxlength="10" value="{c_hu_gg}" tabindex="8"> bis 
-		<input type="text" name="c_hu_kg" size="8" maxlength="10" value="{c_hu_kg}" tabindex="9"></span>
+		<span class="label">HU+AU von / bis</span>
+		<span class="leftfeld"><input type="text" name="c_hu_gg" size="4" maxlength="10" value="{c_hu_gg}" tabindex="8"> &nbsp;/&nbsp;
+		<input type="text" name="c_hu_kg" size="4" maxlength="10" value="{c_hu_kg}" tabindex="9"></span>
 	</div>
 	<div class="zeile">
 		<span class="label">FIN FahrzeugIdentNr</span>
-		<span class="leftfeld"><input type="text" name="c_fin" size="22" maxlength="16" value="{c_fin}" tabindex="10"></span>
+		<span class="leftfeld"><input type="text" name="c_fin" size="16" maxlength="16" value="{c_fin}" tabindex="10"></span>
 	</div>
 	<div class="zeile">
 		<span class="label">Sommerreifen</span>
-		<span class="leftfeld"><input type="text" name="c_st" size="22" maxlength="16" value="{c_st}" tabindex="11"></span>
+		<span class="leftfeld"><input type="text" name="c_st" size="16" maxlength="16" value="{c_st}" tabindex="11"></span>
 	</div>
 	<div class="zeile">
 		<span class="label">Winterreifen</span>
-		<span class="leftfeld"><input type="text" name="c_wt" size="22" maxlength="16" value="{c_wt}" tabindex="12"></span>
+		<span class="leftfeld"><input type="text" name="c_wt" size="16" maxlength="16" value="{c_wt}" tabindex="12"></span>
 	</div>
 	<div class="zeile">
 		<span class="label">Lagerort Sommerreifen</span>
-		<span class="leftfeld"><input type="text" name="c_st_l" size="22" maxlength="16" value="{c_st_l}" tabindex="13"></span>
+		<span class="leftfeld"><input type="text" name="c_st_l" size="16" maxlength="16" value="{c_st_l}" tabindex="13"></span>
 	</div>
 	<div class="zeile">
 		<span class="label">Lagerort Winterreifen</span>
-		<span class="leftfeld"><input type="text" name="c_wt_l" size="22" maxlength="16" value="{c_wt_l}" tabindex="14"></span>
+		<span class="leftfeld"><input type="text" name="c_wt_l" size="16" maxlength="16" value="{c_wt_l}" tabindex="14"></span>
 	</div>
 	<div class="zeile">
 		<span class="label">Bemerkungen</span>
-		<span class="leftfeld"><input type="text" name="c_text" size="22" maxlength="16" value="{c_text}" tabindex="15"></span>
+		<span class="leftfeld"><input type="text" name="c_text" size="16" maxlength="16" value="{c_text}" tabindex="15"></span>
 	</div>
 	
 			<div class="zeile">
