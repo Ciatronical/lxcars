@@ -77,11 +77,6 @@ switch( $task ){
 
 	case 3: 
 	    $_POST['lxc_a_km'] = $_POST['lxc_a_km'] == '' ? '0' : $_POST['lxc_a_km'];
-        if( $_POST['lxc_a_km'] == '0' ) {
-            $jqmsg = '<div id="dialog" title="Kilometerstand fehlt">
-	                     <p>Bitte geben Sie den Stand des Wegstreckenzählers ein.</p>
-	                  </div>';
-	    }        
         $gruppen=getGruppen();
         foreach($gruppen as $key=>$value){
             if($gruppen[$key]['grpname']=="Werkstatt") {$schrauber=getMitglieder($gruppen[$key]['grpid']);}
@@ -114,15 +109,21 @@ switch( $task ){
         if( $_POST[printa]== "drucken" ){
 			header("Location: lxcaufPrt.php?a_id=$a_id&pdf=0&owner=".$owner."&c_id=".$c_id);
 		}
-		if( $_POST[printa] == "Pdf"){
+		if( $_POST[printa] == "Pdf" ){
 			header("Location: lxcaufPrt.php?a_id=$a_id&pdf=1");
 		}
 	}	
     $ad = HoleAuftragsDaten( $a_id );
     $stat = "lxc_a_status".$ad[0]['lxc_a_status'];
     $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
-    if($ad) {
-	   $tpl_array+=$ad[0];
+    if($ad){
+        if( $ad[0]['lxc_a_km'] == '0' ){
+            $tpl_array['JQMSG'] = '<div id="dialog" title="Kilometerstand fehlt">
+	                                 <p>Bitte geben Sie den Stand des Wegstreckenzählers ein.</p>
+	                               </div>';
+	    }
+
+        $tpl_array+=$ad[0];
     }
     if( $pos[$n]['lxc_a_pos_todo'] != "" ){ 
         NeuePosition($a_id);
@@ -141,8 +142,7 @@ switch( $task ){
         PRE_CONTENT   => $menu['pre_content'],
         START_CONTENT => $menu['start_content'],
         END_CONTENT   => $menu['end_content'],
-        BASEPATH      => $_SESSION['basepath'],
-        JQMSG           => $jqmsg ) );
+        BASEPATH      => $_SESSION['basepath'] ) );
     $ta->set_file( array( "tpl-file" => "lxcauf.tpl" ) );
     $ta->set_var( $tpl_array );
     $ta->set_block( "tpl-file","pos_block","blockersatz" );
