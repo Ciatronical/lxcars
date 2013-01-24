@@ -17,10 +17,11 @@
                 hour: 1,                
                 hourMin: 6,            
                 hourMax: 19,
+                timeSuffix: ' Uhr',
                 timeText: 'Zeit',
 			    hourText: 'Stunde',
 			    closeText: 'Fertig',
-                currentText: 'Jezt'
+                currentText: 'Jetzt'
             });
         });
     </script>
