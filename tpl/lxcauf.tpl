@@ -11,8 +11,25 @@
         $(function() {
             $("#dialog").dialog();
         });
+        function AddButton(input){
+            setTimeout(function(){
+                var buttonPane = $(input).datepicker("widget").find( ".ui-datepicker-buttonpane" );  
+                var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button">Knd. wartet</button>');
+                btn.appendTo( buttonPane );                
+                btn.bind("click", function () { 
+                    document.getElementById("lxc_a_finish_time").value = "Kunde wartet! SOFORT anfangen!!!";
+                }); 
+                 
+            }, 1 ); 
+        }
         $(function() {
             $("#lxc_a_finish_time").datetimepicker({
+                beforeShow: function(input){
+                    AddButton(input);
+                 },
+                 onChangeMonthYear:function( year, month, inst ) {                    
+                       AddButton(inst.input);
+                },
                 stepMinute: 5,                
                 hour: 1,                
                 hourMin: 6,            
