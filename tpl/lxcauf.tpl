@@ -59,7 +59,6 @@
     </style>
 </head>
 <body>
-
 {JQMSG}
 {PRE_CONTENT}
 {START_CONTENT}
@@ -70,7 +69,6 @@
 <input type="hidden" name="a_id" value="{a_id}">
 <input type="hidden" name="owner" value="{owner}">
 <input type="hidden" name="b" value="{b}">
-
 
 <table class="klein">
 <tr><td>Auftragnummer:</td><td>{a_id}</td><td>Auftraggeber:</td><td>{ownerstring}</td></tr>
@@ -85,10 +83,6 @@
 </table>
 
 <table class="klein">
-
-
-
-
 <!-- BEGIN pos_block -->
 <tr><th colspan="4"><textarea name="lxc_a_pos_todo___{posid}" cols="22" rows="2">{lxc_a_pos_todo}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_doing___{posid}" cols="22" rows="2">{lxc_a_pos_doing}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_parts___{posid}" cols="22" rows="2">{lxc_a_pos_parts}</textarea></th><td>
 <b class="zeit">Vorg. Zeit </b><input type="text" name="lxc_a_pos_finish_ctime___{posid}" size="1" value="{lxc_a_pos_ctime}">
@@ -99,7 +93,6 @@
 </select></br>
 <b class="zeit"> Gebr. Zeit </b><input type="text" name="lxc_a_pos_finish_time___{posid}" size="1" value="{lxc_a_pos_time}">
 
-
 <select class="inp" name="lxc_a_pos_emp___{posid}">
 	{lxc_schauber_auswahl}
 </select></td></tr>
@@ -108,12 +101,7 @@
 </table>
 <table>
 <tr><th colspan="4"><textarea name="lxc_a_text" cols="59" rows="3">{lxc_a_text}</textarea></th></tr>
-
 </table>
-
-
-
-
 <input type="submit" name="update" value="speichern">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="Pdf">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="drucken">&nbsp;&nbsp;&nbsp;

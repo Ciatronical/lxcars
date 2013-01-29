@@ -4,15 +4,14 @@
     {STYLESHEETS}
 	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}/main.css"></link>
 	<link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
-	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="{BASEPATH}crm/jquery-ui/themes/base/jquery-ui.css"> 
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	{xajax_out}
-    <link rel="stylesheet" type="text/css" href="../jquery-ui/themes/base/jquery-ui.css"> 
-    <script type="text/javascript" src="../jquery-ui/jquery.js"></script> 
-    <script type="text/javascript" src="../jquery-ui/ui/jquery-ui.js"></script> 
+    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/german-date-time-picker.js"></script>
 
 	<script language="JavaScript">
-	<!--
     $(function() {
         $("#ac1").autocomplete({                          
             source: "lxc_ac.php?case=owner",                            
@@ -41,21 +40,26 @@
 		uri=uri1+uri2+uri3+uri4;
 		location.href=uri;
 	}	
-	 $(function() {
-        $("#c_hu").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            dateFormat: "dd.mm.yy"
-        });
-    });	
+
     $(function() {
         $("#c_d").datepicker({
             changeMonth: true,
             changeYear: true,
+            yearRange: "-20:-0" ,
             dateFormat: "dd.mm.yy"
         });
     });	
-	//-->
+	$(function() {
+        $("#c_hu").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            changeDay: false,
+            minDate: '+0m -1y',
+            maxDate: '+0m +3y',
+            dateFormat: "dd.mm.yy"
+        });
+    });	
+
 	</script>
 <style type="text/css">
 	#mann { position:absolute; top:60px; right:15px; border:1px solid #000;  }
@@ -67,12 +71,9 @@
 {PRE_CONTENT}
 {START_CONTENT}
 <p class="listtop">{msg}</p>
+<div id="dialog"></div>
 
 <left>
-
-
-
-
 <div id="mann">
 <img src="image/lxcMann.gif" width="65" height="55" alt="Mann"  onclick="mann(document.car.c_2.value, document.car.c_3.value);">
 </div>

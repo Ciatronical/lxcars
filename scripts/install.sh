@@ -55,15 +55,12 @@ else
 	echo "kivitendo.png als kivitendo.png.orig gesichert"
 fi 
  
-## Bilchen furs Menu
+## Bildchen furs Menu
 cp $DIR_LxCars/image/icons/16x16/*  $DIR_ERP/image/icons/16x16/
 cp $DIR_LxCars/image/icons/24x24/*  $DIR_ERP/image/icons/24x24/
 cp $DIR_LxCars/image/icons/32x32/*  $DIR_ERP/image/icons/32x32/
 
 chown -R www-data: $DIR_LxCars
-
-## Kfz-Button in Kundenmaske
-patch -p1 $DIR_CRM/tpl/firma1.tpl < $DIR_LxCars/lxc-misc/button.patch -b
 
 ## Menü erzeugen
 patch -p1 $DIR_ERP/menu.ini < $DIR_LxCars/lxc-misc/menu.ini.patch -b

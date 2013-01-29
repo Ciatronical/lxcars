@@ -44,7 +44,8 @@ $t->set_var( array(
     STYLESHEETS   => $menu['stylesheets'],
     PRE_CONTENT   => $menu['pre_content'],
     START_CONTENT => $menu['start_content'],
-    END_CONTENT   => $menu['end_content'] ) );
+    END_CONTENT   => $menu['end_content'],
+    BASEPATH      => $_SESSION['basepath'] ) );
 
 $chk_c_ln = $_POST[chk_c_ln] ? "true" : "false" ;
 $chk_c_2 = $_POST[chk_c_2] ? "true" : "false" ;
@@ -138,7 +139,7 @@ switch( $task ){
 		    $miscarray['FhzTypVis'] = 'visible';
 		}
 		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
-		$$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath); //Doppelt $$ RICHTIG??
+        $$miscarray['xajax_out'] = $xajax->printJavascript("../".XajaxPath); //Doppelt $$ RICHTIG??
 		$t->set_var($miscarray);						
 		$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));
 		$t->pparse("out",array("tpl-file"));

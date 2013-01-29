@@ -2,36 +2,51 @@
 <head><title>Neues Fahrzeug </title>
     {STYLESHEETS}
 	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
-	<link rel="stylesheet" type="text/css" href="./css/lxcjquery.autocomplete.css">	
+    <link rel="stylesheet" type="text/css" href="{BASEPATH}crm/jquery-ui/themes/base/jquery-ui.css"> 
 	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
 	{JAVASCRIPTS}
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
-	<script type="text/javascript" src="./inc/lxcjquery.js"></script>
-	<script type="text/javascript" src="./inc/lxcjquery.autocomplete.js"></script>
+    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/german-date-time-picker.js"></script>
 	{xajax_out}
 	<script type="text/javascript">
-	<!--
-		$(function(){
-			var g_art = '1';
-			$("#ac2").autocomplete({
-				url: 'lxc_ac.php',
-				inputClass: 'acInputG_artAnlegen',
-				extraParams: { g_art: g_art },
-				onItemSelect: function(){
-					$("#c_st").focus(); 
-				}
-			});
-		});	
-		var FinGeholt = 0;
-		function HoleFin( zu2, zu3 ){
-			if( FinGeholt == 0 ){
-				xajax_SucheFin( zu2, zu3 );
-				xajax_SucheMkb( zu2, zu3 );
-				FinGeholt = 1;
-				}
+	$(function() {
+        $("#ac2").autocomplete({                          
+            source: "lxc_ac.php?case=g_art",                                                        
+            delay: '0',
+            select: function(e,ui) {
+                $("#c_st").focus();
+            }
+        });
+    });
+    var FinGeholt = 0;
+    function HoleFin( zu2, zu3 ){
+        if( FinGeholt == 0 ){
+            xajax_SucheFin( zu2, zu3 );
+            xajax_SucheMkb( zu2, zu3 );
+            FinGeholt = 1;
 		}
-		//-->
-		</script>
+	}
+    $(function() {
+        $("#c_d").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "-20:-0" ,
+            dateFormat: "dd.mm.yy"
+        });
+    });	
+	$(function() {
+        $("#c_hu").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            changeDay: false,
+            minDate: '+0m -1y',
+            maxDate: '+0m +3y',
+            dateFormat: "dd.mm.yy"
+        });
+    });
+    </script>
 </head>
 <body onload="document.car.c_ln.focus()">
 {PRE_CONTENT}
@@ -47,8 +62,8 @@
 <tr><td>HSN (2.1)</td><td><input tabindex="2" type="text" name="c_2" size="22" maxlength="4" value="{c_2}" title="Herstellerschl&uuml;ssel aus dem Fahrzeugschein"><input tabindex="-1" type="checkbox" name="chk_c_2" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
 <tr><td>TSN (2.2)</td><td><input tabindex="3" type="text" name="c_3" size="22" maxlength="9" value="{c_3}" title="Typschl&uuml;ssel aus dem Fahrzeugschein"><input tabindex="-1" type="checkbox" name="chk_c_3" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
 <tr><td>Emissionsklasse (14.1)</td><td><input  tabindex="4" type="text" name="c_em" size="22" maxlength="6" value="{c_em}" title="Fahrzeugschein Seite zwei, mitte"><input tabindex="-1" type="checkbox" name="chk_c_em" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
-<tr><td>Datum Zulassung</td><td><input tabindex="5" type="text" name="c_d" size="22" maxlength="10" value="{c_d}" title="Fahrzeugschein Feld B (Seite zwei, oben links)"><input tabindex="-1" type="checkbox" name="chk_c_d" value="true" checked="checked" readonly="readonly" title="Eingabe wird geprüft"></td></tr>
-<tr><td>Datum HU+AU</td><td><input tabindex="6" type="text" name="c_hu" size="22" maxlength="10" value="{c_hu}" title="Stempel Fahrzeugscheinrückseite oder vom Fahrzeug ablesen"><input tabindex="-1" type="checkbox" name="chk_c_hu" value="true" checked="checked" title="Fälligkeit der HU wird geprüft"></td></tr>
+<tr><td>Datum Zulassung</td><td><input tabindex="5" type="text" name="c_d" id="c_d" size="22" maxlength="10" value="{c_d}" title="Fahrzeugschein Feld B (Seite zwei, oben links)"><input tabindex="-1" type="checkbox" name="chk_c_d" value="true" checked="checked" readonly="readonly" title="Eingabe wird geprüft"></td></tr>
+<tr><td>Datum HU+AU</td><td><input tabindex="6" type="text" name="c_hu" id="c_hu" size="22" maxlength="10" value="{c_hu}" title="Stempel Fahrzeugscheinrückseite oder vom Fahrzeug ablesen"><input tabindex="-1" type="checkbox" name="chk_c_hu" value="true" checked="checked" title="Fälligkeit der HU wird geprüft"></td></tr>
 <tr><td>FIN+Pr&uuml;fziffer </td><td><input id="idfin" onfocus="HoleFin(document.car.c_2.value,document.car.c_3.value)" onblur="xajax_UniqueFin(this.value,document.car.c_id.value)" tabindex="7" type="text" name="fin" size="22" maxlength="17" title="Fahrzeugschein Seite zwei, Feld E oder im Fahrzeug (Motorraum, Frontscheibe)"><input tabindex="8" type="text" name="cn" size="1" maxlength="1" value="{cn}" title="Fahrzeugschein Seite 2 Feld 3; Falls unbekannt - eingeben"><input tabindex="-1" type="checkbox" name="chk_fin" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
 <tr><td>Motorcode</td><td><input tabindex="9" type="text" name="mkb" size="8" maxlength="22" value="{mkb}" title="Steht meist auf dem Motor"><select tabindex="10" name="mkbdrop" id="mkbdrop" </select></td></tr>
 <tr><td>Farbe</td><td><input tabindex="11" type="text" name="c_color" size="22" maxlength="22" value="{c_color}" title="Fahrzeugschein Seite 3 Feld R"></td></tr>
