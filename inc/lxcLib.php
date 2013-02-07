@@ -6,7 +6,6 @@
 ******************************************************************************************/  
 include_once("../inc/stdLib.php");
 include_once("../inc/FirmenLib.php");
-include_once("../inc/db.php");
 include_once("inc/config.php");
 
 
@@ -165,9 +164,11 @@ function UpdatePosition($pos_id,$posdata){
 	global $tbpos;
 	$posdata[4] = Float2DB( $posdata[4] );
 	$posdata[6] = Float2DB( $posdata[6] );
+	$tmp = array_shift($posdata);
+	array_unshift($posdata,$tmp);  // Index muss mit 0 beginnen
 	$p_dbarray=array('lxc_a_pos_todo','lxc_a_pos_doing','lxc_a_pos_parts','lxc_a_pos_ctime','lxc_a_pos_status','lxc_a_pos_time','lxc_a_pos_emp');
 	$wherestring = "lxc_a_pos_id = $pos_id"; 
-	$rs=$db->update($tbpos,$p_dbarray,$posdata,$wherestring);
+       $rs=$db->update($tbpos,$p_dbarray,$posdata,$wherestring);
 }
 
 function lxc2db( $parastr ){	

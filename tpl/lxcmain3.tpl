@@ -59,7 +59,20 @@
             dateFormat: "dd.mm.yy"
         });
     });	
-
+    
+    function UniqueKz(kz,id){
+        var ret = true;
+        $.get('ajax.php',{kz: kz, id: id})
+        .done( function(data){
+            var ret = true;
+            if(data){
+                alert('Ein Datensatz mit dem Kennzeichen '+kz+' existiert bereits! \nDas Fahrzeug gehört '+data+'.' );
+                //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
+                // Achtung speichern ist kein Button!
+            }
+            return data;
+        })
+    }
 	</script>
 <style type="text/css">
 	#mann { position:absolute; top:60px; right:15px; border:1px solid #000;  }
@@ -79,15 +92,16 @@
 </div>
 
 <div id="bmw">
-<img src="image/lxcBMW.jpg" width="65" height="55" alt="BMW"  onclick="bmw(document.car.c_2.value, document.car.fin.value);"></div>
-<form name="car" action="lxcmain.php?task=3&owner={owner}&c_id={c_id}" method="post" onSubmit="return checkfelder();">
+<img src="image/lxcBMW.jpg" width="65" height="55" alt="BMW"  onclick="bmw(document.car.c_2.value, document.car.fin.value);">
+</div>
+<form name="car" id="car" action="lxcmain.php?task=3&owner={owner}&c_id={c_id}" method="post">
 <input type="hidden" name="owner" value="{owner}">
 <input type="hidden" name="c_id" value="{c_id}">
 <input type="hidden" name="c_t" value="{c_t}">
 <input type="hidden" name="c_m" value="{c_m}">
 
 <table>
-<tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" size="12" maxlength="9" value="{c_ln}" title="Kennzeichen!" onchange="xajax_UniqueKz(this.value,document.car.c_id.value)" {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" {chk_c_ln} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td><td>Besitzer:</td><td> <input tabindex="23" type="text" name="chown" size="22" value="{ownerstring}" title="Fahrzeughalter" id="ac1" autocomplete="off" {readonly}></td></tr>
+<tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" size="12" maxlength="9" value="{c_ln}" title="Kennzeichen!" onchange="UniqueKz(this.value,document.car.c_id.value)" {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" {chk_c_ln} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td><td>Besitzer:</td><td> <input tabindex="23" type="text" name="chown" size="22" value="{ownerstring}" title="Fahrzeughalter" id="ac1" autocomplete="off" {readonly}></td></tr>
 <tr><td class="info infoleft FahrzeuscheinZu2">HSN (2.1)<span></span></td><td><input tabindex="2" type="text" name="c_2" size="12" maxlength="4" value="{c_2}" title="Herstellerschlüssel aus dem Fahrzeugschein" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_2" value="true" {chk_c_2}  title="Eingabe prüfen"></td><td class="info inforightright FahrzeuscheinHerst">Hersteller:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{cm}" title="Automarke" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinZu3">TSN (2.2)<span></span></td><td><input  tabindex="3" type="text" name="c_3" size="12" maxlength="9" value="{c_3}" title="Typschlüssel aus dem Fahrzeugschein" {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_3" value="true" {chk_c_3} title="Eingabe prüfen"></td><td class="info inforightright FahrzeuscheinTyp">Typ:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{ct}" title="Typ/Variante" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinAbg">Emissionsklasse<span></span></td><td><input tabindex="4" type="text" name="c_em" size="12" maxlength="6" value="{c_em}" title="Fahrzeugschein Seite zwei, mitte,Feld 14" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_em" value="true" {chk_c_em} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="feinstaub()"></td><td class="info inforightright FahrzeuscheinHub">Hubraum:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{vh}" title="Zylindervolumen" readonly="readonly"></td></tr>
@@ -109,7 +123,7 @@
 <tr><td><textarea tabindex="19" name="c_text" cols="92" rows="5">{c_text}</textarea></td></tr>
 </table>
 
-<input id="speichern" tabindex="20" type="submit" name="update" value="speichern">&nbsp;&nbsp;&nbsp;
+<input tabindex="20" type="submit" name="update" id="speichern" value="speichern">&nbsp;&nbsp;&nbsp;
 <input tabindex="21" type="button" name="close" onClick="myclose(document.car.owner.value);" value="schlie&szlig;en">&nbsp;&nbsp;&nbsp;
 <input tabindex="22" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);" value="   Auftrag   ">&nbsp;&nbsp;&nbsp;
 <input tabindex="22" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');" value="KBA DB bearbeiten" style="visibility:{FhzTypVis}">&nbsp;&nbsp;&nbsp;

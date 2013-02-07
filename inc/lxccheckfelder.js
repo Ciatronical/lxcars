@@ -200,12 +200,16 @@ function checkfelder(){
         $("#dialog").html('Das Datum der Erstzulassung wurde fehlerhaft eingegeben! Folgendes Format verwenden: 12.8.73 oder 12.8.');            
         return false;	   
     }        
-    var respKz = false;
-    respKz = xajax.call('UniqueKz',{mode:'synchronous',parameters:[document.car.c_ln.value,document.car.c_id.value]});
-	var respFin = false;
-	respFin = xajax.call('UniqueFin',{mode:'synchronous',parameters:[document.car.fin.value,document.car.c_id.value]});					
-	return respKz && respFin;
+    //var respKz = false;
+    //respKz = xajax.call('UniqueKz',{mode:'synchronous',parameters:[document.car.c_ln.value,document.car.c_id.value]});
+	//var respFin = false;
+	//respFin = xajax.call('UniqueFin',{mode:'synchronous',parameters:[document.car.fin.value,document.car.c_id.value]});					
+	//return respKz && respFin;
+	//alert( UniqueKz(document.car.c_ln.value,document.car.c_id.value));
+	//UniqueKz(document.car.c_ln.value,document.car.c_id.value);
 }
+
+
 
 function checkhu( param ){
     hudate=param;
