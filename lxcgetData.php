@@ -7,7 +7,7 @@ $menu = $_SESSION['menu'];
 <html>
 <head><title></title>
     <script language="JavaScript">
-	<!--
+
 	function showD (src,id) {
 		if      (src=="C") {	uri="../firma1.php?Q=C&id=" + id }
 		else if (src=="V") {	uri="../firma1.php?Q=V&id=" + id; }
@@ -21,8 +21,7 @@ $menu = $_SESSION['menu'];
 			window.location.href=uri;
 		}
 	}
-    //-->
-	</script>
+   	</script>
 <?php 
     echo $menu['stylesheets'].'
     <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">

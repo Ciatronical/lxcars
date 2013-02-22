@@ -5,7 +5,6 @@
 ********************************************************************************************/
 //ToDo: switch durch if ersetzen
 
-require_once( "../inc/db.php" );
 require_once( "../inc/stdLib.php" );
 
 
