@@ -3,6 +3,7 @@ ob_start();
 require_once("../inc/stdLib.php");
 include("../inc/crmLib.php");
 $menu = $_SESSION['menu'];
+$head = mkHeader();
 ?>
 <html>
 <head><title></title>
@@ -23,12 +24,17 @@ $menu = $_SESSION['menu'];
 	}
    	</script>
 <?php 
-    echo $menu['stylesheets'].'
+	 echo $menu['stylesheets'].'
     <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">
     <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
     <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
     <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
-    if ($feature_ac) { 
+    echo $head['CRMCSS'];
+	 echo $head['JQUERY']; 
+	 echo $head['JQUERYUI']; 
+	 echo $head['THEME'];
+    echo $head['JQTABLE'];
+    if ($_SESSION['feature_ac']) { 
         echo '   
     <style>
         .ui-autocomplete-category {
@@ -60,8 +66,8 @@ $menu = $_SESSION['menu'];
         $(function() {
             $("#ac0").catcomplete({                          
                 source: "lxc_ac.php?case=fastsearch",                            
-                minLength: '.$feature_ac_minLength.',                            
-                delay: '.$feature_ac_delay.',
+                minLength: '.$_SESSION['feature_ac_minlength'].',                            
+                delay: '.$_SESSION['feature_ac_delay'].',
                 select: function(e,ui) {
                     if(ui.item.src==\'CAR\'){
                         showCar(ui.item.c_id);
@@ -208,7 +214,8 @@ if($keineFirma){
 		}
 	}//end if
 	else echo $keinFhz; 
-}		
+}	
+
     $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
     $formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.' method="get">';
     $formular .= '<input type="text" name="swort" size="20" id="ac0" autocomplete="off">';  
@@ -220,3 +227,17 @@ if($keineFirma){
     echo $menu['end_content'];
     ob_end_flush(); 
 ?>
+<span id="pager" class="pager">
+    <form>
+        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/first.png" class="first"/>
+        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/prev.png" class="prev"/>
+        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/next.png" class="next"/>
+        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/last.png" class="last"/>
+        <select class="pagesize" id='pagesize'>
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+        </select>
+    </form>
+</span>'
