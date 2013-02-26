@@ -63,7 +63,13 @@ $menu = $_SESSION['menu'];
                 minLength: '.$feature_ac_minLength.',                            
                 delay: '.$feature_ac_delay.',
                 select: function(e,ui) {
-                    $("#adress").click();
+                    if(ui.item.src==\'CAR\'){
+                        alert(\'tetstststt\');
+                        showCar(ui.item.id);
+                    }
+                    else{
+                        showD(ui.item.src,ui.item.id);
+                    }
                 }
             });
         });

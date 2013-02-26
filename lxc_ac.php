@@ -123,19 +123,19 @@ switch( $mode ){
         $rs = array(); 
         foreach ( $rsC as $key => $value ) { 
             if (count($rs) > 11) break;
-            array_push($rs,array('label'=>$value['name'],'category'=>'')); 
+            array_push($rs,array('label'=>$value['name'],'category'=>'','src'=>'C','id'=>$value['id'])); 
         } 
         foreach ( $rsV as $key => $value ) {
             if (count($rs) > 11) break; 
-            array_push($rs,array('label'=>$value['name'],'category'=>'Lieferanten'));//ToDo translate 
+            array_push($rs,array('label'=>$value['name'],'category'=>'Lieferanten','src'=>'L','id'=>$value['id']));//ToDo translate 
         } 
         foreach ( $rsK as $key => $value ) {
             if (count($rs) > 11) break;  
-            array_push($rs,array('label'=>$value['cp_givenname']." ".$value['cp_name'],'category'=>'Personen'));//ToDo translate 
+            array_push($rs,array('label'=>$value['cp_givenname']." ".$value['cp_name'],'category'=>'Personen','src'=>'K','id'=>$value['id']));//ToDo translate 
         } 
         foreach ( $rsFhz as $key => $value ) {
             if (count($rs) > 11) break;  
-            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge'));//ToDo translate 
+            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge','src'=>'CAR','id'=>$value['c_id']));//ToDo translate 
         } 
         echo json_encode($rs); 
 	break;	
