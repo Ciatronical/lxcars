@@ -64,8 +64,7 @@ $menu = $_SESSION['menu'];
                 delay: '.$feature_ac_delay.',
                 select: function(e,ui) {
                     if(ui.item.src==\'CAR\'){
-                        alert(\'tetstststt\');
-                        showCar(ui.item.id);
+                        showCar(ui.item.c_id);
                     }
                     else{
                         showD(ui.item.src,ui.item.id);

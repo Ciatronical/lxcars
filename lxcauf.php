@@ -3,7 +3,7 @@
 /************************ LxCars Auftrag *********************/
 /************** ronny@lxcars.de, April 2010 ******************/
 /*************************************************************/
-include_once("../inc/db.php");
+//include_once( "../inc/stdLib.php" );
 include_once("inc/lxcLib.php");
 include_once("../inc/template.inc");
 include_once("../inc/UserLib.php");

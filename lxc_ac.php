@@ -118,7 +118,7 @@ switch( $mode ){
         $rsC = getAllFirmen($suchwort,true,"C"); 
         $rsV = getAllFirmen($suchwort,true,"V"); 
         $rsK = getAllPerson($suchwort); 
-        $sql = "SELECT c_ln, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
+        $sql = "SELECT c_ln, c_id, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
 		$rsFhz = $db->getAll( $sql );
         $rs = array(); 
         foreach ( $rsC as $key => $value ) { 
@@ -135,7 +135,7 @@ switch( $mode ){
         } 
         foreach ( $rsFhz as $key => $value ) {
             if (count($rs) > 11) break;  
-            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge','src'=>'CAR','id'=>$value['c_id']));//ToDo translate 
+            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge','src'=>'CAR','c_id'=>$value['c_id']));//ToDo translate 
         } 
         echo json_encode($rs); 
 	break;	

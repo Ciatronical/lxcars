@@ -38,7 +38,7 @@ $c_d = $_POST['c_d'] == "" ? "1900-01-01" : date2db( $_POST['c_d'] );
 $c_hu = $_POST['c_hu'] == "" ? "1900-01-01" : date2db( $_POST['c_hu'] );
 $fincn = $_POST['fin'].$_POST['cn'];
 $mytimestamp = mktime();
-print_r($_POST);
+//print_r($_POST);
 $c_mkb = $_POST['mkbdrop'] == "0" ? $_POST['mkb'] : $_POST['mkbdrop'];
 $cardata = array( "owner" => $owner, "c_ln" => $_POST['c_ln'], "c_2" => $_POST['c_2'], "c_3" => $_POST['c_3'], "c_em" => $_POST['c_em'], "c_d" => $c_d , "c_hu" => $c_hu , "c_fin" => $fincn, "c_st" => $_POST['c_st'], "c_wt" => $_POST['c_wt'], "c_st_l" => $_POST['c_st_l'], "c_wt_l" => $_POST['c_wt_l'], "c_st_z" => $_POST['c_st_z'], "c_wt_z" => $_POST['c_wt_z'], "c_color" => $_POST['c_color'], "c_gart" => $_POST['c_gart'], "c_text" => $_POST['c_text'], "c_mt" => $mytimestamp, "c_e_id" => $e_id, "chk_c_ln" => $chk_c_ln, "chk_c_2" => $chk_c_2, "chk_c_3" => $chk_c_3, "chk_c_em" => $chk_c_em, "chk_c_hu" => $chk_c_hu, "chk_fin" => $chk_fin );
 $cardata_anlegen = array( "c_ow" => $owner, "c_ln" => $_POST['c_ln'], "c_2" => $_POST['c_2'], "c_3" => $_POST['c_3'], "c_em" => $_POST['c_em'], "c_mkb"=> $c_mkb, "c_d" => $c_d, "c_hu" => $c_hu , "c_fin" => $fincn,  "c_st" => $_POST['c_st'], "c_wt" => $_POST['c_wt'], "c_st_l" => $_POST['c_st_l'], "c_wt_l" => $_POST['c_wt_l'], "c_st_z" => $_POST['c_st_z'], "c_wt_z" => $_POST['c_wt_z'], "c_color" => $_POST['c_color'], "c_gart" => $_POST['c_gart'], "c_text" => $_POST['c_text'], "c_mt" => $mytimestamp, "c_e_id" => $e_id, "chk_c_ln" => $chk_c_ln, "chk_c_2" => $chk_c_2, "chk_c_3" => $chk_c_3, "chk_c_em" => $chk_c_em, "chk_c_hu" => $chk_c_hu, "chk_fin" => $chk_fin);
