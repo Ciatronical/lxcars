@@ -30,9 +30,9 @@ $head = mkHeader();
     <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
     <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
     echo $head['CRMCSS'];
-	 echo $head['JQUERY']; 
-	 echo $head['JQUERYUI']; 
-	 echo $head['THEME'];
+	echo $head['JQUERY']; 
+	echo $head['JQUERYUI']; 
+	echo $head['THEME'];
     echo $head['JQTABLE'];
     if ($_SESSION['feature_ac']) { 
         echo '   
@@ -81,11 +81,29 @@ $head = mkHeader();
     </script>'; 
     }//end feature_ac 
     ?> 
+    <style>
+    table.tablesorter {
+	   width: 900;
+    }    
+    </style>
 </head>
 <body onload=$("#ac0").focus().val('<?php echo preg_replace("#[ ].*#",'',$_GET['swort']);?>');>
 <?php //wichtig: focus().val('ohneLeerZeichen')
 echo $menu['pre_content'];
 echo $menu['start_content'];
+    $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
+    $formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.' method="get">';
+    $formular .= '<input type="text" name="swort" size="20" id="ac0" autocomplete="off">';  
+    $formular .= '<input type="submit" name="adress" id="adress" value="Kunde o. Lief.">';
+    $formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
+    $formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
+    $formular .= '<span class="liste">Suchbegriff</span></form>';
+    print $formular;
+?>
+
+
+<?php
+    
 $msg=    '<div id="dialog" title="Kein Suchbegriff eingegeben">
 	          <p>Bitte geben Sie mindestens ein Zeichen ein.</p>
 	      </div>';
@@ -130,8 +148,8 @@ if ($_GET["adress"]) {
         if ($anzahl==1 && $rsV) header("Location: ../firma1.php?Q=V&id=".$rsV[0]['id']); 
         if ($anzahl==1 && $rsK) header("Location: ../kontakt.php?id=".$rsK[0]['id']); 
         if ($anzahl==1 && $rsE) header("Location: ../user.php?id=".$rsE[0]['id']); 
-        echo '<p class="listtop">Suchergebnis</p>'; 
-		echo "<table class=\"liste\">\n";
+
+		echo "<table id='treffer' class='tablesorter'>";
 		echo "<tr class='bgcol3'><th>KD-Nr</th><th class=\"liste\">Name</th><th class=\"liste\">Anschrift</th><th class=\"liste\">Telefon</th><th></th></tr>\n";
 		$i=0;
 		if ($rsC) foreach($rsC as $row) {
@@ -178,8 +196,8 @@ if($_GET['sauto']){
         } else {
             if ($anzahl==0) {$msg = $keine;echo $msg;}
             if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
-            echo '<p class="listtop">Suchergebnis</p>'; 
-		    echo "<table class=\"liste\">\n";
+ 
+		    echo "<table id='treffer' class='tablesorter'>\n";
 		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
 		    foreach($result as $row) {
 			    echo 	"<tr class='bgcol".($i%2+1)."' onClick='showD(\"V\",".$row["id"].");'>". 
@@ -201,8 +219,8 @@ if($keineFirma){
         } else {
             if ($anzahl==0) {$msg = $keine;echo $msg;}
             if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
-	        echo '<p class="listtop">Suchergebnis</p>'; 
-		    echo "<table class=\"liste\">\n";
+
+		    echo "<table id='treffer' class='tablesorter'>\n";
 		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
 		    foreach( $result as $row ){
 			    echo    "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
@@ -215,29 +233,23 @@ if($keineFirma){
 	}//end if
 	else echo $keinFhz; 
 }	
-
-    $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
-    $formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.' method="get">';
-    $formular .= '<input type="text" name="swort" size="20" id="ac0" autocomplete="off">';  
-    $formular .= '<input type="submit" name="adress" id="adress" value="Kunde o. Lief.">';
-    $formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
-    $formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
-    $formular .= '<span class="liste">Suchbegriff</span></form>';
-    print $formular;
+?>
+   <span id="pager" class="pager">
+        <form>
+            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/first.png" class="first"/>
+            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/prev.png" class="prev"/>
+            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/next.png" class="next"/>
+            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/last.png" class="last"/>
+            <select class="pagesize" id='pagesize'>
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+            </select>
+        </form>
+    </span>
+<?php
+    
     echo $menu['end_content'];
     ob_end_flush(); 
 ?>
-<span id="pager" class="pager">
-    <form>
-        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/first.png" class="first"/>
-        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/prev.png" class="prev"/>
-        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/next.png" class="next"/>
-        <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/last.png" class="last"/>
-        <select class="pagesize" id='pagesize'>
-            <option value="10">10</option>
-            <option value="20" selected>20</option>
-            <option value="30">30</option>
-            <option value="40">40</option>
-        </select>
-    </form>
-</span>'
