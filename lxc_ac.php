@@ -127,7 +127,7 @@ switch( $mode ){
         } 
         foreach ( $rsV as $key => $value ) {
             if (count($rs) > 11) break; 
-            array_push($rs,array('label'=>$value['name'],'category'=>'Lieferanten','src'=>'L','id'=>$value['id']));//ToDo translate 
+            array_push($rs,array('label'=>$value['name'],'category'=>'Lieferanten','src'=>'V','id'=>$value['id']));//ToDo translate 
         } 
         foreach ( $rsK as $key => $value ) {
             if (count($rs) > 11) break;  

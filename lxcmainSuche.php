@@ -128,7 +128,7 @@ if ($_POST["felder"]) {
 }
 
 $i = 0;
-if ($rs && ($i < $listLimit)){//
+if ($rs && ($i < $_SESSION['listLimit'])){//
 	
 	foreach ($rs as $zeile){
 		$tst = getFirmenStamm($zeile[c_ow]);

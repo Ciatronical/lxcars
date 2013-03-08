@@ -9,4 +9,7 @@ $tbname="lxc_cars";
 $tbkba="lxc_kba";
 $tbauf="lxc_a";
 $tbpos="lxc_a_pos";
+define("FPDF_FONTPATH","/usr/share/fpdf/font/");
+define("FONTART","2");
+define("FONTSTYLE","1");
 ?>
