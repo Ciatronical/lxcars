@@ -159,19 +159,19 @@ if ($_GET["adress"]) {
 			$i++;
 		}
 		if ($rsV) foreach($rsV as $row) {
-			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
+			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"V\",".$row["id"].");'>".
 				"<td class=\"liste\">".$row["vendornumber"]."</td><td class=\"liste\">".$row["name"]."</td>".
 				"<td class=\"liste\">".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td class=\"liste\">".$row["phone"]."</td><td class=\"liste\">L</td></tr>\n";
 			$i++;
 		}
 		if ($rsK) foreach($rsK as $row) {
-			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
+			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
 				"<td class=\"liste\">".$row["cp_id"]."</td><td class=\"liste\">".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
 				"<td class=\"liste\">".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td class=\"liste\">".$row["cp_phone1"]."</td><td class=\"liste\">P</td></tr>\n";
 			$i++;
 		}
 		if ($rsE) foreach($rsE as $row) {
-			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
+			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"E\",".$row["id"].");'>".
 				"<td class=\"liste\">".$row["id"]."</td><td class=\"liste\">".$row["name"]."</td>".
 				"<td class=\"liste\">".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td class=\"liste\">".$row["workphone"]."</td><td class=\"liste\">U</td></tr>\n";
 			$i++;
