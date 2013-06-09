@@ -244,10 +244,9 @@ if($_GET['sauto']){
 		    echo "<table id='treffer' class='tablesorter'>\n";
 		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
 		    foreach($result as $row) {
-			    echo 	"<tr class='bgcol".($i%2+1)."' onClick='showD(\"V\",".$row["id"].");'>". 
-					    "<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					    "<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
-			    $i++;//nClick='showD(\"V\",".$row["id"].");
+			    echo 	"<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
+					    "<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+			    $i++;
 		    }//end foreach
 		   echo "</table>\n";
         }
@@ -267,9 +266,9 @@ if($keineFirma){
 		    echo "<table id='treffer' class='tablesorter'>\n";
 		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
 		    foreach( $result as $row ){
-			    echo    "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
-				    	"<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					    "<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+			    echo   "<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
+					    "<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0033FF';\" 
+					    onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
 			    $i++;
 	    	} 
 		    echo "</table>\n";
