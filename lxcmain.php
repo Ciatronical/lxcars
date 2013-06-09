@@ -89,7 +89,7 @@ switch( $task ){
 			$t->pparse("out",array("tpl-file"));
 		}
 	break;
-	case 3 :	
+	case 3 :
 		if ( isset($_POST['update']) ) {
 			$cardata['mkb'] = $_POST['mkb'];
 			$cardata['mkbwahl'] = $_POST['mkbwahl'];
@@ -107,6 +107,7 @@ switch( $task ){
 					UpdateTypNr( $c_id, $_GET['c_t'] );
 		}
 		$miscarray = ShowCar( $c_id );
+		accessHistory(array($miscarray['c_id'],$miscarray['c_ln'],'A'));	
 		$miscarray["visibility"] = $visibility;
 		$miscarray["readonly"] = $readonly;
 		$miscarray['FhzTypVis'] = 'hidden';

@@ -10,18 +10,14 @@ $head = mkHeader();
     <script language="JavaScript">
 
 	function showD (src,id) {
-		if      (src=="C") {	uri="../firma1.php?Q=C&id=" + id }
-		else if (src=="V") {	uri="../firma1.php?Q=V&id=" + id; }
-		else if (src=="E") {	uri="../user1.php?id=" + id; }
-		else if (src=="K") {	uri="../kontakt.php?id=" + id; }
+		if      (src=="C")        {	 uri="../firma1.php?Q=C&id=" + id }
+		else if (src=="V")        { uri="../firma1.php?Q=V&id=" + id; }
+		else if (src=="E")        { uri="../user1.php?id=" + id; }
+		else if (src=="K")   { uri="../kontakt.php?id=" + id; }
+		else if (src=="A") { uri="lxcmain.php?task=3&c_id=" + id; }
 		window.location.href=uri;
 	}
-	function showCar (c_id){
-		if (c_id) {
-			uri="lxcmain.php?task=3&c_id=" + c_id;
-			window.location.href=uri;
-		}
-	}
+
    	</script>
 <?php 
 	 echo $menu['stylesheets'].'
@@ -34,6 +30,8 @@ $head = mkHeader();
 	echo $head['JQUERYUI']; 
 	echo $head['THEME'];
     echo $head['JQTABLE'];
+    echo $head['JUI-DROPDOWN'];
+    
     if ($_SESSION['feature_ac']) { 
         echo '   
     <style>
@@ -69,22 +67,62 @@ $head = mkHeader();
                 minLength: '.$_SESSION['feature_ac_minlength'].',                            
                 delay: '.$_SESSION['feature_ac_delay'].',
                 select: function(e,ui) {
-                    if(ui.item.src==\'CAR\'){
-                        showCar(ui.item.c_id);
-                    }
-                    else{
-                        showD(ui.item.src,ui.item.id);
-                    }
+                    showD(ui.item.src,ui.item.id);
                 }
             });
         });
     </script>'; 
     }//end feature_ac 
-    ?> 
+        
+    ?>
+    <script>
+        $(function() {
+        $.ajax({
+            url: "../jqhelp/getHistory.php",
+            context: $('#menu'),
+            success: function(data) {
+                $(this).html(data);
+                $("#drop").jui_dropdown({
+                    launcher_id: 'launcher',
+                    launcher_container_id: 'launcher_container',
+                    menu_id: 'menu',
+                    containerClass: 'drop_container',
+                    menuClass: 'menu',
+                    launchOnMouseEnter:true,
+                    onSelect: function(event, data) {
+                        showD(data.id.substring(0,1), data.id.substring(1));
+                    }
+                });
+            }
+        });
+          
+    });
+    </script> 
     <style>
     table.tablesorter {
 	   width: 900;
-    }    
+    } 
+    #jui_dropdown {
+        height: 400px;
+    }
+    #jui_dropdown button {
+        padding: 3px !important;
+    }
+    #jui_dropdown ul li {
+        background: none;
+        display: inline-block;
+        list-style: none;
+    }   
+
+    .drop_container {
+        margin: 10px 10px 10px 10px ;
+        display: inline-block;
+    }   
+    .menu {
+        position: absolute;
+        width: 240px !important;
+        margin-top: 3px !important;
+    }     
     </style>
 </head>
 <body onload=$("#ac0").focus().val('<?php echo preg_replace("#[ ].*#",'',$_GET['swort']);?>');>
@@ -98,7 +136,13 @@ echo $menu['start_content'];
     $formular .= '<input type="submit" name="sauto" value="Kennzeichen">';
     $formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
     $formular .= '<span class="liste">Suchbegriff</span></form>';
-    print $formular;
+    echo $formular;
+    $history = '<div id="drop">
+  <div id="launcher_container">
+    <button id="launcher">'.translate('.:history tracking:.','firma').'</button>
+  </div>
+  <ul id="menu"> </ul>';
+  echo $history;
 ?>
 
 
@@ -201,9 +245,9 @@ if($_GET['sauto']){
 		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
 		    foreach($result as $row) {
 			    echo 	"<tr class='bgcol".($i%2+1)."' onClick='showD(\"V\",".$row["id"].");'>". 
-					    "<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					    "<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
-			    $i++;
+					    "<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
+					    "<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+			    $i++;//nClick='showD(\"V\",".$row["id"].");
 		    }//end foreach
 		   echo "</table>\n";
         }
@@ -224,8 +268,8 @@ if($keineFirma){
 		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
 		    foreach( $result as $row ){
 			    echo    "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
-				    	"<td onClick='showCar(".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					    "<td onClick='showCar(".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+				    	"<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
+					    "<td onClick='showD(\"CAR\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
 			    $i++;
 	    	} 
 		    echo "</table>\n";
