@@ -135,7 +135,7 @@ switch( $mode ){
         } 
         foreach ( $rsFhz as $key => $value ) {
             if (count($rs) > 11) break;  
-            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge','src'=>'CAR','id'=>$value['c_id']));//ToDo translate 
+            array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge','src'=>'A','id'=>$value['c_id']));//ToDo translate 
         } 
         echo json_encode($rs); 
 	break;	

@@ -25,7 +25,6 @@ $head = mkHeader();
     <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
     <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
     <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
-    echo $head['CRMCSS'];
 	echo $head['JQUERY']; 
 	echo $head['JQUERYUI']; 
 	echo $head['THEME'];
@@ -43,9 +42,7 @@ $head = mkHeader();
         }
     </style>
     <script>
-        $(function() {
-            $("#dialog").dialog();
-        });
+
         $.widget("custom.catcomplete", $.ui.autocomplete, {
             _renderMenu: function(ul,items) {
                 var that = this,
@@ -76,7 +73,13 @@ $head = mkHeader();
         
     ?>
     <script>
-        $(function() {
+    $(function() {
+        $( "input[type=submit]" )
+            .button();
+        $("#dialog").dialog();
+        $("#treffer")
+            .tablesorter({widthFixed: true, widgets: ['zebra']})
+            .tablesorterPager({container: $("#pager"), size: 20, positionFixed: false}); 
         $.ajax({
             url: "../jqhelp/getHistory.php",
             context: $('#menu'),
@@ -94,13 +97,12 @@ $head = mkHeader();
                     }
                 });
             }
-        });
-          
+        });  
     });
     </script> 
     <style>
     table.tablesorter {
-	   width: 900;
+	   width: 1000;
     } 
     #jui_dropdown {
         height: 400px;
@@ -194,33 +196,33 @@ if ($_GET["adress"]) {
         if ($anzahl==1 && $rsE) header("Location: ../user.php?id=".$rsE[0]['id']); 
 
 		echo "<table id='treffer' class='tablesorter'>";
-		echo "<tr class='bgcol3'><th>KD-Nr</th><th class=\"liste\">Name</th><th class=\"liste\">Anschrift</th><th class=\"liste\">Telefon</th><th></th></tr>\n";
+		echo "<thead><tr ><th>KD-Nr</th><th>Name</th><th>Anschrift</th><th>Telefon</th><th></th></tr></thead>\n<tbody>\n"; 
 		$i=0;
 		if ($rsC) foreach($rsC as $row) {
-			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"C\",".$row["id"].");'>".
-				"<td class=\"liste\">".$row["customernumber"]."</td><td class=\"liste\">".$row["name"]."</td>".
-				"<td class=\"liste\">".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td class=\"liste\">".$row["phone"]."</td><td class=\"liste\">K</td></tr>\n";
+			echo "<tr onClick='showD(\"C\",".$row["id"].");'>".
+				"<td>".$row["customernumber"]."</td><td >".$row["name"]."</td>".
+				"<td >".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td >".$row["phone"]."</td><td>K</td></tr>\n";
 			$i++;
 		}
 		if ($rsV) foreach($rsV as $row) {
-			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"V\",".$row["id"].");'>".
-				"<td class=\"liste\">".$row["vendornumber"]."</td><td class=\"liste\">".$row["name"]."</td>".
-				"<td class=\"liste\">".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td class=\"liste\">".$row["phone"]."</td><td class=\"liste\">L</td></tr>\n";
+			echo "<tr onClick='showD(\"V\",".$row["id"].");'>".
+				"<td>".$row["vendornumber"]."</td><td >".$row["name"]."</td>".
+				"<td>".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td>".$row["phone"]."</td><td>L</td></tr>\n";
 			$i++;
 		}
 		if ($rsK) foreach($rsK as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
-				"<td class=\"liste\">".$row["cp_id"]."</td><td class=\"liste\">".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
-				"<td class=\"liste\">".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td class=\"liste\">".$row["cp_phone1"]."</td><td class=\"liste\">P</td></tr>\n";
+				"<td >".$row["cp_id"]."</td><td >".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
+				"<td >".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td >".$row["cp_phone1"]."</td><td >P</td></tr>\n";
 			$i++;
 		}
 		if ($rsE) foreach($rsE as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"E\",".$row["id"].");'>".
-				"<td class=\"liste\">".$row["id"]."</td><td class=\"liste\">".$row["name"]."</td>".
-				"<td class=\"liste\">".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td class=\"liste\">".$row["workphone"]."</td><td class=\"liste\">U</td></tr>\n";
+				"<td >".$row["id"]."</td><td >".$row["name"]."</td>".
+				"<td >".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td >".$row["workphone"]."</td><td >U</td></tr>\n";
 			$i++;
 		}
-        echo "</table>\n";
+        echo "</tbody></table>\n"; 
         }  
         echo "<br>"; 
     } else if ($_GET["kontakt"]) {
@@ -231,7 +233,7 @@ if ($_GET["adress"]) {
 		F1=open("suchKontakt.php?suchwort="+sw+"&Q=S","Suche","width=400, height=400, left=100, top=50, scrollbars=yes");
 </script>	
 <? }
-if($_GET['sauto']){
+if ( $_GET['sauto'] || $keineFirma ) {
 	include("inc/lxcLib.php");
 	$result=GetOwner($_GET['swort']);
     if ($result){
@@ -242,48 +244,27 @@ if($_GET['sauto']){
             if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
  
 		    echo "<table id='treffer' class='tablesorter'>\n";
-		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
+		    //echo "<thead><tr ><th>KD-Nr</th><th>Name</th><th>Anschrift</th><th>Telefon</th><th></th></tr></thead>\n<tbody>\n"; 
+		    echo "<thead><tr><th>Kennzeichen</th><th >Hersteller</th><th >Fahrzeugtyp</th><th >Besitzer</th></tr></thead>\n<tbody>\n";
 		    foreach($result as $row) {
-			    echo 	"<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					    "<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
+			    echo 	"<td onClick='showD(\"A\",".$row["c_id"].");'  >".$row["c_ln"]."</td><td  onClick='showD(\"A\",".$row["c_id"].");' >".$row["c_m"]."</td>".                                           
+					    "<td onClick='showD(\"A\",".$row["c_id"].");' >".$row["c_t"]."</td><td onMouseover=\"this.bgColor='#0066FF';\" onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\"  onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
 			    $i++;
 		    }//end foreach
-		   echo "</table>\n";
+		   echo "</tbody></table>\n";
         }
 	}//end if
 	else echo $keinFhz; 
 }
-if($keineFirma){
-    include("lxcars/inc/lxcLib.php");
-	$result=GetOwner($_GET['swort']);
-    if ($result){
-        if (!chkAnzahl($result,$anzahl)) {
-            $msg=$viele; echo $msg;
-        } else {
-            if ($anzahl==0) {$msg = $keine;echo $msg;}
-            if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
-
-		    echo "<table id='treffer' class='tablesorter'>\n";
-		    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">c_id</th><th class=\"liste\">Besitzer</th></tr>\n";
-		    foreach( $result as $row ){
-			    echo   "<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\" >".$row["c_ln"]."</td><td  onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_m"]."</td>".                                           
-					    "<td onClick='showD(\"A\",".$row["c_id"].");' class=\"liste\">".$row["c_t"]."</td><td class=\"liste\">".$row["c_id"]."</td><td onMouseover=\"this.bgColor='#0033FF';\" 
-					    onMouseout=\"this.bgColor='".$bgcol[($i%2+1)]."';\" class=\"liste\" onClick='showD(\"C\",".$row["c_ow"].");'>".$row["owner"]."</td></tr>\n";
-			    $i++;
-	    	} 
-		    echo "</table>\n";
-		}
-	}//end if
-	else echo $keinFhz; 
-}	
-?>
-   <span id="pager" class="pager">
+if ( $anzahl > 10 ) {
+    echo '
+    <span id="pager" class="pager">
         <form>
-            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/first.png" class="first"/>
-            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/prev.png" class="prev"/>
-            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/next.png" class="next"/>
-            <img src="<?php echo $_SESSION['baseurl']; ?>crm/jquery-ui/plugin/Table/addons/pager/icons/last.png" class="last"/>
-            <select class="pagesize" id='pagesize'>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/first.png" class="first"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/prev.png" class="prev"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/next.png" class="next"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/last.png" class="last"/>
+            <select class="pagesize" id="pagesize">
                 <option value="10">10</option>
                 <option value="20" selected>20</option>
                 <option value="30">30</option>
@@ -291,6 +272,11 @@ if($keineFirma){
             </select>
         </form>
     </span>
+    ';
+}
+
+?>
+   
 <?php
     
     echo $menu['end_content'];
