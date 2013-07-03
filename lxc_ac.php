@@ -9,7 +9,7 @@ require_once( "../inc/stdLib.php" );
 
 
 $acSrc = "localdb";
-global $db;
+//global $db;
 $mode = 0;
 $q = '';
 if( isset( $_GET['q'] ) ){
@@ -41,7 +41,7 @@ switch( $mode ){
 		if( $acSrc == "localdb" || $acSrc == "localdb,geodb" ){
 			 // PLZ aus Kunden- bzw Lieferantenadressen holen, meistverwendetes Bundesland und Land holen  
 			$sql = " SELECT  to_number AS myzipcode, (SELECT country FROM ( SELECT DISTINCT ON ( country )country, count( country ) FROM ( ( SELECT zipcode, country FROM customer UNION ALL SELECT zipcode, country FROM vendor ) UNION ALL SELECT shiptozipcode, shiptocountry FROM shipto ) AS u  WHERE zipcode LIKE '".$q."%' AND country != '' GROUP BY u.country ) AS o ORDER BY count DESC LIMIT 1 ) AS country, ( SELECT bland FROM ( SELECT DISTINCT ON ( bland ) bland, count( bland ) FROM ( ( SELECT zipcode, bland FROM customer UNION ALL SELECT zipcode, bland FROM vendor) UNION ALL SELECT shiptozipcode, shiptobland FROM shipto) AS u  WHERE zipcode LIKE '".$q."%' AND bland > 0 GROUP BY u.bland ) AS o ORDER BY count DESC LIMIT 1) AS bland  FROM (SELECT DISTINCT ON (to_number(u.zipcode, '99999'))to_number(u.zipcode, '99999'), count(to_number(u.zipcode, '99999')) FROM ((SELECT zipcode FROM vendor UNION ALL SELECT zipcode from customer)UNION ALL SELECT shiptozipcode FROM shipto) as u where u.zipcode like '".$q."%' GROUP BY to_number(u.zipcode, '99999')  ORDER BY to_number(u.zipcode, '99999')) AS xyz ORDER BY count DESC LIMIT 8";
-			$rs = $db->getall($sql);
+			$rs = $_SESSION['db']->getall($sql);
 			foreach( $rs as $value ){
 				echo $value['myzipcode']."|".$value['country']."__".$value['bland']."\n";
 			}
@@ -54,7 +54,7 @@ switch( $mode ){
 		if( $acSrc == "localdb" || $acSrc == "localdb,geodb" ){
 			$sql = "SELECT city FROM (SELECT DISTINCT ON ( city )count(city),city, zipcode FROM ((SELECT city, zipcode FROM customer UNION ALL SELECT city, zipcode FROM vendor)UNION ALL SELECT shiptocity, shiptozipcode FROM shipto) AS u WHERE zipcode LIKE '".$plz."%' AND city ILIKE '".$q."%'  GROUP BY u.city, u.zipcode ORDER BY  u.city)AS s ORDER BY count DESC";
 			//echo $sql;			
-			$rs = $db->getall($sql);
+			$rs = $_SESSION['db']->getall($sql);
 			foreach( $rs as $value ){
 				echo $value['city']."\n";
 			}
@@ -64,7 +64,7 @@ switch( $mode ){
 		if( $acSrc == "localdb" || $acSrc == "localdb,geodb" ){
 		//Straße aus Kunden- bzw Lieferantenadressen holen, sortiert nach Häufigkeit ohne Hausnummern
 			$sql = "SELECT  count( trim( both ' ' FROM substring( street from '^[^[:digit:]]*') ) ), trim( both ' ' FROM substring( street from '^[^[:digit:]]*') ) || ' ' AS street FROM ((SELECT street FROM customer UNION ALL SELECT street FROM vendor) UNION ALL SELECT shiptostreet AS street FROM shipto ) AS s WHERE s.street ILIKE '".$q."%' GROUP BY trim(both ' ' FROM substring( street from '^[^[:digit:]]*')) ORDER BY count DESC, street LIMIT 8";
-			$rs = $db->getall($sql);
+			$rs = $_SESSION['db']->getall($sql);
 			foreach( $rs as $value ){
 				echo $value['street']."\n";
 			}
@@ -88,7 +88,7 @@ switch( $mode ){
         //Getriebe
         if (empty($_GET['term'])) exit;//ToDo  nach oben 
         $sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' AND c_gart ILIKE '".$_GET['term']."%' GROUP BY c_gart ORDER BY count DESC";			
-		$rsG = $db->getall($sql);
+		$rsG = $_SESSION['db']->getall($sql);
 		$rs = array();
 		foreach( $rsG as $value ){
 		    if (count($rs) > 11) break;
@@ -101,7 +101,7 @@ switch( $mode ){
 		include("inc/lxcLib.php");
 		$rs = array();
 		$sql = "SELECT c_ln, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
-		$rsLn = $db->getAll( $sql );
+		$rsLn = $_SESSION['db']->getAll( $sql );
 			//print_r( $rs );
 		foreach( $rsLn as $value ){
 			if (count($rs) > 11) break;
@@ -119,21 +119,21 @@ switch( $mode ){
         $rsV = getAllFirmen($suchwort,true,"V"); 
         $rsK = getAllPerson($suchwort); 
         $sql = "SELECT c_ln, c_id, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
-		$rsFhz = $db->getAll( $sql );
+		$rsFhz = $_SESSION['db']->getAll( $sql );
         $rs = array(); 
-        foreach ( $rsC as $key => $value ) { 
+        if ( $rsC ) foreach ( $rsC as $key => $value ) { 
             if (count($rs) > 11) break;
             array_push($rs,array('label'=>$value['name'],'category'=>'','src'=>'C','id'=>$value['id'])); 
         } 
-        foreach ( $rsV as $key => $value ) {
+        if ( $rsV )foreach ( $rsV as $key => $value ) {
             if (count($rs) > 11) break; 
             array_push($rs,array('label'=>$value['name'],'category'=>'Lieferanten','src'=>'V','id'=>$value['id']));//ToDo translate 
         } 
-        foreach ( $rsK as $key => $value ) {
+        if ( $rsK )foreach ( $rsK as $key => $value ) {
             if (count($rs) > 11) break;  
             array_push($rs,array('label'=>$value['cp_givenname']." ".$value['cp_name'],'category'=>'Personen','src'=>'K','id'=>$value['id']));//ToDo translate 
         } 
-        foreach ( $rsFhz as $key => $value ) {
+        if ( $rsFhz ) foreach ( $rsFhz as $key => $value ) {
             if (count($rs) > 11) break;  
             array_push($rs,array('label'=>$value['c_ln']." -> ".$value['name'],'value'=>$value['c_ln'],'category'=>'Fahrzeuge','src'=>'A','id'=>$value['c_id']));//ToDo translate 
         } 
