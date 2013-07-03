@@ -14,8 +14,9 @@ include_once( "../inc/UserLib.php" );
 
 $owner = isset( $_GET["owner"] )? $_GET["owner"] : $_POST["owner"]; 
 $task  = isset( $_GET["task"] ) ? $_GET["task"] : $_POST["task"]; 
-$c_id  = isset( $_GET["c_id"] ) ? $_GET["c_id"]:$_POST["c_id"]; 
-$e_id  = $_SESSION["employee"]; 	
+$c_id  = isset( $_GET["c_id"] ) ? $_GET["c_id"]: ""; 
+$e_id  = $_SESSION["id"]; 	
+//print_r($_SESSION );
 
 
 $t = new Template( $base );
@@ -28,20 +29,80 @@ $t->set_var( array(
     'END_CONTENT'   => $menu['end_content'],
     'BASEPATH'      => $_SESSION['basepath'] ) );
 
-$chk_c_ln = $_POST['chk_c_ln'] ? "true" : "false" ;
-$chk_c_2 = $_POST['chk_c_2'] ? "true" : "false" ;
-$chk_c_3 = $_POST['chk_c_3'] ? "true" : "false" ;
-$chk_c_em = $_POST['chk_c_em'] ? "true" : "false" ;
-$chk_c_hu = $_POST['chk_c_hu'] ? "true" : "false" ;
-$chk_fin = $_POST['chk_fin'] ? "true" : "false" ;
-$c_d = $_POST['c_d'] == "" ? "1900-01-01" : date2db( $_POST['c_d'] );
-$c_hu = $_POST['c_hu'] == "" ? "1900-01-01" : date2db( $_POST['c_hu'] );
-$fincn = $_POST['fin'].$_POST['cn'];
+$chk_c_ln = isset($_POST['chk_c_ln']) ? "true" : "false" ;
+$chk_c_2  = isset($_POST['chk_c_2'])  ? "true" : "false" ;
+$chk_c_3  = isset($_POST['chk_c_3'])  ? "true" : "false" ;
+$chk_c_em = isset($_POST['chk_c_em']) ? "true" : "false" ;
+$chk_c_hu = isset($_POST['chk_c_hu']) ? "true" : "false" ;
+$chk_fin  = isset($_POST['chk_fin']) ? "true" : "false" ;
+$c_d       = ( !isset($_POST['c_d']) ||$_POST['c_d'] == "" )? "1900-01-01" : date2db( $_POST['c_d'] );
+$c_hu      = ( !isset($_POST['c_hu'])||$_POST['c_hu']== "" )? "1900-01-01" : date2db( $_POST['c_hu'] );
+$fincn     = isset($_POST['fin'])?$_POST['fin']:'';
+$fincn    .= isset($_POST['cn'])?$_POST['cn']:'';
 $mytimestamp = mktime();
 //print_r($_POST);
-$c_mkb = $_POST['mkbdrop'] == "0" ? $_POST['mkb'] : $_POST['mkbdrop'];
-$cardata = array( "owner" => $owner, "c_ln" => $_POST['c_ln'], "c_2" => $_POST['c_2'], "c_3" => $_POST['c_3'], "c_em" => $_POST['c_em'], "c_d" => $c_d , "c_hu" => $c_hu , "c_fin" => $fincn, "c_st" => $_POST['c_st'], "c_wt" => $_POST['c_wt'], "c_st_l" => $_POST['c_st_l'], "c_wt_l" => $_POST['c_wt_l'], "c_st_z" => $_POST['c_st_z'], "c_wt_z" => $_POST['c_wt_z'], "c_color" => $_POST['c_color'], "c_gart" => $_POST['c_gart'], "c_text" => $_POST['c_text'], "c_mt" => $mytimestamp, "c_e_id" => $e_id, "chk_c_ln" => $chk_c_ln, "chk_c_2" => $chk_c_2, "chk_c_3" => $chk_c_3, "chk_c_em" => $chk_c_em, "chk_c_hu" => $chk_c_hu, "chk_fin" => $chk_fin );
-$cardata_anlegen = array( "c_ow" => $owner, "c_ln" => $_POST['c_ln'], "c_2" => $_POST['c_2'], "c_3" => $_POST['c_3'], "c_em" => $_POST['c_em'], "c_mkb"=> $c_mkb, "c_d" => $c_d, "c_hu" => $c_hu , "c_fin" => $fincn,  "c_st" => $_POST['c_st'], "c_wt" => $_POST['c_wt'], "c_st_l" => $_POST['c_st_l'], "c_wt_l" => $_POST['c_wt_l'], "c_st_z" => $_POST['c_st_z'], "c_wt_z" => $_POST['c_wt_z'], "c_color" => $_POST['c_color'], "c_gart" => $_POST['c_gart'], "c_text" => $_POST['c_text'], "c_mt" => $mytimestamp, "c_e_id" => $e_id, "chk_c_ln" => $chk_c_ln, "chk_c_2" => $chk_c_2, "chk_c_3" => $chk_c_3, "chk_c_em" => $chk_c_em, "chk_c_hu" => $chk_c_hu, "chk_fin" => $chk_fin);
+$mkb = (isset($_POST['mkb']))?$_POST['mkb']:'';
+$c_mkb = (!isset($_POST['mkbdrop'])|| $_POST['mkbdrop'] == "0" )? $mkb : $_POST['mkbdrop'];
+
+
+
+/**
+sets $var to $string if $var not set
+
+funktion set_var_if_not_set(&$var, $string){
+    return (isset($var)) ? $var: $string;
+}
+
+*/
+$cardata = array(  "owner" => $owner, 
+                    "c_ln"      => (isset($_POST['c_ln'])) ? $_POST['c_ln']:'',
+                    "c_ln"      => (isset($_POST['c_ln'])) ? $_POST['c_ln']:'',
+                    "c_2"       => (isset($_POST['c_2'])) ? $_POST['c_2']:'', 
+                    "c_3"       => (isset($_POST['c_3'])) ? $_POST['c_3']:'',
+                    "c_em"      => (isset($_POST['c_em'])) ? $_POST['c_em']:'',
+                    "c_d"       => (isset($_POST['c_d'])) ? $_POST['c_em']:'',
+                    "c_hu"      => $c_hu ,
+                    "c_fin"     => $fincn,
+                    "c_st"      => (isset($_POST['c_st'])) ? $_POST['c_st']:'',
+                    "c_wt"      => (isset($_POST['c_wt'])) ? $_POST['c_wt']:'',
+                    "c_st_l"    => (isset($_POST['c_st_l'])) ? $_POST['c_st_l']:'',
+                    "c_wt_l"    => (isset($_POST['c_wt_l'])) ? $_POST['c_wt_l']:'',
+                    "c_st_z"    => (isset($_POST['c_st_z'])) ? $_POST['c_st_z']:'',
+                    "c_wt_z"    => (isset($_POST['c_wt_z'])) ? $_POST['c_wt_z']:'',
+                    "c_color"   => (isset($_POST['c_color'])) ? $_POST['c_color']:'',
+                    "c_gart"    => (isset($_POST['c_gart'])) ? $_POST['c_gart']:'',
+                    "c_text"    => (isset($_POST['c_text'])) ? $_POST['c_text']:'',
+                    "c_mt"      => $mytimestamp, "c_e_id" => $e_id,
+                    "chk_c_ln"  => $chk_c_ln, "chk_c_2" => $chk_c_2,
+                    "chk_c_3"   => $chk_c_3, "chk_c_em" => $chk_c_em,
+                    "chk_c_hu"  => $chk_c_hu, "chk_fin" => $chk_fin );
+                    
+$cardata_anlegen = array( "c_ow"     => $owner,
+                            "c_ln"     => (isset($_POST['c_ln'])) ? $_POST['c_ln']:'',
+                            "c_2"      => (isset($_POST['c_2'])) ? $_POST['c_2']:'',
+                            "c_3"      => (isset($_POST['c_3'])) ? $_POST['c_3']:'',
+                            "c_em"     => (isset($_POST['c_em'])) ? $_POST['c_em']:'',
+                            "c_mkb"    => $c_mkb, 
+                            "c_d"      => $c_d,
+                            "c_hu"     => $c_hu , 
+                            "c_fin"    => $fincn,  
+                            "c_st"     => (isset($_POST['c_st'])) ? $_POST['c_st']:'',
+                            "c_wt"     => (isset($_POST['c_wt'])) ? $_POST['c_wt']:'', 
+                            "c_st_l"   => (isset($_POST['c_st_l'])) ? $_POST['c_st_l']:'', 
+                            "c_wt_l"   => (isset($_POST['c_wt_l'])) ? $_POST['c_wt_l']:'', 
+                            "c_st_z"   => (isset($_POST['c_st_z'])) ? $_POST['c_st_z']:'', 
+                            "c_wt_z"   => (isset($_POST['c_wt_z'])) ? $_POST['c_wt_z']:'', 
+                            "c_color"  => (isset($_POST['c_color'])) ? $_POST['c_color']:'', 
+                            "c_gart"   => (isset($_POST['c_gart'])) ? $_POST['c_gart']:'', 
+                            "c_text"   => (isset($_POST['c_text'])) ? $_POST['c_text']:'', 
+                            "c_mt"     => $mytimestamp, 
+                            "c_e_id"   => $e_id, 
+                            "chk_c_ln" => $chk_c_ln, 
+                            "chk_c_2"  => $chk_c_2, 
+                            "chk_c_3"  => $chk_c_3, 
+                            "chk_c_em" => $chk_c_em, 
+                            "chk_c_hu" => $chk_c_hu, 
+                            "chk_fin"  => $chk_fin);
 
 //prüfen ob der User zur Gruppe Admin gehört
 $gruppen = getGruppen();
@@ -77,7 +138,7 @@ switch( $task ){
 		else{     //Dateneingabe
 			$g_art_drop = '<select tabindex="13" name="g_art_drop"><option value="-1" selected>Getriebeart';	
 			$sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' GROUP BY c_gart ORDER BY count DESC";
-			$rs_g_art = $db->getall($sql);
+			$rs_g_art = $_SESSION['db']->getall($sql);
 			foreach( $rs_g_art as $value ){
 				$g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
 			}
