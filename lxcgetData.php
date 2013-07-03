@@ -163,32 +163,48 @@ $keinFhz='<div id="dialog" title="Fahrzeug nicht gefunden">
               <p>Es wurde kein Fahrzeug gefunden.</br>Bitte überprüfen Sie die Schreibweise!</p>
           </div>';   
 if ($_GET["adress"]) {
+  
 	include("inc/FirmenLib.php");
 	include("inc/persLib.php");
 	include("inc/UserLib.php");    
 	$found=false;
 	$suchwort=mkSuchwort($_GET["swort"]);
 	$anzahl=0;
-	$db->debug=0;
-    $rsE=getAllUser($suchwort);
-	if (chkAnzahl($rsE,$anzahl) && $_GET["swort"]) {
-		$rsV=getAllFirmen($suchwort,true,"V");	
-		if (chkAnzahl($rsV,$anzahl)) {
-			$rsC=getAllFirmen($suchwort,true,"C");
-			if (chkAnzahl($rsC,$anzahl)) {
-				$rsK=getAllPerson($suchwort);
-				if (!chkAnzahl($rsK,$anzahl)) {
-					$msg=$viele;
-				} else {
-					if ($anzahl===0) {$keineFirma=1;}
-				} 
-			} else {
-				$msg=$viele;
-			}
-		} else {
-			$msg=$viele;
-		}
-	} 
+
+    #$rsE = $rsV = $rsC = $rsK = false;
+    if ( $_GET['swort'] != '') {
+        $rsC = getAllFirmen($suchwort,true,"C");
+        if ( $rsC ) $anzahl = count($rsC);
+        if ( $anzahl <= $_SESSION['listLimit'] ) {
+            $rsV = getAllFirmen($suchwort,true,"V");    
+            if ( $rsV ) $anzahl += count($rsV);
+            if ( $anzahl <= $_SESSION['listLimit'] ) {
+                $rsK = getAllPerson($suchwort);
+                if ( $rsK ) $anzahl += count($rsK);
+                if ( $anzahl <= $_SESSION['listLimit'] ) {
+                    $rsE = getAllUser($suchwort);
+                    if ( $rsE ) $anzahl += count($rsE);
+                    //echo "Anzahl: ".$anzahl;
+                    if ( $anzahl >= $_SESSION['listLimit'] ) {
+                        $msg = $viele;
+                    } else {
+                        if ($anzahl === 0) {
+                            //$msg = $keine;
+                            $keineFirma = 1;
+                            //echo "Keine Firma = ".$keineFirma;
+                        }
+                    } 
+                } else {
+                    $msg = $viele;
+                }
+            } else {
+                $msg = $viele;
+            }
+        } else {
+                $msg = $viele;
+        }
+    }
+
     if ($anzahl>0) {
         if ($anzahl==1 && $rsC) header("Location: ../firma1.php?Q=C&id=".$rsC[0]['id']); 
         if ($anzahl==1 && $rsV) header("Location: ../firma1.php?Q=V&id=".$rsV[0]['id']); 
@@ -233,15 +249,18 @@ if ($_GET["adress"]) {
 		F1=open("suchKontakt.php?suchwort="+sw+"&Q=S","Suche","width=400, height=400, left=100, top=50, scrollbars=yes");
 </script>	
 <? }
+
 if ( $_GET['sauto'] || $keineFirma ) {
 	include("inc/lxcLib.php");
 	$result=GetOwner($_GET['swort']);
-    if ($result){
-	    if (!chkAnzahl($result,$anzahl)) {
+	if ( $result ){
+	    $anzahl = count($result);
+	    if ( $anzahl >= $_SESSION['listLimit'] ) {
             echo $viele; 
         } else {
-            if ($anzahl==0) {$msg = $keine;echo $msg;}
-            if ($anzahl==1) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
+
+            if ( $anzahl === 0 ) {$msg = $keine;echo $msg;}
+            if ( $anzahl == 1 ) header("Location: lxcmain.php?task=3&c_id=".$result[0]['c_id']);
  
 		    echo "<table id='treffer' class='tablesorter'>\n";
 		    //echo "<thead><tr ><th>KD-Nr</th><th>Name</th><th>Anschrift</th><th>Telefon</th><th></th></tr></thead>\n<tbody>\n"; 
