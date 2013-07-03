@@ -217,25 +217,26 @@ if ($_GET["adress"]) {
 		if ($rsC) foreach($rsC as $row) {
 			echo "<tr onClick='showD(\"C\",".$row["id"].");'>".
 				"<td>".$row["customernumber"]."</td><td >".$row["name"]."</td>".
-				"<td >".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td >".$row["phone"]."</td><td>K</td></tr>\n";
+				"<td >".$row["city"].(($row["street"])?", ":" ").$row["street"]."</td><td >".$row["phone"]."</td><td>K</td></tr>\n";
 			$i++;
 		}
 		if ($rsV) foreach($rsV as $row) {
 			echo "<tr onClick='showD(\"V\",".$row["id"].");'>".
 				"<td>".$row["vendornumber"]."</td><td >".$row["name"]."</td>".
-				"<td>".$row["city"].(($row["street"])?",":"").$row["street"]."</td><td>".$row["phone"]."</td><td>L</td></tr>\n";
+				"<td>".$row["city"].(($row["street"])?", ":" ").$row["street"]."</td><td>".$row["phone"]."</td><td>L</td></tr>\n";
 			$i++;
 		}
-		if ($rsK) foreach($rsK as $row) {
+		if ($rsK) 
+		print_r($rsK);foreach($rsK as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
 				"<td >".$row["cp_id"]."</td><td >".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
-				"<td >".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td >".$row["cp_phone1"]."</td><td >P</td></tr>\n";
+				"<td >".$row["cp_city"].(($row["cp_street"])?", ":" ").$row["cp_street"]."</td><td >".$row["cp_phone1"]."</td><td >P</td></tr>\n";
 			$i++;
 		}
 		if ($rsE) foreach($rsE as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"E\",".$row["id"].");'>".
 				"<td >".$row["id"]."</td><td >".$row["name"]."</td>".
-				"<td >".$row["addr2"].(($row["addr1"])?",":"").$row["addr1"]."</td><td >".$row["workphone"]."</td><td >U</td></tr>\n";
+				"<td >".$row["addr2"].(($row["addr1"])?", ":" ").$row["addr1"]."</td><td >".$row["workphone"]."</td><td >U</td></tr>\n";
 			$i++;
 		}
         echo "</tbody></table>\n"; 
