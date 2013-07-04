@@ -207,6 +207,7 @@ function checkfelder(){
 	//return respKz && respFin;
 	//alert( UniqueKz(document.car.c_ln.value,document.car.c_id.value));
 	//UniqueKz(document.car.c_ln.value,document.car.c_id.value);
+	//if ( UniqueKz( document.car.c_ln.value,document.car.c_id.value) 
 }
 
 

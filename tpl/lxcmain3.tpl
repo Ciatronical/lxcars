@@ -6,7 +6,7 @@
 	<link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="{BASEPATH}crm/jquery-ui/themes/base/jquery-ui.css"> 
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
-	{xajax_out}
+	
     <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
     <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
     <script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/german-date-time-picker.js"></script>

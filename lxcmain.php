@@ -125,7 +125,7 @@ foreach( $admin as $value ){
 
 switch( $task ){
 	case 1:	
-		GetCars( $owner, $tbname );
+		GetCars( $owner);
 	break;      	//Autos des Owners darstellen
 	case 2:	
 		if ( isset($_POST['anlegen']) ) {
@@ -164,7 +164,7 @@ switch( $task ){
 			}
 			UpdateCar( $c_id, $cardata );
 		}
-		if( $_GET["c_t"] ){
+		if( isset($_GET["c_t"]) ){
 					UpdateTypNr( $c_id, $_GET['c_t'] );
 		}
 		$miscarray = ShowCar( $c_id );
