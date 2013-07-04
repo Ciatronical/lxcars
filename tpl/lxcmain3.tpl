@@ -66,11 +66,11 @@
         .done( function(data){
             var ret = true;
             if(data){
-                alert('Ein Datensatz mit dem Kennzeichen '+kz+' existiert bereits! \nDas Fahrzeug gehört '+data+'.' );
+                alert('Ein Datensatz mit dem Kennzeichen '+kz+' existiert bereits! \nDas Fahrzeug gehört '+ data +'.' );
                 //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
                 // Achtung speichern ist kein Button!
             }
-            return data;
+            return true;
         })
     }
 	</script>
