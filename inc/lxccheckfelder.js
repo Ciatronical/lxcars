@@ -210,7 +210,7 @@ function checkfelder(){
 	//if ( UniqueKz( document.car.c_ln.value,document.car.c_id.value) 
 }
 
-
+    
 
 function checkhu( param ){
     hudate=param;

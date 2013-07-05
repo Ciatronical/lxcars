@@ -236,7 +236,7 @@ function NeuesAuto ( $cardata ) {
 function UpdateCar ( $c_id, $u ) {
     //Total neu schreiben
     global $tbname;
-    $mywahl=$u[mkbwahl];
+    $mywahl=$u['mkbwahl'];
     $i=0;
     foreach ( $u as $key => $value ) {
         // das geht sicher auch ohne i ...
@@ -263,7 +263,7 @@ function UpdateCar ( $c_id, $u ) {
         $upmkb=" c_mkb = $u[mkb], ";
         $upc_m="c_m = '', ";
     }
-    $c_t= ( $u[c_t] )? ( ", c_t = '".$u[c_t]."' " ): ( " " );
+    $c_t= ( isset($u['c_t'] ))? ( ", c_t = '".$u['c_t']."' " ): ( " " );
     $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
     //echo "sql: ".$sql;
     $rc=$_SESSION['db']->query ( $sql );
@@ -531,7 +531,7 @@ function ShowCar ( $c_id ) {
         'phone'       => $ownerarray['phone'],
         'mobile'      => $ownerarray['fax'],
         'owner'       => $rs[0]['c_ow'],
-        'task'        => $task,
+
         'c_id'       => $c_id,
         'c_ln'       => $rs[0]['c_ln'],
         'c_2'        => $rs[0]['c_2'],
@@ -886,14 +886,14 @@ function SucheMkb ( $zu2, $zu3 ) {
 function UniqueKz ( $kz, $c_id ) {
     global $tbname;
     $sql="SELECT name, c_id FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_ln =  '".$kz."'";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$_SESSION['db']->getone( $sql );
     
-    if ( $rs[0]&&$c_id!=$rs[0][c_id] ) {
-        return "Ein  Kennzeichen $kz existiert bereits! \nDas Fahrzeug gehört ".$rs[0][name].".";
+    if ( isset($rs)&&$c_id!=$rs['c_id'] ) {
+        return $rs['name'];
 
     }
     else {
-        return 1;
+        return 0;
     }
 }
 function UniqueFin ( $fin, $c_id ) {

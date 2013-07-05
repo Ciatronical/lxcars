@@ -59,8 +59,7 @@
             dateFormat: "dd.mm.yy"
         });
     });	
-    
-    function UniqueKz(kz,id){
+    $(function UniqueKz(kz,id){
         var ret = true;
         $.get('ajax.php',{kz: kz, id: id})
         .done( function(data){
@@ -73,7 +72,35 @@
             return true;
         })
     }
-	</script>
+        
+);    
+
+$(function() {
+    $( "#dialog" ).dialog({ autoOpen: false });
+});
+
+
+$(function() {
+    $("#c_ln").change(function() {
+        var kz = $("#c_ln").val();
+        var c_id = $("#c_id").val();
+        //alert('Handler for .chang ' + kz + ' called ' + c_id);
+        $.get('ajax.php',{kz: kz , id: c_id})
+            .done( function(data){
+                var ret = true;
+                if(data != 0){
+                    //alert('Ein Datensatz mit dem Kennzeichenerer '+kz+' existiert bereits! \nDas Fahrzeug gehört '+ data +'.' );
+                    //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
+                    // Achtung speichern ist kein Button!
+                    $( "#dialog" ).dialog( "open" );
+
+            }
+            
+        })         
+    })
+});
+
+</script>
 <style type="text/css">
 	#mann { position:absolute; top:60px; right:15px; border:1px solid #000;  }
 	#bmw { position:absolute; top:130px; right:15px; border:1px solid #000;  }
@@ -84,8 +111,10 @@
 {PRE_CONTENT}
 {START_CONTENT}
 <p class="listtop">{msg}</p>
-<div id="dialog"></div>
 
+<div id="dialog" title="LxCars Fehler" >
+  <p>Ein Datensatz mit diesem Kennzeichen existiert schon.</p>
+</div>
 <left>
 <div id="mann">
 <img src="image/lxcMann.gif" width="65" height="55" alt="Mann"  onclick="mann(document.car.c_2.value, document.car.c_3.value);">
@@ -96,12 +125,12 @@
 </div>
 <form name="car" id="car" action="lxcmain.php?task=3&owner={owner}&c_id={c_id}" method="post">
 <input type="hidden" name="owner" value="{owner}">
-<input type="hidden" name="c_id" value="{c_id}">
+<input type="hidden" name="c_id" id="c_id" value="{c_id}">
 <input type="hidden" name="c_t" value="{c_t}">
 <input type="hidden" name="c_m" value="{c_m}">
 
 <table>
-<tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" size="12" maxlength="9" value="{c_ln}" title="Kennzeichen!" onchange="UniqueKz(this.value,document.car.c_id.value)" {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" {chk_c_ln} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td><td>Besitzer:</td><td> <input tabindex="23" type="text" name="chown" size="22" value="{ownerstring}" title="Fahrzeughalter" id="ac1" autocomplete="off" {readonly}></td></tr>
+<tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" id="c_ln" size="12" maxlength="9" value="{c_ln}" title="Kennzeichen!"  {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" {chk_c_ln} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td><td>Besitzer:</td><td> <input tabindex="23" type="text" name="chown" size="22" value="{ownerstring}" title="Fahrzeughalter" id="ac1" autocomplete="off" {readonly}></td></tr>
 <tr><td class="info infoleft FahrzeuscheinZu2">HSN (2.1)<span></span></td><td><input tabindex="2" type="text" name="c_2" size="12" maxlength="4" value="{c_2}" title="Herstellerschlüssel aus dem Fahrzeugschein" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_2" value="true" {chk_c_2}  title="Eingabe prüfen"></td><td class="info inforightright FahrzeuscheinHerst">Hersteller:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{cm}" title="Automarke" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinZu3">TSN (2.2)<span></span></td><td><input  tabindex="3" type="text" name="c_3" size="12" maxlength="9" value="{c_3}" title="Typschlüssel aus dem Fahrzeugschein" {readonly} ><input tabindex="-1" type="checkbox" name="chk_c_3" value="true" {chk_c_3} title="Eingabe prüfen"></td><td class="info inforightright FahrzeuscheinTyp">Typ:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{ct}" title="Typ/Variante" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinAbg">Emissionsklasse<span></span></td><td><input tabindex="4" type="text" name="c_em" size="12" maxlength="6" value="{c_em}" title="Fahrzeugschein Seite zwei, mitte,Feld 14" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_em" value="true" {chk_c_em} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="feinstaub()"></td><td class="info inforightright FahrzeuscheinHub">Hubraum:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{vh}" title="Zylindervolumen" readonly="readonly"></td></tr>
@@ -131,5 +160,6 @@
 </form>
 </left>
 {END_CONTENT}
+
 </body>
 </html>
