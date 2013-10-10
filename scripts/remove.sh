@@ -1,8 +1,8 @@
 #!/bin/sh
 set +e
 
-DIR_CRM=/usr/lib/lx-office-crm
-DIR_ERP=/usr/lib/lx-office-erp
+DIR_CRM=..
+DIR_ERP=../../kivitendo-erp
 
 echo "*******************************************" 
 echo "Deinstallation LxCars."
@@ -23,9 +23,9 @@ fi
 
 #Links löschen und *.orig in * umbenennen
 ## Menü Patch rückgängig machen
-if [ -f $DIR_ERP/menu.ini.orig ]; then
-   rm $DIR_ERP/menu.ini
-   mv $DIR_ERP/menu.ini.orig $DIR_ERP/menu.ini
+if [ -f $DIR_ERP/menus/crm.ini.orig ]; then
+   rm $DIR_ERP/menus/crm.ini
+   mv $DIR_ERP/menus/crm.ini.orig $DIR_ERP/menus/crm.ini
 else
    echo "Error menue.ini.orig nicht gefunden"
 fi
@@ -55,16 +55,6 @@ if [ -f $DIR_ERP/image/icons/32x32/LxCars--Schnellsuche.png ]; then
 else
    echo "Error $DIR_ERP/image/icons/32x32/LxCars* nicht gefunden"
 fi
-
-## Patch für Button rückgängig machen
-if [ -f $DIR_CRM/tpl/firma1.tpl.orig ]; then
-   rm $DIR_CRM/tpl/firma1.tpl
-   mv $DIR_CRM/tpl/firma1.tpl.orig $DIR_CRM/tpl/firma1.tpl
-else
-   echo "Error firma1.tpl.orig nicht gefunden"
-fi 
-
-
 
 
 echo "done!!"

@@ -2,9 +2,9 @@
 #set -x
 set +e
 ## Begin: an System, Installation anpassen
-DIR_LxCars=/usr/lib/lx-office-crm/lxcars
-DIR_ERP=/usr/lib/lx-office-erp
-DIR_CRM=/usr/lib/lx-office-crm
+DIR_LxCars=.
+DIR_ERP=../../kivitendo-erp
+DIR_CRM=..
 ## END
 
 echo "Willkommen bei der LxCars-Installation"
@@ -62,8 +62,10 @@ cp $DIR_LxCars/image/icons/32x32/*  $DIR_ERP/image/icons/32x32/
 
 chown -R www-data: $DIR_LxCars
 
-## Menü erzeugen
-patch -p1 $DIR_ERP/menu.ini < $DIR_LxCars/lxc-misc/menu.ini.patch -b
+## CRM Menü erweitern
+cp $DIR_ERP/menus/crm.ini $DIR_ERP/menus/crm.ini.orig
+sed -i '1 i\[LxCars]\n[LxCars--Schnellsuche]\nACCESS=crm_other\nmodule=crm/lxcars/lxcgetData.php\n\n[LxCars--KfzSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmainSuche.php\n\n[LxCars--AuftragSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcaufSuche.php\n\n[LxCars--MotorSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmotSuche.php\n\n' $DIR_ERP/menus/crm.ini
+
  
 echo "done!!"
 
