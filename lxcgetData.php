@@ -228,11 +228,11 @@ if ($_GET["adress"]) {
 		}
 		if ($rsK) 
 		print_r($rsK);foreach($rsK as $row) {
-			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
+		/*	echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
 				"<td >".$row["cp_id"]."</td><td >".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
 				"<td >".$row["cp_city"].(($row["cp_street"])?", ":" ").$row["cp_street"]."</td><td >".$row["cp_phone1"]."</td><td >P</td></tr>\n";
 			$i++;
-		}
+		}*/
 		if ($rsE) foreach($rsE as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"E\",".$row["id"].");'>".
 				"<td >".$row["id"]."</td><td >".$row["name"]."</td>".
