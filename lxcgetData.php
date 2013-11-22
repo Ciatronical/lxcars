@@ -226,9 +226,9 @@ if ($_GET["adress"]) {
 				"<td>".$row["city"].(($row["street"])?", ":" ").$row["street"]."</td><td>".$row["phone"]."</td><td>L</td></tr>\n";
 			$i++;
 		}
-		if ($rsK) 
+		/*if ($rsK) 
 		print_r($rsK);foreach($rsK as $row) {
-		/*	echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
+			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
 				"<td >".$row["cp_id"]."</td><td >".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
 				"<td >".$row["cp_city"].(($row["cp_street"])?", ":" ").$row["cp_street"]."</td><td >".$row["cp_phone1"]."</td><td >P</td></tr>\n";
 			$i++;
