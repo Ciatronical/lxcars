@@ -586,7 +586,7 @@ function GetOwner ( $c_ln ) {
     global $tbname;
     global $tbkba;
     //global $db;
-    $sql="select c_ln, c_t, c_id, c_ow from $tbname where c_ln ILIKE '\%$c_ln\%' ORDER by c_ow";
+    $sql="select c_ln, c_t, c_id, c_ow from $tbname where c_ln ILIKE '%$c_ln%' ORDER by c_ow";
     $rs=$_SESSION['db']->getall ( $sql );
     if ( $rs ) {
         foreach ( $rs as $index => $el ) {
