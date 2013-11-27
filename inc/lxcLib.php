@@ -282,14 +282,63 @@ function GetCars ( $owner ) {
     ?>
 	<html>
 	<head><title>Fahrzeug auswaehlen</title>
-	    <?php echo $menu['stylesheets'];?> 
-        <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"];?>/main.css"></link>
-        <?php echo $menu['javascripts'];?>
+	    <?php echo $menu['stylesheets'].'
+    <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">
+    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
+    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/plugin/Table/themes/blue/style.css"> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/plugin/Table/jquery.tablesorter.js"></script> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
+	echo $head['JQUERY']; 
+	echo $head['JQUERYUI']; 
+	echo $head['THEME'];
+    echo $head['JQTABLE'];
+    echo $head['JUI-DROPDOWN']; ?> 
+    
+     <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"];?>/main.css"></link>
+       <?php echo $menu['javascripts']; ?>
+
+    <script type="text/javascript">
+     $(function()
+            {
+                $("table")
+                .tablesorter({widthFixed: true, widgets: ['zebra']});
+            }
+        )
+    </script> 
+    <style>
+    table.tablesorter {
+	   width: 800;
+    } 
+    #jui_dropdown {
+        height: 400px;
+    }
+    #jui_dropdown button {
+        padding: 3px !important;
+    }
+    #jui_dropdown ul li {
+        background: none;
+        display: inline-block;
+        list-style: none;
+    }   
+
+    .drop_container {
+        margin: 10px 10px 10px 10px ;
+        display: inline-block;
+    }   
+    .menu {
+        position: absolute;
+        width: 240px !important;
+        margin-top: 3px !important;
+    }     
+    </style>
+        
 	</head>
 	<body>
 	<?php echo $menu['pre_content'];?> 
 	<?php echo $menu['start_content'];?> 
-   <script language="JavaScript">
+   
+    <script language="JavaScript">
 	<!--
 	function showD( owner, c_id ){
 		uri1="lxcmain.php?owner=" + owner;
@@ -300,14 +349,15 @@ function GetCars ( $owner ) {
 	}
 	//-->
 	</script>
+	
 	<p class="listtop">Fahrzeuge des Kunden <?echo $owner;?></p>
 
 	<?php
 	$sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
     //
     $rs=$_SESSION['db']->getAll ( $sql );
-    echo "<table class=\"liste\">\n";
-    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">Fhz Art</th><th></th></tr>\n";
+    echo "<table id=\"liste\" class=\"tablesorter\">\n";
+    echo "<thead><tr class='bgcol3'> <th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
     $i=0;
     if ( $rs ) {
         //ToDo Lesbarkeit verbessern!!
@@ -338,10 +388,13 @@ function GetCars ( $owner ) {
                 $typ= ( $rskba!=-1 )? ( $rskba[0][5] ): ( "Keine Daten gefunden" );
                 $name= ( $rskba!=-1 )? ( $rskba[0][6] ): ( "Keine Daten gefunden" );
             }
-            echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td class=\"liste\">".$row["c_ln"]."</td><td class=\"liste\">".$herst."</td>"."<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$art."</td></tr>\n";
+           // echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td class=\"liste\">".$row["c_ln"]."</td><td class=\"liste\">".$herst."</td>"."<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$art."</td></tr>\n";
+           //  mouseover entfernt    
+           echo "<tr onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td>".$row["c_ln"]."</td><td>".$herst."</td>"."<td>".$typ." ".$name."</td><td>".$art."</td></tr>\n";        
+            
             $i++;
         }
-        echo "</table>\n";
+        echo "</tbody>\n</table>\n";
     }
     else {
         //echo "Kein Fahrzeug vorhanden..  starte cars.php?task=2 Fahrzeug anlegen";
@@ -394,6 +447,7 @@ function ShowCar ( $c_id ) {
     //echo "</br> !!!!!!lxcrs[][]!!!!  </br>";
     //print_r($lxcrs);
     $index=-1;
+ 
     if ( $lxcrs[0] ) {
         foreach ( $lxcrs as $key => $value ) {
             //echo "</br> value:".$value[0]."  rs[c_t] ".$rs[0]["c_t"];
@@ -444,7 +498,7 @@ function ShowCar ( $c_id ) {
                 echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='SaveTypNr(\"$owner\",".$c_id.",\"".$lxcrs[$key][0]."\");'>"."<td class=\"liste\">".$lxcrs[$key][1]."</td><td class=\"liste\">".$lxcrs[$key][2]."</td>"."<td class=\"liste\">".$lxcrs[$key][3]."</td><td class=\"liste\">".$lxcrs[$key][7]."</td><td class=\"liste\">".$lxcrs[$key][8]."</td></tr>\n";
                 $i++;
             }
-            echo "</table>\n";
+            echo "</table>\n"; 
             ?>	
 	
 	
