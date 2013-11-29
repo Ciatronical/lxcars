@@ -942,7 +942,7 @@ function UniqueKz ( $kz, $c_id ) {
     $sql="SELECT name, c_id FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_ln =  '".$kz."'";
     $rs=$_SESSION['db']->getone( $sql );
     
-    if ( isset($rs)&&$c_id!=$rs['c_id'] ) {
+    if ( isset($rs) &&  $c_id != $rs['c_id'] )  {
         return $rs['name'];
 
     }
@@ -952,21 +952,17 @@ function UniqueKz ( $kz, $c_id ) {
 }
 function UniqueFin ( $fin, $c_id ) {
     global $tbname;
-    if ( strlen ( $fin )==17 ) 
+    if ( strlen ( $fin ) == 17 ) 
         $sql="SELECT c_id, c_ln, name, c_fin FROM customer CROSS JOIN lxc_cars WHERE c_ow = id AND c_fin like '".$fin."_'";
     else 
         $sql="SELECT c_id, c_ln, name FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_fin = '".$fin."'";
     $rs=$_SESSION['db']->getall ( $sql );
-    $objResponse=new xajaxResponse ( );
+    
     if ( $rs[0]&&$c_id!=$rs[0][c_id]&&$fin!="" ) {
         $objResponse->alert ( "Ein Datensatz mit dieer FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
         return $objResponse;
     }
-    elseif ( XajaxVer=="05" ) {
-        //Ist das so richtig?
-        $objResponse->setReturnValue ( true );
-        return $objResponse;
-    }
+
 }
 function NewFhzTyp ( $data ) {
     $tb="lxc_mykba";

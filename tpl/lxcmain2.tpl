@@ -1,15 +1,13 @@
 <html>
-<head><title>Neues Fahrzeug </title>
-    {STYLESHEETS}
-	<link type="text/css" REL="stylesheet" HREF="../../css/{ERPCSS}"></link>
-    <link rel="stylesheet" type="text/css" href="{BASEPATH}crm/jquery-ui/themes/base/jquery-ui.css"> 
-	<link href="./css/lxcalert.css" rel="stylesheet" type="text/css" media="screen" />
-	{JAVASCRIPTS}
-	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
-    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
-    <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
-    <script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/german-date-time-picker.js"></script>
-	{xajax_out}
+<head><title>LxCars - Neues Fahrzeug anlegen</title>
+{STYLESHEETS}
+{CRMCSS}
+{JQUERY}
+{JQUERYUI}
+{THEME}
+
+{JAVASCRIPTS}
+<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 	<script type="text/javascript">
 	$(function() {
         $("#ac2").autocomplete({                          
@@ -21,13 +19,13 @@
         });
     });
     var FinGeholt = 0;
-    function HoleFin( zu2, zu3 ){
-        if( FinGeholt == 0 ){
-            xajax_SucheFin( zu2, zu3 );
-            xajax_SucheMkb( zu2, zu3 );
-            FinGeholt = 1;
-		}
-	}
+    //function HoleFin( zu2, zu3 ){
+    //    if( FinGeholt == 0 ){
+    //        xajax_SucheFin( zu2, zu3 );
+    //        xajax_SucheMkb( zu2, zu3 );
+    //        FinGeholt = 1;
+	//	}
+	//}
     $(function() {
         $("#c_d").datepicker({
             changeMonth: true,
@@ -46,19 +44,65 @@
             dateFormat: "dd.mm.yy"
         });
     });
+
+        $(function UniqueKz(kz,id){
+        var ret = true;
+        $.get('ajax.php',{kz: kz, id: id})
+        .done( function(data){
+            var ret = true;
+            if(data){
+                alert('Ein Datensatz mit dem Kennzeichen '+kz+' existiert bereits! \nDas Fahrzeug gehört '+ data +'.' );
+                //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
+                // Achtung speichern ist kein Button!
+            }
+            return true;
+        })
+    });    
+
+    $(function() {
+        $( "#dialog" ).dialog({ autoOpen: false });
+    });
+
+$(function() {
+    $("#c_ln").change(function() {
+        var kz = $("#c_ln").val();
+        var c_id = $("#c_id").val();
+        alert('Handler for .chang ' + kz + ' called ' + c_id);
+        $.get('ajax.php',{kz: kz , id: c_id})
+            .done( function(data){
+                var ret = true;
+                if(data != 0){
+                    //alert('Ein Datensatz mit dem Kennzeichenerer '+kz+' existiert bereits! \nDas Fahrzeug gehört '+ data +'.' );
+                    //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
+                    // Achtung speichern ist kein Button!
+                    $( "#dialog" ).empty();
+                    $( "#dialog" ).append( 'Ein Datensatz mit diesem Kennzeichen <b>'+kz+'</b> existiert schon. \nDas Fahrzeug gehört <b>'+ data +'</b>.');
+                    $( "#dialog" ).dialog( "open" );
+
+            }
+            
+        })         
+    })
+});
+
     </script>
 </head>
 <body onload="document.car.c_ln.focus()">
 {PRE_CONTENT}
 {START_CONTENT}
+
+<div id="dialog" title="LxCars Fehler" >
+  <p></p>
+</div>
+
 <p ></p>
 <left>
-<form name="car" action="lxcmain.php?task=2&owner={owner}&c_id={c_id}" method="post" onSubmit="return checkfelder();">
+<form name="car" action="lxcmain.php?task=2&owner={owner}&c_id={c_id}" method="post" onSubmit="return checkFelder();">
 <input type="hidden" name="owner" value="{owner}">
-<input type="hidden" name="c_id" value="{c_id}">
+<input type="hidden" name="c_id"  id="c_id" value="{c_id}">
 {MSG}
 <table>
-<tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" size="22"  maxlength="9" value="{c_ln}" title="Kennzeichen eingeben" onblur="xajax_UniqueKz(this.value,document.car.c_id.value)"><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" checked="checked" title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td></tr>
+<tr><td>Kennzeichen</td><td><input tabindex="1" type="text" name="c_ln" id="c_ln" size="22"  maxlength="9" value="{c_ln}" title="Kennzeichen eingeben"><input tabindex="-1" type="checkbox" name="chk_c_ln" value="true" checked="checked" title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="kz_to_lks(document.car.c_ln.value);"></td></tr>
 <tr><td>HSN (2.1)</td><td><input tabindex="2" type="text" name="c_2" size="22" maxlength="4" value="{c_2}" title="Herstellerschl&uuml;ssel aus dem Fahrzeugschein"><input tabindex="-1" type="checkbox" name="chk_c_2" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
 <tr><td>TSN (2.2)</td><td><input tabindex="3" type="text" name="c_3" size="22" maxlength="9" value="{c_3}" title="Typschl&uuml;ssel aus dem Fahrzeugschein"><input tabindex="-1" type="checkbox" name="chk_c_3" value="true" checked="checked" title="Eingabe prüfen"></td></tr>
 <tr><td>Emissionsklasse (14.1)</td><td><input  tabindex="4" type="text" name="c_em" size="22" maxlength="6" value="{c_em}" title="Fahrzeugschein Seite zwei, mitte"><input tabindex="-1" type="checkbox" name="chk_c_em" value="true" checked="checked" title="Eingabe prüfen"></td></tr>

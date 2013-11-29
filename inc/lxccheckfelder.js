@@ -140,7 +140,73 @@ function feinstaub(){
 	fenster.location.href = "http://dekra.de/feinstaub";
 }	
 
-function checkfelder(){
+function checkFelder(){
+    //Leeren des dialog-divs
+    $("#dialog").empty()
+    //Testvariable ob submit abgeschickt wird! false = keine Speicherung / true = Speicherung der Daten
+    var wert = true;
+    if (!document.car.c_ln.value.match(/^[A-Z ÜÄÖ]{1,3}-[A-Z]{1,2}[0-9]{1,4}[H]{0,1}$/)&& document.car.chk_c_ln.checked) {
+         
+        $("#dialog").append('Kennzeichen fehlerhaft! Folgendes Format verwenden: MOL-RK73 oder MOL-DS88H für Oldtimer.<br></br>');      
+        wert = false; 
+    }
+    if ((!(document.car.c_2.value.length <= 0)&&(!document.car.c_2.value.match(/^[0-9]{4}$/)))&& document.car.chk_c_2.checked) {
+ 
+        $("#dialog").append('Die Schlüsselnummer zu 2.2 ist fehlerhaft! Folgendes Format verwenden: 0600<br></br>'); 
+        wert = false; 	     
+    }
+    if ((!(document.car.c_3.value.length <= 0)&&(!document.car.c_3.value.match(/^([0-9A-Z]{3,10})$/))) && document.car.chk_c_ln.checked ) { 
+
+        $("#dialog").append('Die Schlüsselnummer zu 2.3 ist fehlerhaft! Folgendes Format verwenden: ABL1277L3 oder 300<br></br>');            
+        wert = false;
+    }
+    if ((!(document.car.c_em.value.length <= 0)&&(!document.car.c_em.value.match(/^[0-9]{0,2}[0-9A-Z]{4}$/)))&& document.car.chk_c_em.checked) { 
+    // if ((!(document.car.c_em.value.length <= 0)&&(!document.car.c_em.value.match(/^[0-9]{4,6}$/)))&& document.car.chk_c_em.checked) { 
+
+        $("#dialog").append('Der Abgasschlüssel ist fehlerhaft! Folgendes Format verwenden: 0456 oder 010456<br></br>');            
+        wert = false;	   
+    }
+    if ((!(document.car.fin.value.length <= 0)&&(!checkfin(document.car.fin.value,document.car.cn.value))) && document.car.chk_fin.checked) { 
+  
+        $("#dialog").append('Die Fahrzeugidentnummer (FIN) ist fehlerhaft! Folgendes Format verwenden: WDB2081091X123456. Prüfziffer nicht vergessen. Falls unbekannt \'-\' eingeben<br></br>');            
+        wert = false;	   
+    } 
+    if (!(document.car.c_hu.value.length <= 0)&&(!document.car.c_hu.value.match(/^[\d]{1,2}[.][\d]{1,2}[.][\d]{0,4}$/))) {
+         
+        $("#dialog").append('Das Datum der HU wurde fehlerhaft eingegeben! Folgendes Format verwenden: 12.8. oder 12.8.13<br></br>');            
+        wert = false;	   
+    }         
+    if (!(document.car.c_d.value.length <= 0)&&(!document.car.c_d.value.match(/^[\d]{1,2}[.][\d]{1,2}[.][\d]{1,4}$/))) {
+        
+        $("#dialog").append('Das Datum der Erstzulassung wurde fehlerhaft eingegeben! Folgendes Format verwenden: 12.8.73 oder 12.8.<br></br>');            
+        wert = false;	   
+    }        
+
+    //Anzeige des Dialogfeldes
+    if (!wert) {
+        $("#dialog").dialog({ 
+		    width: 500,
+            modal: true,
+            title: 'LxCars Fehler!', 
+            open: function(event, ui) {
+                // "X"-Button entfernen/verstecken
+                $(this).parent().children().children(".ui-dialog-titlebar-close").hide();
+            } , 
+            buttons: {
+                 "OK": function () {
+                             $(this).dialog("close");
+                     }
+            }         
+        });
+      $("#dialog").append('Fehler beheben um die Daten zu speichen!');            
+      $("#dialog").dialog("open"); 
+      
+    }
+    return wert;
+  }
+  
+
+function checkfelder_alt(){
 	if (valid_kz(document.car.c_ln.value) == -1 && document.car.chk_c_ln.checked) { 
         alert('Kennzeichen vom Kraftfahrtbundesamt nicht vergeben');
 	}

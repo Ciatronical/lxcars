@@ -20,7 +20,9 @@ $e_id  = $_SESSION["id"];
 
 
 $t = new Template( $base );
-$menu =  $_SESSION['menu']; 
+doHeader($t); 
+//print_r($_SESSION['javascripts']);
+/*
 $t->set_var( array(
     'JAVASCRIPTS'   => $menu['javascripts'],
     'STYLESHEETS'   => $menu['stylesheets'],
@@ -28,6 +30,7 @@ $t->set_var( array(
     'START_CONTENT' => $menu['start_content'],
     'END_CONTENT'   => $menu['end_content'],
     'BASEPATH'      => $_SESSION['basepath'] ) );
+    */  
 
 $chk_c_ln = isset($_POST['chk_c_ln']) ? "true" : "false" ;
 $chk_c_2  = isset($_POST['chk_c_2'])  ? "true" : "false" ;
