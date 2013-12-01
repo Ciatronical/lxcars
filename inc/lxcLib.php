@@ -679,7 +679,7 @@ function SucheCars ( $was ) {
             }
             $i++;
             //echo "<br>"."I=".$i;
-            $opva=" ILIKE '\%$value\%' ";
+            $opva=" ILIKE '%$value%' ";
             //Operand Value
             /*if($key == c_ow){
             	$rs_all = getAllFirmen($value);
@@ -716,9 +716,7 @@ function SucheCars ( $was ) {
     }
     if ( $where ) {
         $sql="select c_ln, c_2, c_3, c_id, c_ow, name, city from lxc_cars JOIN customer ON c_ow = id where $where ORDER by c_ow";
-        //echo "SucheCars mit where-String: $where ";
         $rs=$_SESSION['db']->getall ( $sql );
-        //print_r($rs);
     }
     if ( $rs ) {
         foreach ( $rs as $key => $vaule ) {
