@@ -896,6 +896,7 @@ function ts2gerdate ( $myts ) {
         return $wt." ".$day.".".$m." ".$year." ".$hour.":".$minute;
     }
 }
+//ToDo !!!!!!
 function SucheFin ( $zu2, $zu3 ) {
     //Sucht mit der KBA einen passenden Anfang fur die FIN
     //global $db;
@@ -904,22 +905,21 @@ function SucheFin ( $zu2, $zu3 ) {
     $zu3=substr ( $zu3, 0, 3 );
     for ( $i=11;$i>=3;$i-- ) {
         $sql="SELECT MAX( fin ) AS fin, COUNT( fin )FROM( SELECT DISTINCT SUBSTR( c_fin, 1, ".$i." ) AS fin FROM $tbname WHERE c_2 = '".$zu2."' AND c_3 LIKE '".$zu3."%' ORDER BY fin ) AS rs";
-        $rs=$_SESSION['db']->getall ( $sql );
-        if ( $rs[0]['count']=="1" ) {
-            $fin=$rs[0]['fin'];
+        $rs=$_SESSION['db']->getone( $sql );
+        if ( $rs['count']=="1" ) {
+            $fin=$rs['fin'];
             $erfolg=1;
             break;
         }
     }
     if ( $erfolg==0 ) {
         $sql="SELECT  SUBSTR( c_fin, 1, 3 ) AS fin , count( SUBSTR( c_fin, 1, 3 )) AS c FROM lxc_cars WHERE c_2 = '".$zu2."' GROUP BY SUBSTR( c_fin, 1, 3 ) ORDER BY c DESC LIMIT 1";
-        $rs=$_SESSION['db']->getall ( $sql );
-        $fin=$rs[0]['fin'];
+        $rs=$_SESSION['db']->getone ( $sql );
+        $fin=$rs['fin'];
     }
-    $objResponse=new xajaxResponse ( );
-    $objResponse->assign ( "idfin", "value", $fin );
-    return $objResponse;
+    return $fin;
 }
+
 function SucheMkb ( $zu2, $zu3 ) {
     $lxcrs=lxc2db ( " -C ".$zu2." ".substr ( $zu3, 0, 3 ) );
     if ( $lxcrs[0] ) {
@@ -931,10 +931,9 @@ function SucheMkb ( $zu2, $zu3 ) {
             $ret.='<option value="'.$value[29].'">'.$value[29].'</option>';
         }
     }
-    $objResponse=new xajaxResponse ( );
-    $objResponse->assign ( 'mkbdrop', 'innerHTML', $ret );
-    return $objResponse;
+    return $ret;
 }
+
 function UniqueKz ( $kz, $c_id ) {
     global $tbname;
     $sql="SELECT name, c_id FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_ln =  '".$kz."'";
@@ -948,20 +947,24 @@ function UniqueKz ( $kz, $c_id ) {
         return 0;
     }
 }
+
 function UniqueFin ( $fin, $c_id ) {
     global $tbname;
     if ( strlen ( $fin ) == 17 ) 
         $sql="SELECT c_id, c_ln, name, c_fin FROM customer CROSS JOIN lxc_cars WHERE c_ow = id AND c_fin like '".$fin."_'";
     else 
         $sql="SELECT c_id, c_ln, name FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_fin = '".$fin."'";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$_SESSION['db']->getone( $sql );
     
-    if ( $rs[0]&&$c_id!=$rs[0][c_id]&&$fin!="" ) {
-        $objResponse->alert ( "Ein Datensatz mit dieer FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
-        return $objResponse;
+    if ( $rs && $c_id != $rs[c_id] && $fin!="" ) {
+        //$objResponse->alert ( "Ein Datensatz mit diser FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
+        return "<b>".$rs['c_ln']."</b> gehört <b>".$rs['name']."</b>. <br /> ";
     }
-
+    else {
+        return 0;
+    }
 }
+
 function NewFhzTyp ( $data ) {
     $tb="lxc_mykba";
     $fields=array_keys ( $data );

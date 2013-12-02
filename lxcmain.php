@@ -10,28 +10,17 @@ include_once( "../inc/template.inc" );
 include_once( "./inc/lxcLib.php" );
 include_once( "../inc/conf.php" );
 include_once( "../inc/UserLib.php" );
-
+include_once( "../inc/FirmenLib.php" );
 
 $owner = isset( $_GET["owner"] )? $_GET["owner"] : $_POST["owner"]; 
 $task  = isset( $_GET["task"] ) ? $_GET["task"] : $_POST["task"]; 
 $c_id  = isset( $_GET["c_id"] ) ? $_GET["c_id"]: ""; 
 $e_id  = $_SESSION["id"]; 	
-//print_r($_SESSION );
-
 
 $t = new Template( $base );
 doHeader($t); 
-//print_r($_SESSION['javascripts']);
-/*
-$t->set_var( array(
-    'JAVASCRIPTS'   => $menu['javascripts'],
-    'STYLESHEETS'   => $menu['stylesheets'],
-    'PRE_CONTENT'   => $menu['pre_content'],
-    'START_CONTENT' => $menu['start_content'],
-    'END_CONTENT'   => $menu['end_content'],
-    'BASEPATH'      => $_SESSION['basepath'] ) );
-    */  
-
+$t->set_var( array( 'BASEPATH' => $_SESSION['basepath'] ) );
+   
 $chk_c_ln = isset($_POST['chk_c_ln']) ? "true" : "false" ;
 $chk_c_2  = isset($_POST['chk_c_2'])  ? "true" : "false" ;
 $chk_c_3  = isset($_POST['chk_c_3'])  ? "true" : "false" ;
@@ -43,20 +32,11 @@ $c_hu      = ( !isset($_POST['c_hu'])||$_POST['c_hu']== "" )? "1900-01-01" : dat
 $fincn     = isset($_POST['fin'])?$_POST['fin']:'';
 $fincn    .= isset($_POST['cn'])?$_POST['cn']:'';
 $mytimestamp = mktime();
-//print_r($_POST);
-$mkb = (isset($_POST['mkb']))?$_POST['mkb']:'';
-$c_mkb = (!isset($_POST['mkbdrop'])|| $_POST['mkbdrop'] == "0" )? $mkb : $_POST['mkbdrop'];
+$owner_data = getFirmenStamm( $owner );
 
+$mkb = ( isset($_POST['mkb'] ) ) ? $_POST['mkb'] : '';
+$c_mkb = ( !isset($_POST['mkbdrop'] ) || $_POST['mkbdrop'] == "0" )? $mkb : $_POST['mkbdrop'];
 
-
-/**
-sets $var to $string if $var not set
-
-funktion set_var_if_not_set(&$var, $string){
-    return (isset($var)) ? $var: $string;
-}
-
-*/
 $cardata = array(  "owner" => $owner, 
                     "c_ln"      => (isset($_POST['c_ln'])) ? $_POST['c_ln']:'',
                     "c_ln"      => (isset($_POST['c_ln'])) ? $_POST['c_ln']:'',
@@ -146,7 +126,7 @@ switch( $task ){
 				$g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
 			}
 			$g_art_drop.='</select>';
-			$msg = "<p class=\"listtop\">Fahrzeug anlegen durch: ".$e_id."</p>";
+			$msg = "<p class=\"listtop\">Fahrzeug von <b> ".$owner_data['name']."</b> anlegen.</p>";
 			$t->set_var( array( 'owner' => $owner, 'c_text' =>"Kommentar eingeben", 'g_art_drop' => $g_art_drop, 'ERPCSS' => $_SESSION["stylesheet"], 'MSG'=>$msg ) );	//$formdata['ERPCSS'] = $_SESSION["stylesheet"];
 			
 			$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));

@@ -2,15 +2,14 @@
 <html>
 <head><title>Fahrzeudaten  anzeigen von {ln} mit der ID {c_id}</title>
 {STYLESHEETS}
+<link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
 {CRMCSS}
 {JQUERY}
 {JQUERYUI}
+<script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/german-date-time-picker.js"></script>
 {THEME}
-
-{JAVASCRIPTS}
-<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
-
-	<script language="JavaScript">
+<script language="JavaScript">
     $(function() {
         $("#ac1").autocomplete({                          
             source: "lxc_ac.php?case=owner",                            
@@ -39,7 +38,6 @@
 		uri=uri1+uri2+uri3+uri4;
 		location.href=uri;
 	}	
-
     $(function() {
         $("#c_d").datepicker({
             changeMonth: true,
@@ -47,6 +45,7 @@
             yearRange: "-20:-0" ,
             dateFormat: "dd.mm.yy"
         });
+        
     });	
 	$(function() {
         $("#c_hu").datepicker({
@@ -58,45 +57,17 @@
             dateFormat: "dd.mm.yy"
         });
     });	
-    $(function UniqueKz(kz,id){
-        var ret = true;
-        $.get('ajax.php',{kz: kz, id: id})
-        .done( function(data){
-            var ret = true;
-            if(data){
-                alert('Ein Datensatz mit dem Kennzeichen '+kz+' existiert bereits! \nDas Fahrzeug gehört '+ data +'.' );
-                //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
-                // Achtung speichern ist kein Button!
-            }
-            return true;
-        })
-    });    
-
+    
 $(function() {
     $( "#dialog" ).dialog({ autoOpen: false });
 });
-
+    
+$(function() {
+    $( "#hu_dialog" ).dialog({ autoOpen: false });
+});
 
 $(function() {
-    $("#c_ln").change(function() {
-        var kz = $("#c_ln").val();
-        var c_id = $("#c_id").val();
-        //alert('Handler for .chang ' + kz + ' called ' + c_id);
-        $.get('ajax.php',{kz: kz , id: c_id})
-            .done( function(data){
-                var ret = true;
-                if(data != 0){
-                    //alert('Ein Datensatz mit dem Kennzeichenerer '+kz+' existiert bereits! \nDas Fahrzeug gehört '+ data +'.' );
-                    //ToDo!!!  Buttton ruft UniqueKz() bis data leer ist! Und zwar so: http://api.jquery.com/submit/
-                    // Achtung speichern ist kein Button!
-                    $( "#dialog" ).empty();
-                    $( "#dialog" ).append( 'Ein Datensatz mit diesem Kennzeichen <b>'+kz+'</b> existiert schon. \nDas Fahrzeug gehört <b>'+ data +'</b>.');
-                    $( "#dialog" ).dialog( "open" );
-
-            }
-            
-        })         
-    })
+    $("#c_ln").change(UniqueKz);
 });
 
 </script>
@@ -112,6 +83,9 @@ $(function() {
 <p class="listtop">{msg}</p>
 
 <div id="dialog" title="LxCars Fehler" >
+  <p></p>
+</div>
+<div id="hu_dialog" title="Hauptuntersuchung fällig" >
   <p></p>
 </div>
 <left>
@@ -135,7 +109,7 @@ $(function() {
 <tr><td class="info infoleft FahrzeuscheinAbg">Emissionsklasse<span></span></td><td><input tabindex="4" type="text" name="c_em" size="12" maxlength="6" value="{c_em}" title="Fahrzeugschein Seite zwei, mitte,Feld 14" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_em" value="true" {chk_c_em} title="Eingabe prüfen"><input type="button" name="Info" value="Info" onclick="feinstaub()"></td><td class="info inforightright FahrzeuscheinHub">Hubraum:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{vh}" title="Zylindervolumen" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinBj">Datum Zulassung<span></span></td><td><input tabindex="5" type="text" id="c_d" name="c_d" size="12" maxlength="10" value="{c_d}" title="Fahrzeugschein Seite zwei, oben links, Feld B" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_d" value="chk_c_d" checked="checked" readonly="readonly" title="Eingabe wird geprüft"></td><td>Bj. von - bis: </td><td><input tabindex="-1" type="text" size="29" value="{bj}" title="Zeitraum in dem das Fahrzeug produziert wurde" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinHu">Datum HU+AU<span></span></td><td><input tabindex="6" type="text" id="c_hu" name="c_hu" size="12" maxlength="10" value="{c_hu}" title="Stempel Fahrzeugscheinrückseite oder vom Fahrzeug ablesen" {readonly}><input tabindex="-1" type="checkbox" name="chk_c_hu" value="chk_c_hu" {chk_c_hu} title="Fälligkeit der HU wird geprüft"></td><td  class="info inforightright FahrzeuscheinLeist">Leistung:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{peff}" title="Pferdchen" readonly="readonly"></td></tr>
-<tr><td class="info infoleft FahrzeuscheinFin">FIN+Pr&uuml;fziffer<span></span> </td><td><input tabindex="7" type="text" name="fin" size="24" maxlength="17" value="{fin}" title="Fahrzeugschein Seite 2 und im Fhz" onchange="xajax_UniqueFin(this.value,document.car.c_id.value)" {readonly}><input tabindex="8" type="text" name="cn" size="1" maxlength="1" value="{cn}" title="Fahrzeugschein Seite 2, Feld 3 (falls unbekannt - eingeben)" {readonly}><input tabindex="-1" type="checkbox" name="chk_fin" value="true" {chk_fin} title="Eingabe prüfen"></td><td>Drehmoment:</td><td><input tabindex="-1" type="text" size="29" value="{drehm}" title="falls bekannt" readonly="readonly"></td></tr>
+<tr><td class="info infoleft FahrzeuscheinFin">FIN+Pr&uuml;fziffer<span></span> </td><td><input tabindex="7" type="text" name="fin" size="24" maxlength="17" value="{fin}" title="Fahrzeugschein Seite 2 und im Fhz" onchange="UniqueFin(this.value,document.car.c_id.value)" {readonly}><input tabindex="8" type="text" name="cn" size="1" maxlength="1" value="{cn}" title="Fahrzeugschein Seite 2, Feld 3 (falls unbekannt - eingeben)" {readonly}><input tabindex="-1" type="checkbox" name="chk_fin" value="true" {chk_fin} title="Eingabe prüfen"></td><td>Drehmoment:</td><td><input tabindex="-1" type="text" size="29" value="{drehm}" title="falls bekannt" readonly="readonly"></td></tr>
 <tr><td>Motorcode</td><td><input tabindex="9" type="text" name="mkb" size="12" maxlength="22" value="{mkb}" title="Steht meist auf dem Motor"  {readonly}>{mkbdrop} <input type="button" name="InfoMotor" value="Info" onclick="zeigeMotor(document.car.owner.value, document.car.c_id.value, document.car.mkb.value);"></td><td>Verdichtung:</td><td title="Kompressionsverh&auml;ltnis"><input tabindex="-1" type="text" size="29" value="{verd}" title="Kompressionsverh&auml;ltnis" readonly="readonly"></td></tr>
 <tr><td>Farbnummer</td><td><input tabindex="11" tyu7pe="text" name="c_color" size="12" maxlength="22" value="{c_color}" title="Fahrzeugschein Seite 3, Feld R" {readonly}></td><td>Ventile:</td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{vent}" title="Anzahl der Ventile" readonly="readonly"></td></tr>
 <tr><td>Getriebeart</td><td><input id="ac2" tabindex="12" type="text" name="c_gart" size="12" value="{c_gart}" title="Schalter, Automatik, DSG" autocomplete="off" {readonly}>{g_art_drop}</td><td>Zylinder:</td><td><input tabindex="-1" type="text" size="29" value="{zyl}" title="Anzahl der Zylinder" readonly="readonly"></td></tr>

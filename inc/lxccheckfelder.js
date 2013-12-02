@@ -142,9 +142,12 @@ function feinstaub(){
 
 function checkFelder(){
     //Leeren des dialog-divs
+    //var mytest = UniqueKz();
+    //alert( "Mytest: " + mytest );
     $("#dialog").empty()
     //Testvariable ob submit abgeschickt wird! false = keine Speicherung / true = Speicherung der Daten
-    var wert = true;
+    var wert = UniqueKz();
+        wert = UniqueFin( document.car.fin.value,document.car.c_id.value );
     if (!document.car.c_ln.value.match(/^[A-Z ÜÄÖ]{1,3}-[A-Z]{1,2}[0-9]{1,4}[H]{0,1}$/)&& document.car.chk_c_ln.checked) {
          
         $("#dialog").append('Kennzeichen fehlerhaft! Folgendes Format verwenden: MOL-RK73 oder MOL-DS88H für Oldtimer.<br></br>');      
@@ -204,81 +207,9 @@ function checkFelder(){
     }
     return wert;
   }
-  
-
-function checkfelder_alt(){
-	if (valid_kz(document.car.c_ln.value) == -1 && document.car.chk_c_ln.checked) { 
-        alert('Kennzeichen vom Kraftfahrtbundesamt nicht vergeben');
-	}
-    if (!document.car.c_ln.value.match(/^[A-Z ÜÄÖ]{1,3}-[A-Z]{1,2}[0-9]{1,4}[H]{0,1}$/)&& document.car.chk_c_ln.checked) {
-        $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Kennzeichen'           
-        });  
-        $("#dialog").html('Kennzeichen fehlerhaft! Folgendes Format verwenden: MOL-RK73 oder MOL-DS88H für Oldtimer.');            
-        return false; 
-    }
-	if ((!(document.car.c_2.value.length <= 0)&&(!document.car.c_2.value.match(/^[0-9]{4}$/)))&& document.car.chk_c_2.checked) {
-        $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Schlüsselnummer'           
-        });  
-        $("#dialog").html('Die Schlüsselnummer zu 2.2 ist fehlerhaft! Folgendes Format verwenden: 0600');            
-        return false; 	     
-    }   
-	if ((!(document.car.c_3.value.length <= 0)&&(!document.car.c_3.value.match(/^([0-9A-Z]{3,10})$/))) && document.car.chk_c_ln.checked ) { 
-	    $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Schlüsselnummer'           
-        });  
-        $("#dialog").html('Die Schlüsselnummer zu 2.3 ist fehlerhaft! Folgendes Format verwenden: ABL1277L3 oder 300');            
-        return false; 	     
-    }
-	if ((!(document.car.c_em.value.length <= 0)&&(!document.car.c_em.value.match(/^[0-9]{4,6}$/)))&& document.car.chk_c_em.checked) { 
-	    $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Abgasschlüssel'           
-        });  
-        $("#dialog").html('Der Abgasschlüssel ist fehlerhaft! Folgendes Format verwenden: 0456 oder 010456');            
-        return false;	   
-    }
-	if ((!(document.car.fin.value.length <= 0)&&(!checkfin(document.car.fin.value,document.car.cn.value))) && document.car.chk_fin.checked) { 
-		    $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Fahrzeugidentnummer'           
-        });  
-        $("#dialog").html('Die Fahrzeugidentnummer (FIN) ist fehlerhaft! Folgendes Format verwenden: WDB2081091X123456. Prüfziffer nicht vergessen. Falls unbekannt \'-\' eingeben');            
-        return false;	   
-    } 
-    if (!(document.car.c_hu.value.length <= 0)&&(!document.car.c_hu.value.match(/^[\d]{1,2}[.][\d]{1,2}[.][\d]{0,4}$/))) {
-		    $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Datum HU'           
-        });  
-        $("#dialog").html('Das Datum der HU wurde fehlerhaft eingegeben! Folgendes Format verwenden: 12.8. oder 12.8.13');            
-        return false;	   
-    }         
-    if (!(document.car.c_d.value.length <= 0)&&(!document.car.c_d.value.match(/^[\d]{1,2}[.][\d]{1,2}[.][\d]{1,4}$/))) {
-		    $("#dialog").dialog({ 
-            modal: true,
-            title: 'Fehler Datum Erstzulassung'           
-        });  
-        $("#dialog").html('Das Datum der Erstzulassung wurde fehlerhaft eingegeben! Folgendes Format verwenden: 12.8.73 oder 12.8.');            
-        return false;	   
-    }        
-    //var respKz = false;
-    //respKz = xajax.call('UniqueKz',{mode:'synchronous',parameters:[document.car.c_ln.value,document.car.c_id.value]});
-	//var respFin = false;
-	//respFin = xajax.call('UniqueFin',{mode:'synchronous',parameters:[document.car.fin.value,document.car.c_id.value]});					
-	//return respKz && respFin;
-	//alert( UniqueKz(document.car.c_ln.value,document.car.c_id.value));
-	//UniqueKz(document.car.c_ln.value,document.car.c_id.value);
-	//if ( UniqueKz( document.car.c_ln.value,document.car.c_id.value) 
-}
-
-    
-
+ 
 function checkhu( param ){
+    
     hudate=param;
 	var jetzt = new Date();
 	Tag = hudate.substr(0,2);
@@ -286,8 +217,9 @@ function checkhu( param ){
 	Jahr = hudate.substr(6,4);
 	USDatum = Monat + "/" + Tag + "/" + Jahr;
 	if ( Date.parse(USDatum) < jetzt.getTime() && document.car.chk_c_hu.checked ) {
-	    $("#hu_dialog").dialog({ modal: true});
-	    $("#hu_dialog").html("Die Hauptuntersuchung ist seit  " + Date.parse(USDatum) + " abgelaufen");//ToDo
+    	$("#hu_dialog").dialog({ modal: true});
+	    $("#hu_dialog").html("Die Hauptuntersuchung ist seit dem " + param + " abgelaufen");//ToDo
+	    $("#hu_dialog").dialog("open");
 	    return false;
     }
 }
@@ -320,3 +252,49 @@ function EBtoNum( fin ){
 	if(fin='I'||fin=='R'||fin=='Z'||fin=='9'){return 9;}
 	else{alert("EBtoFin Error!!!");}
 }
+
+function UniqueKz(){
+    var kz = $("#c_ln").val();
+    var c_id = $("#c_id").val();
+    var returnValue = null;
+    $.ajax({ url: "ajax.php", data: { kz: kz, id: c_id }, async: false}).done( function(data){ 
+        if(data != 0){
+            $( "#dialog" ).empty();
+            $( "#dialog" ).append( 'Ein Datensatz mit dem Kennzeichen <b>'+kz+'</b> existiert bereits. \nDas Fahrzeug gehört <b>'+ data +'</b>.');
+            $( "#dialog" ).dialog( "open" );
+            returnValue = false;
+        } 
+        else {
+            returnValue = true;
+        } 
+    }) 
+    return returnValue;        
+}
+
+function UniqueFin( fin, c_id ){
+    var returnValue = null;
+    $.ajax({ url: "ajax.php", data: { fin: fin, id: c_id }, async: false}).done( function(data){ 
+        if(data != 0){
+            $( "#dialog" ).empty();
+            $( "#dialog" ).append( 'Ein Datensatz mit der FIN <b>'+fin+'</b> existiert bereits. \nDas Fahrzeug '+ data );
+            $( "#dialog" ).dialog( "open" );
+            returnValue = false;
+        } 
+        else {
+            returnValue = true;
+        } 
+    }) 
+    return returnValue;        
+}  
+ 
+function SucheFin( zu2, zu3 ){
+    $.ajax({ url: "ajax.php", data: { fin_zu2: zu2, fin_zu3: zu3 }, async: false}).done( function(data){ 
+        $("#fin").val( data );    
+    })
+}
+
+function SucheMkb( zu2, zu3 ){
+    $.ajax({ url: "ajax.php", data: { mkb_zu2: zu2, mkb_zu3: zu3 }, async: false}).done( function(data){ 
+        $("#mkbdrop").append( data );    
+    })                
+}     
