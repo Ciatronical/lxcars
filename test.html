@@ -1,0 +1,40 @@
+<html>
+<head><title></title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://www.steamdev.com/zclip/js/jquery.zclip.js"></script>
+<style type="text/css">
+<!--
+td { padding: 0px; border: solid 0px; } 
+.zclip { position: relative; display: inline-block; } 
+-->
+</style>
+<script>
+$(document).ready(function(){ 
+    $(".test01").zclip({
+        path: "http://www.steamdev.com/zclip/js/ZeroClipboard.swf",
+        copy: function(){
+            return "Test 01 Table in Clipboard";
+        }
+    });
+
+     
+}); //- See more at: http://www.steamdev.com/zclip/ 
+</script>
+</head>
+<body>
+<h2>Test zclip in Tabelle mit Inputfeld</h2>
+<form name="test">
+<table>
+    <tr>
+        <td>
+            <span class="zclip">
+                <span class="test01"><input type="text"></span>test03
+           </span>
+           
+        </td>
+
+    </tr>
+</table>
+</form>
+</body>
+</html>
