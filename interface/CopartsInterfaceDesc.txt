@@ -1,0 +1,188 @@
+
+
+	Die Applikation
+
+	Speicherort der Applikation
+
+Für den externen Zugriff aus einem Dealer- Management- System heraus müssen aus der Windows Registry verschiedene Einträge ausgelesen werden.  Der Schlüssel für den Pfad der Applikation lautet:
+
+
+
+„HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname
+
+
+
+ Der Systemname ist bei dem zuständigen Projektverantwortlichen zu erfragen\Path“.
+
+
+
+Der Schlüsselname für den Applikationsnamen Iautet 
+
+„HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname
+
+ Der Systemname ist bei dem zuständigen Projektverantwortlichen zu erfragen\AppName”. Ist dieser nicht vorhanden, so muss der Applikationsname  „DVSE.WinApp.NemoKat.exe“ verwendet werden.
+
+
+
+
+
+
+	Die Controldatei
+
+	Speicherort der Controldatei
+
+Für den externen Zugriff aus einem Dealer- Management- System heraus müssen aus der Windows Registry verschiedene Einträge ausgelesen werden.  Der Schlüssel für die Controldatei lautet:
+
+
+
+„HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname
+
+ Der Systemname ist beim zuständigen Projektverantwortlichen zu erfragen\Control“
+
+
+
+
+
+	Format der Controldatei 
+
+Die Suchinformation wird in der Datei “Controlfile.cf“ geschrieben. An welcher Stelle diese Controldatei liegen muss, steht auch in der Registry (siehe ). 
+
+Diese wird gefüllt um die Applikation (Systemname)  zu starten und z.B. ein Fahrzeug zu übergeben. Die Datei muss in einer XML Struktur aufgebaut sein. Der Aufbau wird im folgenden Beispiel erklärt.
+
+Beispiel:
+
+In diesem Beispiel wird durch die Controldatei ein Fahrzeug über eine Ktypnr ausgewählt.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Der Name und der Schlüssel des Arguments haben die gleiche Bezeichnung. Eine Übersicht der verschiedenen Argumente folgt. 
+
+	Kommandos der Controldatei
+
+In der Controldatei werden verschiedene Kommandos und ihre Argumente verarbeitet. In der folgenden Tabelle sind die Kommandos (Command) und die Argumente (Arg Name)  aufgelistet:
+
+
+
+<Command Name = „[PKW]“>
+
+<Arg Name = „[KTYPNR]“ Value ="" />
+
+Reset des PKW-Auswahlfensters
+
+<Arg Name = „[KTYPNR]“ Value =" KtypNr " />
+
+KTypNr ist nummerisch
+
+Auswahl des PKW’s mit der TecDoc KTypNr
+
+<Arg Name = „[KBANR]“ Value = ""/>
+
+Reset des PKW-Auswahlfensters
+
+<Arg Name = „[KBANR]“ Value = "KtypNr"/>
+
+KBA Nr. ist alphanummerisch
+
+Auswahl des PKW’s mit der KBA Nr.. Sollte die Auswahl auf mehrere TecDoc –Fahrzeuge verweisen, muss eine zusätzliche Auswahl durchgeführt werden.
+
+<Arg Name = „[VIN]“ Value ="" />
+
+Anzeige der Fahrgestellnummer
+
+<Arg Name = „[EZ]“ Value ="" />
+
+Anzeige der Erstzulassung
+
+<Arg Name = „[MCODE]“ Value ="" />
+
+Anzeige des Motorcodes
+
+<Arg Name = „[KMStand]“ Value ="" />
+
+Anzeige des Kilometerstandes
+
+<Arg Name = „[KDName]“ Value ="" />
+
+Anzeige des Kundennamens
+
+<Arg Name = „[KZN]“ Value ="" />
+
+Anzeige des Kennzeichen
+
+
+
+
+
+<Command Name="[NKW]">
+
+<Arg Name = „[NTYPNR]“ Value ="" />
+
+Reset des NKW-Auswahlfensters
+
+<Arg Name = „[NTYPNR]“ value = "NtypNr"/>
+
+NTypNr ist nummerisch.
+
+Auswahl eines NKW’s mit der TecDoc Nummer NTypNr.
+
+
+
+
+
+<Command Name="[TYPART]">
+
+<Arg Name = „[ TYPART]“ value = "pkw"/>
+
+“PKW”, wenn PKW in der Applikation aktiviert werden soll
+
+„NKW“, wenn NKW in der Applikation aktiviert werden soll
+
+
+
+
+
+
+
+<Command Name=”[ APP]”>
+
+<Arg Name="[COMMAND]" Value="min" />
+
+<Arg Name="[COMMAND]" Value="max" />
+
+Min: minimieren der Applikation
+
+Max: Maximieren der Applikation
+
+
+
+Die Datei wird während der Laufzeit des SmartClients ständig überprüft. Sobald sich der Inhalt ändert, reagiert das Programm auf diese Änderungen und führt die entsprechenden Befehle aus. 
+
+Wenn die Applikation noch nicht geöffnet ist, beschreiben Sie die Datei und rufen die Applikation auf.
+
+
+Compiler:
+http://prdownloads.sourceforge.net/dev-cpp/devcpp-4.9.9.2_setup.exe
+
+Filehandle c++:
+http://www.willemer.de/informatik/cpp/fileop.htm
+
+Idee:
+
+
+
+
+
