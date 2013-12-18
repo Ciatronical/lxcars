@@ -282,14 +282,63 @@ function GetCars ( $owner ) {
     ?>
 	<html>
 	<head><title>Fahrzeug auswaehlen</title>
-	    <?php echo $menu['stylesheets'];?> 
-        <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"];?>/main.css"></link>
-        <?php echo $menu['javascripts'];?>
+	    <?php echo $menu['stylesheets'].'
+    <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">
+    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
+    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/plugin/Table/themes/blue/style.css"> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/plugin/Table/jquery.tablesorter.js"></script> 
+    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
+	echo $head['JQUERY']; 
+	echo $head['JQUERYUI']; 
+	echo $head['THEME'];
+    echo $head['JQTABLE'];
+    echo $head['JUI-DROPDOWN']; ?> 
+    
+     <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"];?>/main.css"></link>
+       <?php echo $menu['javascripts']; ?>
+
+    <script type="text/javascript">
+     $(function()
+            {
+                $("table")
+                .tablesorter({widthFixed: true, widgets: ['zebra']});
+            }
+        )
+    </script> 
+    <style>
+    table.tablesorter {
+	   width: 800;
+    } 
+    #jui_dropdown {
+        height: 400px;
+    }
+    #jui_dropdown button {
+        padding: 3px !important;
+    }
+    #jui_dropdown ul li {
+        background: none;
+        display: inline-block;
+        list-style: none;
+    }   
+
+    .drop_container {
+        margin: 10px 10px 10px 10px ;
+        display: inline-block;
+    }   
+    .menu {
+        position: absolute;
+        width: 240px !important;
+        margin-top: 3px !important;
+    }     
+    </style>
+        
 	</head>
 	<body>
 	<?php echo $menu['pre_content'];?> 
 	<?php echo $menu['start_content'];?> 
-   <script language="JavaScript">
+   
+    <script language="JavaScript">
 	<!--
 	function showD( owner, c_id ){
 		uri1="lxcmain.php?owner=" + owner;
@@ -300,14 +349,15 @@ function GetCars ( $owner ) {
 	}
 	//-->
 	</script>
+	
 	<p class="listtop">Fahrzeuge des Kunden <?echo $owner;?></p>
 
 	<?php
 	$sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
     //
     $rs=$_SESSION['db']->getAll ( $sql );
-    echo "<table class=\"liste\">\n";
-    echo "<tr class='bgcol3'><th>Kennzeichen</th><th class=\"liste\">Hersteller</th><th class=\"liste\">Fahrzeugtyp</th><th class=\"liste\">Fhz Art</th><th></th></tr>\n";
+    echo "<table id=\"liste\" class=\"tablesorter\">\n";
+    echo "<thead><tr class='bgcol3'> <th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
     $i=0;
     if ( $rs ) {
         //ToDo Lesbarkeit verbessern!!
@@ -338,10 +388,13 @@ function GetCars ( $owner ) {
                 $typ= ( $rskba!=-1 )? ( $rskba[0][5] ): ( "Keine Daten gefunden" );
                 $name= ( $rskba!=-1 )? ( $rskba[0][6] ): ( "Keine Daten gefunden" );
             }
-            echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td class=\"liste\">".$row["c_ln"]."</td><td class=\"liste\">".$herst."</td>"."<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$art."</td></tr>\n";
+           // echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td class=\"liste\">".$row["c_ln"]."</td><td class=\"liste\">".$herst."</td>"."<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$art."</td></tr>\n";
+           //  mouseover entfernt    
+           echo "<tr onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td>".$row["c_ln"]."</td><td>".$herst."</td>"."<td>".$typ." ".$name."</td><td>".$art."</td></tr>\n";        
+            
             $i++;
         }
-        echo "</table>\n";
+        echo "</tbody>\n</table>\n";
     }
     else {
         //echo "Kein Fahrzeug vorhanden..  starte cars.php?task=2 Fahrzeug anlegen";
@@ -394,6 +447,7 @@ function ShowCar ( $c_id ) {
     //echo "</br> !!!!!!lxcrs[][]!!!!  </br>";
     //print_r($lxcrs);
     $index=-1;
+ 
     if ( $lxcrs[0] ) {
         foreach ( $lxcrs as $key => $value ) {
             //echo "</br> value:".$value[0]."  rs[c_t] ".$rs[0]["c_t"];
@@ -444,7 +498,7 @@ function ShowCar ( $c_id ) {
                 echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='SaveTypNr(\"$owner\",".$c_id.",\"".$lxcrs[$key][0]."\");'>"."<td class=\"liste\">".$lxcrs[$key][1]."</td><td class=\"liste\">".$lxcrs[$key][2]."</td>"."<td class=\"liste\">".$lxcrs[$key][3]."</td><td class=\"liste\">".$lxcrs[$key][7]."</td><td class=\"liste\">".$lxcrs[$key][8]."</td></tr>\n";
                 $i++;
             }
-            echo "</table>\n";
+            echo "</table>\n"; 
             ?>	
 	
 	
@@ -586,7 +640,7 @@ function GetOwner ( $c_ln ) {
     global $tbname;
     global $tbkba;
     //global $db;
-    $sql="select c_ln, c_t, c_id, c_ow from $tbname where c_ln ILIKE '\%$c_ln\%' ORDER by c_ow";
+    $sql="select c_ln, c_t, c_id, c_ow from $tbname where c_ln ILIKE '%$c_ln%' ORDER by c_ow";
     $rs=$_SESSION['db']->getall ( $sql );
     if ( $rs ) {
         foreach ( $rs as $index => $el ) {
@@ -625,7 +679,7 @@ function SucheCars ( $was ) {
             }
             $i++;
             //echo "<br>"."I=".$i;
-            $opva=" ILIKE '\%$value\%' ";
+            $opva=" ILIKE '%$value%' ";
             //Operand Value
             /*if($key == c_ow){
             	$rs_all = getAllFirmen($value);
@@ -662,9 +716,7 @@ function SucheCars ( $was ) {
     }
     if ( $where ) {
         $sql="select c_ln, c_2, c_3, c_id, c_ow, name, city from lxc_cars JOIN customer ON c_ow = id where $where ORDER by c_ow";
-        //echo "SucheCars mit where-String: $where ";
         $rs=$_SESSION['db']->getall ( $sql );
-        //print_r($rs);
     }
     if ( $rs ) {
         foreach ( $rs as $key => $vaule ) {
@@ -844,6 +896,7 @@ function ts2gerdate ( $myts ) {
         return $wt." ".$day.".".$m." ".$year." ".$hour.":".$minute;
     }
 }
+//ToDo !!!!!!
 function SucheFin ( $zu2, $zu3 ) {
     //Sucht mit der KBA einen passenden Anfang fur die FIN
     //global $db;
@@ -852,22 +905,21 @@ function SucheFin ( $zu2, $zu3 ) {
     $zu3=substr ( $zu3, 0, 3 );
     for ( $i=11;$i>=3;$i-- ) {
         $sql="SELECT MAX( fin ) AS fin, COUNT( fin )FROM( SELECT DISTINCT SUBSTR( c_fin, 1, ".$i." ) AS fin FROM $tbname WHERE c_2 = '".$zu2."' AND c_3 LIKE '".$zu3."%' ORDER BY fin ) AS rs";
-        $rs=$_SESSION['db']->getall ( $sql );
-        if ( $rs[0]['count']=="1" ) {
-            $fin=$rs[0]['fin'];
+        $rs=$_SESSION['db']->getone( $sql );
+        if ( $rs['count']=="1" ) {
+            $fin=$rs['fin'];
             $erfolg=1;
             break;
         }
     }
     if ( $erfolg==0 ) {
         $sql="SELECT  SUBSTR( c_fin, 1, 3 ) AS fin , count( SUBSTR( c_fin, 1, 3 )) AS c FROM lxc_cars WHERE c_2 = '".$zu2."' GROUP BY SUBSTR( c_fin, 1, 3 ) ORDER BY c DESC LIMIT 1";
-        $rs=$_SESSION['db']->getall ( $sql );
-        $fin=$rs[0]['fin'];
+        $rs=$_SESSION['db']->getone ( $sql );
+        $fin=$rs['fin'];
     }
-    $objResponse=new xajaxResponse ( );
-    $objResponse->assign ( "idfin", "value", $fin );
-    return $objResponse;
+    return $fin;
 }
+
 function SucheMkb ( $zu2, $zu3 ) {
     $lxcrs=lxc2db ( " -C ".$zu2." ".substr ( $zu3, 0, 3 ) );
     if ( $lxcrs[0] ) {
@@ -879,16 +931,15 @@ function SucheMkb ( $zu2, $zu3 ) {
             $ret.='<option value="'.$value[29].'">'.$value[29].'</option>';
         }
     }
-    $objResponse=new xajaxResponse ( );
-    $objResponse->assign ( 'mkbdrop', 'innerHTML', $ret );
-    return $objResponse;
+    return $ret;
 }
+
 function UniqueKz ( $kz, $c_id ) {
     global $tbname;
     $sql="SELECT name, c_id FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_ln =  '".$kz."'";
     $rs=$_SESSION['db']->getone( $sql );
     
-    if ( isset($rs)&&$c_id!=$rs['c_id'] ) {
+    if ( isset($rs) &&  $c_id != $rs['c_id'] )  {
         return $rs['name'];
 
     }
@@ -896,24 +947,24 @@ function UniqueKz ( $kz, $c_id ) {
         return 0;
     }
 }
+
 function UniqueFin ( $fin, $c_id ) {
     global $tbname;
-    if ( strlen ( $fin )==17 ) 
+    if ( strlen ( $fin ) == 17 ) 
         $sql="SELECT c_id, c_ln, name, c_fin FROM customer CROSS JOIN lxc_cars WHERE c_ow = id AND c_fin like '".$fin."_'";
     else 
         $sql="SELECT c_id, c_ln, name FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_fin = '".$fin."'";
-    $rs=$_SESSION['db']->getall ( $sql );
-    $objResponse=new xajaxResponse ( );
-    if ( $rs[0]&&$c_id!=$rs[0][c_id]&&$fin!="" ) {
-        $objResponse->alert ( "Ein Datensatz mit dieer FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
-        return $objResponse;
+    $rs=$_SESSION['db']->getone( $sql );
+    
+    if ( $rs && $c_id != $rs[c_id] && $fin!="" ) {
+        //$objResponse->alert ( "Ein Datensatz mit diser FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
+        return "<b>".$rs['c_ln']."</b> gehört <b>".$rs['name']."</b>. <br /> ";
     }
-    elseif ( XajaxVer=="05" ) {
-        //Ist das so richtig?
-        $objResponse->setReturnValue ( true );
-        return $objResponse;
+    else {
+        return 0;
     }
 }
+
 function NewFhzTyp ( $data ) {
     $tb="lxc_mykba";
     $fields=array_keys ( $data );
