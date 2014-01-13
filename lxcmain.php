@@ -58,7 +58,8 @@ $cardata = array(  "owner" => $owner,
                     "c_mt"      => $mytimestamp, "c_e_id" => $e_id,
                     "chk_c_ln"  => $chk_c_ln, "chk_c_2" => $chk_c_2,
                     "chk_c_3"   => $chk_c_3, "chk_c_em" => $chk_c_em,
-                    "chk_c_hu"  => $chk_c_hu, "chk_fin" => $chk_fin );
+                    "chk_c_hu"  => $chk_c_hu, "chk_fin" => $chk_fin,
+                    );
                     
 $cardata_anlegen = array( "c_ow"     => $owner,
                             "c_ln"     => (isset($_POST['c_ln'])) ? $_POST['c_ln']:'',
@@ -87,12 +88,13 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "chk_c_hu" => $chk_c_hu, 
                             "chk_fin"  => $chk_fin);
 
-//prüfen ob der User zur Gruppe Admin gehört
-$gruppen = getGruppen();
-foreach($gruppen as $key=>$value){
-	if( $gruppen[$key]['grpname'] == "Admin" ){
-		$admin = getMitglieder( $gruppen[$key]['grpid'] );
-	}
+//prüfen ob der User zur Gruppe Admin oder Special gehört
+$gruppen = getGruppen($_SESSION["login"]);
+//print_r($gruppen);
+$admin = $special = false;
+foreach($gruppen as $value){
+	if( $value['name'] == "Admin" ) $admin = true;
+	if(  $value['name'] == "Spezial" ) $special = true;
 }
 if( !$admin ){
 	echo "<b>Gruppe Admin nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
@@ -105,7 +107,13 @@ foreach( $admin as $value ){
 		$readonly = "";
 	}
 }
-
+$grp = getGruppen($_SESSION["login"]);
+if( $grp )foreach( $grp as $value ){
+    if(  $value['name'] == "Spezial" ) $special = true;
+}
+else{
+    echo "<b>Gruppe Admin nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
+}
 switch( $task ){
     	case 1:	
 		GetCars( $owner);
@@ -165,6 +173,7 @@ switch( $task ){
 		    $miscarray['msg'] = "FahrzeugTyp existiert nicht in der KBA-Datenbank! Kann jedoch angelegt werden.";
 		    $miscarray['FhzTypVis'] = 'visible';
 		}
+		$miscarray['SPECIAL'] = $admin ? '<input tabindex="24" type="button"  onClick="special(document.car.c_id.value, document.car.owner.value,1);" value="Spezial">&nbsp;&nbsp;&nbsp;' : '';
 		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
 		$t->set_var($miscarray);						
 		$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));

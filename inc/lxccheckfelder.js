@@ -50,6 +50,13 @@ function lxc_auf( c_id, owner, task ){
     uri=uri1+uri2+uri3;
 	location.href=uri;
 }
+function special( c_id, owner, task ){
+    uri1="special.php?c_id=" +  c_id;
+	uri2="&owner=" + owner;
+	uri3="&task=" + task;
+    uri=uri1+uri2+uri3;
+	location.href=uri;
+}
 
 function FhzTyp( c_id, owner, hsn, tsn ){
     uri1="FhzTyp.php?c_id=" +  c_id;

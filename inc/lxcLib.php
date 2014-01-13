@@ -110,7 +110,7 @@ function HoleAuftraege ( $c_id ) {
     //sucht alle Auftrage zum Fhz mit der CarID und gibt die AuftragsID,... zuruck;
     global $tbauf;
     global $tbpos;
-    $sql="select lxc_a_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)),lxc_a_status from $tbauf where lxc_a_c_id = $c_id ORDER BY lxc_a_id";
+    $sql="select lxc_a_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)),lxc_a_status, lxc_a_km from $tbauf where lxc_a_c_id = $c_id ORDER BY lxc_a_id";
     $rs=$_SESSION['db']->getall ( $sql );
     foreach ( $rs as $key => $value ) {
         $sql="select lxc_a_pos_todo from ".$tbpos." where lxc_a_pos_aid = ".$rs[$key]['lxc_a_id']." ORDER BY lxc_a_pos_id ";

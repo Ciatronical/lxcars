@@ -30,7 +30,8 @@
                 $("#c_st").focus();
             }
         });
-    });		 
+    });	
+    /*	 
 	function call_lxc_auf( owner,c_id,a_id ){
 		Frame=eval("parent.main_window");
 		uri1="lxcauf.php?owner=" + owner;
@@ -40,6 +41,7 @@
 		uri=uri1+uri2+uri3+uri4;
 		location.href=uri;
 	}	
+	*/
     $(function() {
         $("#c_d").datepicker({
             changeMonth: true,
@@ -134,8 +136,8 @@ $(function() {
 <input tabindex="20" type="submit" name="update" id="speichern" value="speichern">&nbsp;&nbsp;&nbsp;
 <input tabindex="21" type="button" name="close" onClick="myclose(document.car.owner.value);" value="schlie&szlig;en">&nbsp;&nbsp;&nbsp;
 <input tabindex="22" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);" value="   Auftrag   ">&nbsp;&nbsp;&nbsp;
-<input tabindex="22" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');" value="KBA DB bearbeiten" style="visibility:{FhzTypVis}">&nbsp;&nbsp;&nbsp;
-
+<input tabindex="23" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');" value="KBA DB bearbeiten" style="visibility:{FhzTypVis}">&nbsp;
+{SPECIAL}
 </form>
 </left>
 {END_CONTENT}
