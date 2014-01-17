@@ -90,30 +90,27 @@ $cardata_anlegen = array( "c_ow"     => $owner,
 
 //prüfen ob der User zur Gruppe Admin oder Special gehört
 $gruppen = getGruppen($_SESSION["login"]);
-//print_r($gruppen);
 $admin = $special = false;
 foreach($gruppen as $value){
 	if( $value['name'] == "Admin" ) $admin = true;
+	if( $value['name'] == "Spezial" ) $special = true;
 	if(  $value['name'] == "Spezial" ) $special = true;
 }
-if( !$admin ){
-	echo "<b>Gruppe Admin nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
+
+$visibility = $admin ? 'style="visibility:visible"' : 'style="visibility:hidden"';
+$readonly   = $admin ? "" : 'readonly="readonly"';
+$grp = getGruppen();
+
+$is_admin = false;
+$is_werkstatt = false;
+foreach( $grp as $value ){
+    if( $value['grpname'] == "Admin") $is_admin = true;
+    if( $value['grpname'] == "Werkstatt") $is_admin = true;
+
 }
-$visibility = 'style="visibility:hidden"';
-$readonly = 'readonly="readonly"';
-foreach( $admin as $value ){
-	if( $_SESSION["login"] == $value["login"] ){
-		$visibility = 'style="visibility:visible"';
-		$readonly = "";
-	}
-}
-$grp = getGruppen($_SESSION["login"]);
-if( $grp )foreach( $grp as $value ){
-    if(  $value['name'] == "Spezial" ) $special = true;
-}
-else{
-    echo "<b>Gruppe Admin nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
-}
+if( !$is_admin ) echo "<b>Gruppe Admin nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
+if( !$is_admin ) echo "<b>Gruppe Werkstatt nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
+
 switch( $task ){
     	case 1:	
 		GetCars( $owner);
