@@ -30,6 +30,7 @@ $street[x] = 45;	$street[y] = 47.9;
 $city[x] = 45;		$city[y] = 53.4;
 $phone[x] = 45;	$phone[y] = 59.3;
 $mobile[x] = 45;	$mobile[y] = 64.7;
+$color[x] = 45;	$color[y] = 76.4;
 $emp[x] = 45;		$emp[y] = 70.3;
 $fertig[x] = 61;  $fertig[y] = 86;
 $kba[x] = 133;		$kba[y] = 42.0;  
@@ -61,6 +62,9 @@ $pdf->Text($street[x],$street[y],utf8_decode($carData["street"]));
 $pdf->Text($city[x],$city[y],utf8_decode($carData["city"]));
 $pdf->Text($phone[x],$phone[y],$carData["phone"]);
 $pdf->Text($mobile[x],$mobile[y],$carData["mobile"]);
+$pdf->Text(21.5,$color[y],"Farbe.:");
+$pdf->Text($color[x],$color[y],$carData["c_color"]);
+
 $pdf->Text($emp[x],$emp[y],utf8_decode($_SESSION["employee"]));
 
 $pdf->Text($kba[x],$kba[y],$carData["c_2"]." ".$carData["c_3"]);
