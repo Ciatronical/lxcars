@@ -40,6 +40,12 @@
 			    closeText: 'Fertig',
                 currentText: 'Jetzt'
             });
+            $( "#service" ).button()
+                .click(function() { 
+                    $( ".todo:last" ).val("Liquide, Wischer, Licht- und Wischwaschanlage prüfen");                
+                    return false;
+            });
+            $( "input[type=submit],input[type=button]" ).button()
         });
     </script>
 	<script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
@@ -84,7 +90,7 @@
 
 <table class="klein">
 <!-- BEGIN pos_block -->
-<tr><th colspan="4"><textarea name="lxc_a_pos_todo___{posid}" cols="22" rows="2">{lxc_a_pos_todo}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_doing___{posid}" cols="22" rows="2">{lxc_a_pos_doing}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_parts___{posid}" cols="22" rows="2">{lxc_a_pos_parts}</textarea></th><td>
+<tr><th colspan="4"><textarea class="todo" name="lxc_a_pos_todo___{posid}" cols="22" rows="2">{lxc_a_pos_todo}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_doing___{posid}" cols="22" rows="2">{lxc_a_pos_doing}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_parts___{posid}" cols="22" rows="2">{lxc_a_pos_parts}</textarea></th><td>
 <b class="zeit">Vorg. Zeit </b><input type="text" name="lxc_a_pos_finish_ctime___{posid}" size="1" value="{lxc_a_pos_ctime}">
 <select class="inp" name="lxc_a_pos_status___{posid}">
 <option value="1" {lxc_a_pos_status1{posid}}>gelesen
@@ -100,13 +106,13 @@
 <!-- END pos_block -->
 </table>
 <table>
-<tr><th colspan="4"><textarea name="lxc_a_text" cols="59" rows="3">{lxc_a_text}</textarea></th></tr>
+<tr><th colspan="4"><textarea name="lxc_a_text" id="lxc_a_text" cols="59" rows="3">{lxc_a_text}</textarea></th></tr>
 </table>
 <input type="submit" name="update" value="speichern">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="Pdf">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="drucken">&nbsp;&nbsp;&nbsp;
 <input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.owner.value,document.lxcauf.c_id.value,3,{b});" value="schlie&szlig;en">
-
+<button id="service">Service</button>
 </form>
 </left>
 {END_CONTENT}
