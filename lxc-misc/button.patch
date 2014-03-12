@@ -1,0 +1,43 @@
+From 886709a3b88fb477eee917825a3c48672e628809 Mon Sep 17 00:00:00 2001
+From: Ronny Kumke <ronny@lxcars.de>
+Date: Wed, 12 Mar 2014 14:59:24 +0100
+Subject: [PATCH] =?UTF-8?q?Button=20LxCars=20und=20CRM=20hinzugef=C3=BCgt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ templates/webpages/is/form_footer.html |    3 ++-
+ templates/webpages/oe/form_footer.html |    2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/templates/webpages/is/form_footer.html b/templates/webpages/is/form_footer.html
+index 5ab55b7..4327b64 100644
+--- a/templates/webpages/is/form_footer.html
++++ b/templates/webpages/is/form_footer.html
+@@ -148,7 +148,8 @@
+ <hr size="3" noshade>
+ 
+ <p>[% print_options %]</p>
+-
++    <input class="submit" type="button" name="crm" id="crm" value="CRM" onClick="window.location.href='crm/firma1.php?Q=C&id=[% customer_id %]'">
++    <input class="submit" type="button" name="crm" id="crm" value="LxCars" onClick="window.location.href='crm/lxcars/lxcmain.php?owner=[% customer_id %]&task=1'">
+   [% IF id %]
+ 
+     <input class="submit" type="submit" accesskey="u" name="action" id="update_button" value="[% 'Update' | $T8 %]">
+diff --git a/templates/webpages/oe/form_footer.html b/templates/webpages/oe/form_footer.html
+index 7c72a45..5a58bbc 100644
+--- a/templates/webpages/oe/form_footer.html
++++ b/templates/webpages/oe/form_footer.html
+@@ -126,6 +126,8 @@
+ <p>[% print_options %]</p>
+ 
+ [% label_edit %]<br>
++<input class="submit" type="button" name="crm" id="crm" value="CRM" onClick="window.location.href='crm/firma1.php?Q=C&id=[% customer_id %]'">
++<input class="submit" type="button" name="crm" id="crm" value="LxCars" onClick="window.location.href='crm/lxcars/lxcmain.php?owner=[% customer_id %]&task=1'">
+ <input class="submit" type="submit" name="action_update" id="update_button" value="[% 'Update' | $T8 %]">
+ <input class="submit" type="submit" name="action_ship_to" value="[% 'Ship to' | $T8 %]">
+ <input class="submit" type="submit" name="action_print" value="[% 'Print' | $T8 %]">
+-- 
+1.7.9.5
+
