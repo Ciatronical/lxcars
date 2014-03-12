@@ -89,7 +89,7 @@ else
     echo "crm.ini als crm.ini.orig gesichert"
 fi 
 
-sed -i '1 i\[LxCars]\n[LxCars--Schnellsuche]\nACCESS=crm_other\nmodule=crm/lxcars/lxcgetData.php\n\n[LxCars--KfzSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmainSuche.php\n\n[LxCars--AuftragSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcaufSuche.php\n\n[LxCars--MotorSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmotSuche.php\n\n' $DIR_ERP/menus/crm.ini
+sed -i '1 i\[LxCars]\n[LxCars--Schnellsuche]\nACCESS=crm_other\nmodule=crm/lxcars/lxcgetData.php\n\n[LxCars--KfzSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmainSuche.php\n\n[LxCars--AuftragSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcaufSuche.php\n\n[LxCars--MotorSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmotSuche.php\n\n[LxCars--EbaySeller]\nACCESS=crm_other\nmodule=crm/lxcars/ebayseller.php\n\n' $DIR_ERP/menus/crm.ini
 
  
 echo "done!!"
