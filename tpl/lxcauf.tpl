@@ -42,7 +42,12 @@
             });
             $( "#service" ).button()
                 .click(function() { 
-                    $( ".todo:last" ).val("Liquide, Wischer, Licht- und Wischwaschanlage prüfen");                
+                    $( ".todo:last" ).val( "Liquide, Wischer, Licht- und Wischwaschanlage prüfen" );                
+                    return false;
+            });
+            $( "#carData" ).button()
+                .click(function() {    
+                    lxcaufschliessen( document.lxcauf.owner.value, document.lxcauf.c_id.value, 3 )            
                     return false;
             });
             $( "input[type=submit],input[type=button]" ).button()
@@ -113,6 +118,7 @@
 <input type="submit" name="printa" value="drucken">&nbsp;&nbsp;&nbsp;
 <input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.owner.value,document.lxcauf.c_id.value,3,{b});" value="schlie&szlig;en">
 <button id="service">Service</button>
+<button id="carData">Fahrzeug</button>
 </form>
 </left>
 {END_CONTENT}
