@@ -96,7 +96,7 @@ function NeuerAuftrag ( $c_id ) {
     //ToDo!! kann das insert gleich zurückgeben!!!
     $rsid=$_SESSION['db']->getall ( $sql );
     $a_id=$rsid[0]['max'];
-    $sql="insert into $tbpos (lxc_a_pos_aid, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts)  values ($a_id, 'Liquide, Wischer, Licht- und Wischwasseranlage prüfen', '', '')";
+    $sql="insert into $tbpos (lxc_a_pos_aid, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts)  values ($a_id, 'Arbeitstext', 'Antworttext Werkstatt', 'Ersatzteile')";
     $rc=$_SESSION['db']->query ( $sql );
     return $a_id;
 }
