@@ -21,7 +21,6 @@ doHeader($t);
 *
 *
 ******************************************/
-
 if(!$_POST['select_file']){
   $t->set_var( array( 'BASEPATH' => $_SESSION['basepath'], 'TEST' => 
 
@@ -45,7 +44,7 @@ if(!$_POST['select_file']){
   </tr>
   <tr>
   <td>Neu Version:</td>
-  <td><a href="ebaysellerBearbeitung.php">KLICK</a></td>
+  <td><a href="ebaysellerJquery.php">KLICK</a></td>
   </tr>
   </form>
   </table>' ) );
