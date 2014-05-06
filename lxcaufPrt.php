@@ -24,8 +24,8 @@ $posData = HoleAuftragsPositionen($a_id);
 $pdf=new FPDF('P','mm','A4');
 $pdf->AddPage();
 $pdf->SetFont('Helvetica','B','18');
-$pdf->Text('20','26','Reparaturauftrag');
-$pdf->Text('80','26',$carData["c_ln"]);
+$pdf->Text('20','26','Auto-Spar Reparaturauftrag');
+$pdf->Text('110','26',$carData["c_ln"]);
 $pdf->SetFont('Helvetica','','14');
 $pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
 
@@ -34,33 +34,33 @@ $pdf->SetFont('Helvetica','','16');
 $pdf->Text('22','45','Kunde:');
 $pdf->Text('22','52',utf8_decode('Straße').':');
 $pdf->Text('22','59','Ort:');
-$pdf->Text('22','66','Telefon:');
+$pdf->Text('22','66','Tele.:');
 $pdf->Text('22','73','Mobil:');
-$pdf->Text('22','80','Bearbeiter:');
+$pdf->Text('22','80','Bearb.:');
 $pdf->Text('22','87','Farbe:');
-$pdf->Text('22','94','Hubraum:');
-$pdf->Text('108','45','KBA:');
-$pdf->Text('108','52','Baujahr:');
-$pdf->Text('108','59','FIN:');
-$pdf->Text('108','66','MKE:');
-$pdf->Text('108','73','AU/HU:');
-$pdf->Text('108','80','KM-Stand:');
-$pdf->Text('108','87','Abgasschl.:');
-$pdf->Text('108','94','Leistung:');
+$pdf->Text('22','94','Hubr.:');
+$pdf->Text('117','45','KBA:');
+$pdf->Text('117','52','Baujahr:');
+$pdf->Text('117','59','FIN:');
+$pdf->Text('117','66','MK:');
+$pdf->Text('117','73','AU/HU:');
+$pdf->Text('117','80','KM:');
+$pdf->Text('117','87','Abgas.:');
+$pdf->Text('117','94','Peff:');
 
 $pdf->SetLineWidth(0.3); 
-$pdf->Rect('20', '38', '80', '60'); 
-$pdf->Rect('105', '38', '98', '60'); 
+$pdf->Rect('20', '38', '93', '60'); 
+$pdf->Rect('115', '38', '90', '60'); 
 
 //Daten aus DB
-$pdf->SetFont('Helvetica','','15');
-$pdf->Text('55','45',utf8_decode($carData["ownerstring"]));
-$pdf->Text('55','52',utf8_decode($carData["street"]));
-$pdf->Text('55','59',utf8_decode($carData["city"]));
-$pdf->Text('55','66',$carData["phone"]);
-$pdf->Text('55','73',$carData["mobile"]);
-$pdf->Text('55','87',$carData["c_color"]);
-$pdf->Text('55','94',$carData["vh"]);
+$pdf->SetFont('Helvetica','','14');
+$pdf->Text('43','45',utf8_decode($carData["ownerstring"]));
+$pdf->Text('43','52',utf8_decode($carData["street"]));
+$pdf->Text('43','59',utf8_decode($carData["city"]));
+$pdf->Text('43','66',$carData["phone"]);
+$pdf->Text('43','73',$carData["mobile"]);
+$pdf->Text('43','87',$carData["c_color"]);
+$pdf->Text('43','94',$carData["vh"]);
 $pdf->Text('141','45',$carData["c_2"]." ".$carData["c_3"]);
 $pdf->Text('141','52',$carData["c_d"]);
 $pdf->Text('141','59',$carData["fin"]);
@@ -72,9 +72,9 @@ $pdf->Text('141','94',$carData["peff"]);
 
 $pdf->SetFont('Helvetica','B','16');
 $pdf->SetTextColor(255, 0, 0); 
-$pdf->Text('20','105','Fertigstellung:');
+$pdf->Text('20','110','Fertigstellung:');
 $pdf->SetFont('Helvetica','','16');
-$pdf->Text('65','105',utf8_decode($aufData[0]['lxc_a_finish_time']));
+$pdf->Text('75','110',utf8_decode($aufData[0]['lxc_a_finish_time']));
 $pdf->SetTextColor(0, 0, 0); 
 
 $pos_todo[x] = 20;$pos_todo[y] = 130; 
@@ -87,8 +87,8 @@ foreach($posData as $index => $element){
 	}
 
 $pdf->SetFont('Helvetica','','14'); 
-$pdf->Text('22','274','Auto-Spar, Datum:');
-$pdf->Text('65','274',date('d.m.Y'));  
+$pdf->Text('22','274','Datum:');
+$pdf->Text('45','274',date('d.m.Y'));  
 $pdf->Text('110','274','Unterschrift: __________________');
 $pdf->SetFont('Helvetica','','06'); 
 $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
