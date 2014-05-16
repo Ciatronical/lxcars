@@ -54,6 +54,10 @@ $pdf->Rect('122', '38', '84', '60');
 
 //Daten aus DB
 $pdf->SetFont('Helvetica','','14');
+// Besitzerstring einkürzen, wenn der dieser zu lang wird
+if(strlen($carData["ownerstring"])>34){
+    $carData["ownerstring"] = substr($carData["ownerstring"],0,34).".";
+}
 $pdf->Text('43','45',utf8_decode($carData["ownerstring"]));
 $pdf->Text('43','52',utf8_decode($carData["street"]));
 $pdf->Text('43','59',utf8_decode($carData["city"]));
