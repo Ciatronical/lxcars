@@ -99,11 +99,7 @@ function lxcchown(c_id){
 }
 			
 function mann( zu2, zu3 ){
-    var zu3sub = zu3.substring(0, 3);
-	uri1="http://www.mann-hummel.com/mf_prodkata_eur/index.html?ktlg_page=5&ktlg_lang=2&ktlg_05_szu2=" + zu2; 
-	uri2="&ktlg_05_szu3=" + zu3sub;
-	uri=uri1+uri2;
-	location.href=uri;
+    location.href="http://catalog.mann-filter.com/EU/ger/vehicle/" + zu2 + "/" + zu3.substring( 0, 3 );
 }
 
 function bmw( zu2, fin ){
