@@ -51,7 +51,7 @@ function lxc_auf( c_id, owner, task ){
 	location.href=uri;
 }
 function special( c_id, owner, task ){
-    uri1="special.php?c_id=" +  c_id;
+    uri1="mytmp/lxcars/special.phtml?c_id=" +  c_id;
 	uri2="&owner=" + owner;
 	uri3="&task=" + task;
     uri=uri1+uri2+uri3;
@@ -99,7 +99,7 @@ function lxcchown(c_id){
 }
 			
 function mann( zu2, zu3 ){
-    location.href="http://catalog.mann-filter.com/EU/ger/vehicle/" + zu2 + "/" + zu3.substring( 0, 3 );
+    location.href="http://catalog.mann-filter.com/EU/ger/vehicle/" + zu2 + "/" + zu3.substring( 0, 3 );//
 }
 
 function bmw( zu2, fin ){

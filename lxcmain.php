@@ -94,7 +94,7 @@ $admin = $special = false;
 foreach($gruppen as $value){
 	if( $value['name'] == "Admin" ) $admin = true;
 	if( $value['name'] == "Spezial" ) $special = true;
-	if(  $value['name'] == "Spezial" ) $special = true;
+	//if(  $value['name'] == "Spezial" ) $special = true;
 }
 
 $visibility = $admin ? 'style="visibility:visible"' : 'style="visibility:hidden"';
@@ -170,7 +170,7 @@ switch( $task ){
 		    $miscarray['msg'] = "FahrzeugTyp existiert nicht in der KBA-Datenbank! Kann jedoch angelegt werden.";
 		    $miscarray['FhzTypVis'] = 'visible';
 		}
-		$miscarray['SPECIAL'] = $admin ? '<input tabindex="24" type="button"  onClick="special(document.car.c_id.value, document.car.owner.value,1);" value="Spezial">&nbsp;&nbsp;&nbsp;' : '';
+		$miscarray['SPECIAL'] = $special ? '<input tabindex="24" type="button"  onClick="special(document.car.c_id.value, document.car.owner.value,1);" value="Spezial">&nbsp;&nbsp;&nbsp;' : '';
 		$miscarray['ERPCSS'] = $_SESSION["stylesheet"];
 		$t->set_var($miscarray);						
 		$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));
