@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<?php
+    require_once("../inc/stdLib.php");
+    $menu = $_SESSION['menu'];
+    $head = mkHeader();
+    echo $menu['stylesheets'];
+    echo $head['JTABLECSS'];
+    echo $head['JQUERY'];   
+    echo $head['JQUERYUI'];
+    echo $head['THEME'];
+    echo $head['JTABLEJS'];
+    //print_r( $_SESSION );
+
+
+?>
+<script>
+
+    $(document).ready(function(){
+       // $( "#carlist" ).tablesorter({
+            
+        
+        
+        $.urlParam = function( name ){
+            var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+            if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );               
+            else return decodeURIComponent( results[1] || 0 );
+        }
+        $('#carlist').jtable({
+            title: 'List of Cars',
+            paging: true, //Enable paging
+            pageSize: 10, //Set page size (default: 10)
+            sorting: true, //Enable sorting
+            //defaultSorting: 'Name ASC', //Set default sorting
+            actions: {
+                listAction: 'ajaxHelp/main.php',
+                deleteAction: 'ajaxHelp/main.php',
+                updateAction: 'ajaxHelp/main.php',
+                createAction: 'ajaxHelp/main.php'
+            },
+            fields: {
+                c_ln: {
+                   title: 'Kennzeichen',
+                    width: '23%'
+                },
+                c_2: {
+                    title: 'TSN',
+                    width: '23%'
+                },
+                c_3: {
+                    title: 'HSN',
+                    //list: false
+                },
+                c_id: {
+                    key: true,
+                    list: false
+
+                },
+                c_t: {
+                    title: 'Type',
+                    width: '13%',
+                   
+                }
+            }
+        });
+        //alert( $.urlParam( 'task' ) );
+        switch( $.urlParam( 'task' ) ) {
+            case '1':
+                //alert( 'tetst' );
+                $.ajax({
+                    url: 'ajaxHelp/main.php',
+                    //data: { task:  'getCars'  },
+                    type: "POST",
+                    success: function( json ) {
+                        var obj = $.parseJSON( json.trim() )
+                        //$( "#carlist" ).
+                        //alert( json.toString());
+                        $.each( obj, function( i, val ){
+                           //alert( "Car" + val.c_ln ) 
+                        });
+                    }
+                   
+                });
+                
+ 
+        //Load student list from server
+        $('#carlist').jtable('load');
+            break;
+            case 2:
+            //code block
+            break;
+
+        } 
+        
+
+    });
+</script>
+
+<style>
+    #example    { position:absolute; top:130px; left:87px; }
+</style>
+</head>
+<body>
+<?php 
+    echo $menu['pre_content'];
+    echo $menu['start_content'];
+?>
+<div class="ui-widget-content" style="height:600px">
+
+<div id="carlist"></div>
+
+            
+
+
+
+
+</div>
+<?php $menu['end_content']; ?>
+</body>
+</html>
