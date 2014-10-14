@@ -28,41 +28,46 @@
             if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );               
             else return decodeURIComponent( results[1] || 0 );
         }
-        $('#carlist').jtable({
-            title: 'List of Cars',
-            paging: true, //Enable paging
-            pageSize: 10, //Set page size (default: 10)
-            sorting: true, //Enable sorting
-            //defaultSorting: 'Name ASC', //Set default sorting
+        //$.urlParam( 'param2' )
+       $('#PersonTableContainer').jtable({
+            title: 'Table of people',
+            jqueryuiTheme: true,
+            zebra: true,
+            //paging: true,
+            addRecordButton: false,
+            sorting: true,
+            defaultSorting: 'c_ln ASC',
             actions: {
-                listAction: 'ajaxHelp/main.php',
-                deleteAction: 'ajaxHelp/main.php',
-                updateAction: 'ajaxHelp/main.php',
-                createAction: 'ajaxHelp/main.php'
+                listAction: 'ajaxHelp/main.php?task=getCars',
+                createAction: '/GettingStarted/CreatePerson',
+                updateAction: '/GettingStarted/UpdatePerson',
+                deleteAction: '/GettingStarted/DeletePerson'
             },
             fields: {
                 c_ln: {
-                   title: 'Kennzeichen',
-                    width: '23%'
+                    title: 'Kennzeichen',
                 },
-                c_2: {
-                    title: 'TSN',
-                    width: '23%'
+                herst: {
+                    title: 'Hersteller',
+                    width: '40%'
                 },
-                c_3: {
-                    title: 'HSN',
-                    //list: false
+                typ: {
+                    title: 'Typ',
+                    width: '20%'
                 },
-                c_id: {
+                name: {
+                    title: 'Name'
+                },
+                art: {
+                    title: 'Art',
+                    width: '20%'
+                },
+                id: {
                     key: true,
+                    create: false,
+                    edit: false,
                     list: false
-
-                },
-                c_t: {
-                    title: 'Type',
-                    width: '13%',
-                   
-                }
+               }
             }
         });
         //alert( $.urlParam( 'task' ) );
@@ -70,7 +75,7 @@
             case '1':
                 //alert( 'tetst' );
                 $.ajax({
-                    url: 'ajaxHelp/main.php',
+                   // url: 'ajaxHelp/main.php',
                     //data: { task:  'getCars'  },
                     type: "POST",
                     success: function( json ) {
@@ -86,15 +91,15 @@
                 
  
         //Load student list from server
-        $('#carlist').jtable('load');
+        //$('#carlist').jtable('load');
             break;
             case 2:
             //code block
             break;
 
         } 
-        
-
+     //$('#carlist').jtable('load');  
+     $('#PersonTableContainer').jtable('load');
     });
 </script>
 
@@ -110,7 +115,7 @@
 <div class="ui-widget-content" style="height:600px">
 
 <div id="carlist"></div>
-
+<div id="PersonTableContainer"></div>
             
 
 
