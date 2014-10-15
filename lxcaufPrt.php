@@ -3,7 +3,7 @@
 define("x",0);  define("y",1); 
 
 require("fpdf.php");
-require("fpdi.php");
+//require("fpdi.php");
 require_once("inc/lxcLib.php");
 include_once("inc/config.php");
 define("FPDF_FONTPATH","../font/");
