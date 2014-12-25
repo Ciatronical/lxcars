@@ -1,4 +1,7 @@
+#include <Wire.h>
+#include "RTClib.h"
 
+const int analogInPin      = A0;//Lichtsensor
 const short switchPin2     = 2;
 const short switchPin3     = 3;
 const short switchPin4     = 4;
@@ -29,7 +32,14 @@ int i = 0;
 short Usoll = 450;
 short Umin = 425;
 
-bool debug = 1;
+//Lichtsensor Init
+int schwelle    = 500;         // Schwellwert für Dunkelheit
+int sensorValue = 0;           // Intit des Variablen die den Messwert aufnimmt
+
+//Init RTC
+RTC_DS1307 RTC;           
+
+bool debug = 0;
 
 bool ladeState = LOW; 
 bool switch2 = LOW;
@@ -41,24 +51,36 @@ long previousMillis = 0;
 long interval       = 10000; 
 long ladeInterval   = 1000*60*60;//eine stunde
 void setup(){
-   if( debug ) Serial.begin(9600);
-   pinMode( pwmOutPin, OUTPUT );
-   pinMode( outPin8_0, OUTPUT );
-   pinMode( outPin9_1, OUTPUT );
-   pinMode( outPin10_2, OUTPUT );
-   pinMode( outPin11_3, OUTPUT );
-   pinMode( outPin12_4, OUTPUT );
-   pinMode( outPin13_5, OUTPUT );
-   pinMode( UladePin, OUTPUT );
-   pinMode( switchPin2, INPUT_PULLUP ); 
-   pinMode( switchPin3, INPUT_PULLUP );
-   pinMode( switchPin4, INPUT_PULLUP );
-   pinMode( switchPin6, INPUT_PULLUP );
-   digitalWrite( UladePin, LOW );
+  if( debug ) Serial.begin(9600);
+  pinMode( pwmOutPin, OUTPUT );
+  pinMode( outPin8_0, OUTPUT );
+  pinMode( outPin9_1, OUTPUT );
+  pinMode( outPin10_2, OUTPUT );
+  pinMode( outPin11_3, OUTPUT );
+  pinMode( outPin12_4, OUTPUT );
+  pinMode( outPin13_5, OUTPUT );
+  pinMode( UladePin, OUTPUT );
+  pinMode( switchPin2, INPUT_PULLUP ); 
+  pinMode( switchPin3, INPUT_PULLUP );
+  pinMode( switchPin4, INPUT_PULLUP );
+  pinMode( switchPin6, INPUT_PULLUP );
+  digitalWrite( UladePin, LOW );
    //setPwmFrequency(10, 10);
+   
+  Wire.begin();
+  RTC.begin();
+
+  if ( !RTC.isrunning() ){
+    Serial.println("RTC is NOT running!");
+    //following line sets the RTC to the date & time this sketch was compiled
+  }
+  RTC.adjust(DateTime(__DATE__, __TIME__));  
+   
+ 
 }
 void loop() {
   currentMillis = millis();
+  DateTime now = RTC.now();
     
 
  
@@ -123,5 +145,43 @@ void loop() {
   digitalWrite( outPin13_5, switch2 );//Aussenbeleuchtung.
   //digitalWrite( outTstPin, 1 );
   
+  /************************************************************************************
+  +++ Uhr 
+  ************************************************************************************/
+  if( debug ){ 
+    Serial.print(now.year(), DEC);
+    Serial.print('/');
+    Serial.print(now.month(), DEC);
+    Serial.print('/');
+    Serial.print(now.day(), DEC);
+    Serial.print(' ');
+    Serial.print(now.hour(), DEC);
+    Serial.print(':');
+    Serial.print(now.minute(), DEC);
+    Serial.print(':');
+    Serial.print(now.second(), DEC);
+    Serial.print(" dayOfWeek: ");
+    Serial.print(now.dayOfWeek(), DEC);
+    Serial.println();
+  }
+ 
   
+  //if( now.hour() >= 16 && now.hour() < 23 && now.day() > 4  ) digitalWrite( outPin13_5, HIGH );
+  //else digitalWrite( outPin13_5, LOW );
+  if( now.day() >= 1 && now.day() >= 4 ){ //Montag bis Donnerstag
+    if( now.hour() == 16 ) digitalWrite( outPin13_5, HIGH );
+    if( now.hour() == 23 ) digitalWrite( outPin13_5, LOW );
+  }
+  
+  if( now.day() == 5 ){ //am Freitag wird das Licht nur eingeschaltet
+    if( now.hour() == 16 ) digitalWrite( outPin13_5, HIGH );
+  }
+  if( now.day() == 6 ){ //Sonnabend
+    if( now.hour() == 2 ) digitalWrite( outPin13_5, LOW );
+    if( now.hour() == 17 ) digitalWrite( outPin13_5, HIGH );
+  }
+  if( now.day() == 7 ){ //Sonntag
+    if( now.hour() == 2 || now.hour() == 23 ) digitalWrite( outPin13_5, LOW );
+    if( now.hour() == 17 ) digitalWrite( outPin13_5, HIGH );
+  }       
 }
