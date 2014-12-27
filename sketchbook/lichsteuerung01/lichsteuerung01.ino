@@ -142,7 +142,7 @@ void loop() {
   digitalWrite( outPin10_2, !switch6 );
   digitalWrite( outPin11_3, !switch4 );
   digitalWrite( outPin12_4, !switch3 );
-  digitalWrite( outPin13_5, switch2 );//Aussenbeleuchtung.
+  //digitalWrite( outPin13_5, switch2 );//Aussenbeleuchtung.
   //digitalWrite( outTstPin, 1 );
   
   /************************************************************************************
