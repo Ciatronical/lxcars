@@ -21,13 +21,20 @@ switch( $task ){
     case 1://Alle Aufträge anzeigen
 	$rs = HoleAuftraege( $c_id );
 	$menu =  $_SESSION['menu'];
+	$head = mkHeader();
 	if( $rs ){
 	?>
 	<html>
         <head><title>Auftrag auswaehlen</title>
         <?php echo $menu['stylesheets']; ?>
         <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
-        <?php echo $menu['javascripts']; ?>
+        <?php echo $menu['javascripts']; 
+         	echo $head['JQUERY']; 
+	         echo $head['JQUERYUI']; 
+	         echo $head['THEME'];
+            echo $head['JQTABLE'];
+            echo $head['JUI-DROPDOWN'];
+            ?>
         </head>
         <body>
         <?php echo $menu['pre_content']; ?>   
@@ -59,10 +66,10 @@ switch( $task ){
         }
         echo "</table>\n";
         ?>	
-        <form name="extra" action="lxcauf.php?task=2&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
+        <form name="extra" action="lxcauf.php?task=2&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>" method="post" >
             <input type="submit" name="neuer_auftrag" value="Neuer Auftrag">
         </form>
-	    <form name="back" action="lxcmain.php?task=3&owner=<?echo $owner;?>&c_id=<?echo $c_id;?>" method="post" >
+	    <form name="back" action="lxcmain.php?task=3&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>" method="post" >
             <input type="submit"  value="zurück">
         </form>
         <?php } echo $menu['end_content']; ?>      
@@ -136,6 +143,9 @@ switch( $task ){
     $pos = HoleAuftragsPositionen( $a_id );
     $ta = new Template( $base );
     $menu =  $_SESSION['menu']; 
+    doHeader($ta);
+    $ta->set_var( array( 'BASEPATH' => $_SESSION['basepath'] ) );
+    /*
     $ta->set_var( array(
         JAVASCRIPTS   => $menu['javascripts'],
         STYLESHEETS   => $menu['stylesheets'],
@@ -143,9 +153,11 @@ switch( $task ){
         START_CONTENT => $menu['start_content'],
         END_CONTENT   => $menu['end_content'],
         BASEPATH      => $_SESSION['basepath'] ) );
-    $ta->set_file( array( "tpl-file" => "lxcauf.tpl" ) );
-    $ta->set_var( $tpl_array );
-    $ta->set_block( "tpl-file","pos_block","blockersatz" );
+       */
+       
+      $ta->set_file( array( "tpl-file" => "lxcauf.tpl" ) );
+      $ta->set_var( $tpl_array );
+      $ta->set_block( "tpl-file","pos_block","blockersatz" );
 
     $abbrechen = false;
     $last_pos_todo = "";

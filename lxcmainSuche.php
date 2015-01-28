@@ -29,13 +29,15 @@ $formdata['ERPCSS'] = $_SESSION["stylesheet"];
 $formdata['Q'] = "C";// kann weg??
 $t = new Template($base);
 $menu =  $_SESSION['menu']; 
+doHeader($t);
+/*
 $t->set_var( array(
     JAVASCRIPTS   => $menu['javascripts'],
     STYLESHEETS   => $menu['stylesheets'],
     PRE_CONTENT   => $menu['pre_content'],
     START_CONTENT => $menu['start_content'],
     END_CONTENT   => $menu['end_content'] ) );
-
+*/
 if( !$was[reset] ){
 	$t->set_var($formdata);
 }

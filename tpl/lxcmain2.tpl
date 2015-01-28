@@ -3,6 +3,7 @@
 {STYLESHEETS}
 <link href="./css/Tooltip-pop-up-FhzSchein.css" rel="stylesheet" type="text/css" media="screen" />
 <script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
+{JAVASCRIPTS}
 {CRMCSS}
 {JQUERY}
 {JQUERYUI}

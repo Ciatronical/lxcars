@@ -1,12 +1,12 @@
 <!-- $Id$ -->
 <html>
 	<head><title></title>
-	{STYLESHEETS}
-	<link type="text/css" REL="stylesheet" HREF="../css/{ERPCSS}/main.css"></link>
-	{JAVASCRIPTS}
-    <link rel="stylesheet" type="text/css" href="../jquery-ui/themes/base/jquery-ui.css"> 
-    <script type="text/javascript" src="../jquery-ui/jquery.js"></script> 
-    <script type="text/javascript" src="../jquery-ui/ui/jquery-ui.js"></script> 
+	   {STYLESHEETS}
+   	{JAVASCRIPTS}
+		{CRMCSS}
+		{JQUERY}
+		{JQUERYUI}
+
    <script language="JavaScript">
     <!--	
     $(function() {

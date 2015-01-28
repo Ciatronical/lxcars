@@ -3,33 +3,32 @@ ob_start();
 require_once("../inc/stdLib.php");
 include("../inc/crmLib.php");
 $menu = $_SESSION['menu'];
+//print_r($_SESSION);
 $head = mkHeader();
 ?>
+
 <html>
 <head><title></title>
-    <script language="JavaScript">
+	<script language="JavaScript">
 
 	function showD (src,id) {
-		if      (src=="C")        {	 uri="../firma1.php?Q=C&id=" + id }
-		else if (src=="V")        { uri="../firma1.php?Q=V&id=" + id; }
-		else if (src=="E")        { uri="../user1.php?id=" + id; }
-		else if (src=="K")   { uri="../kontakt.php?id=" + id; }
+		if      (src=="C") { uri="../firma1.php?Q=C&id=" + id }
+		else if (src=="V") { uri="../firma1.php?Q=V&id=" + id; }
+		else if (src=="E") { uri="../user1.php?id=" + id; }
+		else if (src=="K") { uri="../kontakt.php?id=" + id; }
 		else if (src=="A") { uri="lxcmain.php?task=3&c_id=" + id; }
 		window.location.href=uri;
 	}
 
    	</script>
 <?php 
-	 echo $menu['stylesheets'].'
-    <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">
-    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
-    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
-    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
-	echo $head['JQUERY']; 
+	echo $menu['stylesheets'];
+	echo $menu['javascripts'];
+ 	echo $head['JQUERY']; 
 	echo $head['JQUERYUI']; 
 	echo $head['THEME'];
-    echo $head['JQTABLE'];
-    echo $head['JUI-DROPDOWN'];
+   echo $head['JQTABLE'];
+   echo $head['JUI-DROPDOWN'];
     
     if ($_SESSION['feature_ac']) { 
         echo '   
@@ -161,7 +160,7 @@ $keine=  '<div id="dialog" title="Nichts gefunden">
           </div>';
 $keinFhz='<div id="dialog" title="Fahrzeug nicht gefunden">
               <p>Es wurde kein Fahrzeug gefunden.</br>Bitte überprüfen Sie die Schreibweise!</p>
-          </div>';   
+          </div>'; 
 if ($_GET["adress"]) {
   
 	include("inc/FirmenLib.php");
@@ -171,7 +170,8 @@ if ($_GET["adress"]) {
 	$suchwort=mkSuchwort($_GET["swort"]);
 	$anzahl=0;
 
-    #$rsE = $rsV = $rsC = $rsK = false;
+    $rsE = $rsV = $rsC = $rsK = false;
+    
     if ( $_GET['swort'] != '') {
         $rsC = getAllFirmen($suchwort,true,"C");
         if ( $rsC ) $anzahl = count($rsC);
@@ -220,19 +220,20 @@ if ($_GET["adress"]) {
 				"<td >".$row["city"].(($row["street"])?", ":" ").$row["street"]."</td><td >".$row["phone"]."</td><td>K</td></tr>\n";
 			$i++;
 		}
+
 		if ($rsV) foreach($rsV as $row) {
 			echo "<tr onClick='showD(\"V\",".$row["id"].");'>".
 				"<td>".$row["vendornumber"]."</td><td >".$row["name"]."</td>".
 				"<td>".$row["city"].(($row["street"])?", ":" ").$row["street"]."</td><td>".$row["phone"]."</td><td>L</td></tr>\n";
 			$i++;
 		}
-		/*if ($rsK) 
-		print_r($rsK);foreach($rsK as $row) {
+	
+		if ($rsK) foreach($rsK as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"K\",".$row["id"].");'>".
 				"<td >".$row["cp_id"]."</td><td >".$row["cp_name"].", ".$row["cp_givenname"]."</td>".
 				"<td >".$row["cp_city"].(($row["cp_street"])?", ":" ").$row["cp_street"]."</td><td >".$row["cp_phone1"]."</td><td >P</td></tr>\n";
 			$i++;
-		}*/
+		}
 		if ($rsE) foreach($rsE as $row) {
 			echo "<tr  class='bgcol".($i%2+1)."' onClick='showD(\"E\",".$row["id"].");'>".
 				"<td >".$row["id"]."</td><td >".$row["name"]."</td>".
@@ -242,14 +243,11 @@ if ($_GET["adress"]) {
         echo "</tbody></table>\n"; 
         }  
         echo "<br>"; 
-    } else if ($_GET["kontakt"]) {
-?>
-<script language="JavaScript">
-	sw="<?php echo  $_GET["swort"]; ?>";
-	if (sw != "") 
-		F1=open("suchKontakt.php?suchwort="+sw+"&Q=S","Suche","width=400, height=400, left=100, top=50, scrollbars=yes");
-</script>	
-<? }
+} 
+    
+    else if ($_GET["kontakt"]) {
+}   
+
 
 if ( $_GET['sauto'] || $keineFirma ) {
 	include("inc/lxcLib.php");
@@ -280,10 +278,10 @@ if ( $anzahl > 10 ) {
     echo '
     <span id="pager" class="pager">
         <form>
-            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/first.png" class="first"/>
-            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/prev.png" class="prev"/>
-            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/next.png" class="next"/>
-            <img src="'.$_SESSION["baseurl"].'crm/jquery-ui/plugin/Table/addons/pager/icons/last.png" class="last"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-plugins/Table/addons/pager/icons/first.png" class="first"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-plugins/Table/addons/pager/icons/prev.png" class="prev"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-plugins/Table/addons/pager/icons/next.png" class="next"/>
+            <img src="'.$_SESSION["baseurl"].'crm/jquery-plugins/Table/addons/pager/icons/last.png" class="last"/>
             <select class="pagesize" id="pagesize">
                 <option value="10">10</option>
                 <option value="20" selected>20</option>
@@ -298,7 +296,7 @@ if ( $anzahl > 10 ) {
 ?>
    
 <?php
-    
+   
     echo $menu['end_content'];
     ob_end_flush(); 
 ?>

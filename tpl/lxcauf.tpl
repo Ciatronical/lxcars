@@ -1,6 +1,11 @@
 <html>
 <head><title>Auftragb {ln} mit der ID {c_id}</title>
-    {STYLESHEETS}
+      {STYLESHEETS}
+   	{JAVASCRIPTS}
+		{CRMCSS}
+		{JQUERY}
+		{JQUERYUI}
+
     <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
     <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
     <script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/date-time-picker.js"></script>
