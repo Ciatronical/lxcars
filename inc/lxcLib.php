@@ -397,10 +397,10 @@ function GetCars ( $owner ) {
         //bei ev. Problemen ganzen Pfad angeben
     }
     ?>	
-	<form name="extra" action="lxcmain.php?task=2&owner=<?echo $owner;?>" method="post" >
+	<form name="extra" action="lxcmain.php?task=2&owner=<?php echo $owner;?>" method="post" >
 	   <input type="submit" name="newcar" value="Neues Auto">
 	</form>
-	<form name="close" action="../firma1.php?Q=C&id=<?echo $owner;?>" method="post">
+	<form name="close" action="../firma1.php?Q=C&id=<?php echo $owner;?>" method="post">
 	   <input type="submit" name="back" value="Zurück">
 	</form>
 	<?php echo $menu['end_content'];?> 
@@ -483,7 +483,7 @@ function ShowCar ( $c_id ) {
 	}
 	//-->
 	</script>
-	<p class="listtop">Folgende Fahrzeuge stehen zur KBA  <?echo $rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 );?> zur Auswahl. Wähle ein Fahrzeug! </p>
+	<p class="listtop">Folgende Fahrzeuge stehen zur KBA  <?php echo $rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 );?> zur Auswahl. Wähle ein Fahrzeug! </p>
 
 	<?php
 	echo "<table class=\"liste\">\n";
