@@ -278,25 +278,20 @@ function GetCars ( $owner ) {
     global $bgcol;
     global $tbkba;
     global $tbname;
-    $menu=$_SESSION['menu'];
+    $menu =  $_SESSION['menu'];
+	 $head = mkHeader();
     ?>
 	<html>
 	<head><title>Fahrzeug auswaehlen</title>
-	    <?php echo $menu['stylesheets'].'
-    <link type="text/css" REL="stylesheet" HREF="'.$_SESSION["basepath"].'crm/css/'.$_SESSION["stylesheet"].'/main.css">
-    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/themes/base/jquery-ui.css"> 
-    <link rel="stylesheet" type="text/css" href="'.$_SESSION['basepath'].'crm/jquery-ui/plugin/Table/themes/blue/style.css"> 
-    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/jquery.js"></script> 
-    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/plugin/Table/jquery.tablesorter.js"></script> 
-    <script type="text/javascript" src="'.$_SESSION['basepath'].'crm/jquery-ui/ui/jquery-ui.js"></script>'; 
-	echo $head['JQUERY']; 
-	echo $head['JQUERYUI']; 
-	echo $head['THEME'];
-    echo $head['JQTABLE'];
-    echo $head['JUI-DROPDOWN']; ?> 
-    
-     <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"];?>/main.css"></link>
-       <?php echo $menu['javascripts']; ?>
+	    <?php 
+	    
+	    echo $menu['stylesheets'];
+		echo $menu['javascripts'];    
+		echo $head['JQUERY']; 
+		echo $head['JQUERYUI']; 
+		echo $head['THEME'];
+   	echo $head['JQTABLE'];
+    	//echo $head['JUI-DROPDOWN']; ?> 
 
     <script type="text/javascript">
      $(function()

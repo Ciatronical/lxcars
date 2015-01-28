@@ -2,12 +2,18 @@
 ob_start();//kann in neueren php-Versionen entfallen
 include("../inc/stdLib.php");
 $menu =  $_SESSION['menu'];
+$head = mkHeader();
 ?>
 <html>
 <head><title></title>
 <?php echo $menu['stylesheets']; ?>
 <link type="text/css" REL="stylesheet" HREF="../css/<?php echo $_SESSION["stylesheet"]; ?>/main.css"></link>
-<?php echo $menu['javascripts']; ?>
+<?php echo $menu['javascripts']; 
+      echo $head['JQUERY']; 
+	   echo $head['JQUERYUI']; 
+	   echo $head['THEME'];
+      echo $head['JQTABLE'];
+      echo $head['JUI-DROPDOWN'];?>
 
 </head>
 <body onLoad="document.suche.mkbinput.focus()";>
