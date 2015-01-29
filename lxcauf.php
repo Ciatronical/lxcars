@@ -124,7 +124,7 @@ switch( $task ){
     $stat = "lxc_a_status".$ad[0]['lxc_a_status'];
     $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
     if($ad){
-        if( $ad[0]['lxc_a_km'] == '0' ){
+        if( $ad[0]['lxc_a_km'] == '0' && $ad[0]['lxc_a_finish_time'] != ''){
             $tpl_array['JQMSG'] = '<div id="dialog" title="Kilometerstand fehlt">
 	                                 <p>Bitte geben Sie den Stand des Wegstreckenzählers ein.</p>
 	                               </div>';
