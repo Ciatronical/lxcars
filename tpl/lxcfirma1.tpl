@@ -102,7 +102,7 @@
 	</script>
 	</head>
 <body onLoad="submenu('{kdview}'); showCall(0);">
-<p class="listtop">.:detailview:. {FAART} <span title=".:important note:.">{Cmsg}&nbsp;</span></p>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">.:detailview:. {FAART} <span title=".:important note:.">{Cmsg}&nbsp;</span></p>
 <form name="kdhelp">
 <div style="position:absolute; top:1.7em; left:1.1em; ">
     <div style="float:left; padding-top:1.5em; ";>

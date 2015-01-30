@@ -131,7 +131,7 @@ switch( $task ){
 				$g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
 			}
 			$g_art_drop.='</select>';
-			$msg = "<p class=\"listtop\">Fahrzeug von <b> ".$owner_data['name']."</b> anlegen.</p>";
+			$msg = "<p class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 20px; padding: 0.6em;\">Fahrzeug von <b> ".$owner_data['name']."</b> anlegen.</p>";
 			$t->set_var( array( 'owner' => $owner, 'c_text' =>"Kommentar eingeben", 'g_art_drop' => $g_art_drop, 'ERPCSS' => $_SESSION["stylesheet"], 'MSG'=>$msg ) );	//$formdata['ERPCSS'] = $_SESSION["stylesheet"];
 			
 			$t->set_file(array("tpl-file" => "lxcmain$task.tpl"));

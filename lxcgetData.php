@@ -130,7 +130,7 @@ $head = mkHeader();
 <?php //wichtig: focus().val('ohneLeerZeichen')
 echo $menu['pre_content'];
 echo $menu['start_content'];
-    $formular = '<p class="listtop">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
+    $formular = '<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">Schnellsuche Kunde/Lieferant/Kontakte und Kontaktverlauf <?php echo ($telnum)?"Telefonunummer: ".$telnum:""; ?></p>';
     $formular .= '<form name="suche" action="lxcgetData.php?telnum='.$telnum.' method="get">';
     $formular .= '<input type="text" name="swort" size="20" id="ac0" autocomplete="off">';  
     $formular .= '<input type="submit" name="adress" id="adress" value="Kunde o. Lief.">';

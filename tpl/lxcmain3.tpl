@@ -88,7 +88,7 @@ $(function() {
 <body onload="checkhu(document.car.c_hu.value)">
 {PRE_CONTENT}
 {START_CONTENT}
-<p class="listtop">{msg}</p>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">{msg}</p>
 
 <div id="dialog" title="LxCars Fehler" >
   <p></p>

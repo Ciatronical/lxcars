@@ -53,7 +53,7 @@ if( $motnr ){
 	$t->pparse( "out", array( "tpl-file" ) );
 }
 else{
-	$formular = '<p class="listtop">Suche nach Motoren</p>';
+	$formular = '<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">Suche nach Motoren</p>';
 	$formular .= '<form name="suche" action="lxcmotSuche.php" method="post">';
 	$formular .= '<input type="text" name="mkbinput" size="20" value="'.$mkbinput.'">';  
 	$formular .= '<input type="submit" name="mkbform" value="Suche MKB"></form>';

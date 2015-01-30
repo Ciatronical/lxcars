@@ -5,6 +5,7 @@
 		{CRMCSS}
 		{JQUERY}
 		{JQUERYUI}
+		{THEME}
 
     <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/jquery.js"></script> 
     <script type="text/javascript" src="{BASEPATH}crm/jquery-ui/ui/jquery-ui.js"></script>
@@ -79,7 +80,7 @@
 {PRE_CONTENT}
 {START_CONTENT}
 <left>
-<p class="listtop">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
 <form name="lxcauf" action="lxcauf.php?task=3" method="post" onSubmit="">
 <input type="hidden" name="c_id" value="{c_id}">
 <input type="hidden" name="a_id" value="{a_id}">

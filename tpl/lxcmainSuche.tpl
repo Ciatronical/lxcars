@@ -6,6 +6,7 @@
 		{CRMCSS}
 		{JQUERY}
 		{JQUERYUI}
+		{THEME}
 
 
 	<script language="JavaScript" type="text/javascript">
@@ -66,7 +67,7 @@
    <body onLoad="document.erwsuche.c_hu_gg.focus();">
    {PRE_CONTENT}
    {START_CONTENT}
-   <p class="listtop" onClick="help('SuchFirma');"> Suche nach Fahrzeugen und verkn&uuml;pften Daten</p>
+   <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;" onClick="help('SuchFirma');"> Suche nach Fahrzeugen und verkn&uuml;pften Daten</p>
    <span style="position:absolute; left:1em; top:5.0em; border: 0px solid black;">
   	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="post">
   	<input type="hidden" name="felder" value="">

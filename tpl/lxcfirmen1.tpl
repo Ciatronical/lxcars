@@ -27,7 +27,7 @@
 <form name="erwsuche" enctype='multipart/form-data' action="{action}" method="post">
 <input type="hidden" name="felder" value="">
 <input type="hidden" name="Q" value="{Q}">
-<p class="listtop" onClick="help('SuchFirma');">.:Companys:. .:search:. {FAART} (?)</p>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;" onClick="help('SuchFirma');">.:Companys:. .:search:. {FAART} (?)</p>
 <span style="position:absolute; left:1em; top:3.0em; border: 0px solid black;">
 <!-- Beginn Code ------------------------------------------->
 <p class="listheading">| 
