@@ -179,7 +179,7 @@ function UpdatePosition ( $pos_id, $posdata ) {
     $wherestring="lxc_a_pos_id = $pos_id";
     $rs=$_SESSION['db']->update ( $tbpos, $p_dbarray, $posdata, $wherestring );
 }
-function lxc2db ( $parastr ) {
+function lxc2db ( $parastr ) { 
     $rsdata=array ( );
     $ret=-10;
     $db_name="lxcars";
@@ -410,13 +410,20 @@ function GetCars ( $owner ) {
 }
 function ShowCar ( $c_id ) {
     //fragt die DB an, schreibt, die Daten nach c_t und zeigt diese im tpl an
-    global $t;
-    global $tbname;
+    // global $t;
+    // global $tbname;
+    $tbname="lxc_cars";
+    $tbkba="lxc_kba";
+    $tblxc_a="lxc_a";
     /* ToDOTODO Motorcode vorausfüllen!!!!!*/
     global $owner;
     global $tbkba;
     //echo "SchowCar wird mit der Car ID = ".$c_id." und mit tbname = ".$tbname."  ausgefuehrt";
     //global $db;
+    //letzter KM-Stand
+    //select lxc_a_km from lxc_a where lxc_a_c_id = 120 order by lxc_a_km desc limit 1
+    $sql="select MAX(lxc_a_km) from $tblxc_a where lxc_a_c_id = $c_id";
+    $km=$_SESSION['db']->getall ( $sql );
     $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu,  chk_fin from $tbname where c_id = $c_id ";
     $rs=$_SESSION['db']->getall ( $sql );
     //print_r($rs);
@@ -582,6 +589,7 @@ function ShowCar ( $c_id ) {
         'owner'       => $rs[0]['c_ow'],
 
         'c_id'       => $c_id,
+        'km_s'       => $km[0]["max"],
         'c_ln'       => $rs[0]['c_ln'],
         'c_2'        => $rs[0]['c_2'],
         'c_3'        => $rs[0]['c_3'],
