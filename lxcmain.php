@@ -86,15 +86,23 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "chk_c_3"  => $chk_c_3, 
                             "chk_c_em" => $chk_c_em, 
                             "chk_c_hu" => $chk_c_hu, 
+    
                             "chk_fin"  => $chk_fin);
 
+//Benutzer in Gruppe Spezial ?
+$gruppe  = $_SESSION['grp'];
+$special = false;
+foreach ($gruppe as $value) {
+    if( $value['text'] == 'Spezial' ) {
+      $special = true;
+    }  
+}
+ 
 //prüfen ob der User zur Gruppe Admin oder Special gehört
 $gruppen = getGruppen($_SESSION["login"]);
-$admin = $special = false;
+$admin = false;
 foreach($gruppen as $value){
 	if( $value['name'] == "Admin" ) $admin = true;
-	if( $value['name'] == "Spezial" ) $special = true;
-	//if(  $value['name'] == "Spezial" ) $special = true;
 }
 
 $visibility = $admin ? 'style="visibility:visible"' : 'style="visibility:hidden"';
