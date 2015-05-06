@@ -25,7 +25,7 @@ $pdf=new FPDF('P','mm','A4');
 $pdf->AddPage();
 $pdf->SetFont('Helvetica','B','18');
 $pdf->Text('20','26','Auto-Spar Reparaturauftrag');
-$pdf->Text('160','26',$carData["c_ln"]);
+$pdf->Text('160','26',utf8_decode($carData["c_ln"]));
 $pdf->SetFont('Helvetica','','14');
 $pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
 
