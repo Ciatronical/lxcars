@@ -128,16 +128,17 @@ $(function() {
 <tr><td>LO Winterr&auml;der</td><td><input tabindex="16" type="text" name="c_wt_l" size="12" value="{c_wt_l}" title="Lagerort der Winterreifen, z.B. B4D1"></td><td  class="info inforightright FahrzeuscheinMasse">Gesamtgewicht:  <span></span></td><td><input tabindex="-1" type="text" size="29" value="{mmax}" title="Fahrzeugschein Seite 3, oben Feld G" readonly="readonly"></td></tr>
 <tr><td>Zustand Sommerreifen</td><td><input tabindex="17" type="text" name="c_st_z" size="12" value="{c_st_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>bearbeitet am:</td><td><input tabindex="-1" type="text" size="29" value="{mdate}" title="Datum und Zeit" readonly="readonly"></td></tr>
 <tr><td>Zustand Winterreifen</td><td><input tabindex="18" type="text" name="c_wt_z" size="12" value="{c_wt_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>bearbeitet von:</td><td><input tabindex="-1" type="text" size="29" value="{c_e_string}" title="dein Name" readonly="readonly"></td></tr>
+<tr><td>Flexrohrgröße:</td><td><input tabindex="19" type="text" id="c_flx" name="c_flx" size="12" value="{c_flx}" title="Druchmesser/Länge"></td></tr>
 </table>
 <h4>Interne Bemerkungen</h4>
 <table summary="Interne Bemerkungen">
-<tr><td><textarea tabindex="19" name="c_text" cols="92" rows="5">{c_text}</textarea></td></tr>
+<tr><td><textarea tabindex="20" name="c_text" cols="92" rows="5">{c_text}</textarea></td></tr>
 </table>
 
-<input tabindex="20" type="submit" name="update" id="speichern" value="speichern">&nbsp;&nbsp;&nbsp;
-<input tabindex="21" type="button" name="close" onClick="myclose(document.car.owner.value);" value="schlie&szlig;en">&nbsp;&nbsp;&nbsp;
-<input tabindex="22" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);" value="   Auftrag   ">&nbsp;&nbsp;&nbsp;
-<input tabindex="23" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');" value="KBA DB bearbeiten" style="visibility:{FhzTypVis}">&nbsp;
+<input tabindex="21" type="submit" name="update" id="speichern" value="speichern">&nbsp;&nbsp;&nbsp;
+<input tabindex="22" type="button" name="close" onClick="myclose(document.car.owner.value);" value="schlie&szlig;en">&nbsp;&nbsp;&nbsp;
+<input tabindex="23" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);" value="   Auftrag   ">&nbsp;&nbsp;&nbsp;
+<input tabindex="24" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');" value="KBA DB bearbeiten" style="visibility:{FhzTypVis}">&nbsp;
 {SPECIAL}
 </form>
 </left>
