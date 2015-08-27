@@ -78,12 +78,22 @@ if( $rs && ( $i < $_SESSION['listLimit'] ) ){
 			$farbe='yellow';
 			$statustext='Auto hier / wird repariert';
 		}
-		//Fall 3: Auftrag bearbeitet, Auto in der Werkstatt ( auf dem Gelände ) - Reparatur abgeschlossen
+		//Fall 3: Auftrag bearbeitet, Gegenstand in der Werkstatt - Reparatur im Gange
+		elseif($zeile['lxc_a_car_status'] == 3 && $zeile['lxc_a_status'] == 1) {
+			$farbe='yellow';
+			$statustext='Sonstiges / wird repariert';
+		}
+		//Fall 4: Auftrag bearbeitet, Auto in der Werkstatt ( auf dem Gelände ) - Reparatur abgeschlossen
 		elseif($zeile['lxc_a_car_status'] == 2 && $zeile['lxc_a_status'] == 2) {
 			$farbe='green';
 			$statustext='Auto hier / fertig';
 		}
-		//Sonstige Fälle
+		//Fall 5: Auftrag bearbeitet, Gegenstand in der Werkstatt - Reparatur abgeschlossen
+		elseif($zeile['lxc_a_car_status'] == 3 && $zeile['lxc_a_status'] == 2) {
+			$farbe='green';
+			$statustext='Sonstiges / fertig';
+		}
+		//Restliche Fälle
 		else {
 			$farbe='lightgrey';
 			$statustext='Auto abgeholt / nicht abgerechnet';

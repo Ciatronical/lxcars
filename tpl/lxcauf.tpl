@@ -95,6 +95,7 @@
 <tr><td></td><td></td><td>KfZ:</td><td><select name="lxc_a_car_status"> 
 													<option value="1" {lxc_a_car_status1}>Auto nicht hier
 													<option value="2" {lxc_a_car_status2}>Auto hier
+													<option value="3" {lxc_a_car_status3}>Sonstiges zur Reparatur gebracht
 													</select></td></tr>
 <tr><td>erstellt am:</td><td>{lxc_a_init_time}</td><td>Status:</td><td><select name="lxc_a_status">
 																						<option value="1" {lxc_a_status1}>angenommen
