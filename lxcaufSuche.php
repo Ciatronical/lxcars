@@ -78,20 +78,30 @@ if( $rs && ( $i < $_SESSION['listLimit'] ) ){
 			$farbe='yellow';
 			$statustext='Auto hier / wird repariert';
 		}
-		//Fall 3: Auftrag bearbeitet, Gegenstand in der Werkstatt - Reparatur im Gange
+		//Fall 3: Auftrag angenommen, Gegenstand in der Werkstatt - Reparatur im Gange
 		elseif($zeile['lxc_a_car_status'] == 3 && $zeile['lxc_a_status'] == 1) {
 			$farbe='yellow';
 			$statustext='Sonstiges / wird repariert';
 		}
-		//Fall 4: Auftrag bearbeitet, Auto in der Werkstatt ( auf dem Gelände ) - Reparatur abgeschlossen
+		//Fall 4: Auftrag angenommen, muss bestellt werden
+		elseif($zeile['lxc_a_car_status'] == 4 && $zeile['lxc_a_status'] == 1) {
+			$farbe='yellow';
+			$statustext='Bestellung';
+		}
+		//Fall 5: Auftrag bearbeitet, Auto in der Werkstatt ( auf dem Gelände ) - Reparatur abgeschlossen
 		elseif($zeile['lxc_a_car_status'] == 2 && $zeile['lxc_a_status'] == 2) {
 			$farbe='green';
 			$statustext='Auto hier / fertig';
 		}
-		//Fall 5: Auftrag bearbeitet, Gegenstand in der Werkstatt - Reparatur abgeschlossen
+		//Fall 6: Auftrag bearbeitet, Gegenstand in der Werkstatt - Reparatur abgeschlossen
 		elseif($zeile['lxc_a_car_status'] == 3 && $zeile['lxc_a_status'] == 2) {
 			$farbe='green';
 			$statustext='Sonstiges / fertig';
+		}
+		//Fall 7: Bestellung angekommen
+		elseif($zeile['lxc_a_car_status'] == 4 && $zeile['lxc_a_status'] == 2) {
+			$farbe='green';
+			$statustext='Bestellung';
 		}
 		//Restliche Fälle
 		else {
