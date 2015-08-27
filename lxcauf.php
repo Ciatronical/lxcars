@@ -97,17 +97,16 @@ switch( $task ){
 			$mem = 0;
 			$mytimestamp = mktime();
 			$mts = date("d.m.Y H:i:s",$mytimestamp);	
-			$a_data = array( $_POST['lxc_a_finish_time'], $_POST['lxc_a_km'], $_SESSION['employee'], $mts, $_POST['lxc_a_status'], $_POST['lxc_a_text']);
+			$a_data = array( $_POST['lxc_a_finish_time'], $_POST['lxc_a_km'], $_SESSION['employee'], $mts, $_POST['lxc_a_status'], $_POST['lxc_a_text'], $_POST['lxc_a_car_status']);
 			UpdateAuftragsDaten( $a_id, $a_data  );
 			$zaehler = 0;
 			foreach( $_POST as $key => $value ){
 				if( strrpos( $key, "___" ) ){//StingPosition()  (sind drei Underlines enthalten?
 					$zaehler++;					
 					$geteilt = explode( "___", $key );//Underlines abtrennen, explode teilt einen string, Rückgabe ist ein Array 
-					$poscontent[$zaehler] = $_POST[$key];		
+					$poscontent[$zaehler] = $_POST[$key];
 					if( $zaehler == 7 ){
 						$zaehler = 0;
-						
                         $poscontent['7'] = $schrauber[$poscontent['7']]['name'];
 						UpdatePosition( $geteilt[1], $poscontent );
 					}
@@ -122,7 +121,8 @@ switch( $task ){
 	}	
     $ad = HoleAuftragsDaten( $a_id );
     $stat = "lxc_a_status".$ad[0]['lxc_a_status'];
-    $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
+	$stat_car = "lxc_a_car_status".$ad[0]['lxc_a_car_status'];
+    $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', $stat_car => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
     if($ad){
         if( $ad[0]['lxc_a_km'] == '0' && $ad[0]['lxc_a_finish_time'] != ''){
             $tpl_array['JQMSG'] = '<div id="dialog" title="Kilometerstand fehlt">

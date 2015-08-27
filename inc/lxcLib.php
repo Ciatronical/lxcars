@@ -127,7 +127,7 @@ function HoleAuftragsDaten ( $a_id ) {
     //Gibt alle Daten des Auftrags mit der a_id zuruck
     global $tbauf;
     global $tbpos;
-    $selectstring="lxc_a_c_id,EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)), lxc_a_finish_time, lxc_a_modified_from, lxc_a_km, lxc_a_status, lxc_a_text, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_modified_on))AS modified_time";
+    $selectstring="lxc_a_c_id,EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)), lxc_a_finish_time, lxc_a_modified_from, lxc_a_km, lxc_a_status, lxc_a_text, lxc_a_car_status, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_modified_on))AS modified_time";
     $sql="select $selectstring from $tbauf where lxc_a_id = $a_id ORDER BY lxc_a_id ";
     $rs=$_SESSION['db']->getall ( $sql );
     $rs[0]['lxc_a_modified_on']=ts2gerdate ( $rs[0]['modified_time'] );
@@ -156,6 +156,7 @@ function UpdateAuftragsDaten ( $a_id, $a_data ) {
         'lxc_a_modified_on',
         'lxc_a_status',
         'lxc_a_text',
+        'lxc_a_car_status',
     );
     $wherestring="lxc_a_id = $a_id";
     $rs=$_SESSION['db']->update ( $tbauf, $a_dbarray, $a_data, $wherestring );
@@ -827,7 +828,7 @@ function SucheAuftrag ( $was ) {
         $and="AND";
     }
     //$sql = "SELECT  a.lxc_a_id, c.c_ln, d.lxc_a_pos_todo, to_char(a.lxc_a_init_time,'Day, DD Mon YYYY HH24:SS')  FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where GROUP BY a.lxc_a_id SORT BY d.lxc_a_pos_id DESC, a.lex_a_id ASC ";
-    $sql="SELECT DISTINCT ON (a.lxc_a_id) a.lxc_a_id, c.c_ln, e.name, d.lxc_a_pos_todo, c.c_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(a.lxc_a_init_time)), c.c_ow FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where ORDER BY a.lxc_a_id ASC, d.lxc_a_pos_id ASC";
+    $sql="SELECT DISTINCT ON (a.lxc_a_id) a.lxc_a_id, a.lxc_a_status, a.lxc_a_car_status, c.c_ln, e.name, d.lxc_a_pos_todo, c.c_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(a.lxc_a_init_time)), c.c_ow FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where ORDER BY a.lxc_a_id ASC, d.lxc_a_pos_id ASC";
     //echo "SQL: ".$sql;
     if ( $where ) {
         $rs=$_SESSION['db']->getall ( $sql );

@@ -65,10 +65,31 @@ if( !$formdata[reset] ){
 	$t->set_var($formdata);
 }
 $i = 0;
-if( $rs && ( $i < $_SESSION['listLimit'] ) ){//
+if( $rs && ( $i < $_SESSION['listLimit'] ) ){
 	foreach( $rs as $zeile ){
-        $t->set_var(array(rs_c_ln => $zeile['c_ln'], lxc_a_id => $zeile['lxc_a_id'], LineCol => $bgcol[($i%2+1)], kdname => $zeile['name'], todo => $zeile['lxc_a_pos_todo'], adate => $zeile['to_char'], a_c_ow => $zeile['c_ow'], a_c_id => $zeile['c_id']));// end set_var
- 		$t->parse("Block","Liste",true);
+		//Status Farben erstellen - für die spätere Markierung in der Auftragsauflistung
+		//Fall 1: Auftrag angenommen, Auto nicht in der Werkstatt ( nicht auf dem Gelände )
+		if($zeile['lxc_a_car_status'] == 1 && $zeile['lxc_a_status'] == 1) {
+			$farbe='red';
+			$statustext='Auto nicht hier';
+		}
+		//Fall 2: Auftrag angenommen, Auto in der Werkstatt ( auf dem Gelände ) - Reparatur im Gange
+		elseif($zeile['lxc_a_car_status'] == 2 && $zeile['lxc_a_status'] == 1) {
+			$farbe='yellow';
+			$statustext='Auto hier / wird repariert';
+		}
+		//Fall 3: Auftrag bearbeitet, Auto in der Werkstatt ( auf dem Gelände ) - Reparatur abgeschlossen
+		elseif($zeile['lxc_a_car_status'] == 2 && $zeile['lxc_a_status'] == 2) {
+			$farbe='green';
+			$statustext='Auto hier / fertig';
+		}
+		//Sonstige Fälle
+		else {
+			$farbe='lightgrey';
+			$statustext='Auto abgeholt / nicht abgerechnet';
+		}
+		$t->set_var(array(rs_c_ln => $zeile['c_ln'], lxc_a_id => $zeile['lxc_a_id'], lxc_a_car_status => $zeile['lxc_a_car_status'], Statustext => $statustext, SpCol => $farbe, kdname => $zeile['name'], LineCol => $bgcol[($i%2+1)], todo => $zeile['lxc_a_pos_todo'], adate => $zeile['to_char'], a_c_ow => $zeile['c_ow'], a_c_id => $zeile['c_id']));// end set_var
+		$t->parse("Block","Liste",true);
      	$i++;
     }
 }

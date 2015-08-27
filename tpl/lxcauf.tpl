@@ -92,6 +92,10 @@
 <tr><td>Fertigstellung:</td><td><input type="text" name="lxc_a_finish_time" id="lxc_a_finish_time" size="22" value="{lxc_a_finish_time}"></td><td>KM-Stand</td>
 <td><input type="text" name="lxc_a_km" size="8" value="{lxc_a_km}"></td></tr>
 <tr><td>bearbeitet von:</td><td>{lxc_a_modified_from}</td><td>bearbeitet am:</td><td>{lxc_a_modified_on}</td></tr>
+<tr><td></td><td></td><td>KfZ:</td><td><select name="lxc_a_car_status"> 
+													<option value="1" {lxc_a_car_status1}>Auto nicht hier
+													<option value="2" {lxc_a_car_status2}>Auto hier
+													</select></td></tr>
 <tr><td>erstellt am:</td><td>{lxc_a_init_time}</td><td>Status:</td><td><select name="lxc_a_status">
 																						<option value="1" {lxc_a_status1}>angenommen
 																						<option value="2" {lxc_a_status2}>bearbeitet

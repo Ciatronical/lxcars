@@ -7,9 +7,7 @@
 		{JQUERY}
 		{JQUERYUI}
 		{THEME}
-
    <script language="JavaScript">
-    <!--	
     $(function() {
         $("#ac1").autocomplete({                          
             source: "lxc_ac.php?case=owner",                            
@@ -92,10 +90,12 @@
 			
 	</div>
 </form> 
-<table class="mini">
-	<tr class='bgcol3'><th>Kennzeichen</th><th>Besitzer</th><th>Auftragsdatum</th><th>Erster Arbeitstext</th><th>Auftr.-Nr.</th></tr>
+	<table class="mini"> 
+	<!-- class='bgcol3'-->
+	<thead><tr bgcolor="lightblue"><th>Status</th><th>Kennzeichen</th><th>Besitzer</th><th>Auftragsdatum</th><th>Erster Arbeitstext</th><th>Auftr.-Nr.</th></tr>
+	</thead>
 	<!-- BEGIN Liste -->
-	<tr onMouseover="this.bgColor='#0033FF';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}"><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"  >{rs_c_ln}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"> {kdname}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"> {adate}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"> {todo}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste" align=right>{lxc_a_id}</td></tr>
+	<tr onMouseover="this.bgColor='#0033FF';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}"><td bgcolor="{SpCol}">{Statustext}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"  >{rs_c_ln}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"> {kdname}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"> {adate}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste"> {todo}</td><td onClick="call_lxc_auf({a_c_ow},{a_c_id},{lxc_a_id},1);" class="liste" align=right>{lxc_a_id}</td></tr>
 	<!-- END Liste -->
 </table>
 </div>
