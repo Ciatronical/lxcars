@@ -95,7 +95,7 @@ $pdf->Text('22','270','Datum:');
 $pdf->Text('45','270',date('d.m.Y'));
 $pdf->Text('110','270','Unterschrift: __________________');
 $pdf->SetTextColor(255, 0, 0);
-$pdf->Text('22','280',utf8_decode('Endkontrolle durchgeführt von:'));
+$pdf->Text('22','280',utf8_decode('Endkontrolle UND Probefahrt durchgeführt von:'));
 $pdf->SetTextColor(0, 0, 0);
 $pdf->SetFont('Helvetica','','08');
 $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
