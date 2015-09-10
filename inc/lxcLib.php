@@ -83,6 +83,22 @@ function CheckLxCars ( ) {
             echo "Statement: ".$sok1."</br>";
         }
     }
+    if ( $rs[$last]['version']=="1.4.3-3" ) {
+        echo "Update erfolgt </br>";
+        echo "Zusätzliche Tabellen werden angelegt </br>";
+        $sql=file_get_contents ( "lxc-misc/lxc-update-04.sql" );
+        $statement=explode ( ";", $sql );
+        $sm0='/\/\*.{0,}\*\//';
+        // SuchMuster ' /* bla */ '
+        $sm1='/--.{0,}\n/';
+        // SuchMuster ' --bla \n '
+        foreach ( $statement as $key => $value ) {
+            $sok0=preg_replace ( $sm0, '', $statement[$key] );
+            $sok1=preg_replace ( $sm1, '', $sok0 );
+            $rc=$_SESSION['db']->query ( $sok1 );
+            echo "Statement: ".$sok1."</br>";
+        }
+    }
 }
 CheckLxCars ( );
 function NeuerAuftrag ( $c_id ) {
@@ -265,7 +281,7 @@ function UpdateCar ( $c_id, $u ) {
         $upc_m="c_m = '', ";
     }
     $c_t= ( isset($u['c_t'] ))? ( ", c_t = '".$u['c_t']."' " ): ( " " );
-    $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_flx = $u[c_flx], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
+    $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_flx = $u[c_flx], c_zrd = $u[c_zrd], c_zrk = $u[c_zrk], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
     //echo "sql: ".$sql;
     $rc=$_SESSION['db']->query ( $sql );
 }
@@ -425,7 +441,7 @@ function ShowCar ( $c_id ) {
     //select lxc_a_km from lxc_a where lxc_a_c_id = 120 order by lxc_a_km desc limit 1
     $sql="select MAX(lxc_a_km) from $tblxc_a where lxc_a_c_id = $c_id";
     $km=$_SESSION['db']->getall ( $sql );
-    $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu, chk_fin, c_flx from $tbname where c_id = $c_id ";
+    $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu, chk_fin, c_flx, c_zrd, c_zrk from $tbname where c_id = $c_id ";
     $rs=$_SESSION['db']->getall ( $sql );
     //print_r($rs);
     $z2=$rs[0]['c_2'];
@@ -572,6 +588,7 @@ function ShowCar ( $c_id ) {
     $c_fin=substr ( $rs[0]['c_fin'], 0, 17 );
     $c_d=db2date ( $rs[0]['c_d'] );
     $c_hu=db2date ( $rs[0]['c_hu'] );
+	$c_zrd=db2date ( $rs[0]['c_zrd'] );
     $chk_c_ln= ( $rs[0]['chk_c_ln']=='t' )? ( 'checked="checked"' ): ( '' );
     $chk_c_2= ( $rs[0]['chk_c_2']=='t' )? ( 'checked="checked"' ): ( '' );
     $chk_c_3= ( $rs[0]['chk_c_3']=='t' )? ( 'checked="checked"' ): ( '' );
@@ -637,6 +654,8 @@ function ShowCar ( $c_id ) {
         'chk_fin'    => $chk_fin,
         'kba'        => $kba,
         'c_flx'	     => $rs[0]['c_flx'],
+        'c_zrd'	     => $c_zrd,
+        'c_zrk'	     => $rs[0]['c_zrk'],
     );
     return $retarray;
 }
