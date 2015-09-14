@@ -47,13 +47,13 @@
                 currentText: 'Jetzt'
             });
             $( "#service" ).button()
-                .click(function() { 
-                    $( ".todo:last" ).val( "Liquide, Wischer, Licht- und Wischwaschanlage prüfen" );                
+                .click(function() {
+                    $( ".todo:last" ).val( "Liquide, Wischer, Licht- und Wischwaschanlage prüfen" );
                     return false;
             });
             $( "#carData" ).button()
-                .click(function() {    
-                    lxcaufschliessen( document.lxcauf.owner.value, document.lxcauf.c_id.value, 3 )            
+                .click(function() {
+                    lxcaufschliessen( document.lxcauf.owner.value, document.lxcauf.c_id.value, 3 )
                     return false;
             });
             $( "input[type=submit],input[type=button]" ).button()
@@ -128,7 +128,7 @@
 <input type="submit" name="update" value="speichern">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="Pdf">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="drucken">&nbsp;&nbsp;&nbsp;
-<input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.owner.value,document.lxcauf.c_id.value,3,{b});" value="schlie&szlig;en">
+<input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.c_id.value,document.lxcauf.owner.value,1);" value="schlie&szlig;en">
 <button id="service">Service</button>
 <button id="carData">Fahrzeug</button>
 </form>

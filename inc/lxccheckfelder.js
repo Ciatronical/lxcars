@@ -75,16 +75,11 @@ function zeigeMotor( owner, c_id, mkbinput ){
     location.href=uri;
 }
 
-function lxcaufschliessen( owner, c_id, task, b){
-	if(b==1){
-		uri="lxcaufSuche.php"
-	}
-	else{
-		uri1="lxcmain.php?owner=" + owner;
-		uri2="&c_id=" + c_id;
-		uri3="&task=" + task;
-		uri=uri1+uri2+uri3;
-	}
+function lxcaufschliessen( c_id, owner, task){
+	uri1="lxcauf.php?c_id=" + c_id;
+	uri2="&owner=" + owner;
+	uri3="&task=" + task;
+	uri=uri1+uri2+uri3;
 	location.href=uri;
 }
 

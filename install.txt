@@ -24,5 +24,9 @@ su postgres
 ./lxc2db
 Datenbank braucht nicht angegeben zu werden.
 
+Buttons in der ERP wiederherstellen
+cd kivitendo-erp
+git am --signoff < ../kivitendo-crm/lxcars/lxc-misc/button.patch
+
 Bei Fragen oder Problemen 
 ronny@lxcars.de
