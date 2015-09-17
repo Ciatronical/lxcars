@@ -40,6 +40,7 @@ $pdf->Text('22','80','Bearb.:');
 $pdf->Text('22','87','Farbe:');
 $pdf->Text('22','94','Hubr.:');
 $pdf->Text('22','100','Flex.:');
+$pdf->Text('22','106','Zr. gewech. am:');
 $pdf->Text('124','45','KBA:');
 $pdf->Text('124','52','Baujahr:');
 $pdf->Text('124','59','FIN:');
@@ -48,10 +49,11 @@ $pdf->Text('124','73','AU/HU:');
 $pdf->Text('124','80','KM:');
 $pdf->Text('124','87','Abgas.:');
 $pdf->Text('124','94','Peff:');
+$pdf->Text('124','101','Zr. Km:');
 
 $pdf->SetLineWidth(0.3); 
-$pdf->Rect('20', '38', '100', '65');
-$pdf->Rect('122', '38', '84', '65');
+$pdf->Rect('20', '38', '100', '70');
+$pdf->Rect('122', '38', '84', '70');
 
 //Daten aus DB
 $pdf->SetFont('Helvetica','','14');
@@ -67,6 +69,7 @@ $pdf->Text('43','73',$carData["mobile"]);
 $pdf->Text('43','87',$carData["c_color"]);
 $pdf->Text('43','94',$carData["vh"]);
 $pdf->Text('43','100',$carData["c_flx"]);
+$pdf->Text('68','106',$carData["c_zrd"]);
 $pdf->Text('148','45',$carData["c_2"]." ".$carData["c_3"]);
 $pdf->Text('148','52',$carData["c_d"]);
 $pdf->Text('148','59',$carData["fin"]);
@@ -75,12 +78,13 @@ $pdf->Text('148','73',$carData["c_hu"]);
 $pdf->Text('148','80',$aufData[0]['lxc_a_km']);
 $pdf->Text('148','87',$carData["c_em"]);
 $pdf->Text('148','94',$carData["peff"]);
+$pdf->Text('150','101',$carData["c_zrk"]);
 
 $pdf->SetFont('Helvetica','B','16');
 $pdf->SetTextColor(255, 0, 0); 
-$pdf->Text('20','110','Fertigstellung:');
+$pdf->Text('20','115','Fertigstellung:');
 $pdf->SetFont('Helvetica','','16');
-$pdf->Text('75','110',utf8_decode($aufData[0]['lxc_a_finish_time']));
+$pdf->Text('75','117',utf8_decode($aufData[0]['lxc_a_finish_time']));
 $pdf->SetTextColor(0, 0, 0); 
 
 $pos_todo[x] = 20;$pos_todo[y] = 130; 
