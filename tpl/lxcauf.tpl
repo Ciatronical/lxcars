@@ -47,13 +47,29 @@
                 currentText: 'Jetzt'
             });
             $( "#service" ).button()
-                .click(function() {
-                    $( ".todo:last" ).val( "Liquide, Wischer, Licht- und Wischwaschanlage prüfen" );
+                .click(function() { 
+                    $( ".todo:last" ).val( "Liquide, Wischer, Licht- und Wischwaschanlage prüfen" );            
+                    return false;
+            });
+            $( "#testfelder" ).button()
+               .click(function() { 
+               var posi = (parseInt({posid})+1);
+                alert('PosID alt: {posid} -> PosID neu: '+posi);
+                    $("#erw").append('<tr><th colspan="4"><textarea class="todo" name="lxc_a_pos_todo___'+ posi +'" cols="22" rows="2">{lxc_a_pos_todo}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_doing___'+ posi +'" cols="22" rows="2">{lxc_a_pos_doing}</textarea></th><th colspan="3"><textarea name="lxc_a_pos_parts___'+ posi +'" cols="22" rows="2">{lxc_a_pos_parts}</textarea></th><td>'+
+'<b class="zeit">Vorg. Zeit </b><input type="text" name="lxc_a_pos_finish_ctime___'+ posi +'" size="1" value="{lxc_a_pos_ctime}">'+
+'<select class="inp" name="lxc_a_pos_status___'+ posi +'">'+
+'<option value="1" {lxc_a_pos_status1'+ posi +'}>gelesen'+
+'<option value="2" {lxc_a_pos_status2'+ posi +'}>bearbeitet'+
+'<option value="3" {lxc_a_pos_status3'+ posi +'}>geprüft'+
+'</select></br>'+
+'<b class="zeit"> Gebr. Zeit </b><input type="text" name="lxc_a_pos_finish_time___'+ posi +'" size="1" value="{lxc_a_pos_time}">'+
+'<select class="inp" name="lxc_a_pos_emp___'+ posi +'">{lxc_schauber_auswahl}'+
+'</select></td></tr>');
                     return false;
             });
             $( "#carData" ).button()
                 .click(function() {
-                    lxcaufschliessen( document.lxcauf.owner.value, document.lxcauf.c_id.value, 3 )
+                    lxcaufschliessen2( document.lxcauf.c_id.value, document.lxcauf.owner.value, 3);
                     return false;
             });
             $( "input[type=submit],input[type=button]" ).button()
@@ -128,7 +144,7 @@
 <input type="submit" name="update" value="speichern">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="Pdf">&nbsp;&nbsp;&nbsp;
 <input type="submit" name="printa" value="drucken">&nbsp;&nbsp;&nbsp;
-<input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.c_id.value,document.lxcauf.owner.value,1);" value="schlie&szlig;en">
+<input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.c_id.value,document.lxcauf.owner.value,1,{b});" value="schlie&szlig;en">
 <button id="service">Service</button>
 <button id="carData">Fahrzeug</button>
 </form>
