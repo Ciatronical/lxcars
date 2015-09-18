@@ -7,6 +7,7 @@
 include_once("inc/lxcLib.php");
 include_once("../inc/template.inc");
 include_once("../inc/UserLib.php");
+include_once ( "../inc/crmLib.php" );
 
 ob_start();
 $task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
@@ -84,15 +85,12 @@ switch( $task ){
 
 	case 3: 
 	    $_POST['lxc_a_km'] = $_POST['lxc_a_km'] == '' ? '0' : $_POST['lxc_a_km'];
-        $gruppen=getGruppen();
-        foreach($gruppen as $key=>$value){
-            if($gruppen[$key]['grpname']=="Werkstatt") {$schrauber=getMitglieder($gruppen[$key]['grpid']);}
-        }   
+		$schrauber = ERPNutzerVonGruppe("Werkstatt");
+		array_unshift( $schrauber, array(id => 0, name => "Monteur") );
+		$schrauber = array_reverse( $schrauber );
         if( !$schrauber ){
 	       echo "<b>Gruppe Werkstatt nicht angelegt oder ihr sind keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
         }
-        array_unshift( $schrauber, array(id => 0, name => "Monteur") );
-        $schrauber = array_reverse( $schrauber );
 		if( $_POST[update] || $_POST[printa] ){
 			$mem = 0;
 			$mytimestamp = mktime();
@@ -107,7 +105,11 @@ switch( $task ){
 					$poscontent[$zaehler] = $_POST[$key];
 					if( $zaehler == 7 ){
 						$zaehler = 0;
-                        $poscontent['7'] = $schrauber[$poscontent['7']]['name'];
+						$schrauber_name = $schrauber[$poscontent['7']]['name'];
+						if($schrauber[$poscontent['7']]['name'] == '') {
+							$schrauber_name = $poscontent['7'];
+						}
+                        $poscontent['7'] = $schrauber_name;
 						UpdatePosition( $geteilt[1], $poscontent );
 					}
 				}
@@ -168,15 +170,23 @@ switch( $task ){
         } 
         $last_pos_todo = $posdata['lxc_a_pos_todo'];
         $schrauberAuswahlString = "";//array(lxc_schauber_auswahl=>'<option value="1"  > Schraubername');
+        $selected = false;
         foreach ($schrauber as $key1=>$value){
             if( $posdata['lxc_a_pos_emp'] == $value['name'] ){
                 $selectString = "selected";
-            } 
+                $selected = true;
+            }
    	        else{
    		       $selectString = "";
    	        }
-   	        $schrauberAuswahlString = " "."<option value=\"$key1\" ".$selectString." > ".$schrauber[$key1]['name'].$schrauberAuswahlString;   
-        }    
+   	        $schrauberAuswahlString = " "."<option value=\"$key1\" ".$selectString." > ".$schrauber[$key1]['name'].$schrauberAuswahlString;
+        }
+        //wichtig für ältere Aufträge von Benutzern die nicht mehr in der ERP sind
+        if(!$selected && ($posdata['lxc_a_pos_emp'] != '')) {
+        	 $opt_key = array_pop(array_keys($schrauber))+1;
+        	 $opt_key = $posdata['lxc_a_pos_emp'];
+        	 $schrauberAuswahlString = " "."<option value=\"$opt_key\" selected > ".$posdata['lxc_a_pos_emp'].$schrauberAuswahlString;
+        }
         $schrauberAuswahlArray = Array( lxc_schauber_auswahl => $schrauberAuswahlString );
         $ta_array = array( posid => $posdata['lxc_a_pos_id'], lxc_a_pos_status.$posdata['lxc_a_pos_status'].$posdata['lxc_a_pos_id'] => "selected" );
         $ta_array += $schrauberAuswahlArray;
