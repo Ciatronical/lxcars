@@ -281,9 +281,26 @@ function UpdateCar ( $c_id, $u ) {
         $upc_m="c_m = '', ";
     }
     $c_t= ( isset($u['c_t'] ))? ( ", c_t = '".$u['c_t']."' " ): ( " " );
-    $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_flx = $u[c_flx], c_zrd = $u[c_zrd], c_zrk = $u[c_zrk], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
+    $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_zrd = $u[c_zrd], c_zrk = $u[c_zrk], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
     //echo "sql: ".$sql;
     $rc=$_SESSION['db']->query ( $sql );
+    //zu1 zu2
+    $zu2 = substr($u['c_2'], 0, 5)."'";
+    $zu3 = substr($u['c_3'], 0, 4)."'";
+    //Baujahr von bis
+    $pos = strpos($u['c_bauj'], '-');
+    $bjvon = '';
+    $bjbis = '';
+    if($pos) {
+        $bjvon = substr($u['c_bauj'], 0, $pos-1)."'";
+        $bjbis = "'".substr($u['c_bauj'], $pos+2);
+    }
+    $test = substr($u['c_flx'], 1 , strlen($u['c_flx'])-2);
+    //Flexrohrgröße angegeben - Abfrage
+    if($test != '') {
+        $sql="insert into lxc_flex (hsn, tsn, flxgr, hubr, leist, baujvon, baujbis) values ($zu2, $zu3, $u[c_flx], $u[c_hubr], $u[c_leist], $bjvon, $bjbis)";
+        $rcflx=$_SESSION['db']->query ( $sql );
+    }
 }
 function UpdateTypNr ( $c_id, $c_t ) {
     global $tbname;
@@ -441,13 +458,16 @@ function ShowCar ( $c_id ) {
     //select lxc_a_km from lxc_a where lxc_a_c_id = 120 order by lxc_a_km desc limit 1
     $sql="select MAX(lxc_a_km) from $tblxc_a where lxc_a_c_id = $c_id";
     $km=$_SESSION['db']->getall ( $sql );
-    $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu, chk_fin, c_flx, c_zrd, c_zrk from $tbname where c_id = $c_id ";
+    $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu, chk_fin, c_zrd, c_zrk from $tbname where c_id = $c_id ";
     $rs=$_SESSION['db']->getall ( $sql );
     //print_r($rs);
     $z2=$rs[0]['c_2'];
     //ToDo wird noch gebraucht
     $z3=$rs[0]['c_3'];
     $z3=substr ( $z3, 0, 3 );
+    //Flexrohrgröße holen, wenn diese anhand z2 und z2 in lxc_flex hinterlegt sind
+	$sql="select flxgr from lxc_flex where hsn = '$z2' and tsn = '$z3'";
+	$flx=$_SESSION['db']->getall ( $sql );
     //echo "TEST".$z3;
     /*
     $sql="select amther, amttyp, name, vh, peff, mottyp, energqu, vmaxmax, gmmax, radstand from $tbkba where zu2 = '$z2'  AND zu3 = '$z3' ";
@@ -653,7 +673,7 @@ function ShowCar ( $c_id ) {
         'chk_c_hu'   => $chk_c_hu,
         'chk_fin'    => $chk_fin,
         'kba'        => $kba,
-        'c_flx'	     => $rs[0]['c_flx'],
+        'c_flx'	     => $flx[0]['flxgr'],
         'c_zrd'	     => $c_zrd,
         'c_zrk'	     => $rs[0]['c_zrk'],
     );
