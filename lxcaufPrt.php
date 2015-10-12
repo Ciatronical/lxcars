@@ -40,7 +40,7 @@ $pdf->Text('22','80','Bearb.:');
 $pdf->Text('22','87','Farbe:');
 $pdf->Text('22','94','Hubr.:');
 $pdf->Text('22','100','Flex.:');
-$pdf->Text('22','106','Zr. gewech. am:');
+$pdf->Text('22','106','Zr-Wechsel am:');
 $pdf->Text('124','45','KBA:');
 $pdf->Text('124','52','Baujahr:');
 $pdf->Text('124','59','FIN:');

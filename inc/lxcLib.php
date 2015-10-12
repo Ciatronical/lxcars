@@ -298,8 +298,19 @@ function UpdateCar ( $c_id, $u ) {
     $test = substr($u['c_flx'], 1 , strlen($u['c_flx'])-2);
     //Flexrohrgröße angegeben - Abfrage
     if($test != '') {
-        $sql="insert into lxc_flex (hsn, tsn, flxgr, hubr, leist, baujvon, baujbis) values ($zu2, $zu3, $u[c_flx], $u[c_hubr], $u[c_leist], $bjvon, $bjbis)";
-        $rcflx=$_SESSION['db']->query ( $sql );
+        //Abfrage ob Eintrag vorhanden oder nicht -   Insert oder update
+        $sql = "select * from lxc_flex where hsn = $zu2 and tsn = $zu3";
+		$rcflx1=$_SESSION['db']->getAll  ( $sql );
+		// UPDATE
+		if($rcflx1[0]['id']) {
+			$sql="update lxc_flex set flxgr = $u[c_flx] where hsn = $zu2 and tsn = $zu3";
+			$rcflx2=$_SESSION['db']->query ( $sql );
+		}
+		//INSERT
+		else {
+		    $sql="insert into lxc_flex (hsn, tsn, flxgr, hubr, leist, baujvon, baujbis) values ($zu2, $zu3, $u[c_flx], $u[c_hubr], $u[c_leist], $bjvon, $bjbis)";
+		    $rcflx3=$_SESSION['db']->query ( $sql );
+		}
     }
 }
 function UpdateTypNr ( $c_id, $c_t ) {
