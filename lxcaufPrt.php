@@ -42,14 +42,16 @@ $pdf->Text('22','94','Hubr.:');
 $pdf->Text('22','100','Flex.:');
 $pdf->Text('22','106','Zr-Wechsel am:');
 $pdf->Text('124','45','KBA:');
-$pdf->Text('124','52','Baujahr:');
-$pdf->Text('124','59','FIN:');
-$pdf->Text('124','66','MK:');
-$pdf->Text('124','73','AU/HU:');
-$pdf->Text('124','80','KM:');
-$pdf->Text('124','87','Abgas.:');
-$pdf->Text('124','94','Peff:');
-$pdf->Text('124','101','Zr. Km:');
+$pdf->Text('124','51','Baujahr:');
+$pdf->Text('124','58','FIN:');
+$pdf->Text('124','64','MK:');
+$pdf->Text('124','69','AU/HU:');
+$pdf->Text('124','75','KM:');
+$pdf->Text('124','81','Abgas.:');
+$pdf->Text('124','88','Peff:');
+$pdf->Text('124','94','Zr. Km:');
+$pdf->Text('124','100','Bremsfl:');
+$pdf->Text('124','106','WD:');
 
 $pdf->SetLineWidth(0.3); 
 $pdf->Rect('20', '38', '100', '70');
@@ -71,14 +73,16 @@ $pdf->Text('43','94',$carData["vh"]);
 $pdf->Text('43','100',$carData["c_flx"]);
 $pdf->Text('68','106',$carData["c_zrd"]);
 $pdf->Text('148','45',$carData["c_2"]." ".$carData["c_3"]);
-$pdf->Text('148','52',$carData["c_d"]);
-$pdf->Text('148','59',$carData["fin"]);
-$pdf->Text('148','66',$carData["mkb"]);
-$pdf->Text('148','73',$carData["c_hu"]);
-$pdf->Text('148','80',$aufData[0]['lxc_a_km']);
-$pdf->Text('148','87',$carData["c_em"]);
-$pdf->Text('148','94',$carData["peff"]);
-$pdf->Text('150','101',$carData["c_zrk"]);
+$pdf->Text('148','51',$carData["c_d"]);
+$pdf->Text('148','58',$carData["fin"]);
+$pdf->Text('148','63',$carData["mkb"]);
+$pdf->Text('148','69',$carData["c_hu"]);
+$pdf->Text('148','74',$aufData[0]['lxc_a_km']);
+$pdf->Text('148','81',$carData["c_em"]);
+$pdf->Text('148','88',$carData["peff"]);
+$pdf->Text('148','94',$carData["c_zrk"]);
+$pdf->Text('148','100',$carData["c_bf"]);
+$pdf->Text('148','106',$carData["c_wd"]);
 
 $pdf->SetFont('Helvetica','B','16');
 $pdf->SetTextColor(255, 0, 0); 
@@ -88,18 +92,28 @@ $pdf->Text('75','117',utf8_decode($aufData[0]['lxc_a_finish_time']));
 $pdf->SetTextColor(0, 0, 0); 
 
 $pos_todo[x] = 20;$pos_todo[y] = 130; 
-
+//"Merk"-Variable ob es Positionen mit Absätzen gab
+$merke = 0;
 foreach($posData as $index => $element){
-	//echo $posData[$index]['lxc_a_pos_todo']."</br>";	;
-	$b = 16;
-	$y = $pos_todo[y]+$b*$index;	//echo "tst  :  ".$y;
-	$pdf->Text($pos_todo[x],$y,utf8_decode($posData[$index]['lxc_a_pos_todo']));//*$b*$index
+	$b = 17;
+	$count = strlen($posData[$index-1]['lxc_a_pos_todo']) - strlen(str_replace("\n", "", $posData[$index-1]['lxc_a_pos_todo']));
+	// Wenn die vorhergehende Position mehr als 3 Absätze hat, muss die nächste Position weiter nach unten verrückt werden
+	if($count >= 3) {
+	    $y = $pos_todo[y]+$b*($index+$merke+1);
+	    $merke++;
 	}
+	else {
+	    $y = $pos_todo[y]+$b*($index+$merke);
+	}
+	$pdf->SetXY($pos_todo[x], $y); 
+    $pdf->Multicell(0,5,utf8_decode($posData[$index]['lxc_a_pos_todo']));
+    $pdf->Multicell(0,5,"\r\n");
+    }
 
 $pdf->SetFont('Helvetica','','14');
 $pdf->Text('22','270','Datum:');
 $pdf->Text('45','270',date('d.m.Y'));
-$pdf->Text('110','270','Unterschrift: __________________');
+$pdf->Text('105','270','Kundenunterschrift: __________________');
 $pdf->SetTextColor(255, 0, 0);
 $pdf->Text('22','280',utf8_decode('Endkontrolle UND Probefahrt durchgeführt von:'));
 $pdf->SetTextColor(0, 0, 0);

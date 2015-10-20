@@ -12,4 +12,6 @@ CREATE TABLE lxc_flex
 );
 ALTER TABLE lxc_cars ADD COLUMN c_zrd date;
 ALTER TABLE lxc_cars ADD COLUMN c_zrk integer;
+ALTER TABLE lxc_cars ADD COLUMN c_bf date;
+ALTER TABLE lxc_cars ADD COLUMN c_wd date;
 INSERT INTO lxc_ver (version) VALUES ('1.4.3-4');

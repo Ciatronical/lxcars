@@ -66,7 +66,26 @@
         $("#c_zrd").datepicker({
             changeMonth: true,
             changeYear: true,
-            yearRange: "-5:-0" ,
+            minDate: '+0m +0y',
+            maxDate: '+0m +5y',
+            dateFormat: "dd.mm.yy"
+        });
+    });
+    $(function() {
+        $("#c_bf").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            minDate: '+0m +0y',
+            maxDate: '+0m +5y',
+            dateFormat: "dd.mm.yy"
+        });
+    });
+    $(function() {
+        $("#c_wd").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            minDate: '+0m +0y',
+            maxDate: '+0m +5y',
             dateFormat: "dd.mm.yy"
         });
     });
@@ -128,16 +147,17 @@ $(function() {
 <tr><td class="info infoleft FahrzeuscheinHu">Datum HU+AU<span></span></td><td><input tabindex="6" type="text" id="c_hu" name="c_hu" size="12" maxlength="10" value="{c_hu}" title="Stempel Fahrzeugscheinrückseite oder vom Fahrzeug ablesen" onclick=select() {readonly}></span><input tabindex="-1" type="checkbox" name="chk_c_hu" value="chk_c_hu" {chk_c_hu} title="Fälligkeit der HU wird geprüft"></td><td  class="info inforightright FahrzeuscheinLeist">Leistung:<span></span></td><td><input id="c_leist" name="c_leist" tabindex="-1" type="text" size="29" value="{peff}" title="Pferdchen" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinFin">FIN+Pr&uuml;fziffer<span></span><td> <input tabindex="7" type="text" name="fin" id="fin" size="24" maxlength="17" value="{fin}" title="Fahrzeugschein Seite 2 und im Fhz" onclick=select() onchange="UniqueFin(this.value,document.car.c_id.value)" {readonly}><input tabindex="8" type="text" name="cn" size="1" maxlength="1" value="{cn}" title="Fahrzeugschein Seite 2, Feld 3 (falls unbekannt - eingeben)" {readonly}><input tabindex="-1" type="checkbox" name="chk_fin" value="true" {chk_fin} title="Eingabe prüfen"></td><td>Drehmoment:</td><td><input tabindex="-1" type="text" size="29" value="{drehm}" title="falls bekannt" readonly="readonly"></td></tr>
 <tr><td>Motorcode</td><td><input tabindex="9" type="text" name="mkb" size="12" maxlength="22" value="{mkb}" title="Steht meist auf dem Motor"  {readonly}>{mkbdrop} <input type="button" name="InfoMotor" value="Info" onclick="zeigeMotor(document.car.owner.value, document.car.c_id.value, document.car.mkb.value);"></td><td>Verdichtung:</td><td title="Kompressionsverh&auml;ltnis"><input tabindex="-1" type="text" size="29" value="{verd}" title="Kompressionsverh&auml;ltnis" readonly="readonly"></td></tr>
-<tr><td>Farbnummer</td><td><input tabindex="11" tyu7pe="text" name="c_color" size="12" maxlength="22" value="{c_color}" title="Fahrzeugschein Seite 3, Feld R" {readonly}></td><td>Ventile:</td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{vent}" title="Anzahl der Ventile" readonly="readonly"></td></tr>
+<tr><td>Farbnummer</td><td><input tabindex="11" type="text" name="c_color" size="12" maxlength="22" value="{c_color}" title="Fahrzeugschein Seite 3, Feld R" {readonly}></td><td>Ventile:</td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{vent}" title="Anzahl der Ventile" readonly="readonly"></td></tr>
 <tr><td>Getriebeart</td><td><input id="ac2" tabindex="12" type="text" name="c_gart" size="12" value="{c_gart}" title="Schalter, Automatik, DSG" autocomplete="off" {readonly}>{g_art_drop}</td><td>Zylinder:</td><td><input tabindex="-1" type="text" size="29" value="{zyl}" title="Anzahl der Zylinder" readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinReifen">Sommerr&auml;der<span></span></td><td><input id="c_st" tabindex="13" type="text" name="c_st" size="12" value="{c_st}" title="Vom Fahrzeug ablesen Format: 185-65R14 88H"></td><td class="info inforightright FahrzeuscheinKraftstoff">Kraftstoffart / Inhalt:<span></span></td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{ks}" title="Benzin, Diesel..." readonly="readonly"></td></tr>
 <tr><td class="info infoleft FahrzeuscheinReifen">Winterr&auml;der<span></span></td><td><input tabindex="14" type="text" name="c_wt" size="12" value="{c_wt}" title="Vom Fahrzeug ablesen Format: 175-70R14 82T"></td><td>Radstand:</td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{radstand}" title="Abstand zwischen den Achsen" readonly="readonly"></td></tr>
 <tr><td>LO Sommerr&auml;der</td><td><input tabindex="15" type="text" name="c_st_l" size="12" value="{c_st_l}" title="Lagerort der Sommerreifen, z.B. B1D4"></td><td  class="info inforightright FahrzeuscheinVmax">Vmax:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{vmax}" title="H&ouml;chstgeschwindigkeit" readonly="readonly"></td></tr>
 <tr><td>LO Winterr&auml;der</td><td><input tabindex="16" type="text" name="c_wt_l" size="12" value="{c_wt_l}" title="Lagerort der Winterreifen, z.B. B4D1"></td><td  class="info inforightright FahrzeuscheinMasse">Gesamtgewicht:  <span></span></td><td><input tabindex="-1" type="text" size="29" value="{mmax}" title="Fahrzeugschein Seite 3, oben Feld G" readonly="readonly"></td></tr>
-<tr><td>Zustand Sommerreifen</td><td><input tabindex="17" type="text" name="c_st_z" size="12" value="{c_st_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster Zahnriemenwechsel:</td><td><input type="text" id="c_zrd" name="c_zrd" size="29" maxlength="10" value="{c_zrd}" title="" onclick=select() {readonly}></td></tr>
-<tr><td>Zustand Winterreifen</td><td><input tabindex="18" type="text" name="c_wt_z" size="12" value="{c_wt_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster ZR-Wechsel bei KM:</td><td><input type="text" id="c_zrk" name="c_zrk" size="29" maxlength="10" value="{c_zrk}" title="" onclick=select() {readonly}></td></tr>
-<tr><td>Flexrohrgröße:</td><td><input tabindex="19" type="text" id="c_flx" name="c_flx" size="12" value="{c_flx}" title="Druchmesser/Länge"></td><td>bearbeitet am:</td><td><input tabindex="-1" type="text" size="29" value="{mdate}" title="Datum und Zeit" readonly="readonly"></td></tr>
-<tr><td></td><td></td><td>bearbeitet von:</td><td><input tabindex="-1" type="text" size="29" value="{c_e_string}" title="dein Name" readonly="readonly"></td></tr>
+<tr><td>Zustand Sommerreifen</td><td><input tabindex="17" type="text" name="c_st_z" size="12" value="{c_st_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster Zahnriemenwechsel:</td><td><input type="text" id="c_zrd" name="c_zrd" size="29" maxlength="10" value="{c_zrd}" title="" onclick=select()></td></tr>
+<tr><td>Zustand Winterreifen</td><td><input tabindex="18" type="text" name="c_wt_z" size="12" value="{c_wt_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster ZR-Wechsel bei KM:</td><td><input type="text" id="c_zrk" name="c_zrk" size="29" maxlength="10" value="{c_zrk}" title="" onclick=select()></td></tr>
+<tr><td>Flexrohrgröße:</td><td><input tabindex="19" type="text" id="c_flx" name="c_flx" size="12" value="{c_flx}" title="Druchmesser/Länge"></td><td>Nächster Bremsflüssigkeitswechsel:</td><td><input type="text" id="c_bf" name="c_bf" size="29" maxlength="10" value="{c_bf}" title="" onclick=select()></td></tr>
+<tr><td>bearbeitet am:</td><td><input tabindex="-1" type="text" size="20" value="{mdate}" title="Datum und Zeit" readonly="readonly"></td><td>Nächster Wartungsdienst:</td><td><input type="text" id="c_wd" name="c_wd" size="29" maxlength="10" value="{c_wd}" title="" onclick=select()></td></tr>
+<tr><td>bearbeitet von:</td><td><input tabindex="-1" type="text" size="20" value="{c_e_string}" title="dein Name" readonly="readonly"></td><td></td><td></td></tr>
 </table>
 <h4>Interne Bemerkungen</h4>
 <table summary="Interne Bemerkungen">
