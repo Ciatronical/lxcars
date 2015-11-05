@@ -64,6 +64,26 @@
 	}
     //-->
 	</script>
+	<script>
+
+    $(document).ready(function() {
+
+        $('#csv_exp').button().click(
+            function() {
+                var param = $(".kunden input:checkbox:checked").map(function () {
+                    return $(this).attr("value");
+                }).get();
+                $.ajax({
+                    url: "lxccsv.php",
+                    data: {daten : param},
+                    type: "POST",
+                    success: function(strResponse){
+                        window.open('mytmp/daten.csv');
+                    }
+                });
+        });
+    });
+    </script>
    <body onLoad="document.erwsuche.c_hu_gg.focus();">
    {PRE_CONTENT}
    {START_CONTENT}
@@ -141,10 +161,10 @@
 	 <span style="position:absolute; left:28em; top:5.0em; border: 0px solid black;">
 	<table><tr><td valign="top">
 
-<table>
+<table class="kunden">
 <!-- BEGIN Liste -->
 	<tr>
-		<td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showK({ID});" class="mini" > {Name} {Ort}</td><td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showCar({CarID});" class="mini">{KZ} {Herst} {CarTyp}</td>
+		<td><input type="checkbox" id="{ID}" name="{KdNr}" value="{ID}__{KZ}" checked></td><td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showK({ID});" class="mini" > {Name} {Ort}</td><td onMouseover="this.bgColor='#FF0000';" onMouseout="this.bgColor='{LineCol}';" bgcolor="{LineCol}" onClick="showCar({CarID});" class="mini">{KZ} {Herst} {CarTyp}</td>
     </tr>
 <!-- END Liste -->
 
@@ -154,6 +174,7 @@
 
 <!-- BEGIN Rechts -->
 <td class="mini">
+<button id="csv_exp">CSV</button>&nbsp;
 <form>
 	<input type="button" name="etikett" value="Etikett" onClick="chngSerial('../etiketten');">&nbsp;
 	<a href="../sermail.php"><input type="button" name="email" value="Serienmail"></a>&nbsp;
