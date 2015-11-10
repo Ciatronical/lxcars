@@ -921,40 +921,6 @@ function DB2Float ( $wert ) {
         return $wert;
     }
 }
-function ts2gerdate ( $myts ) {
-    if ( $myts ) {
-        $wochentag=array(
-            "Sonntag",
-            "Montag",
-            "Dienstag",
-            "Mittwoch",
-            "Donnerstag",
-            "Freitag",
-            "Samstag",
-        );
-        $Monate=array(
-            "Januar",
-            "Februar",
-            "März",
-            "April",
-            "Mai",
-            "Juni",
-            "Juli",
-            "August",
-            "September",
-            "Oktober",
-            "November",
-            "Dezember",
-        );
-        $wt=$wochentage[date ( "w", $myts )];
-        $day=date ( "d", $myts );
-        $m=$Monate[date ( "m", $myts )-1];
-        $year=date ( "Y", $myts );
-        $hour=date ( "H", $myts );
-        $minute=date ( "i", $myts );
-        return $wt." ".$day.".".$m." ".$year." ".$hour.":".$minute;
-    }
-}
 //ToDo !!!!!!
 function SucheFin ( $zu2, $zu3 ) {
     //Sucht mit der KBA einen passenden Anfang fur die FIN
