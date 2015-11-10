@@ -1,8 +1,8 @@
 <?php
-/******************************************************************************************  
+/******************************************************************************************
 **** lxcLib.php     Library for LxCars                                                  ***
 **** erdacht und geschrieben von Ronny Kumke ronny@lxcars.de                            ***
-**** Lizenz 	GPL, Artistic License                                                    ***
+**** Lizenz     GPL, Artistic License                                                    ***
 ******************************************************************************************/
 include_once ( "../inc/stdLib.php" );
 include_once ( "../inc/FirmenLib.php" );
@@ -136,7 +136,7 @@ function HoleAuftraege ( $c_id ) {
         }
         $rs[$key]['to_char']=ts2gerdate ( $rs[$key]['date_part'] );
     }
-    //$rs['to_char'] = 	ts2gerdate( $rs['lxc_a_init_time'] );
+    //$rs['to_char'] =     ts2gerdate( $rs['lxc_a_init_time'] );
     return $rs;
 }
 function HoleAuftragsDaten ( $a_id ) {
@@ -196,7 +196,7 @@ function UpdatePosition ( $pos_id, $posdata ) {
     $wherestring="lxc_a_pos_id = $pos_id";
     $rs=$_SESSION['db']->update ( $tbpos, $p_dbarray, $posdata, $wherestring );
 }
-function lxc2db ( $parastr ) { 
+function lxc2db ( $parastr ) {
     $rsdata=array ( );
     $ret=-10;
     $db_name="lxcars";
@@ -239,7 +239,7 @@ function NeuesAuto ( $cardata ) {
         $cardata['c_t']="";
         // Wird beim Aufruf von ShowCar und anschließenden Update behandelt
     }
-    if ( $cardata["c_fin"]=="" ) 
+    if ( $cardata["c_fin"]=="" )
         unset ( $cardata["c_fin"] );
     $fields=array_keys ( $cardata );
     $values=array_values ( $cardata );
@@ -300,17 +300,17 @@ function UpdateCar ( $c_id, $u ) {
     if($test != '') {
         //Abfrage ob Eintrag vorhanden oder nicht -   Insert oder update
         $sql = "select * from lxc_flex where hsn = $zu2 and tsn = $zu3";
-		$rcflx1=$_SESSION['db']->getAll  ( $sql );
-		// UPDATE
-		if($rcflx1[0]['id']) {
-			$sql="update lxc_flex set flxgr = $u[c_flx] where hsn = $zu2 and tsn = $zu3";
-			$rcflx2=$_SESSION['db']->query ( $sql );
-		}
-		//INSERT
-		else {
-		    $sql="insert into lxc_flex (hsn, tsn, flxgr, hubr, leist, baujvon, baujbis) values ($zu2, $zu3, $u[c_flx], $u[c_hubr], $u[c_leist], $bjvon, $bjbis)";
-		    $rcflx3=$_SESSION['db']->query ( $sql );
-		}
+        $rcflx1=$_SESSION['db']->getAll  ( $sql );
+        // UPDATE
+        if($rcflx1[0]['id']) {
+            $sql="update lxc_flex set flxgr = $u[c_flx] where hsn = $zu2 and tsn = $zu3";
+            $rcflx2=$_SESSION['db']->query ( $sql );
+        }
+        //INSERT
+        else {
+            $sql="insert into lxc_flex (hsn, tsn, flxgr, hubr, leist, baujvon, baujbis) values ($zu2, $zu3, $u[c_flx], $u[c_hubr], $u[c_leist], $bjvon, $bjbis)";
+            $rcflx3=$_SESSION['db']->query ( $sql );
+        }
     }
 }
 function UpdateTypNr ( $c_id, $c_t ) {
@@ -324,32 +324,25 @@ function GetCars ( $owner ) {
     global $tbkba;
     global $tbname;
     $menu =  $_SESSION['menu'];
-	 $head = mkHeader();
+     $head = mkHeader();
     ?>
-	<html>
-	<head><title>Fahrzeug auswaehlen</title>
-	    <?php 
-	    
-	    echo $menu['stylesheets'];
-		echo $menu['javascripts'];    
-		echo $head['JQUERY']; 
-		echo $head['JQUERYUI']; 
-		echo $head['THEME'];
-   	echo $head['JQTABLE'];
-    	//echo $head['JUI-DROPDOWN']; ?> 
+    <html>
+    <head><title>Fahrzeug auswaehlen</title>
+        <?php
 
-    <script type="text/javascript">
-     $(function()
-            {
-                $("table")
-                .tablesorter({widthFixed: true, widgets: ['zebra']});
-            }
-        )
-    </script> 
+        echo $menu['stylesheets'];
+        echo $menu['javascripts'];
+        echo $head['JQUERY'];
+        echo $head['JQUERYUI'];
+        echo $head['THEME'];
+           echo $head['JQTABLE'];
+        //echo $head['JUI-DROPDOWN']; ?>
+
+    <script type="text/javascript" src="../js/tablesorter.js"></script>
     <style>
     table.tablesorter {
-	   width: 800;
-    } 
+       width: 800;
+    }
     #jui_dropdown {
         height: 400px;
     }
@@ -360,41 +353,40 @@ function GetCars ( $owner ) {
         background: none;
         display: inline-block;
         list-style: none;
-    }   
+    }
 
     .drop_container {
         margin: 10px 10px 10px 10px ;
         display: inline-block;
-    }   
+    }
     .menu {
         position: absolute;
         width: 240px !important;
         margin-top: 3px !important;
-    }     
+    }
     </style>
-        
-	</head>
-	<body>
-	<?php echo $menu['pre_content'];?> 
-	<?php echo $menu['start_content'];?> 
-   
-    <script language="JavaScript">
-	<!--
-	function showD( owner, c_id ){
-		uri1="lxcmain.php?owner=" + owner;
-		uri2="&c_id=" + c_id;
-		uri3="&task=3"
-		uri=uri1+uri2+uri3;
-		location.href=uri;
-	}
-	//-->
-	</script>
-	
-	<p class="listtop">Fahrzeuge des Kunden <?echo $owner;?></p>
 
-	<?php
-	$sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
-    //
+    </head>
+    <body>
+    <?php echo $menu['pre_content'];?>
+    <?php echo $menu['start_content'];?>
+
+    <script language="JavaScript">
+    <!--
+    function showD( owner, c_id ){
+        uri1="lxcmain.php?owner=" + owner;
+        uri2="&c_id=" + c_id;
+        uri3="&task=3"
+        uri=uri1+uri2+uri3;
+        location.href=uri;
+    }
+    //-->
+    </script>
+
+    <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;"> Fahrzeuge des Kunden <?php echo $owner;?></p>
+
+    <?php
+    $sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
     $rs=$_SESSION['db']->getAll ( $sql );
     echo "<table id=\"liste\" class=\"tablesorter\">\n";
     echo "<thead><tr class='bgcol3'> <th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
@@ -429,9 +421,9 @@ function GetCars ( $owner ) {
                 $name= ( $rskba!=-1 )? ( $rskba[0][6] ): ( "Keine Daten gefunden" );
             }
            // echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td class=\"liste\">".$row["c_ln"]."</td><td class=\"liste\">".$herst."</td>"."<td class=\"liste\">".$typ." ".$name."</td><td class=\"liste\">".$art."</td></tr>\n";
-           //  mouseover entfernt    
-           echo "<tr onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td>".$row["c_ln"]."</td><td>".$herst."</td>"."<td>".$typ." ".$name."</td><td>".$art."</td></tr>\n";        
-            
+           //  mouseover entfernt
+           echo "<tr onClick='showD(\"$owner\",".$row["c_id"].");'>"."<td>".$row["c_ln"]."</td><td>".$herst."</td>"."<td>".$typ." ".$name."</td><td>".$art."</td></tr>\n";
+
             $i++;
         }
         echo "</tbody>\n</table>\n";
@@ -441,17 +433,17 @@ function GetCars ( $owner ) {
         header ( "Location: lxcmain.php?owner=$owner&task=2" );
         //bei ev. Problemen ganzen Pfad angeben
     }
-    ?>	
-	<form name="extra" action="lxcmain.php?task=2&owner=<?php echo $owner;?>" method="post" >
-	   <input type="submit" name="newcar" value="Neues Auto">
-	</form>
-	<form name="close" action="../firma1.php?Q=C&id=<?php echo $owner;?>" method="post">
-	   <input type="submit" name="back" value="Zurück">
-	</form>
-	<?php echo $menu['end_content'];?> 
-	</body>
-	</html>
-	<?php
+    ?>
+    <form name="extra" action="lxcmain.php?task=2&owner=<?php echo $owner;?>" method="post" >
+       <input type="submit" name="newcar" value="Neues Auto">
+    </form>
+    <form name="close" action="../firma1.php?Q=C&id=<?php echo $owner;?>" method="post">
+       <input type="submit" name="back" value="Zurück">
+    </form>
+    <?php echo $menu['end_content'];?>
+    </body>
+    </html>
+    <?php
 }
 function ShowCar ( $c_id ) {
     //fragt die DB an, schreibt, die Daten nach c_t und zeigt diese im tpl an
@@ -477,16 +469,16 @@ function ShowCar ( $c_id ) {
     $z3=$rs[0]['c_3'];
     $z3=substr ( $z3, 0, 3 );
     //Flexrohrgröße holen, wenn diese anhand z2 und z2 in lxc_flex hinterlegt sind
-	$sql="select flxgr from lxc_flex where hsn = '$z2' and tsn = '$z3'";
-	$flx=$_SESSION['db']->getall ( $sql );
+    $sql="select flxgr from lxc_flex where hsn = '$z2' and tsn = '$z3'";
+    $flx=$_SESSION['db']->getall ( $sql );
     //echo "TEST".$z3;
     /*
     $sql="select amther, amttyp, name, vh, peff, mottyp, energqu, vmaxmax, gmmax, radstand from $tbkba where zu2 = '$z2'  AND zu3 = '$z3' ";
     $rskba=$db->getall($sql);
-    Die folgenden Zeilen sind nur bei einem Umstieg von LxCars1.0 auf LxCars1.2 nötig 
-    und können bei einer Neuinstallation von Vers. 1.1 kommentiert werden 
-    Ist nicht c_t vorhanden? Dann ermitteln und in 
-    Ermitteln ob TypNr vergeben wenn nicht dieses tun sonst prüfen ob Typnummer zur KBA passt (Fahrzeugwechsel)	
+    Die folgenden Zeilen sind nur bei einem Umstieg von LxCars1.0 auf LxCars1.2 nötig
+    und können bei einer Neuinstallation von Vers. 1.1 kommentiert werden
+    Ist nicht c_t vorhanden? Dann ermitteln und in
+    Ermitteln ob TypNr vergeben wenn nicht dieses tun sonst prüfen ob Typnummer zur KBA passt (Fahrzeugwechsel)
     */
     $lxcrs=lxc2db ( ( $rs[0]['c_d']=="1900-01-01" )? ( " -C ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) ): ( " -CJ ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 )." ".$rs[0]['c_d'] ) );
     if ( $lxcrs==-1 ) {
@@ -497,7 +489,7 @@ function ShowCar ( $c_id ) {
     //echo "</br> !!!!!!lxcrs[][]!!!!  </br>";
     //print_r($lxcrs);
     $index=-1;
- 
+
     if ( $lxcrs[0] ) {
         foreach ( $lxcrs as $key => $value ) {
             //echo "</br> value:".$value[0]."  rs[c_t] ".$rs[0]["c_t"];
@@ -520,42 +512,42 @@ function ShowCar ( $c_id ) {
             //echo "Verschiedene Typnummern !!! Auswahl treffen !!!!! </br>";
             /************Unterbrechung****************/
             ?>
-	<html>
-	<head><title>Fahrzeug auswaehlen</title>
-	<link REL="stylesheet" HREF="css/main.css" TYPE="text/css" TITLE="Lx-System stylesheet">
-	</head>
-	<body >
+    <html>
+    <head><title>Fahrzeug auswaehlen</title>
+    <link REL="stylesheet" HREF="css/main.css" TYPE="text/css" TITLE="Lx-System stylesheet">
+    </head>
+    <body >
    <script language="JavaScript">
-	<!--
-	function SaveTypNr (owner,c_id, c_t) {
-		Frame=eval("parent.main_window");
-		uri1="lxcmain.php?owner=" + owner;
-		uri2="&c_id=" + c_id;
-		uri3="&c_t=" + c_t;
-		uri4="&task=3";
-		uri=uri1+uri2+uri3+uri4;
-		location.href=uri;
-	}
-	//-->
-	</script>
-	<p class="listtop">Folgende Fahrzeuge stehen zur KBA  <?php echo $rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 );?> zur Auswahl. Wähle ein Fahrzeug! </p>
+    <!--
+    function SaveTypNr (owner,c_id, c_t) {
+        Frame=eval("parent.main_window");
+        uri1="lxcmain.php?owner=" + owner;
+        uri2="&c_id=" + c_id;
+        uri3="&c_t=" + c_t;
+        uri4="&task=3";
+        uri=uri1+uri2+uri3+uri4;
+        location.href=uri;
+    }
+    //-->
+    </script>
+    <p class="listtop">Folgende Fahrzeuge stehen zur KBA  <?php echo $rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 );?> zur Auswahl. Wähle ein Fahrzeug! </p>
 
-	<?php
-	echo "<table class=\"liste\">\n";
+    <?php
+    echo "<table class=\"liste\">\n";
             echo "<tr class='bgcol3'><th>Hersteller</th><th class='bgcol3'>Baureihe   </th><th class='bgcol3'>Typ    </th><th class='bgcol3'>von Bj   </th><th class='bgcol3'>bis Bj</th></tr>\n";
             $i=0;
             foreach ( $lxcrs as $key => $row ) {
                 echo "<tr onMouseover=\"this.bgColor='#0033FF';\" onMouseout=\"this.bgColor='".$bgcol[ ( $i%2+1 )]."';\" bgcolor='".$bgcol[ ( $i%2+1 )]."'onClick='SaveTypNr(\"$owner\",".$c_id.",\"".$lxcrs[$key][0]."\");'>"."<td class=\"liste\">".$lxcrs[$key][1]."</td><td class=\"liste\">".$lxcrs[$key][2]."</td>"."<td class=\"liste\">".$lxcrs[$key][3]."</td><td class=\"liste\">".$lxcrs[$key][7]."</td><td class=\"liste\">".$lxcrs[$key][8]."</td></tr>\n";
                 $i++;
             }
-            echo "</table>\n"; 
-            ?>	
-	
-	
-		</html>
-	<?php		
-		
-		/******************Ende der Unterbrechung*******************/
+            echo "</table>\n";
+            ?>
+
+
+        </html>
+    <?php
+
+        /******************Ende der Unterbrechung*******************/
         }
         else {
             //Wenn typnummer einmalig, kann gespeichert werden
@@ -619,7 +611,7 @@ function ShowCar ( $c_id ) {
     $c_fin=substr ( $rs[0]['c_fin'], 0, 17 );
     $c_d=db2date ( $rs[0]['c_d'] );
     $c_hu=db2date ( $rs[0]['c_hu'] );
-	$c_zrd=db2date ( $rs[0]['c_zrd'] );
+    $c_zrd=db2date ( $rs[0]['c_zrd'] );
     $c_bf=db2date ( $rs[0]['c_bf'] );
     $c_wd=db2date ( $rs[0]['c_wd'] );
     $chk_c_ln= ( $rs[0]['chk_c_ln']=='t' )? ( 'checked="checked"' ): ( '' );
@@ -686,9 +678,9 @@ function ShowCar ( $c_id ) {
         'chk_c_hu'   => $chk_c_hu,
         'chk_fin'    => $chk_fin,
         'kba'        => $kba,
-        'c_flx'	     => $flx[0]['flxgr'],
-        'c_zrd'	     => $c_zrd,
-        'c_zrk'	     => $rs[0]['c_zrk'],
+        'c_flx'         => $flx[0]['flxgr'],
+        'c_zrd'         => $c_zrd,
+        'c_zrk'         => $rs[0]['c_zrk'],
         'c_bf'       => $c_bf,
         'c_wd'       => $c_wd,
     );
@@ -718,8 +710,8 @@ function GetOwner ( $c_ln ) {
     }
     return $rsall;
 }
-/* ++++ Input :=	Assoziatives Array c_ln => "MOL-RK73", zu2 => "0039" ++++
-  ++++ Output:=  Array mit Fahrzeugdaten und deren Besitzer 			  ++++     */
+/* ++++ Input :=    Assoziatives Array c_ln => "MOL-RK73", zu2 => "0039" ++++
+  ++++ Output:=  Array mit Fahrzeugdaten und deren Besitzer               ++++     */
 function SucheCars ( $was ) {
     // c_id, c_ow, c_ln, c_2, c_3, c_em, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_text
     global $tbname;
@@ -741,9 +733,9 @@ function SucheCars ( $was ) {
             $opva=" ILIKE '%$value%' ";
             //Operand Value
             /*if($key == c_ow){
-            	$rs_all = getAllFirmen($value);
-            	$opva = "( ";
-            	foreach($rs_all as $firma){ weiter machen!!!
+                $rs_all = getAllFirmen($value);
+                $opva = "( ";
+                foreach($rs_all as $firma){ weiter machen!!!
             */
             if ( $key==c_d_gg ) {
                 $value=date2db ( $value );
@@ -963,7 +955,7 @@ function UniqueKz ( $kz, $c_id ) {
     global $tbname;
     $sql="SELECT name, c_id FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_ln =  '".$kz."'";
     $rs=$_SESSION['db']->getone( $sql );
-    
+
     if ( isset($rs) &&  $c_id != $rs['c_id'] )  {
         return $rs['name'];
 
@@ -975,12 +967,12 @@ function UniqueKz ( $kz, $c_id ) {
 
 function UniqueFin ( $fin, $c_id ) {
     global $tbname;
-    if ( strlen ( $fin ) == 17 ) 
+    if ( strlen ( $fin ) == 17 )
         $sql="SELECT c_id, c_ln, name, c_fin FROM customer CROSS JOIN lxc_cars WHERE c_ow = id AND c_fin like '".$fin."_'";
-    else 
+    else
         $sql="SELECT c_id, c_ln, name FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_fin = '".$fin."'";
     $rs=$_SESSION['db']->getone( $sql );
-    
+
     if ( $rs && $c_id != $rs[c_id] && $fin!="" ) {
         //$objResponse->alert ( "Ein Datensatz mit diser FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
         return "<b>".$rs['c_ln']."</b> gehört <b>".$rs['name']."</b>. <br /> ";
