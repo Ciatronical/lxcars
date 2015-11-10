@@ -81,17 +81,11 @@ cp $DIR_LxCars/image/icons/32x32/*  $DIR_ERP/image/icons/32x32/
 chown -R www-data: $DIR_LxCars
 
 ## CRM Menü erweitern
-echo "Menü sichern......"
-if [ -f $DIR_ERP/menus/crm.ini.orig ]; then
-    echo "Error crm.ini.orig existiert bereits"
-else
-    cp $DIR_ERP/menus/crm.ini $DIR_ERP/menus/crm.ini.orig
-    echo "crm.ini als crm.ini.orig gesichert"
-fi 
+echo "Menü erweitern..."
 
-sed -i '1 i\[LxCars]\n[LxCars--Schnellsuche]\nACCESS=crm_other\nmodule=crm/lxcars/lxcgetData.php\n\n[LxCars--KfzSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmainSuche.php\n\n[LxCars--AuftragSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcaufSuche.php\n\n[LxCars--MotorSuchen]\nACCESS=crm_other\nmodule=crm/lxcars/lxcmotSuche.php\n\n[LxCars--EbaySeller]\nACCESS=crm_other\nmodule=crm/lxcars/ebayseller.php\n\n' $DIR_ERP/menus/crm.ini
+ln -s ../../../kivitendo-crm/lxcars/menu/20-lxcars-menu.yaml ../../kivitendo-erp/menus/user/20-lxcars-menu.yaml
+chown -R www-data: ../../kivitendo-erp/menus/user/20-lxcars-menu.yaml
 
- 
 echo "done!!"
 
 exit 0
