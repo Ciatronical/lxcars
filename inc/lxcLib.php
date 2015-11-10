@@ -327,16 +327,13 @@ function GetCars ( $owner, $owner_name ) {
     $head = mkHeader();
     ?>
     <html>
-    <head><title>Fahrzeug auswaehlen</title>
+    <head><title>Fahrzeug auswählen</title>
         <?php
-
         echo $menu['stylesheets'];
         echo $menu['javascripts'];
-        echo $head['JQUERY'];
-        echo $head['JQUERYUI'];
         echo $head['THEME'];
-           echo $head['JQTABLE'];
-        //echo $head['JUI-DROPDOWN']; ?>
+        echo $head['JQTABLE'];
+         ?>
 
     <script type="text/javascript" src="../js/tablesorter.js"></script>
     <style>
@@ -380,7 +377,7 @@ function GetCars ( $owner, $owner_name ) {
         uri=uri1+uri2+uri3;
         location.href=uri;
     }
-    $(document).ready(function() {//../firma1.php?Q=C&id=<
+    $(document).ready(function() {
         $( "#newCar" )
         .button()
         .click(function( event ) {
@@ -397,8 +394,8 @@ function GetCars ( $owner, $owner_name ) {
     <?php
     $sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
     $rs=$_SESSION['db']->getAll ( $sql );
-    echo "<table id=\"liste\" class=\"tablesorter\">\n";
-    echo "<thead><tr class='bgcol3'> <th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
+    echo "<table id=\"liste\" class=\"tablesorter\" style=\"margin:0px; cursor:pointer;\">\n";
+    echo "<thead><tr><th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
     $i=0;
     if ( $rs ) {
         //ToDo Lesbarkeit verbessern!!
