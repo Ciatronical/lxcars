@@ -318,13 +318,13 @@ function UpdateTypNr ( $c_id, $c_t ) {
     $sql="update $tbname SET c_t = '$c_t' WHERE c_id = $c_id";
     $rc=$_SESSION['db']->query ( $sql );
 }
-function GetCars ( $owner ) {
+function GetCars ( $owner, $owner_name ) {
     //Zeigt Fahrzeuge des Owners ("Kennzeichen", "Hersteller", "Typ","c_id") enthaelt
     global $bgcol;
     global $tbkba;
     global $tbname;
     $menu =  $_SESSION['menu'];
-     $head = mkHeader();
+    $head = mkHeader();
     ?>
     <html>
     <head><title>Fahrzeug auswaehlen</title>
@@ -372,7 +372,7 @@ function GetCars ( $owner ) {
     <?php echo $menu['start_content'];?>
 
     <script language="JavaScript">
-    <!--
+    var owner = <?php echo $owner;?>;
     function showD( owner, c_id ){
         uri1="lxcmain.php?owner=" + owner;
         uri2="&c_id=" + c_id;
@@ -380,11 +380,20 @@ function GetCars ( $owner ) {
         uri=uri1+uri2+uri3;
         location.href=uri;
     }
-    //-->
+    $(document).ready(function() {//../firma1.php?Q=C&id=<
+        $( "#newCar" )
+        .button()
+        .click(function( event ) {
+            location.href="lxcmain.php?task=2&owner=" + owner;
+        });
+        $( "#back" )
+        .button()
+        .click(function( event ) {
+            location.href="../firma1.php?Q=C&id=" + owner;
+        });
+    });
     </script>
-
-    <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;"> Fahrzeuge des Kunden <?php echo $owner;?></p>
-
+    <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;"> Fahrzeuge des Kunden:<b> <?php echo $owner_name;?></b></p>
     <?php
     $sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
     $rs=$_SESSION['db']->getAll ( $sql );
@@ -434,12 +443,10 @@ function GetCars ( $owner ) {
         //bei ev. Problemen ganzen Pfad angeben
     }
     ?>
-    <form name="extra" action="lxcmain.php?task=2&owner=<?php echo $owner;?>" method="post" >
-       <input type="submit" name="newcar" value="Neues Auto">
-    </form>
-    <form name="close" action="../firma1.php?Q=C&id=<?php echo $owner;?>" method="post">
-       <input type="submit" name="back" value="Zurück">
-    </form>
+    <button id="back">Zurück</button>
+    <button id="newCar">Neues Auto</button>
+
+
     <?php echo $menu['end_content'];?>
     </body>
     </html>
