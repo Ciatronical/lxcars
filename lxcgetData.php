@@ -32,6 +32,13 @@ $head = mkHeader();
             margin: .8em 0 .2em;
             line-height: 1.5;
         }
+        .ui-textfield {
+            font: inherit;
+            color: inherit;
+            background: #FFFFEF !important;
+            text-align: inherit;
+            outline: none;
+        }
     </style>
     <script>
 
@@ -66,6 +73,7 @@ $head = mkHeader();
     ?>
     <script>
     $(function() {
+        $('#ac0').button().addClass('ui-textfield');
         $( "input[type=submit]" )
             .button();
         $("#dialog").dialog();
@@ -90,6 +98,7 @@ $head = mkHeader();
     });
     </script>
     <style>
+
     table.tablesorter {
        width: 1000;
     }
@@ -117,6 +126,7 @@ $head = mkHeader();
     </style>
 </head>
 <body onload=$("#ac0").focus().val('<?php echo preg_replace("#[ ].*#",'',$_GET['swort']);?>');>
+<div class="ui-widget-content" style="height:600px">
 <?php //wichtig: focus().val('ohneLeerZeichen')
 echo $menu['pre_content'];
 echo $menu['start_content'];
@@ -268,10 +278,11 @@ if ( $anzahl > 10 ) {
     echo $head['JQTABLE-PAGER'];
 }
 
-?>
 
-<?php
 
     echo $menu['end_content'];
     ob_end_flush();
 ?>
+</div>
+</body>
+</html>
