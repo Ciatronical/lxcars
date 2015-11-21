@@ -1,6 +1,6 @@
 <?php
 
-define("x",0);  define("y",1); 
+define("x",0);  define("y",1);
 
 require("fpdf.php");
 //require("fpdi.php");
@@ -9,10 +9,10 @@ include_once("inc/config.php");
 define("FPDF_FONTPATH","../font/");
 
 
-$a_id = $_GET["a_id"]; //echo "a_id==".$a_id." ***** ";			//AuftragsId
-$print_pdf = $_GET["pdf"];	
+$a_id = $_GET["a_id"]; //echo "a_id==".$a_id." ***** ";            //AuftragsId
+$print_pdf = $_GET["pdf"];
 $owner = $_GET["owner"];
-$c_id = $_GET["c_id"]; 
+$c_id = $_GET["c_id"];
 
 
 $aufData = HoleAuftragsDaten($a_id);//print_r($aufData);
@@ -39,8 +39,8 @@ $pdf->Text('22','73','Mobil:');
 $pdf->Text('22','80','Bearb.:');
 $pdf->Text('22','87','Farbe:');
 $pdf->Text('22','94','Hubr.:');
-$pdf->Text('22','100','Flex.:');
-$pdf->Text('22','106','Zr-Wechsel am:');
+$pdf->Text('22','100','Zr. Km:');
+$pdf->Text('22','106',utf8_decode('nächst. Zr-Wechsel').':');
 $pdf->Text('124','45','KBA:');
 $pdf->Text('124','51','Baujahr:');
 $pdf->Text('124','58','FIN:');
@@ -49,11 +49,11 @@ $pdf->Text('124','69','AU/HU:');
 $pdf->Text('124','75','KM:');
 $pdf->Text('124','81','Abgas.:');
 $pdf->Text('124','88','Peff:');
-$pdf->Text('124','94','Zr. Km:');
-$pdf->Text('124','100','Bremsfl:');
-$pdf->Text('124','106','WD:');
+$pdf->Text('124','94','Flexgr.:');
+$pdf->Text('124','100',utf8_decode('nächst. Bremsfl.').':');
+$pdf->Text('124','106',utf8_decode('nächst. WD').':');
 
-$pdf->SetLineWidth(0.3); 
+$pdf->SetLineWidth(0.3);
 $pdf->Rect('20', '38', '100', '70');
 $pdf->Rect('122', '38', '84', '70');
 
@@ -85,27 +85,27 @@ $pdf->Text('148','100',$carData["c_bf"]);
 $pdf->Text('148','106',$carData["c_wd"]);
 
 $pdf->SetFont('Helvetica','B','16');
-$pdf->SetTextColor(255, 0, 0); 
+$pdf->SetTextColor(255, 0, 0);
 $pdf->Text('20','115','Fertigstellung:');
 $pdf->SetFont('Helvetica','','16');
 $pdf->Text('75','117',utf8_decode($aufData[0]['lxc_a_finish_time']));
-$pdf->SetTextColor(0, 0, 0); 
+$pdf->SetTextColor(0, 0, 0);
 
-$pos_todo[x] = 20;$pos_todo[y] = 130; 
+$pos_todo[x] = 20;$pos_todo[y] = 130;
 //"Merk"-Variable ob es Positionen mit Absätzen gab
 $merke = 0;
 foreach($posData as $index => $element){
-	$b = 17;
-	$count = strlen($posData[$index-1]['lxc_a_pos_todo']) - strlen(str_replace("\n", "", $posData[$index-1]['lxc_a_pos_todo']));
-	// Wenn die vorhergehende Position mehr als 3 Absätze hat, muss die nächste Position weiter nach unten verrückt werden
-	if($count >= 3) {
-	    $y = $pos_todo[y]+$b*($index+$merke+1);
-	    $merke++;
-	}
-	else {
-	    $y = $pos_todo[y]+$b*($index+$merke);
-	}
-	$pdf->SetXY($pos_todo[x], $y); 
+    $b = 17;
+    $count = strlen($posData[$index-1]['lxc_a_pos_todo']) - strlen(str_replace("\n", "", $posData[$index-1]['lxc_a_pos_todo']));
+    // Wenn die vorhergehende Position mehr als 3 Absätze hat, muss die nächste Position weiter nach unten verrückt werden
+    if($count >= 3) {
+        $y = $pos_todo[y]+$b*($index+$merke+1);
+        $merke++;
+    }
+    else {
+        $y = $pos_todo[y]+$b*($index+$merke);
+    }
+    $pdf->SetXY($pos_todo[x], $y);
     $pdf->Multicell(0,5,utf8_decode($posData[$index]['lxc_a_pos_todo']));
     $pdf->Multicell(0,5,"\r\n");
     }
@@ -126,12 +126,12 @@ $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
 //echo date('d.m.Y');
 //echo $print_pdf."*****";
 if($print_pdf){
-	$daten = $pdf->OutPut('Reparaturauftrag_'.$_GET["a_id"].'.pdf',"I");
+    $daten = $pdf->OutPut('Reparaturauftrag_'.$_GET["a_id"].'.pdf',"I");
 }
 else{
-	$test = $pdf->OutPut('out.pdf');
-	system("$lpr out.pdf");
-	header("Location: lxcmain.php?task=3&owner=".$owner."&c_id=".$c_id);
+    $test = $pdf->OutPut('out.pdf');
+    system("$lpr out.pdf");
+    header("Location: lxcmain.php?task=3&owner=".$owner."&c_id=".$c_id);
 }
 
 //print_r ($aufData);
