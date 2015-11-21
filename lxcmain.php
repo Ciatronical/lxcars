@@ -15,7 +15,9 @@ include_once( "../inc/FirmenLib.php" );
 $owner = isset( $_GET["owner"] )? $_GET["owner"] : $_POST["owner"];
 $task  = isset( $_GET["task"] ) ? $_GET["task"] : $_POST["task"];
 $c_id  = isset( $_GET["c_id"] ) ? $_GET["c_id"]: "";
-$e_id  = $_SESSION["id"];
+$e_name  = $_SESSION["name"];
+
+
 
 $t = new Template( $base );
 doHeader($t);
@@ -71,7 +73,7 @@ $cardata = array(  "owner" => $owner,
                     "c_hubr"    => $_POST['c_hubr'],
                     "c_leist"   => $_POST['c_leist'],
                     "c_bauj"    => $_POST['c_bauj'],
-                    "c_mt"      => $mytimestamp, "c_e_id" => $e_id,
+                    "c_mt"      => $mytimestamp, "c_e_name" => $e_name,
                     "chk_c_ln"  => $chk_c_ln, "chk_c_2" => $chk_c_2,
                     "chk_c_3"   => $chk_c_3, "chk_c_em" => $chk_c_em,
                     "chk_c_hu"  => $chk_c_hu, "chk_fin" => $chk_fin,
@@ -96,7 +98,7 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "c_gart"   => (isset($_POST['c_gart'])) ? $_POST['c_gart']:'',
                             "c_text"   => (isset($_POST['c_text'])) ? $_POST['c_text']:'',
                             "c_mt"     => $mytimestamp,
-                            "c_e_id"   => $e_id,
+                            "c_e_name"   => $e_name,
                             "chk_c_ln" => $chk_c_ln,
                             "chk_c_2"  => $chk_c_2,
                             "chk_c_3"  => $chk_c_3,
