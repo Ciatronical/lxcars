@@ -281,7 +281,7 @@ function UpdateCar ( $c_id, $u ) {
         $upc_m="c_m = '', ";
     }
     $c_t= ( isset($u['c_t'] ))? ( ", c_t = '".$u['c_t']."' " ): ( " " );
-    $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_name], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_zrd = $u[c_zrd], c_zrk = $u[c_zrk], c_bf = $u[c_bf], c_wd = $u[c_wd], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
+    $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_zrd = $u[c_zrd], c_zrk = $u[c_zrk], c_bf = $u[c_bf], c_wd = $u[c_wd], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
     //echo "sql: ".$sql;
     $rc=$_SESSION['db']->query ( $sql );
     //zu1 zu2
@@ -336,6 +336,28 @@ function GetCars ( $owner, $owner_name ) {
          ?>
 
     <script type="text/javascript" src="../js/tablesorter.js"></script>
+    <script language="JavaScript">
+    var owner = <?php echo $owner;?>;
+    function showD( owner, c_id ){
+        uri1="lxcmain.php?owner=" + owner;
+        uri2="&c_id=" + c_id;
+        uri3="&task=3"
+        uri=uri1+uri2+uri3;
+        location.href=uri;
+    }
+    $(document).ready(function() {
+        $( "#newCar" )
+        .button()
+        .click(function( event ) {
+            location.href="lxcmain.php?task=2&owner=" + owner;
+        });
+        $( "#back" )
+        .button()
+        .click(function( event ) {
+            location.href="../firma1.php?Q=C&id=" + owner;
+        });
+    });
+    </script>
     <style>
     table.tablesorter {
        width: 800;
@@ -367,29 +389,9 @@ function GetCars ( $owner, $owner_name ) {
     <body>
     <?php echo $menu['pre_content'];?>
     <?php echo $menu['start_content'];?>
+    <div class="ui-widget-content" style="height:600px">
 
-    <script language="JavaScript">
-    var owner = <?php echo $owner;?>;
-    function showD( owner, c_id ){
-        uri1="lxcmain.php?owner=" + owner;
-        uri2="&c_id=" + c_id;
-        uri3="&task=3"
-        uri=uri1+uri2+uri3;
-        location.href=uri;
-    }
-    $(document).ready(function() {
-        $( "#newCar" )
-        .button()
-        .click(function( event ) {
-            location.href="lxcmain.php?task=2&owner=" + owner;
-        });
-        $( "#back" )
-        .button()
-        .click(function( event ) {
-            location.href="../firma1.php?Q=C&id=" + owner;
-        });
-    });
-    </script>
+
     <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;"> Fahrzeuge des Kunden:<b> <?php echo $owner_name;?></b></p>
     <?php
     $sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
@@ -440,8 +442,10 @@ function GetCars ( $owner, $owner_name ) {
         //bei ev. Problemen ganzen Pfad angeben
     }
     ?>
+    <p></p>
     <button id="back">Zurück</button>
     <button id="newCar">Neues Auto</button>
+    </div>
 
 
     <?php echo $menu['end_content'];?>
@@ -570,7 +574,7 @@ function ShowCar ( $c_id ) {
             $mkb[$key]=$value[29];
         }
     }
-    $drop='<select tabindex="10" name="mkbwahl"><option value="1" selected>&#160;Motor&#160;&#160;';
+    $drop='<select tabindex="10" id="mkbwahl" name="mkbwahl"><option value="1" selected>&#160;Motor&#160;&#160;';
     if ( $mkb ) {
         foreach ( $mkb as $key => $value ) {
             $key+=2;
@@ -583,7 +587,7 @@ function ShowCar ( $c_id ) {
     if ( !isset ( $mkb[1] )&&$rs[0]["c_mkb"]=="" ) {
         $mkbtpl=$mkb[0];
     }
-    $g_art_drop='<select name="g_art_drop"><option value="-1" selected>Getriebeart&#160;';
+    $g_art_drop='<select name="g_art_drop" id="g_art_drop"><option value="-1" selected>Getriebeart&#160;';
     $sql="SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' GROUP BY c_gart ORDER BY count DESC";
     //echo $sql;
     $rs_g_art=$_SESSION['db']->getall ( $sql );
@@ -1013,5 +1017,4 @@ function CleanArray ( $array ) {
     }
     return $array;
 }
-//TestZEILEN von Alex
 ?>

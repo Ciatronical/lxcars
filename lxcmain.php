@@ -73,7 +73,7 @@ $cardata = array(  "owner" => $owner,
                     "c_hubr"    => $_POST['c_hubr'],
                     "c_leist"   => $_POST['c_leist'],
                     "c_bauj"    => $_POST['c_bauj'],
-                    "c_mt"      => $mytimestamp, "c_e_name" => $e_name,
+                    "c_mt"      => $mytimestamp, "c_e_id" => $e_name,
                     "chk_c_ln"  => $chk_c_ln, "chk_c_2" => $chk_c_2,
                     "chk_c_3"   => $chk_c_3, "chk_c_em" => $chk_c_em,
                     "chk_c_hu"  => $chk_c_hu, "chk_fin" => $chk_fin,
@@ -98,7 +98,7 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "c_gart"   => (isset($_POST['c_gart'])) ? $_POST['c_gart']:'',
                             "c_text"   => (isset($_POST['c_text'])) ? $_POST['c_text']:'',
                             "c_mt"     => $mytimestamp,
-                            "c_e_name"   => $e_name,
+                            "c_e_id"   => $e_name,
                             "chk_c_ln" => $chk_c_ln,
                             "chk_c_2"  => $chk_c_2,
                             "chk_c_3"  => $chk_c_3,
@@ -150,7 +150,7 @@ switch( $task ){
             header( "Location: lxcmain.php?owner=$owner&task=3&c_id=$c_id" );
         }
         else{     //Dateneingabe
-            $g_art_drop = '<select tabindex="13" name="g_art_drop"><option value="-1" selected>Getriebeart';
+            $g_art_drop = '<select tabindex="13" name="g_art_drop" id="g_art_drop"><option value="-1" selected>Getriebeart';
             $sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' GROUP BY c_gart ORDER BY count DESC";
             $rs_g_art = $_SESSION['db']->getall($sql);
             foreach( $rs_g_art as $value ){
@@ -166,6 +166,9 @@ switch( $task ){
     break;
     case 3 :
         if ( isset($_POST['update']) ) {
+            //echo "<pre>";
+            //print_r( $_POST);
+            //echo "</pre>";
             $cardata['mkb'] = $_POST['mkb'];
             $cardata['mkbwahl'] = $_POST['mkbwahl'];
             $cardata['typnummer'] = $_POST['c_t'];
@@ -196,7 +199,7 @@ switch( $task ){
             $miscarray['msg'] = "FahrzeugTyp existiert nicht in der KBA-Datenbank! Kann jedoch angelegt werden.";
             $miscarray['FhzTypVis'] = 'visible';
         }
-        $miscarray['SPECIAL'] = $special ? '<input tabindex="24" type="button"  onClick="special(document.car.c_id.value, document.car.owner.value,1);" value="Spezial">&nbsp;&nbsp;&nbsp;' : '';
+        $miscarray['SPECIAL'] = $special ? '<button tabindex="24" type="button"  onClick="special(document.car.c_id.value, document.car.owner.value,1);">Spezial</button>&nbsp;&nbsp;&nbsp;' : '';
         $miscarray['ERPCSS'] = $_SESSION["stylesheet"];
         $t->set_var($miscarray);
         $t->set_file(array("tpl-file" => "lxcmain$task.tpl"));
