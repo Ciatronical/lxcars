@@ -46,30 +46,6 @@
             dateFormat: "dd.mm.yy"
         });
 
-        $("#c_zrd").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            minDate: '+0m +0y',
-            maxDate: '+0m +5y',
-            dateFormat: "dd.mm.yy"
-        });
-
-        $("#c_bf").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            minDate: '+0m +0y',
-            maxDate: '+0m +5y',
-            dateFormat: "dd.mm.yy"
-        });
-
-        $("#c_wd").datepicker({
-            changeMonth: true,
-            changeYear: true,
-            minDate: '+0m +0y',
-            maxDate: '+0m +5y',
-            dateFormat: "dd.mm.yy"
-        });
-
         $( "#dialog" ).dialog({
             autoOpen: false,
             title: "Kennzeichen fehlerhaft"
@@ -157,10 +133,10 @@
 <tr><td class="info infoleft FahrzeuscheinReifen">Winterr&auml;der<span></span></td><td><input tabindex="14" type="text" name="c_wt" size="12" value="{c_wt}" title="Vom Fahrzeug ablesen Format: 175-70R14 82T"></td><td>Radstand:</td><td title="Abstand zwischen den Achsen"><input tabindex="-1" type="text" size="29" value="{radstand}" title="Abstand zwischen den Achsen" readonly="readonly"></td></tr>
 <tr><td>LO Sommerr&auml;der</td><td><input tabindex="15" type="text" name="c_st_l" size="12" value="{c_st_l}" title="Lagerort der Sommerreifen, z.B. B1D4"></td><td  class="info inforightright FahrzeuscheinVmax">Vmax:<span></span></td><td><input tabindex="-1" type="text" size="29" value="{vmax}" title="H&ouml;chstgeschwindigkeit" readonly="readonly"></td></tr>
 <tr><td>LO Winterr&auml;der</td><td><input tabindex="16" type="text" name="c_wt_l" size="12" value="{c_wt_l}" title="Lagerort der Winterreifen, z.B. B4D1"></td><td  class="info inforightright FahrzeuscheinMasse">Gesamtgewicht:  <span></span></td><td><input tabindex="-1" type="text" size="29" value="{mmax}" title="Fahrzeugschein Seite 3, oben Feld G" readonly="readonly"></td></tr>
-<tr><td>Zustand Sommerreifen</td><td><input tabindex="17" type="text" name="c_st_z" size="12" value="{c_st_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster ZR-Wechsel am:</td><td><input type="text" id="c_zrd" name="c_zrd" size="29" maxlength="10" value="{c_zrd}" title="" ></td></tr>
+<tr><td>Zustand Sommerreifen</td><td><input tabindex="17" type="text" name="c_st_z" size="12" value="{c_st_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster ZR-Wechsel am:</td><td><input type="text" id="c_zrd" name="c_zrd" size="29" maxlength="29" value="{c_zrd}" title="" ></td></tr>
 <tr><td>Zustand Winterreifen</td><td><input tabindex="18" type="text" name="c_wt_z" size="12" value="{c_wt_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster ZR-Wechsel bei KM:</td><td><input type="text" id="c_zrk" name="c_zrk" size="29" maxlength="10" value="{c_zrk}" title="" ></td></tr>
-<tr><td>Flexrohrgröße:</td><td><input tabindex="19" type="text" id="c_flx" name="c_flx" size="12" value="{c_flx}" title="Druchmesser/Länge"></td><td>Nächster Bremsflüssigkeitsw.:</td><td><input type="text" id="c_bf" name="c_bf" size="29" maxlength="10" value="{c_bf}" title="" ></td></tr>
-<tr><td>bearbeitet am:</td><td><input tabindex="-1" type="text" size="20" value="{mdate}" title="Datum und Zeit" readonly="readonly"></td><td>Nächster Wartungsdienst:</td><td><input type="text" id="c_wd" name="c_wd" size="29" maxlength="10" value="{c_wd}" title="" ></td></tr>
+<tr><td>Flexrohrgröße:</td><td><input tabindex="19" type="text" id="c_flx" name="c_flx" size="12" value="{c_flx}" title="Druchmesser/Länge"></td><td>Nächster Bremsflüssigkeitsw.:</td><td><input type="text" id="c_bf" name="c_bf" size="29" maxlength="29" value="{c_bf}" title="" ></td></tr>
+<tr><td>bearbeitet am:</td><td><input tabindex="-1" type="text" size="20" value="{mdate}" title="Datum und Zeit" readonly="readonly"></td><td>Nächster Wartungsdienst:</td><td><input type="text" id="c_wd" name="c_wd" size="29" maxlength="29" value="{c_wd}" title="" ></td></tr>
 <tr><td>bearbeitet von:</td><td><input tabindex="-1" type="text" size="20" value="{c_e_string}" title="dein Name" readonly="readonly"></td><td></td><td></td></tr>
 </table>
 <h4>Interne Bemerkungen</h4>

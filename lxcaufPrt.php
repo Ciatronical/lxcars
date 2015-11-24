@@ -30,7 +30,7 @@ $pdf->SetFont('Helvetica','','14');
 $pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
 
 //Feste Werte
-$pdf->SetFont('Helvetica','','16');
+$pdf->SetFont('Helvetica','','12');
 $pdf->Text('22','45','Kunde:');
 $pdf->Text('22','52',utf8_decode('Straße').':');
 $pdf->Text('22','59','Ort:');
@@ -80,9 +80,9 @@ $pdf->Text('148','69',$carData["c_hu"]);
 $pdf->Text('148','74',$aufData[0]['lxc_a_km']);
 $pdf->Text('148','81',$carData["c_em"]);
 $pdf->Text('148','88',$carData["peff"]);
-$pdf->Text('148','94',$carData["c_zrk"]);
-$pdf->Text('148','100',$carData["c_bf"]);
-$pdf->Text('148','106',$carData["c_wd"]);
+$pdf->Text('148','94',$carData["c_flx"]);
+$pdf->Text('157','100',$carData["c_bf"]);
+$pdf->Text('151','106',$carData["c_wd"]);
 
 $pdf->SetFont('Helvetica','B','16');
 $pdf->SetTextColor(255, 0, 0);

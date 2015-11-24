@@ -31,9 +31,6 @@ $chk_c_hu = isset($_POST['chk_c_hu']) ? "true" : "false" ;
 $chk_fin  = isset($_POST['chk_fin']) ? "true" : "false" ;
 $c_d       = ( !isset($_POST['c_d']) ||$_POST['c_d'] == "" )? "1900-01-01" : date2db( $_POST['c_d'] );
 $c_hu      = ( !isset($_POST['c_hu'])||$_POST['c_hu']== "" )? "1900-01-01" : date2db( $_POST['c_hu'] );
-$c_zrd     = ( !isset($_POST['c_zrd'])||$_POST['c_zrd']== "" )? "1900-01-01" : date2db( $_POST['c_zrd'] );
-$c_bf      = ( !isset($_POST['c_bf'])||$_POST['c_bf']== "" )? "1900-01-01" : date2db( $_POST['c_bf'] );
-$c_wd      = ( !isset($_POST['c_wd'])||$_POST['c_wd']== "" )? "1900-01-01" : date2db( $_POST['c_wd'] );
 $c_zrk       = $_POST['c_zrk'];
 if(!isset($_POST['c_zrk'])||$_POST['c_zrk']== "" ) {
     $c_zrk = 0;
@@ -66,10 +63,10 @@ $cardata = array(  "owner" => $owner,
                     "c_gart"    => (isset($_POST['c_gart'])) ? $_POST['c_gart']:'',
                     "c_text"    => (isset($_POST['c_text'])) ? $_POST['c_text']:'',
                     "c_flx"     => (isset($_POST['c_flx'])) ? $_POST['c_flx']:'',
-                    "c_zrd"     => $c_zrd,
+                    "c_zrd"     => (isset($_POST['c_zrd'])) ? $_POST['c_zrd']:'',
                     "c_zrk"     => $c_zrk,
-                    "c_bf"      => $c_bf,
-                    "c_wd"      => $c_wd,
+                    "c_bf"      => (isset($_POST['c_bf'])) ? $_POST['c_bf']:'',
+                    "c_wd"      => (isset($_POST['c_wd'])) ? $_POST['c_wd']:'',
                     "c_hubr"    => $_POST['c_hubr'],
                     "c_leist"   => $_POST['c_leist'],
                     "c_bauj"    => $_POST['c_bauj'],

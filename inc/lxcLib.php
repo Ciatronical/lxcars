@@ -619,9 +619,6 @@ function ShowCar ( $c_id ) {
     $c_fin=substr ( $rs[0]['c_fin'], 0, 17 );
     $c_d=db2date ( $rs[0]['c_d'] );
     $c_hu=db2date ( $rs[0]['c_hu'] );
-    $c_zrd=db2date ( $rs[0]['c_zrd'] );
-    $c_bf=db2date ( $rs[0]['c_bf'] );
-    $c_wd=db2date ( $rs[0]['c_wd'] );
     $chk_c_ln= ( $rs[0]['chk_c_ln']=='t' )? ( 'checked="checked"' ): ( '' );
     $chk_c_2= ( $rs[0]['chk_c_2']=='t' )? ( 'checked="checked"' ): ( '' );
     $chk_c_3= ( $rs[0]['chk_c_3']=='t' )? ( 'checked="checked"' ): ( '' );
@@ -686,11 +683,11 @@ function ShowCar ( $c_id ) {
         'chk_c_hu'   => $chk_c_hu,
         'chk_fin'    => $chk_fin,
         'kba'        => $kba,
-        'c_flx'         => $flx[0]['flxgr'],
-        'c_zrd'         => $c_zrd,
-        'c_zrk'         => $rs[0]['c_zrk'],
-        'c_bf'       => $c_bf,
-        'c_wd'       => $c_wd,
+        'c_flx'      => $flx[0]['flxgr'],
+        'c_zrd'      => $rs[0]['c_zrd'],
+        'c_zrk'      => $rs[0]['c_zrk'],
+        'c_bf'       => $rs[0]['c_bf'],
+        'c_wd'       => $rs[0]['c_wd'],
     );
     return $retarray;
 }
