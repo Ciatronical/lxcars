@@ -79,7 +79,6 @@
         });
 
         $( 'form input:text' ).button().addClass( 'ui-textfield' );
-
         $( 'button' ).button();
         $( '#mkbwahl' ).selectmenu({ width: 110 });
         $( '#g_art_drop' ).selectmenu({ width: 140 });
