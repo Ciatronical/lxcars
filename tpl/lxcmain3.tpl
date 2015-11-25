@@ -69,6 +69,15 @@
                 document.execCommand( "copy" );
             });
         }
+
+        $("#c_bf, #c_wd, #c_zrd").datepicker({
+             changeMonth: true,
+             changeYear: true,
+             minDate: '+0m +0y',
+             maxDate: '+0m +5y',
+             dateFormat: "dd.mm.yy"
+        });
+
         $( 'form input:text' ).button().addClass( 'ui-textfield' );
 
         $( 'button' ).button();
