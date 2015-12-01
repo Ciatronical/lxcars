@@ -73,6 +73,7 @@
         $("#c_bf, #c_wd, #c_zrd").datepicker({
              changeMonth: true,
              changeYear: true,
+             constrainInput: false,
              minDate: '+0m +0y',
              maxDate: '+0m +5y',
              dateFormat: "dd.mm.yy"
