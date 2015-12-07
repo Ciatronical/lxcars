@@ -70,7 +70,7 @@ $pdf->Text('43','66',$carData["phone"]);
 $pdf->Text('43','73',$carData["mobile"]);
 $pdf->Text('43','87',$carData["c_color"]);
 $pdf->Text('43','94',$carData["vh"]);
-$pdf->Text('43','100',$carData["c_flx"]);
+$pdf->Text('43','100',$carData["c_zrk"]);
 $pdf->Text('68','106',$carData["c_zrd"]);
 $pdf->Text('148','45',$carData["c_2"]." ".$carData["c_3"]);
 $pdf->Text('148','51',$carData["c_d"]);
