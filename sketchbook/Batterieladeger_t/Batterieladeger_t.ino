@@ -3,7 +3,7 @@
  * Gibt Signal an Pin 13 aus und beginnt automatisch zu laden (Knopfdruck).
  * die interne LED an Pin 13 dient als Statusanzeige.
  ****************************************************************/
- 
+
  int button      = 13;
  int timeSignal  = 500;
  int input       = 4;
@@ -17,10 +17,10 @@
    pinMode( input,INPUT );
    pinMode( button, OUTPUT );
  }
- 
+
  void loop () {
      value = analogRead( input );
-     Serial.print("InputValue = " ); 
+     Serial.print("InputValue = " );
      Serial.println( value );
      delay(timeSignal);
      digitalWrite(button, HIGH);
@@ -30,9 +30,8 @@
          delay(timeSignal);
          digitalWrite(button, HIGH);
      }
-     
+
      if( value < schwelle ){
-       status = 0;  
+       status = 0;
      }
  }
- 

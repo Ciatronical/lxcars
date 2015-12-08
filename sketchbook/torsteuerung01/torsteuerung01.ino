@@ -26,5 +26,5 @@ void loop()
     Serial.println( mittel );
     mittel = 0;
     delay( 300 );
-  } 
+  }
 }

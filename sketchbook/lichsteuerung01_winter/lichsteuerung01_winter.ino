@@ -37,18 +37,18 @@ int schwelle    = 500;         // Schwellwert für Dunkelheit
 int sensorValue = 0;           // Intit des Variablen die den Messwert aufnimmt
 
 //Init RTC
-RTC_DS1307 RTC;           
+RTC_DS1307 RTC;
 
 bool debug = 0;
 
-bool ladeState = LOW; 
+bool ladeState = LOW;
 bool switch2 = LOW;
 bool switch3 = LOW;
 bool switch4 = LOW;
 bool switch6 = LOW;
 unsigned long currentMillis = 0;
-long previousMillis = 0; 
-long interval       = 10000; 
+long previousMillis = 0;
+long interval       = 10000;
 long ladeInterval   = 1000*60*60;//eine stunde
 void setup(){
   if( debug ) Serial.begin(9600);
@@ -60,13 +60,13 @@ void setup(){
   pinMode( outPin12_4, OUTPUT );
   pinMode( outPin13_5, OUTPUT );
   pinMode( UladePin, OUTPUT );
-  pinMode( switchPin2, INPUT_PULLUP ); 
+  pinMode( switchPin2, INPUT_PULLUP );
   pinMode( switchPin3, INPUT_PULLUP );
   pinMode( switchPin4, INPUT_PULLUP );
   pinMode( switchPin6, INPUT_PULLUP );
   digitalWrite( UladePin, LOW );
    //setPwmFrequency(10, 10);
-   
+
   Wire.begin();
   RTC.begin();
 
@@ -74,36 +74,36 @@ void setup(){
     Serial.println("RTC is NOT running!");
     //following line sets the RTC to the date & time this sketch was compiled
   }
-  RTC.adjust(DateTime(__DATE__, __TIME__));  
-   
- 
+  RTC.adjust(DateTime(__DATE__, __TIME__));
+
+
 }
 void loop() {
   currentMillis = millis();
   DateTime now = RTC.now();
-    
 
- 
- /********************************************************************************** 
- +++ Spannungsstabilisator  
+
+
+ /**********************************************************************************
+ +++ Spannungsstabilisator
  **********************************************************************************/
-  
+
   Ugi += analogRead( UgPin );
-  U1i += analogRead( U1Pin );  
+  U1i += analogRead( U1Pin );
   if( i == 50 ){
     UgMittel = Ugi / i;
     U1Mittel = U1i / i;
     U2 = UgMittel - U1Mittel;
     i = 0;
     if( debug ){
-      Serial.print("PWM = " );                       
-      Serial.print(PWM);      
-      Serial.print("\t UgMittel = ");      
-      Serial.print(UgMittel);  
-      Serial.print("\t U1Mittel = ");  
-      Serial.print(U1Mittel); 
-      Serial.print("\t U2 = ");  
-      Serial.println( U2 ); 
+      Serial.print("PWM = " );
+      Serial.print(PWM);
+      Serial.print("\t UgMittel = ");
+      Serial.print(UgMittel);
+      Serial.print("\t U1Mittel = ");
+      Serial.print(U1Mittel);
+      Serial.print("\t U2 = ");
+      Serial.println( U2 );
     }
     Ugi = 0;
     U1i = 0;
@@ -112,31 +112,31 @@ void loop() {
     analogWrite( pwmOutPin, PWM );
   }
   i++;
-  
+
   /************************************************************************************
   +++ Ladeschalter
   *************************************************************************************/
-  if( UgMittel <= Umin ){ 
+  if( UgMittel <= Umin ){
     digitalWrite( UladePin, HIGH );
     previousMillis = currentMillis;
   }
-  if( currentMillis - previousMillis > ladeInterval && UgMittel > Umin){//jetzt messen  
+  if( currentMillis - previousMillis > ladeInterval && UgMittel > Umin){//jetzt messen
      digitalWrite( UladePin, LOW );
-  
-    //previousMillis = currentMillis;     
+
+    //previousMillis = currentMillis;
     //if( UgMittel <= Umin ) digitalWrite( UladePin, HIGH );
      //digitalWrite( UladePin, LOW );
-    
-  } 
- 
+
+  }
+
   /************************************************************************************
   +++ Lichtschalter
-  *************************************************************************************/ 
+  *************************************************************************************/
   switch2 = digitalRead( switchPin2);
   switch3 = digitalRead( switchPin3);
   switch4 = digitalRead( switchPin4);
   switch6 = digitalRead( switchPin6);
-    
+
   digitalWrite( outPin8_0,  !switch6 );
   digitalWrite( outPin9_1,  !switch6 );
   digitalWrite( outPin10_2, !switch6 );
@@ -144,11 +144,11 @@ void loop() {
   digitalWrite( outPin12_4, !switch3 );
   //digitalWrite( outPin13_5, switch2 );//Aussenbeleuchtung.
   //digitalWrite( outTstPin, 1 );
-  
+
   /************************************************************************************
-  +++ Uhr 
+  +++ Uhr
   ************************************************************************************/
-  if( debug ){ 
+  if( debug ){
     Serial.print(now.year(), DEC);
     Serial.print('/');
     Serial.print(now.month(), DEC);
@@ -164,15 +164,15 @@ void loop() {
     Serial.print(now.dayOfWeek(), DEC);
     Serial.println();
   }
- 
-  
+
+
   //if( now.hour() >= 16 && now.hour() < 23 && now.day() > 4  ) digitalWrite( outPin13_5, HIGH );
   //else digitalWrite( outPin13_5, LOW );
   if( now.day() >= 1 && now.day() >= 4 ){ //Montag bis Donnerstag
     if( now.hour() == 16 ) digitalWrite( outPin13_5, HIGH );
     if( now.hour() == 23 ) digitalWrite( outPin13_5, LOW );
   }
-  
+
   if( now.day() == 5 ){ //am Freitag wird das Licht nur eingeschaltet
     if( now.hour() == 16 ) digitalWrite( outPin13_5, HIGH );
   }
@@ -183,5 +183,5 @@ void loop() {
   if( now.day() == 7 ){ //Sonntag
     if( now.hour() == 2 || now.hour() == 23 ) digitalWrite( outPin13_5, LOW );
     if( now.hour() == 17 ) digitalWrite( outPin13_5, HIGH );
-  }       
+  }
 }

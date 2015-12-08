@@ -8,17 +8,17 @@
 
 
 // Initialisierung
-const int analogInPin = A0;    // Eingang des Sensors 
-const int relaisPin   = 13;    // Ausgang für Relais 
+const int analogInPin = A0;    // Eingang des Sensors
+const int relaisPin   = 13;    // Ausgang für Relais
 int schwelle    = 500;         // Schwellwert für Dunkelheit
-int sensorValue = 0;           // Intit des Variablen die den Messwert aufnimmt 
+int sensorValue = 0;           // Intit des Variablen die den Messwert aufnimmt
 bool debug      = 0;           // Debugging on / off
 RTC_DS1307 RTC;                // Real Time Clock
 
 void setup(){
   pinMode(relaisPin, OUTPUT);
   if( debug ) Serial.begin(9600);
-  
+
   Wire.begin();
   RTC.begin();
 
@@ -31,7 +31,7 @@ void setup(){
 
 void loop() {
   DateTime now = RTC.now();
-  if( debug ){ 
+  if( debug ){
     Serial.print(now.year(), DEC);
     Serial.print('/');
     Serial.print(now.month(), DEC);
@@ -48,18 +48,18 @@ void loop() {
     Serial.println();
   }
 
-  
-  if( now.minute()%15 == 0 && now.second() == 0 ){  
-    if( debug ){  
+
+  if( now.minute()%15 == 0 && now.second() == 0 ){
+    if( debug ){
        Serial.print(" Jetzt!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!: \n");
-    }      
+    }
     delay(800);//eine Sekunde warten dass nicht zwei mal gelessen wird
-    sensorValue = analogRead(analogInPin); 
+    sensorValue = analogRead(analogInPin);
     if( sensorValue < schwelle ){
       //dunkel = true;
       digitalWrite(relaisPin,HIGH);
       //delay(3000);
-      
+
       /***********  begin clock ***********/
       if( now.minute() == 0 ){  //Volle Stunde
         digitalWrite( relaisPin, LOW );
@@ -70,9 +70,9 @@ void loop() {
           digitalWrite(relaisPin,HIGH);
           if( debug ){
             Serial.print("Blink: ");
-            Serial.print( i );      
-            Serial.print("\n");  
-          } 
+            Serial.print( i );
+            Serial.print("\n");
+          }
           delay( 700 );
           digitalWrite(relaisPin,LOW);
           delay( 900 );
@@ -82,35 +82,34 @@ void loop() {
         digitalWrite( relaisPin, HIGH );
       }
       /***********  end clock  **************/
-     
+
       // WE ab 2Uhr bis 6Uhr abschalten
       if( now.dayOfWeek() == 6 || now.dayOfWeek() == 7 ){ //WE
-         if( now.hour() > 1 && now.hour() < 7 ){ 
+         if( now.hour() > 1 && now.hour() < 7 ){
             digitalWrite( relaisPin, LOW );
          }
       }
-      // an Wochentagen 
-      else{ 
-        if( now.hour() >= 0 && now.hour() < 6 ){   
+      // an Wochentagen
+      else{
+        if( now.hour() >= 0 && now.hour() < 6 ){
           digitalWrite( relaisPin,LOW );
         }
       }
-     
+
     }
     else{  // sensorValue > schwelle (es ist hell...)
       //dunkel = false;
       digitalWrite( relaisPin, LOW );
-    }  
-  }  
-  delay(700);
-  
-  if( debug ){  
-    Serial.print(" SensorValue: ");    
-    Serial.print(sensorValue);      
-    Serial.print("\n");  
-    
+    }
   }
-  
-                    
-}
+  delay(700);
 
+  if( debug ){
+    Serial.print(" SensorValue: ");
+    Serial.print(sensorValue);
+    Serial.print("\n");
+
+  }
+
+
+}
