@@ -6,7 +6,8 @@
 
 {JAVASCRIPTS}
 <script type="text/javascript" src="./inc/lxccheckfelder.js"></script>
-<script type="text/javascript" src="{BASEPATH}crm/lxcars/jQueryAddOns/german-date-time-picker.js"></script>
+{DATEPICKER}
+
 
 {THEME}
 
@@ -74,11 +75,13 @@
              changeMonth: true,
              changeYear: true,
              constrainInput: false,
+
              minDate: '+0m +0y',
              maxDate: '+0m +5y',
              dateFormat: "dd.mm.yy"
         });
-
+        $("#c_bf, #c_wd, #c_zrd").datepicker($.datepicker.regional["de"]);
+        //$.datepicker.setDefaults($.datepicker.regional{"de"});
         $( 'form input:text' ).button().addClass( 'ui-textfield' );
         $( 'button' ).button();
         $( '#mkbwahl' ).selectmenu({ width: 110 });
