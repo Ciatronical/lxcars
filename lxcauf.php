@@ -85,7 +85,7 @@ switch( $task ){
 
 	case 3: 
 	    $_POST['lxc_a_km'] = $_POST['lxc_a_km'] == '' ? '0' : $_POST['lxc_a_km'];
-		$schrauber = ERPNutzerVonGruppe("Werkstatt");
+		$schrauber = ERPUsersfromGroup("Werkstatt");
 		array_unshift( $schrauber, array(id => 0, name => "Monteur") );
 		$schrauber = array_reverse( $schrauber );
         if( !$schrauber ){
