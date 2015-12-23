@@ -51,6 +51,20 @@
                     $( ".todo:last" ).val( "Liquide, Wischer, Licht- und Wischwaschanlage prüfen" );            
                     return false;
             });
+            $( "#huau" ).button()
+                .click(function() {
+                    $( ".todo:first" ).val( "HU/AU und Verbandskasten überprüfen" );
+                    $.ajax({
+                        url: 'lxchuau.php',
+                        data: {
+                            huau: $("#car_id").val(),
+                        },
+                        type: "POST",
+                            success: function( json ) {
+                            }
+                    });
+                    return false;
+            });
             $( "#testfelder" ).button()
                .click(function() { 
                var posi = (parseInt({posid})+1);
@@ -98,7 +112,7 @@
 <left>
 <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
 <form name="lxcauf" action="lxcauf.php?task=3" method="post" onSubmit="">
-<input type="hidden" name="c_id" value="{c_id}">
+<input type="hidden" id="car_id" name="c_id" value="{c_id}">
 <input type="hidden" name="a_id" value="{a_id}">
 <input type="hidden" name="owner" value="{owner}">
 <input type="hidden" name="b" value="{b}">
@@ -146,6 +160,7 @@
 <input type="submit" name="printa" value="drucken">&nbsp;&nbsp;&nbsp;
 <input type="button" name="close" onClick="lxcaufschliessen(document.lxcauf.c_id.value,document.lxcauf.owner.value,1,{b});" value="schlie&szlig;en">
 <button id="service">Service</button>
+<button id="huau">HU/AU</button>
 <button id="carData">Fahrzeug</button>
 </form>
 </left>
