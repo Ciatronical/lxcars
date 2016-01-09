@@ -112,5 +112,6 @@
 </left>
 </div>
 {END_CONTENT}
+{TOOLS}
 </body>
 </html>

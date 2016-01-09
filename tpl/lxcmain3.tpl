@@ -111,7 +111,7 @@
 {PRE_CONTENT}
 {START_CONTENT}
 <div class="ui-widget-content">
-<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">{msg}</p>
+<p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">{msg}</p>
 
 <div id="dialog"></div>
 <div id="hu_dialog" ></div>
@@ -165,6 +165,7 @@
 </left>
 </div>
 {END_CONTENT}
+{TOOLS}
 
 </body>
 

@@ -46,7 +46,7 @@
    <body>
    {PRE_CONTENT}
    {START_CONTENT}
-   <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;"> Suche nach Aufträgen und verknüpften Daten</p>
+   <p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;"> Suche nach Aufträgen und verknüpften Daten</p>
    
   	<form name="erwsuche" enctype='multipart/form-data' action="{action}" method="get">
   	<input type="hidden" name="felder" value="">
@@ -101,6 +101,7 @@
 </div>
 
 {END_CONTENT}
+{TOOLS}
 </body>
 
 
