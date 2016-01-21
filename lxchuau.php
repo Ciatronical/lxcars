@@ -9,7 +9,7 @@ $heute = date("Y-m-d");
 $datum = date('Y-m-d',strtotime($heute." +2 year"));
 
 $sql="update lxc_cars SET c_hu = '".$datum."' WHERE c_id = '".$_POST['huau']."'";
-$rc=$_SESSION['db']->query ( $sql );
+$rc=$GLOBALS['dbh']->query ( $sql );
 
 echo $datum;
 

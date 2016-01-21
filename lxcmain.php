@@ -149,7 +149,7 @@ switch( $task ){
         else{     //Dateneingabe
             $g_art_drop = '<select tabindex="13" name="g_art_drop" id="g_art_drop"><option value="-1" selected>Getriebeart';
             $sql = "SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' GROUP BY c_gart ORDER BY count DESC";
-            $rs_g_art = $_SESSION['db']->getall($sql);
+            $rs_g_art = $GLOBALS['dbh']->getall($sql);
             foreach( $rs_g_art as $value ){
                 $g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
             }

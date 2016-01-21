@@ -10,7 +10,7 @@ include_once ( "inc/config.php" );
 function CheckLxCars ( ) {
     //Legt beim ersten Aufruf der Datenbank die benötigten Tabellen an und installiert lxc2db
     $sql="SELECT version, id FROM lxc_ver ORDER BY datum ASC";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$GLOBALS['dbh']->getall ( $sql );
     if ( !$rs ) {
         echo "Tabellen nicht vorhanden";
         $sql=file_get_contents ( "lxc-misc/lxc-install.sql" );
@@ -23,7 +23,7 @@ function CheckLxCars ( ) {
         foreach ( $statement as $key => $value ) {
             $sok0=preg_replace ( $sm0, '', $statement[$key] );
             $sok1=preg_replace ( $sm1, '', $sok0 );
-            $rc=$_SESSION['db']->query ( $sok1 );
+            $rc=$GLOBALS['dbh']->query ( $sok1 );
             echo "Statement: ".$sok1."</br>";
         }
         echo "....fertig.";
@@ -47,7 +47,7 @@ function CheckLxCars ( ) {
         foreach ( $statement as $key => $value ) {
             $sok0=preg_replace ( $sm0, '', $statement[$key] );
             $sok1=preg_replace ( $sm1, '', $sok0 );
-            $rc=$_SESSION['db']->query ( $sok1 );
+            $rc=$GLOBALS['dbh']->query ( $sok1 );
             echo "Statement: ".$sok1."</br>";
         }
     }
@@ -63,7 +63,7 @@ function CheckLxCars ( ) {
         foreach ( $statement as $key => $value ) {
             $sok0=preg_replace ( $sm0, '', $statement[$key] );
             $sok1=preg_replace ( $sm1, '', $sok0 );
-            $rc=$_SESSION['db']->query ( $sok1 );
+            $rc=$GLOBALS['dbh']->query ( $sok1 );
             echo "Statement: ".$sok1."</br>";
         }
     }
@@ -79,7 +79,7 @@ function CheckLxCars ( ) {
         foreach ( $statement as $key => $value ) {
             $sok0=preg_replace ( $sm0, '', $statement[$key] );
             $sok1=preg_replace ( $sm1, '', $sok0 );
-            $rc=$_SESSION['db']->query ( $sok1 );
+            $rc=$GLOBALS['dbh']->query ( $sok1 );
             echo "Statement: ".$sok1."</br>";
         }
     }
@@ -95,7 +95,7 @@ function CheckLxCars ( ) {
         foreach ( $statement as $key => $value ) {
             $sok0=preg_replace ( $sm0, '', $statement[$key] );
             $sok1=preg_replace ( $sm1, '', $sok0 );
-            $rc=$_SESSION['db']->query ( $sok1 );
+            $rc=$GLOBALS['dbh']->query ( $sok1 );
             echo "Statement: ".$sok1."</br>";
         }
     }
@@ -106,20 +106,20 @@ function NeuerAuftrag ( $c_id ) {
     global $tbauf;
     global $tbpos;
     $sql="insert into $tbauf (lxc_a_c_id, lxc_a_text)  values ($c_id, 'Bemerkungen zum Auftrag')";
-    $rc=$_SESSION['db']->query ( $sql );
+    $rc=$GLOBALS['dbh']->query ( $sql );
     $sql="select MAX(lxc_a_id) from ".$tbauf;
     //die letzte Auftrags_id auswählen
     //ToDo!! kann das insert gleich zurückgeben!!!
-    $rsid=$_SESSION['db']->getall ( $sql );
+    $rsid=$GLOBALS['dbh']->getall ( $sql );
     $a_id=$rsid[0]['max'];
     $sql="insert into $tbpos (lxc_a_pos_aid, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts)  values ($a_id, 'Arbeitstext', 'Antworttext Werkstatt', 'Ersatzteile')";
-    $rc=$_SESSION['db']->query ( $sql );
+    $rc=$GLOBALS['dbh']->query ( $sql );
     return $a_id;
 }
 function NeuePosition ( $a_id ) {
     global $tbpos;
     $sql="insert into $tbpos (lxc_a_pos_aid)  values ($a_id )";
-    $rc=$_SESSION['db']->query ( $sql );
+    $rc=$GLOBALS['dbh']->query ( $sql );
     return;
 }
 function HoleAuftraege ( $c_id ) {
@@ -127,10 +127,10 @@ function HoleAuftraege ( $c_id ) {
     global $tbauf;
     global $tbpos;
     $sql="select lxc_a_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)),lxc_a_status, lxc_a_km from $tbauf where lxc_a_c_id = $c_id ORDER BY lxc_a_id";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$GLOBALS['dbh']->getall ( $sql );
     foreach ( $rs as $key => $value ) {
         $sql="select lxc_a_pos_todo from ".$tbpos." where lxc_a_pos_aid = ".$rs[$key]['lxc_a_id']." ORDER BY lxc_a_pos_id ";
-        $rspos=$_SESSION['db']->getall ( $sql );
+        $rspos=$GLOBALS['dbh']->getall ( $sql );
         if ( $rspos[0] ) {
             $rs[$key]+=$rspos[0];
         }
@@ -145,7 +145,7 @@ function HoleAuftragsDaten ( $a_id ) {
     global $tbpos;
     $selectstring="lxc_a_c_id,EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)), lxc_a_finish_time, lxc_a_modified_from, lxc_a_km, lxc_a_status, lxc_a_text, lxc_a_car_status, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_modified_on))AS modified_time";
     $sql="select $selectstring from $tbauf where lxc_a_id = $a_id ORDER BY lxc_a_id ";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$GLOBALS['dbh']->getall ( $sql );
     $rs[0]['lxc_a_modified_on']=ts2gerdate ( $rs[0]['modified_time'] );
     $rs[0]['lxc_a_init_time']=ts2gerdate ( $rs[0]['date_part'] );
     return $rs;
@@ -156,7 +156,7 @@ function HoleAuftragsPositionen ( $a_id ) {
     global $tbpos;
     $selectstring="lxc_a_pos_id, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts, lxc_a_pos_time, lxc_a_pos_ctime, lxc_a_pos_emp, lxc_a_pos_status";
     $sql="select $selectstring from $tbpos where lxc_a_pos_aid = $a_id ORDER BY lxc_a_pos_id ";
-    $rspos=$_SESSION['db']->getall ( $sql );
+    $rspos=$GLOBALS['dbh']->getall ( $sql );
     foreach ( $rspos as $key => $value ) {
         $rspos[$key]['lxc_a_pos_time']=DB2Float ( $rspos[$key]['lxc_a_pos_time'] );
         $rspos[$key]['lxc_a_pos_ctime']=DB2Float ( $rspos[$key]['lxc_a_pos_ctime'] );
@@ -175,7 +175,7 @@ function UpdateAuftragsDaten ( $a_id, $a_data ) {
         'lxc_a_car_status',
     );
     $wherestring="lxc_a_id = $a_id";
-    $rs=$_SESSION['db']->update ( $tbauf, $a_dbarray, $a_data, $wherestring );
+    $rs=$GLOBALS['dbh']->update ( $tbauf, $a_dbarray, $a_data, $wherestring );
 }
 function UpdatePosition ( $pos_id, $posdata ) {
     global $tbpos;
@@ -194,7 +194,7 @@ function UpdatePosition ( $pos_id, $posdata ) {
         'lxc_a_pos_emp',
     );
     $wherestring="lxc_a_pos_id = $pos_id";
-    $rs=$_SESSION['db']->update ( $tbpos, $p_dbarray, $posdata, $wherestring );
+    $rs=$GLOBALS['dbh']->update ( $tbpos, $p_dbarray, $posdata, $wherestring );
 }
 function lxc2db ( $parastr ) {
     $rsdata=array ( );
@@ -243,11 +243,11 @@ function NeuesAuto ( $cardata ) {
         unset ( $cardata["c_fin"] );
     $fields=array_keys ( $cardata );
     $values=array_values ( $cardata );
-    $rc=$_SESSION['db']->insert ( $tbname, $fields, $values );
+    $rc=$GLOBALS['dbh']->insert ( $tbname, $fields, $values );
     //Kann insert gleich zurückgeben
     $sql="select MAX(c_id) from $tbname ";
     //die letzte id auswählen
-    $rsid=$_SESSION['db']->getall ( $sql );
+    $rsid=$GLOBALS['dbh']->getall ( $sql );
     return $rsid[0]['max'];
 }
 function UpdateCar ( $c_id, $u ) {
@@ -283,7 +283,7 @@ function UpdateCar ( $c_id, $u ) {
     $c_t= ( isset($u['c_t'] ))? ( ", c_t = '".$u['c_t']."' " ): ( " " );
     $sql="update $tbname SET c_ln = $u[c_ln], c_2 = $u[c_2], c_3 = $u[c_3], c_em = $u[c_em], c_d = $u[c_d], c_hu = $u[c_hu], c_fin = $u[c_fin], $upmkb $upc_m c_color = $u[c_color], c_gart = $u[c_gart], c_st = $u[c_st], c_wt = $u[c_wt], c_st_l = $u[c_st_l], c_wt_l = $u[c_wt_l], c_st_z = $u[c_st_z], c_wt_z = $u[c_wt_z], c_mt = $u[c_mt], c_e_id = $u[c_e_id], c_text = $u[c_text], chk_c_ln = $u[chk_c_ln], chk_c_2 = $u[chk_c_2], chk_c_3 = $u[chk_c_3], chk_c_em = $u[chk_c_em], chk_c_hu = $u[chk_c_hu], chk_fin = $u[chk_fin], c_zrd = $u[c_zrd], c_zrk = $u[c_zrk], c_bf = $u[c_bf], c_wd = $u[c_wd], c_ow = (SELECT id FROM customer WHERE name ilike $u[chown])  $c_t WHERE c_id = $c_id ";
     //echo "sql: ".$sql;
-    $rc=$_SESSION['db']->query ( $sql );
+    $rc=$GLOBALS['dbh']->query ( $sql );
     //zu1 zu2
     $zu2 = substr($u['c_2'], 0, 5)."'";
     $zu3 = substr($u['c_3'], 0, 4)."'";
@@ -300,23 +300,23 @@ function UpdateCar ( $c_id, $u ) {
     if($test != '') {
         //Abfrage ob Eintrag vorhanden oder nicht -   Insert oder update
         $sql = "select * from lxc_flex where hsn = $zu2 and tsn = $zu3";
-        $rcflx1=$_SESSION['db']->getAll  ( $sql );
+        $rcflx1=$GLOBALS['dbh']->getAll  ( $sql );
         // UPDATE
         if($rcflx1[0]['id']) {
             $sql="update lxc_flex set flxgr = $u[c_flx] where hsn = $zu2 and tsn = $zu3";
-            $rcflx2=$_SESSION['db']->query ( $sql );
+            $rcflx2=$GLOBALS['dbh']->query ( $sql );
         }
         //INSERT
         else {
             $sql="insert into lxc_flex (hsn, tsn, flxgr, hubr, leist, baujvon, baujbis) values ($zu2, $zu3, $u[c_flx], $u[c_hubr], $u[c_leist], $bjvon, $bjbis)";
-            $rcflx3=$_SESSION['db']->query ( $sql );
+            $rcflx3=$GLOBALS['dbh']->query ( $sql );
         }
     }
 }
 function UpdateTypNr ( $c_id, $c_t ) {
     global $tbname;
     $sql="update $tbname SET c_t = '$c_t' WHERE c_id = $c_id";
-    $rc=$_SESSION['db']->query ( $sql );
+    $rc=$GLOBALS['dbh']->query ( $sql );
 }
 function GetCars ( $owner, $owner_name ) {
     //Zeigt Fahrzeuge des Owners ("Kennzeichen", "Hersteller", "Typ","c_id") enthaelt
@@ -395,7 +395,7 @@ function GetCars ( $owner, $owner_name ) {
     <p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;"> Fahrzeuge des Kunden:<b> <?php echo $owner_name;?></b></p>
     <?php
     $sql="select c_ln, c_2, c_3, c_id, c_t from $tbname where c_ow = $owner ORDER BY c_id ";
-    $rs=$_SESSION['db']->getAll ( $sql );
+    $rs=$GLOBALS['dbh']->getAll ( $sql );
     echo "<table id=\"liste\" class=\"tablesorter\" style=\"margin:0px; cursor:pointer;\">\n";
     echo "<thead><tr><th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
     $i=0;
@@ -468,9 +468,9 @@ function ShowCar ( $c_id ) {
     //letzter KM-Stand
     //select lxc_a_km from lxc_a where lxc_a_c_id = 120 order by lxc_a_km desc limit 1
     $sql="select MAX(lxc_a_km) from $tblxc_a where lxc_a_c_id = $c_id";
-    $km=$_SESSION['db']->getall ( $sql );
+    $km=$GLOBALS['dbh']->getall ( $sql );
     $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu, chk_fin, c_zrd, c_zrk, c_bf, c_wd from $tbname where c_id = $c_id ";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$GLOBALS['dbh']->getall ( $sql );
     //print_r($rs);
     $z2=$rs[0]['c_2'];
     //ToDo wird noch gebraucht
@@ -478,7 +478,7 @@ function ShowCar ( $c_id ) {
     $z3=substr ( $z3, 0, 3 );
     //Flexrohrgröße holen, wenn diese anhand z2 und z2 in lxc_flex hinterlegt sind
     $sql="select flxgr from lxc_flex where hsn = '$z2' and tsn = '$z3'";
-    $flx=$_SESSION['db']->getall ( $sql );
+    $flx=$GLOBALS['dbh']->getall ( $sql );
     //echo "TEST".$z3;
     /*
     $sql="select amther, amttyp, name, vh, peff, mottyp, energqu, vmaxmax, gmmax, radstand from $tbkba where zu2 = '$z2'  AND zu3 = '$z3' ";
@@ -561,7 +561,7 @@ function ShowCar ( $c_id ) {
             //Wenn typnummer einmalig, kann gespeichert werden
             //echo "Suche Datensatz ..........";
             $sql="update ".$tbname." SET c_t = '".$lxcrs[0][0]."' WHERE c_id = ".$c_id;
-            $_SESSION['db']->query ( $sql );
+            $GLOBALS['dbh']->query ( $sql );
             $rs[0]['c_t']=$lxcrs[0][0];
             // wichtig
         }
@@ -590,7 +590,7 @@ function ShowCar ( $c_id ) {
     $g_art_drop='<select name="g_art_drop" id="g_art_drop"><option value="-1" selected>Getriebeart&#160;';
     $sql="SELECT c_gart, count(c_gart) FROM lxc_cars WHERE c_gart != '' GROUP BY c_gart ORDER BY count DESC";
     //echo $sql;
-    $rs_g_art=$_SESSION['db']->getall ( $sql );
+    $rs_g_art=$GLOBALS['dbh']->getall ( $sql );
     foreach ( $rs_g_art as $value ) {
         $g_art_drop.='<option value="'.$value['c_gart'].'" > '.$value['c_gart'];
     }
@@ -697,7 +697,7 @@ function GetOwner ( $c_ln ) {
     global $tbkba;
     //global $db;
     $sql="select c_ln, c_t, c_id, c_ow from $tbname where c_ln ILIKE '%$c_ln%' ORDER by c_ow";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$GLOBALS['dbh']->getall ( $sql );
     if ( $rs ) {
         foreach ( $rs as $index => $el ) {
             //ToDo ToDo sql und ownerarry durch sql mit join ersetzen
@@ -772,7 +772,7 @@ function SucheCars ( $was ) {
     }
     if ( $where ) {
         $sql="select c_ln, c_2, c_3, c_id, c_ow, name, city from lxc_cars JOIN customer ON c_ow = id where $where ORDER by c_ow";
-        $rs=$_SESSION['db']->getall ( $sql );
+        $rs=$GLOBALS['dbh']->getall ( $sql );
     }
     if ( $rs ) {
         foreach ( $rs as $key => $vaule ) {
@@ -882,7 +882,7 @@ function SucheAuftrag ( $was ) {
     $sql="SELECT DISTINCT ON (a.lxc_a_id) a.lxc_a_id, a.lxc_a_status, a.lxc_a_car_status, c.c_ln, e.name, d.lxc_a_pos_todo, c.c_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(a.lxc_a_init_time)), c.c_ow FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where ORDER BY a.lxc_a_id ASC, d.lxc_a_pos_id ASC";
     //echo "SQL: ".$sql;
     if ( $where ) {
-        $rs=$_SESSION['db']->getall ( $sql );
+        $rs=$GLOBALS['dbh']->getall ( $sql );
     }
     if ( $rs ) {
         foreach ( $rs as $key => $value ) {
@@ -927,7 +927,7 @@ function SucheFin ( $zu2, $zu3 ) {
     $zu3=substr ( $zu3, 0, 3 );
     for ( $i=11;$i>=3;$i-- ) {
         $sql="SELECT MAX( fin ) AS fin, COUNT( fin )FROM( SELECT DISTINCT SUBSTR( c_fin, 1, ".$i." ) AS fin FROM $tbname WHERE c_2 = '".$zu2."' AND c_3 LIKE '".$zu3."%' ORDER BY fin ) AS rs";
-        $rs=$_SESSION['db']->getone( $sql );
+        $rs=$GLOBALS['dbh']->getone( $sql );
         if ( $rs['count']=="1" ) {
             $fin=$rs['fin'];
             $erfolg=1;
@@ -936,7 +936,7 @@ function SucheFin ( $zu2, $zu3 ) {
     }
     if ( $erfolg==0 ) {
         $sql="SELECT  SUBSTR( c_fin, 1, 3 ) AS fin , count( SUBSTR( c_fin, 1, 3 )) AS c FROM lxc_cars WHERE c_2 = '".$zu2."' GROUP BY SUBSTR( c_fin, 1, 3 ) ORDER BY c DESC LIMIT 1";
-        $rs=$_SESSION['db']->getone ( $sql );
+        $rs=$GLOBALS['dbh']->getone ( $sql );
         $fin=$rs['fin'];
     }
     return $fin;
@@ -959,7 +959,7 @@ function SucheMkb ( $zu2, $zu3 ) {
 function UniqueKz ( $kz, $c_id ) {
     global $tbname;
     $sql="SELECT name, c_id FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_ln =  '".$kz."'";
-    $rs=$_SESSION['db']->getone( $sql );
+    $rs=$GLOBALS['dbh']->getone( $sql );
 
     if ( isset($rs) &&  $c_id != $rs['c_id'] )  {
         return $rs['name'];
@@ -976,7 +976,7 @@ function UniqueFin ( $fin, $c_id ) {
         $sql="SELECT c_id, c_ln, name, c_fin FROM customer CROSS JOIN lxc_cars WHERE c_ow = id AND c_fin like '".$fin."_'";
     else
         $sql="SELECT c_id, c_ln, name FROM customer CROSS JOIN $tbname WHERE c_ow = id AND c_fin = '".$fin."'";
-    $rs=$_SESSION['db']->getone( $sql );
+    $rs=$GLOBALS['dbh']->getone( $sql );
 
     if ( $rs && $c_id != $rs[c_id] && $fin!="" ) {
         //$objResponse->alert ( "Ein Datensatz mit diser FIN existiert bereits!\nDas Fahrzeug gehört ".$rs[0][name].", das Kennzeichen lautet ".$rs[0][c_ln]."." );
@@ -991,11 +991,11 @@ function NewFhzTyp ( $data ) {
     $tb="lxc_mykba";
     $fields=array_keys ( $data );
     $values=array_values ( $data );
-    $rc=$_SESSION['db']->insert ( $tb, $fields, $values );
+    $rc=$GLOBALS['dbh']->insert ( $tb, $fields, $values );
 }
 function GetFhzTyp ( $hsn, $tsn ) {
     $sql="SELECT * from lxc_mykba WHERE hsn = '$hsn' AND tsn = '$tsn'";
-    $rs=$_SESSION['db']->getall ( $sql );
+    $rs=$GLOBALS['dbh']->getall ( $sql );
     return $rs[0];
 }
 function UpdateFhzTyp ( $data ) {
@@ -1004,7 +1004,7 @@ function UpdateFhzTyp ( $data ) {
     $wherestring="id = ".array_shift ( $data );
     $fields=array_keys ( $data );
     $values=array_values ( $data );
-    $rs=$_SESSION['db']->update ( $tb, $fields, $values, $wherestring );
+    $rs=$GLOBALS['dbh']->update ( $tb, $fields, $values, $wherestring );
 }
 function CleanArray ( $array ) {
     foreach ( $array as $key => $value ) {

@@ -1,21 +1,21 @@
 <?php
-    require_once( "../../inc/stdLib.php" ); 
+    require_once( "../../inc/stdLib.php" );
     require_once( "../../inc/crmLib.php" );
-    require_once( "../inc/lxcLib2.php" );  
+    require_once( "../inc/lxcLib2.php" );
     $task     = 'getCars';//array_shift( $_GET );
 
 
 
-    
+
     switch( $task ){
         case "newCategory":
             //$sql="INSERT INTO event_category ( label, color, cat_order ) VALUES ( '$newCat', '$newColor', ( SELECT max( cat_order ) + 1 AS cat_order FROM event_category) )";
-            //$rc=$_SESSION['db']->query($sql); 
+            //$rc=$GLOBALS['dbh']->query($sql);
         break;
         case "getCars":
             $sql = "SELECT c_ln, c_2, c_3, c_id, c_t FROM lxc_cars WHERE c_ow  = 1126 ORDER BY c_id";
-            //echo $sql;            
-            $rs = $_SESSION['db']->getAll( $sql );
+            //echo $sql;
+            $rs = $GLOBALS['dbh']->getAll( $sql );
             $json = '{ "Result":"OK", "Records":[';
             if( $rs ){
                 $noData = "Keine Daten";
@@ -26,7 +26,7 @@
                     //echo $z3;
                     $c_ln = $rs[$key]['c_ln'];
                     $art="Pkw";
-                    //echo $rs[$key]['c_t'].', '; 
+                    //echo $rs[$key]['c_t'].', ';
                     if( $rs[$key]['c_t'] == "" ){
                         $rskba = lxc2db( "-C ".$z2." ".$z3 );
                         //print_r( $rskba );
@@ -57,6 +57,6 @@
             }
             echo $json;
             //echo '{ "Result":"OK", "Records":'.$rs['json_agg'].' }';
-            break; 
+            break;
     }
  ?>
