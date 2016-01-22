@@ -6,6 +6,7 @@
 ob_start();
 
 include_once( "../inc/stdLib.php" );
+include_once( "../inc/crmLib.php" );
 include_once( "../inc/template.inc" );
 include_once( "./inc/lxcLib.php" );
 include_once( "../inc/conf.php" );
@@ -107,14 +108,13 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "chk_fin"  => $chk_fin);
 
 //Benutzer in Gruppe Spezial ?
-$gruppe  = $_SESSION['grp'];
+$tempass = ERPUsersfromGroup("Spezial");
 $special = false;
-foreach ($gruppe as $value) {
-    if( $value['text'] == 'Spezial' ) {
+foreach ($tempass as $value) {
+    if( $value['login'] == $_SESSION['userConfig']['login'] ) {
       $special = true;
     }
 }
-
 //prüfen ob der User zur Gruppe Admin oder Special gehört
 $gruppen = getGruppen($_SESSION["login"]);
 $admin = false;
