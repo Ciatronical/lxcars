@@ -21,7 +21,7 @@ $e_name  = $_SESSION["name"];
 
 $t = new Template( $base );
 doHeader($t);
-$t->set_var( array( 'BASEPATH' => $_SESSION['basepath'] ) );
+$t->set_var( array( 'BASEPATH' => $_SESSION['baseurl'] ) );
 
 $chk_c_ln = isset($_POST['chk_c_ln']) ? "true" : "false" ;
 $chk_c_2  = isset($_POST['chk_c_2'])  ? "true" : "false" ;
@@ -38,7 +38,9 @@ if(!isset($_POST['c_zrk'])||$_POST['c_zrk']== "" ) {
 $fincn     = isset($_POST['fin'])?$_POST['fin']:'';
 $fincn    .= isset($_POST['cn'])?$_POST['cn']:'';
 $mytimestamp = mktime();
-$owner_data = getFirmenStamm( $owner );
+if(varExist($owner)) {
+    $owner_data = getFirmenStamm( $owner );
+}
 //print_r($owner_data);
 
 $mkb = ( isset($_POST['mkb'] ) ) ? $_POST['mkb'] : '';
