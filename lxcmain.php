@@ -6,6 +6,7 @@
 ob_start();
 
 include_once( "../inc/stdLib.php" );
+include_once( "../inc/crmLib.php" );
 include_once( "../inc/template.inc" );
 include_once( "./inc/lxcLib.php" );
 include_once( "../inc/conf.php" );
@@ -21,7 +22,7 @@ $e_name  = $_SESSION["name"];
 
 $t = new Template( $base );
 doHeader($t);
-$t->set_var( array( 'BASEPATH' => $_SESSION['basepath'] ) );
+$t->set_var( array( 'BASEPATH' => $_SESSION['baseurl'] ) );
 
 $chk_c_ln = isset($_POST['chk_c_ln']) ? "true" : "false" ;
 $chk_c_2  = isset($_POST['chk_c_2'])  ? "true" : "false" ;
@@ -38,7 +39,9 @@ if(!isset($_POST['c_zrk'])||$_POST['c_zrk']== "" ) {
 $fincn     = isset($_POST['fin'])?$_POST['fin']:'';
 $fincn    .= isset($_POST['cn'])?$_POST['cn']:'';
 $mytimestamp = mktime();
-$owner_data = getFirmenStamm( $owner );
+if(varExist($owner)) {
+    $owner_data = getFirmenStamm( $owner );
+}
 //print_r($owner_data);
 
 $mkb = ( isset($_POST['mkb'] ) ) ? $_POST['mkb'] : '';
@@ -105,14 +108,13 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "chk_fin"  => $chk_fin);
 
 //Benutzer in Gruppe Spezial ?
-$gruppe  = $_SESSION['grp'];
+$tempass = ERPUsersfromGroup("Spezial");
 $special = false;
-foreach ($gruppe as $value) {
-    if( $value['text'] == 'Spezial' ) {
+foreach ($tempass as $value) {
+    if( $value['login'] == $_SESSION['userConfig']['login'] ) {
       $special = true;
     }
 }
-
 //prüfen ob der User zur Gruppe Admin oder Special gehört
 $gruppen = getGruppen($_SESSION["login"]);
 $admin = false;

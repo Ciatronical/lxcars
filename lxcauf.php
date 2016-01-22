@@ -146,7 +146,7 @@ switch( $task ){
     $ta = new Template( $base );
     $menu =  $_SESSION['menu']; 
     doHeader($ta);
-    $ta->set_var( array( 'BASEPATH' => $_SESSION['basepath'] ) );
+    $ta->set_var( array( 'BASEPATH' => $_SESSION['baseurl'] ) );
     /*
     $ta->set_var( array(
         JAVASCRIPTS   => $menu['javascripts'],
