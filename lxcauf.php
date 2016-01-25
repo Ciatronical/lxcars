@@ -124,7 +124,7 @@ switch( $task ){
     $ad = HoleAuftragsDaten( $a_id );
     $stat = "lxc_a_status".$ad[0]['lxc_a_status'];
 	$stat_car = "lxc_a_car_status".$ad[0]['lxc_a_car_status'];
-    $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], ownerstring => $cd['ownerstring'], $stat => 'selected', $stat_car => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
+    $tpl_array = array( a_id => $a_id, c_id => $c_id, ln => $cd['c_ln'], cm => $cd['cm'], ct => $cd['ct'], ownerstring => $cd['ownerstring'], $stat => 'selected', $stat_car => 'selected', owner => $owner, b => $b, ERPCSS => $_SESSION["stylesheet"], msg => $msg);
     if($ad){
         if( $ad[0]['lxc_a_km'] == '0' && $ad[0]['lxc_a_finish_time'] != ''){
             $tpl_array['JQMSG'] = '<div id="dialog" title="Kilometerstand fehlt">

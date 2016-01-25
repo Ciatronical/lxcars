@@ -110,7 +110,7 @@
 {PRE_CONTENT}
 {START_CONTENT}
 <left>
-<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">{msg} Auftrag mit dem Kennzeichen: {ln}</p>
+<p class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0.6em;">{msg} Auftrag mit dem Kennzeichen: {ln} || {cm} {ct}</p>
 <form name="lxcauf" action="lxcauf.php?task=3" method="post" onSubmit="">
 <input type="hidden" id="car_id" name="c_id" value="{c_id}">
 <input type="hidden" name="a_id" value="{a_id}">
