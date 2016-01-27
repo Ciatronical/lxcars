@@ -2,10 +2,10 @@
 
 if( !isset( $_SESSION ) ) session_start();
 
-require_once( $_SESSION['crmpath']."/inc/stdLib.php" );
-require_once( $_SESSION['crmpath']."/inc/crmLib.php" );
+require_once __DIR__.'/../inc/stdLib.php';
+require_once __DIR__.'/../inc/crmLib.php';
 $menu = $_SESSION['menu'];
-//print_r('ronny');
+
 $head = mkHeader();
 ?>
 <html>
@@ -165,9 +165,9 @@ $keinFhz='<div id="dialog" title="Fahrzeug nicht gefunden">
           </div>';
 if ($_GET["adress"]) {
 
-    require_once( $_SESSION['crmpath']."/inc/FirmenLib.php" );
-    require_once( $_SESSION['crmpath']."/inc/persLib.php" );
-    require_once( $_SESSION['crmpath']."/inc/UserLib.php" );
+    require_once __DIR__.'/../inc/FirmenLib.php';
+    require_once __DIR__.'/../inc/persLib.php';
+    require_once __DIR__.'/../inc/UserLib.php';
     $found=false;
     $suchwort=mkSuchwort($_GET["swort"]);
     $anzahl=0;
