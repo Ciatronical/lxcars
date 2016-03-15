@@ -142,7 +142,7 @@ switch( $task ){
     break;          //Autos des Owners darstellen
     case 2:
         if ( isset($_POST['anlegen']) ) {
-            if( $_POST[g_art_drop] != -1 ){
+            if( $_POST['g_art_drop'] != -1 ){
                 $cardata_anlegen['c_gart'] = $_POST['g_art_drop'];
             }
             $c_id = NeuesAuto( $cardata_anlegen );
@@ -165,9 +165,9 @@ switch( $task ){
     break;
     case 3 :
         if ( isset($_POST['update']) ) {
-            //echo "<pre>";
-            //print_r( $_POST);
-            //echo "</pre>";
+            if( $_POST['g_art_drop'] != -1 ){
+                $cardata['c_gart'] = $_POST['g_art_drop'];
+            }
             $cardata['mkb'] = $_POST['mkb'];
             $cardata['mkbwahl'] = $_POST['mkbwahl'];
             $cardata['typnummer'] = $_POST['c_t'];
