@@ -879,7 +879,7 @@ function SucheAuftrag ( $was ) {
         $and="AND";
     }
     //$sql = "SELECT  a.lxc_a_id, c.c_ln, d.lxc_a_pos_todo, to_char(a.lxc_a_init_time,'Day, DD Mon YYYY HH24:SS')  FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where GROUP BY a.lxc_a_id SORT BY d.lxc_a_pos_id DESC, a.lex_a_id ASC ";
-    $sql="SELECT DISTINCT ON (a.lxc_a_id) a.lxc_a_id, a.lxc_a_status, a.lxc_a_car_status, c.c_ln, e.name, d.lxc_a_pos_todo, c.c_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(a.lxc_a_init_time)), c.c_ow FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where ORDER BY a.lxc_a_id ASC, d.lxc_a_pos_id ASC";
+    $sql="SELECT DISTINCT ON (a.lxc_a_id) a.lxc_a_id, a.lxc_a_status, a.lxc_a_car_status, c.c_ln, e.name, d.lxc_a_pos_todo, c.c_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(a.lxc_a_init_time)), c.c_ow FROM lxc_a a JOIN lxc_cars c ON a.lxc_a_c_id = c.c_id JOIN lxc_a_pos d ON a.lxc_a_id = d.lxc_a_pos_aid JOIN customer e ON c.c_ow = e.id WHERE $where ORDER BY a.lxc_a_id DESC, d.lxc_a_pos_id ASC";
     //echo "SQL: ".$sql;
     if ( $where ) {
         $rs=$GLOBALS['dbh']->getall ( $sql );
