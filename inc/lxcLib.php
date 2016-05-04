@@ -445,9 +445,10 @@ function GetCars ( $owner, $owner_name ) {
     <p></p>
     <button id="back">Zurück</button>
     <button id="newCar">Neues Auto</button>
+    <?php echo $head['JQTABLE-PAGER'];?>
     </div>
 
-    <?php echo $head['JQTABLE-PAGER'];?>
+
     <?php echo $menu['end_content'];?>
     </body>
     </html>
