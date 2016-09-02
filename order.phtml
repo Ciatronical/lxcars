@@ -36,10 +36,7 @@ $(document).ready(function() {
         else return decodeURIComponent( results[1] || 0 );
     }
 
-    //alert( $.urlParam( 'id' ) );
-
     var id = $.urlParam( 'id' );
-    //var grp_name;
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
@@ -60,6 +57,8 @@ $(document).ready(function() {
                 + '<label id="head07">KM-Stand:</label>'
                 + '<input id="head08" type="text"></br>'
                 + '<label id="head09">bearbeitet von:</label>'
+                + '<label id="head19">Amtl.-Kennz.:</label>'
+                + '<label id="head20"></label>'
                 + '<label id="head10"></label>'
                 + '<label id="head11">bearbeitet am:</label>'
                 + '<label id="head12"></label></br>'
@@ -197,22 +196,6 @@ $(document).ready(function() {
         })
     }
 
-    /*
-    grp_name = 'Werkstatt';
-    $.ajax({
-            url: 'ajax/order.php?action=ERPUsersfromGroup&data=' + grp_name,
-            type: 'GET',
-            success: function (data) {
-                //alert(JSON.stringify(data));
-                //console.log(JSON.stringify(data));
-                console.log(data);
-            },
-            error:  function(){
-                console.log("fehlgeschlagen!");
-               }
-    })
-    */
-
     $.ajax({
             url: 'ajax/order.php?action=getOrder&data=' + id,
             type: 'GET',
@@ -221,11 +204,14 @@ $(document).ready(function() {
                 //console.log(JSON.stringify(data));
                 console.log(data);
                 $('#head02').text(data[0].lxc_a_id);
+                $('#head04').text(data[0].kundenname);
                 $('#head06').val(data[0].lxc_a_finish_time)
                 $('#head08').val(data[0].lxc_a_km);
-                $('#head10').text(data[0].lxc_a_modified_from);
+                //$('#head10').text(data[0].lxc_a_modified_from);
+                $('#head10').text(kivi.myconfig.name);
                 $('#head12').text(data[0].lxc_a_modified_on);
                 $('#head16').text(data[0].lxc_a_init_time);
+                $('#head20').text(data[0].c_ln);
             },
             error:  function(){
                 alert("fehlgeschlagen!");
@@ -263,16 +249,6 @@ $(document).ready(function() {
                         $('#'+j+'8').append('<option selected="selected">' + data[i].lxc_a_pos_doing + '</option>')
                         //console.log(data[i].lxc_a_pos_doing + ' not exist')
                     }
-
-                    /*
-                    if ($('#'+j+'7').val() == data[i].lxc_a_pos_emp) {
-                        $('#'+j+'7').val(data[i].lxc_a_pos_emp)
-                        //alert('Eintrag vorhanden')
-                    } else {
-                        $('.mechanics').append('<option selected="selected">' + data[i].lxc_a_pos_emp + '</option>')
-                        //alert('Eintrag nicht vorhanden')
-                    }
-                    */
                 }
 
             },
@@ -321,7 +297,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head05 {position: absolute; top: 150px; left: 5px; font-size: 12px;}
     #head06 {position: absolute; top: 150px; left: 125px; font-size: 12px;}
     #head07 {position: absolute; top: 150px; left: 500px; font-size: 12px;}
-    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px;}
+    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px; width: 100px}
     #head09 {position: absolute; top: 165px; left: 5px; font-size: 12px;}
     #head10 {position: absolute; top: 165px; left: 125px; font-size: 12px;}
     #head11 {position: absolute; top: 165px; left: 500px; font-size: 12px;}
@@ -332,6 +308,8 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head16 {position: absolute; top: 200px; left: 125px; font-size: 12px;}
     #head17 {position: absolute; top: 200px; left: 500px; font-size: 12px;}
     #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
+    #head19 {position: absolute; top: 150px; left: 770px; font-size: 12px;}
+    #head20 {position: absolute; top: 150px; left: 870px; font-size: 12px;}
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1450px; }
     #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
@@ -373,11 +351,6 @@ table.tablesorter { width:auto; cursor:pointer; }
 <?php echo $menu['end_content']; ?>
 
 <p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Testfile</p>
-<!--
-<button id="btnSave" class="btn">Speichern</button>
-<button id="btnSaveChange" class="btn">Änderungen übernehmen</button>
-<button id="btn01">button</button>
--->
 
 
 
