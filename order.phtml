@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+<?php
+    require_once(__DIR__."/../inc/stdLib.php");
+    $menu = $_SESSION['menu'];
+    echo $menu['stylesheets'];
+    echo $menu['javascripts'];
+    echo $head['JQUERY'];
+    echo $head['JQUERYUI'];
+    echo $head['JQTABLE'];
+    echo $head['THEME'];
+    echo $head['JUI-DROPDOWN'];
+
+    /*****************************************************************************************************************************
+    Grundsätze: Content wird via Ajax im Json-Format geholt und an die entsprechenden Container verteilt
+                Daten werden ohne Reload einfach via Ajax gespeichert.
+                Fürs Holen und Schreiben von Daten befindet sich unter jqhelp eine gleichnamige Datei mit der Extension ".php"
+                Auf das Benutzen der Variable $_SESSION sollte weitestgehend verzichtet werden.
+                Statt JS einzusetzen sollte auf die jQuery-Methoden zurückgegriffen werden.
+                Url-Parameter können mit $.urlParam( 'ParameterName' ) gelesen werden.
+    ******************************************************************************************************************************/
+
+?>
+
+<script>
+
+
+$(document).ready(function() {
+
+    $.urlParam = function( name ){
+        var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+        if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+        else return decodeURIComponent( results[1] || 0 );
+    }
+
+    //alert( $.urlParam( 'id' ) );
+
+    var id = $.urlParam( 'id' );
+    //var grp_name;
+
+    var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
+    var baseUrl = kivi_global.baseurl;
+
+    console.log(kivi_global)
+
+    //Einfügen beim Laden
+    $('<div class="ui-widget-content">'
+        + '<div id="tmp"></div>'
+        + '<div>'
+            + '<p class="tools ui-state-highlight ui-corner-all lang " style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">'
+                + '<label id="head01">Auftragsnummer:</label>'
+                + '<label id="head02">0000</label>'
+                + '<label id="head03">Auftraggeber:</label>'
+                + '<label id="head04"></label></br>'
+                + '<label id="head05">Fertigstellung:</label>'
+                + '<input id="head06" type="text">'
+                + '<label id="head07">KM-Stand:</label>'
+                + '<input id="head08" type="text"></br>'
+                + '<label id="head09">bearbeitet von:</label>'
+                + '<label id="head10"></label>'
+                + '<label id="head11">bearbeitet am:</label>'
+                + '<label id="head12"></label></br>'
+                + '<label id="head13">KfZ:</label>'
+                + '<select id="head14" type="text">'
+                    + '<option>Auto nicht hier</option>'
+                    + '<option selected="selected">Auto hier</option>'
+                    + '<option>Sonstiges zur Reparatur gebracht</option>'
+                    + '<option>Bestellung</option>'
+                + '</select></br>'
+                + '<label id="head15">erstellt am:</label>'
+                + '<label id="head16"></label>'
+                + '<label id="head17">Status:</label>'
+                + '<select id="head18" type="text">'
+                    + '<option>angenommen</option>'
+                    + '<option>bearbeitet</option>'
+                    + '<option selected="selected">abgerechnet</option>'
+                + '</select>'
+            + '</p>'
+        + '</div>'
+        + '<div>'
+                + '<img src="' + baseUrl + '/image/updown.png" class="lblPositioning lblPos1">'
+                + '<img src="' + baseUrl + '/image/close.png" class="lblPositioning lblPos2">'
+                + '<label name="position" class="lblPositioning lblPos3">Position</label>'
+                + '<label name="art_nr" class="lblPositioning lblPos4">Artikel-Nr.</label>'
+                + '<label name="bezeichnung" class="lblPositioning lblPos5">Beschreibung</label>'
+                + '<label name="einheit" class="lblPositioning lblPos6">Einheit</label>'
+                + '<label name="preis" class="lblPositioning lblPos7">Preis</label>'
+                + '<label name="rabatt" class="lblPositioning lblPos8">Rabatt</label>'
+                + '<label name="gesamt" class="lblPositioning lblPos9">Gesamt</label>'
+                + '<label name="mechaniker" class="lblPositioning lblPos10">Mechaniker</label>'
+                + '<label name="status" class="lblPositioning lblPos11">Status</label>'
+        + '</div>'
+        + '<form id="myform">'
+            + '<ul id="sortable">'
+            + '</ul>'
+        + '</form>'
+    + '</div>').appendTo('body');
+
+    newPositionContainer();
+
+    $('.btn').button();
+
+    $('#sortable').sortable({
+        update: function( ) {
+            zaehler();
+            saveFunction();
+        }
+    });
+
+
+    function newPositionContainer() {
+            //Container for inputs
+            $('<li id="" class="ui-state-default new">'
+                + '<img src="' + baseUrl + '/image/updown.png" class="mv">'
+                + '<img src="' + baseUrl + '/image/close.png" class="rmv">'
+                + '<input name="feld1" type="text" class="ui-widget-content ui-corner-all pos lang" autocomplete="off">'
+                + '<input name="feld2" type="text" class="ui-widget-content ui-corner-all itemNr lang" autocomplete="off">'
+                + '<input name="feld3" type="text" class="ui-widget-content ui-corner-all description lang" autocomplete="on">'
+                + '<select name="feld4" type="text" class="ui-widget-content ui-corner-all unity lang" autocomplete="off">'
+                    + '<option selected="selected"></option>'
+                    + '<option>Stk</option>'
+                    + '<option>Std</option>'
+                + '</select>'
+                + '<input name="feld5" type="text" class="ui-widget-content ui-corner-all price lang" autocomplete="off">'
+                + '<input name="feld6" type="text" class="ui-widget-content ui-corner-all discount lang" autocomplete="off">'
+                + '<input name="feld7" type="text" class="ui-widget-content ui-corner-all total lang" autocomplete="off">'
+                + '<select name="feld8" type="text" class="ui-widget-content ui-corner-all mechanics lang" autocomplete="off">'
+                    + '<option value="" selected="selected"></option>'
+                    //+ '<option value="Mechaniker">Mechaniker</option>'
+                    //+ '<option value="Monteur">Monteur</option>'
+                + '</select>'
+                + '<select name="feld9" type="text" class="ui-widget-content ui-corner-all status lang" autocomplete="off">'
+                    + '<option value="" selected="selected"></option>'
+                + '</select>'
+            + '</li>').appendTo('#sortable');//.attr('id','NewId_' + cnt);
+
+            $('.pos').attr('readonly', true)
+
+        zaehler();
+
+        $('select').change(function () {
+            var y = $(this).val()
+            $(this).attr('value', y)
+        })
+
+        $('.description').focus(function () {
+            var x = $(this).val();
+            if (x.length == 0) {
+                i = 0;
+                keyPressFunction();
+            } else {
+                i = 2;
+            }
+        })
+
+        $('.rmv').click(function () {
+            $(this).parent().remove();
+            zaehler();
+            saveFunction();
+        })
+
+        var timer;
+        $('.lang').on( 'keyup', function(){
+            var y = $(this).val();
+            $(this).attr('value', y)
+            clearTimeout( timer );
+            timer = setTimeout( function(){   //calls click event after a certain time
+            //alert('SAVE')
+            saveFunction();
+            }, 5000 );
+        });
+
+    }
+
+    i = 0;
+    function keyPressFunction() {
+        $('.description').keypress(function () {
+            count = 0;
+            count = i += 1;
+                if (count == 1) {
+                    newPositionContainer();
+                    //zaehler();
+                }
+        })
+    }
+
+    function zaehler() {
+        $('.new').each(function  (a, v){
+            $(v).attr('id', (a+1)).children('.pos').val((a+1))
+            var list = $(this).children('.lang');
+            for (var i = 0; i < list.length; i++){
+                list[i].id = '' + (a+1) + i;
+            }
+        })
+    }
+
+    /*
+    grp_name = 'Werkstatt';
+    $.ajax({
+            url: 'ajax/order.php?action=ERPUsersfromGroup&data=' + grp_name,
+            type: 'GET',
+            success: function (data) {
+                //alert(JSON.stringify(data));
+                //console.log(JSON.stringify(data));
+                console.log(data);
+            },
+            error:  function(){
+                console.log("fehlgeschlagen!");
+               }
+    })
+    */
+
+    $.ajax({
+            url: 'ajax/order.php?action=getOrder&data=' + id,
+            type: 'GET',
+            success: function (data) {
+                //alert(JSON.stringify(data));
+                //console.log(JSON.stringify(data));
+                console.log(data);
+                $('#head02').text(data[0].lxc_a_id);
+                $('#head06').val(data[0].lxc_a_finish_time)
+                $('#head08').val(data[0].lxc_a_km);
+                $('#head10').text(data[0].lxc_a_modified_from);
+                $('#head12').text(data[0].lxc_a_modified_on);
+                $('#head16').text(data[0].lxc_a_init_time);
+            },
+            error:  function(){
+                alert("fehlgeschlagen!");
+               }
+    })
+
+    $.ajax({
+            url: 'ajax/order.php?action=getArtikel&data=' + id,
+            type: 'GET',
+            success: function (data) {
+                //alert(JSON.stringify(data));
+                //console.log(JSON.stringify(data));
+                console.log(data);
+                var j = 0;
+                for (var i = 0; i < data.length; ++i) {
+                    j++;
+                    newPositionContainer()
+                    $('#'+j+'1').val(data[i].lxc_a_pos_id)
+                    $('#'+j+'2').val(data[i].lxc_a_pos_todo)
+                    //$('#'+j+'7').val(data[i].lxc_a_pos_emp)
+                    //$('#'+j+'8').val(data[i].lxc_a_pos_doing)
+
+                    if ( $(".mechanics option[value='" + data[i].lxc_a_pos_emp + "']").val() == data[i].lxc_a_pos_emp) {
+                        $('#'+j+'7').val(data[i].lxc_a_pos_emp)
+                        //console.log(data[i].lxc_a_pos_emp + ' exist')
+                    } else {
+                        $('#'+j+'7').append('<option selected="selected">' + data[i].lxc_a_pos_emp + '</option>')
+                        //onsole.log(data[i].lxc_a_pos_emp + ' not exist')
+                    }
+
+                    if ( $(".status option[value='" + data[i].lxc_a_pos_doing + "']").val() == data[i].lxc_a_pos_doing) {
+                        $('#'+j+'8').val(data[i].lxc_a_pos_doing)
+                        //console.log(data[i].lxc_a_pos_doing + ' exist')
+                    } else {
+                        $('#'+j+'8').append('<option selected="selected">' + data[i].lxc_a_pos_doing + '</option>')
+                        //console.log(data[i].lxc_a_pos_doing + ' not exist')
+                    }
+
+                    /*
+                    if ($('#'+j+'7').val() == data[i].lxc_a_pos_emp) {
+                        $('#'+j+'7').val(data[i].lxc_a_pos_emp)
+                        //alert('Eintrag vorhanden')
+                    } else {
+                        $('.mechanics').append('<option selected="selected">' + data[i].lxc_a_pos_emp + '</option>')
+                        //alert('Eintrag nicht vorhanden')
+                    }
+                    */
+                }
+
+            },
+            error:  function(){
+                alert("fehlgeschlagen!");
+               }
+    })
+
+
+    /*
+    function saveFunction() {
+
+        var object = {};
+        var array = $("#myform").serializeArray();
+        console.log( array );
+        $.each(array, function(index, item) {
+            object[item.name] = item.value;
+           });
+
+        $.ajax({
+            url: 'ajax/order.php',
+            data: { action: "newEntry", data: JSON.stringify(object)},
+            type: "POST",
+            success: function(){
+                   //alert("Gesendet");
+            },
+            error:  function(){
+                alert("Senden der Daten fehlgeschlagen!");
+               }
+        });
+    }
+    */
+            //console.log( JSON.stringify( dataArr ) );
+
+}); //Ende $(document).ready()
+
+</script>
+<style>
+
+table.tablesorter { width:auto; cursor:pointer; }
+
+    #head01 {position: absolute; top: 135px; left: 5px; font-size: 12px;}
+    #head02 {position: absolute; top: 135px; left: 125px; font-size: 12px;}
+    #head03 {position: absolute; top: 135px; left: 500px; font-size: 12px;}
+    #head04 {position: absolute; top: 135px; left: 650px; font-size: 12px;}
+    #head05 {position: absolute; top: 150px; left: 5px; font-size: 12px;}
+    #head06 {position: absolute; top: 150px; left: 125px; font-size: 12px;}
+    #head07 {position: absolute; top: 150px; left: 500px; font-size: 12px;}
+    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px;}
+    #head09 {position: absolute; top: 165px; left: 5px; font-size: 12px;}
+    #head10 {position: absolute; top: 165px; left: 125px; font-size: 12px;}
+    #head11 {position: absolute; top: 165px; left: 500px; font-size: 12px;}
+    #head12 {position: absolute; top: 165px; left: 650px; font-size: 12px;}
+    #head13 {position: absolute; top: 180px; left: 500px; font-size: 12px;}
+    #head14 {position: absolute; top: 180px; left: 650px; font-size: 12px;}
+    #head15 {position: absolute; top: 200px; left: 5px; font-size: 12px;}
+    #head16 {position: absolute; top: 200px; left: 125px; font-size: 12px;}
+    #head17 {position: absolute; top: 200px; left: 500px; font-size: 12px;}
+    #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
+
+    #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1450px; }
+    #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
+    #sortable li span { position: absolute; margin-left: -1.3em; }
+    #buttons { padding-left: 2.5em; padding-top: 1em;    }
+    .btn { position: relative; left: 15px; }
+    .lblPos1 {  position:relative; left: 43px;}
+    .lblPos2 {  position:relative; left: 48px;}
+    .lblPos3 {  position:relative; left: 53px;}
+    .lblPos4 {  position:relative; left: 60px;}
+    .lblPos5 {  position:relative; left: 65px;}
+    .lblPos6 {  position:relative; left: 555px;}
+    .lblPos7 {  position:relative; left: 570px;}
+    .lblPos8 {  position:relative; left: 645px;}
+    .lblPos9 {  position:relative; left: 710px;}
+    .lblPos10 {  position:relative; left: 765px;}
+    .lblPos11 { position: relative; left: 835px;}
+    .mv {  position:relative; left: 5px; top: 3px;}
+    .rmv {  position:relative; left: 10px; top: 3px;}
+    .pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}
+    .itemNr {  position:relative; left: 23px; width: 65px;}
+    .description {  position:relative; left: 28px; width: 570px;}
+    .unity {  position:relative; left: 33px; width: 50px}
+    .price {  position:relative; left: 40px; width: 100px; text-align: right;}
+    .discount {  position:relative; left: 45px; width: 100px;text-align: right;}
+    .total {  position:relative; left: 50px; width: 100px;text-align: right;}
+    .mechanics {  position:relative; left: 55px; width: 140px;}
+    .status { position: relative; left: 60px; width: 140px;}
+
+</style>
+</head>
+
+<body>
+<?php
+    echo $menu['pre_content'];
+    echo $menu['start_content'];
+?>
+
+<?php echo $menu['end_content']; ?>
+
+<p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Testfile</p>
+<!--
+<button id="btnSave" class="btn">Speichern</button>
+<button id="btnSaveChange" class="btn">Änderungen übernehmen</button>
+<button id="btn01">button</button>
+-->
+
+
+
+
+</body>
+</html>
