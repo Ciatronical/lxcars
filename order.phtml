@@ -99,51 +99,57 @@ $(document).ready(function() {
     + '</div>').appendTo('body');
 
     newPositionContainer();
-
-    $('.btn').button();
-
+/*
     $('#sortable').sortable({
-        update: function( ) {
+        cancel: ".unsortable"
+    });
+*/
+    $('#sortable').sortable({
+        update: function() {
             zaehler();
-            saveFunction();
+            //saveFunction();
         }
     });
 
-
     function newPositionContainer() {
             //Container for inputs
-            $('<li id="" class="ui-state-default new">'
+            $('<li id="" class="ui-state-default new unsortable">'
                 + '<img src="' + baseUrl + '/image/updown.png" class="mv">'
                 + '<img src="' + baseUrl + '/image/close.png" class="rmv">'
                 + '<input name="feld1" type="text" class="ui-widget-content ui-corner-all pos lang" autocomplete="off">'
-                + '<input name="feld2" type="text" class="ui-widget-content ui-corner-all itemNr lang" autocomplete="off">'
-                + '<input name="feld3" type="text" class="ui-widget-content ui-corner-all description lang" autocomplete="on">'
-                + '<select name="feld4" type="text" class="ui-widget-content ui-corner-all unity lang" autocomplete="off">'
+                + '<input name="feld2" type="text" class="ui-widget-content ui-corner-all itemNr lang elem" autocomplete="off">'
+                + '<input name="feld3" type="text" class="ui-widget-content ui-corner-all description lang elem" autocomplete="on">'
+                + '<select name="feld4" type="text" class="ui-widget-content ui-corner-all unity lang elem" autocomplete="off">'
                     + '<option selected="selected"></option>'
                     + '<option>Stk</option>'
                     + '<option>Std</option>'
                 + '</select>'
-                + '<input name="feld5" type="text" class="ui-widget-content ui-corner-all price lang" autocomplete="off">'
-                + '<input name="feld6" type="text" class="ui-widget-content ui-corner-all discount lang" autocomplete="off">'
-                + '<input name="feld7" type="text" class="ui-widget-content ui-corner-all total lang" autocomplete="off">'
-                + '<select name="feld8" type="text" class="ui-widget-content ui-corner-all mechanics lang" autocomplete="off">'
+                + '<input name="feld5" type="text" class="ui-widget-content ui-corner-all price lang elem" autocomplete="off">'
+                + '<input name="feld6" type="text" class="ui-widget-content ui-corner-all discount lang elem" autocomplete="off">'
+                + '<input name="feld7" type="text" class="ui-widget-content ui-corner-all total lang elem" autocomplete="off">'
+                + '<select name="feld8" type="text" class="ui-widget-content ui-corner-all mechanics lang elem" autocomplete="off">'
                     + '<option value="" selected="selected"></option>'
                     //+ '<option value="Mechaniker">Mechaniker</option>'
                     //+ '<option value="Monteur">Monteur</option>'
                 + '</select>'
-                + '<select name="feld9" type="text" class="ui-widget-content ui-corner-all status lang" autocomplete="off">'
-                    + '<option value="" selected="selected"></option>'
+                + '<select name="feld9" type="text" class="ui-widget-content ui-corner-all status lang elem" autocomplete="off">'
+                    + '<option value="0" selected="true"></option>'
+                    + '<option value="1">gelesen</option>'
+                    + '<option value="2">Bearbeitung</option>'
+                    + '<option value="3">erledigt</option>'
                 + '</select>'
             + '</li>').appendTo('#sortable');//.attr('id','NewId_' + cnt);
 
+            zaehler()
+
             $('.pos').attr('readonly', true)
 
-        zaehler();
 
         $('select').change(function () {
             var y = $(this).val()
             $(this).attr('value', y)
         })
+
 
         $('.description').focus(function () {
             var x = $(this).val();
@@ -167,7 +173,6 @@ $(document).ready(function() {
             $(this).attr('value', y)
             clearTimeout( timer );
             timer = setTimeout( function(){   //calls click event after a certain time
-            //alert('SAVE')
             saveFunction();
             }, 5000 );
         });
@@ -177,90 +182,116 @@ $(document).ready(function() {
     i = 0;
     function keyPressFunction() {
         $('.description').keypress(function () {
-            count = 0;
-            count = i += 1;
-                if (count == 1) {
-                    newPositionContainer();
-                    //zaehler();
+               i += 1;
+            ll = 0;
+                if (i == 1) {
+                    $('#sortable').each(function () {
+                        var listLength = $(this).children('.new');
+                        ll = listLength.length
+                    })
+
+                    if ($(this).parent().attr('id') == 'pos__' + ll) {
+                        $(this).parent().removeClass('unsortable')
+                        newPositionContainer();
+                    }
                 }
+
         })
     }
 
     function zaehler() {
-        $('.new').each(function  (a, v){
-            $(v).attr('id', (a+1)).children('.pos').val((a+1))
-            var list = $(this).children('.lang');
-            for (var i = 0; i < list.length; i++){
-                list[i].id = '' + (a+1) + i;
+        $('.new').each(function (cnt, list) {
+            $(list).attr('id', 'pos__' + (cnt+1)).children('.pos').val((cnt+1))
+
+        //For-Schleife um in den einzelnen ListenElementen die Felder
+        //durch zu zählen und zu nummerieren
+            var elements = $(this).children('.lang');
+            for (var i = 0; i < elements.length; i++){
+                elements[i].id = $(list).attr('id') + '__elem__' + (i+1);
             }
         })
     }
 
-    $.ajax({
+    if (id > '0') {
+        //alert(id)
+        //Head-Area
+        $.ajax({
             url: 'ajax/order.php?action=getOrder&data=' + id,
             type: 'GET',
             success: function (data) {
-                //alert(JSON.stringify(data));
                 //console.log(JSON.stringify(data));
                 console.log(data);
                 $('#head02').text(data[0].lxc_a_id);
                 $('#head04').text(data[0].kundenname);
                 $('#head06').val(data[0].lxc_a_finish_time)
                 $('#head08').val(data[0].lxc_a_km);
-                //$('#head10').text(data[0].lxc_a_modified_from);
                 $('#head10').text(kivi.myconfig.name);
                 $('#head12').text(data[0].lxc_a_modified_on);
                 $('#head16').text(data[0].lxc_a_init_time);
                 $('#head20').text(data[0].c_ln);
             },
-            error:  function(){
-                alert("fehlgeschlagen!");
-               }
-    })
+            error:  function(){ alert("fehlgeschlagen!"); }
+        })
 
-    $.ajax({
+        //Data-Area
+        $.ajax({
             url: 'ajax/order.php?action=getArtikel&data=' + id,
             type: 'GET',
             success: function (data) {
                 //alert(JSON.stringify(data));
                 //console.log(JSON.stringify(data));
                 console.log(data);
-                var j = 0;
-                for (var i = 0; i < data.length; ++i) {
-                    j++;
-                    newPositionContainer()
-                    $('#'+j+'1').val(data[i].lxc_a_pos_id)
-                    $('#'+j+'2').val(data[i].lxc_a_pos_todo)
-                    //$('#'+j+'7').val(data[i].lxc_a_pos_emp)
-                    //$('#'+j+'8').val(data[i].lxc_a_pos_doing)
 
-                    if ( $(".mechanics option[value='" + data[i].lxc_a_pos_emp + "']").val() == data[i].lxc_a_pos_emp) {
-                        $('#'+j+'7').val(data[i].lxc_a_pos_emp)
+                for (i = 0; i < data.length; i++) {
+                    $('#pos__' + (i+1) + '__elem__3').val(data[i].lxc_a_pos_todo)
+
+                    if ($(".mechanics option[value='" + data[i].lxc_a_pos_emp + "']").val() == data[i].lxc_a_pos_emp) {
+                        $('#pos__' + (i+1) + '__elem__8').val(data[i].lxc_a_pos_emp)
                         //console.log(data[i].lxc_a_pos_emp + ' exist')
                     } else {
-                        $('#'+j+'7').append('<option selected="selected">' + data[i].lxc_a_pos_emp + '</option>')
-                        //onsole.log(data[i].lxc_a_pos_emp + ' not exist')
+                        $('#pos__' + (i+1) + '__elem__8').append('<option selected="selected">' + data[i].lxc_a_pos_emp + '</option>')
+                        //console.log(data[i].lxc_a_pos_emp + ' not exist')
                     }
 
-                    if ( $(".status option[value='" + data[i].lxc_a_pos_doing + "']").val() == data[i].lxc_a_pos_doing) {
-                        $('#'+j+'8').val(data[i].lxc_a_pos_doing)
-                        //console.log(data[i].lxc_a_pos_doing + ' exist')
+                    if ($(".status option[value='" + data[i].lxc_a_pos_status + "']").val() == data[i].lxc_a_pos_status) {
+                        $('#pos__' + (i+1) + '__elem__9').val(data[i].lxc_a_pos_status)
+                        //console.log(data[i].lxc_a_pos_status + ' exist')
                     } else {
-                        $('#'+j+'8').append('<option selected="selected">' + data[i].lxc_a_pos_doing + '</option>')
-                        //console.log(data[i].lxc_a_pos_doing + ' not exist')
+                        $('#pos__' + (i+1) + '__elem__9').append('<option selected="selected">' + data[i].lxc_a_pos_status + '</option>')
+                        //console.log(data[i].lxc_a_pos_status + ' not exist')
                     }
+
+
+                    newPositionContainer()
+                    $('#pos__' + (i+1)).removeClass('unsortable')
                 }
-
             },
-            error:  function(){
-                alert("fehlgeschlagen!");
-               }
-    })
+            error:  function(){ alert("fehlgeschlagen!"); }
+        })
+    }
 
 
-    /*
+
+
+
     function saveFunction() {
 
+                    /*
+                    $('#sortable').each(function () {
+                        var listLength = $(this).children('.new');
+                        ll = listLength.length
+                        alert(ll)
+                        $('#pos__' + ll).remove();
+                    })
+                    */
+
+                    /*
+                    if ($(this).parent().attr('id') == 'pos__' + ll) {
+                        $(this).parent().removeClass('unsortable')
+                        //newPositionContainer();
+                    }
+                    */
+        /*
         var object = {};
         var array = $("#myform").serializeArray();
         console.log( array );
@@ -273,14 +304,15 @@ $(document).ready(function() {
             data: { action: "newEntry", data: JSON.stringify(object)},
             type: "POST",
             success: function(){
-                   //alert("Gesendet");
+                   alert("Gesendet");
             },
             error:  function(){
                 alert("Senden der Daten fehlgeschlagen!");
                }
         });
+        */
     }
-    */
+
             //console.log( JSON.stringify( dataArr ) );
 
 }); //Ende $(document).ready()
