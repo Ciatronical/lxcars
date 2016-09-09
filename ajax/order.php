@@ -2,15 +2,36 @@
 //writeLog(__DIR__);
 require_once __DIR__.'/../inc/ajax2function.php';
 
-function newEntry( $data ){
-    //writeLog( 'Ronny' );
-    writeLog( $data );
+function newEntry($data){
+    writeLog( 'Ronny' );
+    //writeLog( $data );
+    $data = json_decode($data);
+    //writeLog($data);
+    $data = (array) $data;
+    writeLog($data);
+    $rs = $GLOBALS['dbh']->insert( 'lxc_a_pos', array( 'lxc_a_pos_aid', 'lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status' ), array( $data['lxc_a_pos_aid'], $data['lxc_a_pos_order_nr'], $data['lxc_a_pos_todo'],$data['lxc_a_pos_emp'], $data['lxc_a_pos_status']), 'lxc_a_pos_id' );
+    writelog($rs);
+    echo 1;
+}
+
+function updatePositions($data) {
+    writeLog( 'Ronny' );
+    writeLog($data);
+    $data = json_decode($data);
+    writeLog($data);
+
+    //Begin
+        //$result = parent::beginTransaction();
+        //if( $this->logAll ) $this->writeLog( "PDO::beginTransaction() returns: ".$result );
+            //return $result;
+    //Commit
+        //$result = parent::commit();
+        //if( $this->logAll ) $this->writeLog( "PDO::commit() returns: ".$result );
+            //return $result;
     //$data = json_decode($data);
+    //writeLog($data);
     //$data = (array) $data;
     //writeLog($data);
-    //$rs = $GLOBALS['dbh']->insert( 'example', array( 'date_time', 'c_name', 'c_age', 'c_comments' ), array( $data['datetime'], $data['name'],$data['age'], $data['comments']) );
-    //writelog($rs);
-    echo 1;
 }
 
 function getOrder($id){
@@ -21,20 +42,13 @@ writeLog($id);
      echo $rs;
 }
 
-function getArtikel($id){
-     $rs = $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_a_pos WHERE lxc_a_pos_aid = '.$id, true );
+function getPosition($id){
+     $rs = $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_a_pos WHERE lxc_a_pos_aid = '.$id.'ORDER BY lxc_a_pos_id', true );
          //echo json_encode( $rs['json_agg'] );
          //echo json_encode( $rs );
      echo $rs;
 }
 
-/*
-function getArtikel($artikel){
-     $rs = $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_a_pos WHERE lxc_a_pos_todo = '.$artikel, true );
-     //echo json_encode( $rs['json_agg'] );
-     //echo json_encode( $rs );
-     echo $rs;
-}
-*/
+
 
 ?>
