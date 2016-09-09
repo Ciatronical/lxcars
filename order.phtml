@@ -174,6 +174,16 @@ $(document).ready(function() {
 
     }
 
+    /*********************************************************************************************************************
+    + bitte on.change() benutzen!
+    + der letzte leere Container gehört der KLasse new an
+    + wenn sich Elemente in diesem Container ändern dann insert()  ausführen
+    + danach verliert dieser container die Klasse new und ein neuer Container wird erzeugt
+    + beim erzeugen des neuen Containers wird pos um 1 erhöht!
+    + Zählen wird nur beim Aändern der Reihenfolge ( sortable-Event) augführ (also keine extra Funktion)
+    + Update kann vorerst mit einem Button durchgeführt werden
+    + bitte so wenig wie möglich globale Variablen verwenden, wenig cnt, i, j
+    ***********************************************************************************************************************/
     var nChars = 0;
     function keyPressFunction() {
         $('.description').keydown(function () {
