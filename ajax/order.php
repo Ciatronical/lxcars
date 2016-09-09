@@ -14,11 +14,11 @@ function newEntry($data){
     echo 1;
 }
 
-function updatePositions($data) {
-    writeLog( 'Ronny' );
+function updatePositions( $data) {
+    //writeLog( 'Ronny' );
     writeLog($data);
-    $data = json_decode($data);
-    writeLog($data);
+    //$data = json_decode($data);
+    //writeLog($data);
 
     //Begin
         //$result = parent::beginTransaction();
@@ -32,6 +32,7 @@ function updatePositions($data) {
     //writeLog($data);
     //$data = (array) $data;
     //writeLog($data);
+     echo 1;
 }
 
 function getOrder($id){
