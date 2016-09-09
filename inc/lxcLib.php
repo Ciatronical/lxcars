@@ -243,7 +243,7 @@ function NeuesAuto ( $cardata ) {
         unset ( $cardata["c_fin"] );
     $fields=array_keys ( $cardata );
     $values=array_values ( $cardata );
-    $rc=$GLOBALS['dbh']->insert ( $tbname, $fields, $values );
+    $rc = $GLOBALS['dbh']->insert( $tbname, $fields, $values, 'c_id' );
     //Kann insert gleich zurückgeben
     $sql="select MAX(c_id) from $tbname ";
     //die letzte id auswählen
