@@ -95,7 +95,47 @@ $(document).ready(function() {
     $('#sortable').sortable({
         update: function() {
             zaehler();
-            //update();
+
+                    clearTimeout( timer );
+                    timer = setTimeout( function(){   //calls click event after a certain time
+                        var updateDataJSON = new Array;
+                        $( 'ul#sortable > li' ).each( function(){
+                            updateDataJSON.push({
+                                //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                                "lxc_a_pos_order_nr": $( this ).children( '.pos' ).val(),
+                                "lxc_a_pos_item_nr": $( this ).children( '.itemNr' ).val(),
+                                "lxc_a_pos_todo": $( this ).children( '.description' ).val(),
+                                "lxc_a_pos_unity": $( this ).children( '.unity' ).val(),
+                                "lxc_a_pos_price": $( this ).children( '.price' ).val(),
+                                "lxc_a_pos_discount": $( this ).children( '.discount' ).val(),
+                                "lxc_a_pos_total": $( this ).children( '.total' ).val(),
+                                "lxc_a_pos_emp": $( this ).children( '.mechanics' ).val(),
+                                "lxc_a_pos_status": $( this ).children( '.status' ).val(),
+                                "lxc_a_pos_id": $( this ).children( '.posID' ).text()
+                            });
+                        })
+                    updateDataJSON.pop()
+
+                    //console.log( updateDataJSON );
+                    //console.log( JSON.stringify( updateDataJSON ) );
+                    //alert( JSON.stringify( updateDataJSON ) );
+
+                        $.ajax({
+                            url: 'ajax/order.php',
+                            //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                            data: { action: "updatePositions", data: updateDataJSON },
+                            type: "POST",
+                                success: function(){
+                                    alert( 'send all posdata' );
+                                },
+                                error:  function(){
+                                    alert( 'error sending posdata' );
+                                }
+                        });
+                    //console.log( JSON.stringify( object ) );
+                    //alert('Delete last Position in Array AND Update all Positions');
+
+                       }, 800 );
         }
     });
 
@@ -106,16 +146,16 @@ $(document).ready(function() {
             '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
             '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
             '<input name="lxc_a_pos_order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" autocomplete="off">' +
-            '<input name="feld2" type="text" class="ui-widget-content ui-corner-all itemNr elem" autocomplete="off">' +
+            '<input name="lxc_a_pos_item_nr" type="text" class="ui-widget-content ui-corner-all itemNr elem" autocomplete="off">' +
             '<input name="lxc_a_pos_todo" type="text" class="ui-widget-content ui-corner-all description elem" autocomplete="on">' +
-            '<select name="feld4" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
+            '<select name="lxc_a_pos_unity" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
                 '<option selected="selected"></option>' + //!get via AJAX
                 '<option>Stk</option>' +
                 '<option>Std</option>' +
             '</select>' +
-            '<input name="feld5" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
-            '<input name="feld6" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
-            '<input name="feld7" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
+            '<input name="lxc_a_pos_price" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
+            '<input name="lxc_a_pos_discount" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
+            '<input name="lxc_a_pos_total" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
             '<select name="lxc_a_pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
                 '<option value="0" selected="selected"></option>' +
                 '<option value="1">Mechaniker</option>' +
@@ -127,11 +167,13 @@ $(document).ready(function() {
                 '<option value="2">Bearbeitung</option>' +
                 '<option value="3">erledigt</option>' +
             '</select>' +
+            '<label name="lxc_a_pos_id" class="posID elem"></label>' +
           '</li>').appendTo('#sortable');//.attr('id','NewId_' + cnt);
 
         zaehler();
 
         $( '.pos' ).attr( 'readonly', true )
+        //$( '.posID' ).hide();
 
         $( 'select' ).change( function (){
             var y = $(this).val()
@@ -141,7 +183,6 @@ $(document).ready(function() {
         $( '.rmv' ).click( function (){
             $( this ).parent().remove();
             zaehler();
-            //saveFunction();
         })
 
         //bei Änderung des Textes in ".elem"
@@ -159,59 +200,80 @@ $(document).ready(function() {
                     posObject[item.name] = item.value;
                 });
                 posObject['lxc_a_pos_aid'] = id;
-                console.log( posObject );
+                //console.log( posObject );
                 // Insert
                 $.ajax({
                     url: 'ajax/order.php',
-                    data: { action: "newEntry", data: JSON.stringify( posObject ) },
+                    data: { action: "newEntry", data: JSON.stringify(posObject) },
                     type: "POST",
                     success: function(){
-                        alert( 'Gesendet' );
+                        alert('Gesendet');
                     },
                     error:   function(){
-                        alert( 'Senden der Daten fehlgeschlagen!' );
+                        alert('Senden der Daten fehlgeschlagen!');
                     }
                 });
-                console.log( JSON.stringify( posObject ) );
+                //console.log( JSON.stringify( posObject ) );
                 newPositionContainer();
+
+                //holen der neu vergebenen PositionID
+                $.ajax({
+                    url: 'ajax/order.php?action=getPosition&data=' + id,
+                    type: 'GET',
+                    success: function (data) {
+                        for (i = 0; i < data.length; i++) {
+                            $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].lxc_a_pos_id);
+                        }
+                    },
+                    error:  function(){ alert("fehlgeschlagen!"); }
+                })
+
+            } else {
+                $( '.elem' ).on( 'keyup', function(){
+
+                    clearTimeout( timer );
+                    timer = setTimeout( function(){   //calls click event after a certain time
+                        var updateDataJSON = new Array;
+                        $( 'ul#sortable > li' ).each( function(){
+                            updateDataJSON.push({
+                                //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                                "lxc_a_pos_order_nr": $( this ).children( '.pos' ).val(),
+                                "lxc_a_pos_item_nr": $( this ).children( '.itemNr' ).val(),
+                                "lxc_a_pos_todo": $( this ).children( '.description' ).val(),
+                                "lxc_a_pos_unity": $( this ).children( '.unity' ).val(),
+                                "lxc_a_pos_price": $( this ).children( '.price' ).val(),
+                                "lxc_a_pos_discount": $( this ).children( '.discount' ).val(),
+                                "lxc_a_pos_total": $( this ).children( '.total' ).val(),
+                                "lxc_a_pos_emp": $( this ).children( '.mechanics' ).val(),
+                                "lxc_a_pos_status": $( this ).children( '.status' ).val(),
+                                "lxc_a_pos_id": $( this ).children( '.posID' ).text()
+                            });
+                        })
+                    updateDataJSON.pop()
+
+                    //console.log( updateDataJSON );
+                    //console.log( JSON.stringify( updateDataJSON ) );
+                    //alert( JSON.stringify( updateDataJSON ) );
+
+                        $.ajax({
+                            url: 'ajax/order.php',
+                            //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                            data: { action: "updatePositions", data: updateDataJSON },
+                            type: "POST",
+                                success: function(){
+                                    alert( 'send all posdata' );
+                                },
+                                error:  function(){
+                                    alert( 'error sending posdata' );
+                                }
+                        });
+                    //console.log( JSON.stringify( object ) );
+                    //alert('Delete last Position in Array AND Update all Positions');
+
+                       }, 800 );
+                })
             }
         });
-
-        $('.elemyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy').on( 'keyup', function () {
-
-            clearTimeout( timer );
-            timer = setTimeout( function(){   //calls click event after a certain time
-                $( '.new' ).remove();
-                var allPosObject = {};
-                var allPosArray = $( "#myform" ).serializeArray();
-                console.log( allPosArray );
-                /*alert(JSON.stringify(array));
-                array.pop();
-                console.log( array );                        //????Warum werden hier alle im Array ausgegeben und ...
-                $.each(array, function(index, item) {
-                    alert(index)
-                });
-                //object['lxc_a_pos_aid'] = id;
-                //console.log(object);                //... Hier aber nur der letzte????
-                */
-                $.ajax({
-                    url: 'ajax/order.php',
-                    //data: { action: "updatePositions", data: JSON.stringify(object)},
-                    data: { action: "updatePositions", data: allPosArray},
-                    type: "POST",
-                    success: function(){
-                        alert( 'send all posdata' );
-                    },
-                    error:  function(){
-                        alert( 'error sending posdata' );
-                    }
-                });
-                //console.log( JSON.stringify( object ) );
-                //alert('Delete last Position in Array AND Update all Positions');
-                newPositionContainer();
-
-            }, 2000 );
-        })
     }
 
     function zaehler() {
@@ -236,7 +298,7 @@ $(document).ready(function() {
             type: 'GET',
             success: function (data) {
                 //console.log(JSON.stringify(data));
-                console.log(data);
+                //console.log(data);
                 $('#head02').text(data[0].lxc_a_id);
                 $('#head04').text(data[0].kundenname);
                 $('#head06').val(data[0].lxc_a_finish_time)
@@ -256,7 +318,7 @@ $(document).ready(function() {
             success: function (data) {
                 //alert(JSON.stringify(data));
                 //console.log(JSON.stringify(data));
-                console.log(data);
+                //console.log(data);
 
                 for (i = 0; i < data.length; i++) {
                     $('#pos__' + ( i +  1 ) + '__elem__3').val(data[i].lxc_a_pos_todo)
@@ -277,9 +339,10 @@ $(document).ready(function() {
                         //console.log(data[i].lxc_a_pos_status + ' not exist')
                     }
 
+                    $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].lxc_a_pos_id).attr('value', data[i].lxc_a_pos_id)
 
                     $('.position').removeClass('new');
-                    //$('.newElem').removeClass('newElem').addClass('elem');
+
                     newPositionContainer();
                 }
             },
@@ -346,7 +409,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head19 {position: absolute; top: 150px; left: 770px; font-size: 12px;}
     #head20 {position: absolute; top: 150px; left: 870px; font-size: 12px;}
 
-    #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1450px; }
+    #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
     #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
     #sortable li span { position: absolute; margin-left: -1.3em; }
     #buttons { padding-left: 2.5em; padding-top: 1em;    }
@@ -373,6 +436,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     .total {  position:relative; left: 50px; width: 100px;text-align: right;}
     .mechanics {  position:relative; left: 55px; width: 140px;}
     .status { position: relative; left: 60px; width: 140px;}
+    .posID { position: relative; left: 65px; font-size: 12px; }
 
 </style>
 </head>
