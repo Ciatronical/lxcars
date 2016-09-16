@@ -115,22 +115,24 @@ foreach ($tempass as $value) {
       $special = true;
     }
 }
-//prüfen ob der User zur Gruppe Admin oder Special gehört
-$gruppen = getGruppen($_SESSION["login"]);
+//prüfen ob der User zur Gruppe Admin
+$gruppen = ERPUsersfromGroup("Admin");
 $admin = false;
 foreach($gruppen as $value){
-    if( $value['name'] == "Admin" ) $admin = true;
+    if( $value['login'] == $_SESSION['userConfig']['login'] ) $admin = true;
 }
 
 $visibility = $admin ? 'style="visibility:visible"' : 'style="visibility:hidden"';
 $readonly   = $admin ? "" : 'readonly="readonly"';
-$grp = getGruppen();
+
+$grp = getAllERPgroups();
 
 $is_admin = false;
 $is_werkstatt = false;
+
 foreach( $grp as $value ){
-    if( $value['grpname'] == "Admin") $is_admin = true;
-    if( $value['grpname'] == "Werkstatt") $is_admin = true;
+    if( $value['name'] == "Admin") $is_admin = true;
+    if( $value['name'] == "Werkstatt") $is_admin = true;
 
 }
 if( !$is_admin ) echo "<b>Gruppe Admin nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
