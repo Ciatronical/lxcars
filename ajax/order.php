@@ -1,18 +1,14 @@
 <?php
-//writeLog(__DIR__);
-require_once __DIR__.'/../inc/ajax2function.php';
-//require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../../inc/crmLib.php';
-require_once __DIR__.'/../../inc/stdLib.php';
+require_once __DIR__.'/../inc/ajax2function.php';
 
-function getOrder($id){
-     $rs = $GLOBALS['dbh']->getOne( 'SELECT lxc_a_id, name AS kundenname, lxc_a_finish_time, lxc_a_init_time, lxc_a_km, lxc_a_modified_on, c_ln FROM lxc_a, lxc_cars, customer WHERE lxc_a_id = '.$id.' AND lxc_a_c_id = c_id AND c_ow = id', true );
-     echo $rs;
+function getOrder( $id ){
+    $rs = $GLOBALS['dbh']->getOne( 'SELECT lxc_a_id, name AS kundenname, lxc_a_finish_time, lxc_a_init_time, lxc_a_km, lxc_a_modified_on, c_ln FROM lxc_a, lxc_cars, customer WHERE lxc_a_id = '.$id.' AND lxc_a_c_id = c_id AND c_ow = id', true );
+    echo $rs;
 }
 
-function getPosition($id){
-     $rs = $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_a_pos WHERE lxc_a_pos_aid = '.$id.'ORDER BY lxc_a_pos_order_nr', true );
-     echo $rs;
+function getPosition( $id ){
+    echo $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_a_pos WHERE lxc_a_pos_aid = '.$id.'ORDER BY lxc_a_pos_order_nr', true );
 }
 
 function newEntry( $data ){
@@ -24,35 +20,23 @@ function newEntry( $data ){
 
 function updatePositions( $data) {
     $GLOBALS['dbh']->begin();
-        foreach( $data as $key => $value ){
-            $GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
-        }
+    foreach( $data as $key => $value ){
+        $GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
+    }
     $GLOBALS['dbh']->commit();
     echo 1;
 }
 
 function delPosition( $data ){
-    $sql = "DELETE FROM lxc_a_pos WHERE lxc_a_pos_id = ".$data;
-    $rs = $GLOBALS['dbh']->query( $sql );
-    echo 1;
+    echo $GLOBALS['dbh']->query( "DELETE FROM lxc_a_pos WHERE lxc_a_pos_id = ".$data );
 }
 
-function getArticleDescription( $data ) {
-    $rs = $GLOBALS['dbh']->getAll( 'SELECT description FROM parts', true );
-    echo $rs;
+function getArticleDescription( $data ){
+    echo $GLOBALS['dbh']->getAll( 'SELECT description FROM parts', true );
 }
-echo __DIR__;
-writeArray(__DIR__);
-function getUsers( $data ) {
-    //writeLog($data);
-    //echo require_once __DIR__.'/../../inc/crmLib.php';
-    //echo($data);
-    //$users = ERPUsersfromGroup('Werkstatt');
-    //writeLog($users);
-    echo($users);
 
-    //echo __DIR__;
-    echo 'test';
+function getUsersFromGroup( $data ){
+    echo json_encode( ERPUsersfromGroup( $data ) );
 }
 
 
