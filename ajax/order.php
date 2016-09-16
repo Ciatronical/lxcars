@@ -1,6 +1,9 @@
 <?php
 //writeLog(__DIR__);
 require_once __DIR__.'/../inc/ajax2function.php';
+//require_once __DIR__.'/../../inc/crmLib.php';
+require_once __DIR__.'/../../inc/crmLib.php';
+require_once __DIR__.'/../../inc/stdLib.php';
 
 function getOrder($id){
      $rs = $GLOBALS['dbh']->getOne( 'SELECT lxc_a_id, name AS kundenname, lxc_a_finish_time, lxc_a_init_time, lxc_a_km, lxc_a_modified_on, c_ln FROM lxc_a, lxc_cars, customer WHERE lxc_a_id = '.$id.' AND lxc_a_c_id = c_id AND c_ow = id', true );
@@ -38,12 +41,20 @@ function getArticleDescription( $data ) {
     $rs = $GLOBALS['dbh']->getAll( 'SELECT description FROM parts', true );
     echo $rs;
 }
+echo __DIR__;
+writeArray(__DIR__);
+function getUsers( $data ) {
+    //writeLog($data);
+    //echo require_once __DIR__.'/../../inc/crmLib.php';
+    //echo($data);
+    //$users = ERPUsersfromGroup('Werkstatt');
+    //writeLog($users);
+    echo($users);
 
-function getArticle( $articleDescription ) {
-    writeLog( $articleDescription );
-    $rs = $GLOBALS['dbh']->getOne( 'SELECT * FROM parts WHERE description = '.$articleDescription, true );
-    echo $rs;
+    //echo __DIR__;
+    echo 'test';
 }
+
 
 
 

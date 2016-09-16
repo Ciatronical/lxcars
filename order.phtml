@@ -29,6 +29,7 @@ $(document).ready(function() {
     var id = $.urlParam( 'id' );
     var timer;
     var articleDescription;
+    var grp_name;
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
@@ -178,6 +179,30 @@ $(document).ready(function() {
 
 
 
+
+
+
+        $(function () {
+            grp_name = 'Werkstatt';
+            $.ajax({
+                url: 'ajax/order.php?action=getUsers&data=' + grp_name,
+                type: 'GET',
+                success: function (data) {
+                    console.log(JSON.stringify(data));
+                    //console.log(data);
+                    console.log('jens');
+                },
+                error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
+            })
+        });
+
+
+
+
+
+
+
+
         //Holen der Artikelbezeichnung für Autocomplete der neuen Positionen
         $(function () {
             $.ajax({
@@ -222,12 +247,6 @@ $(document).ready(function() {
 
 
     };
-
-
-
-
-
-
 
     function insertIntoDatabase() {
                 var posObject = {};
