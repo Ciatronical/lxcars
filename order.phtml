@@ -108,29 +108,30 @@ $(document).ready(function() {
         $('<li  class="ui-state-default position new">' +
             '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
             '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
-            '<input name="lxc_a_pos_order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" autocomplete="off">' +
-            '<input name="lxc_a_pos_item_nr" type="text" class="ui-widget-content ui-corner-all itemNr elem" autocomplete="off">' +
-            '<input name="lxc_a_pos_todo" type="text" class="ui-autocomplete-input partpicker-undefined ui-widget-content ui-corner-all description elem" autocomplete="on">' +
-            '<select name="lxc_a_pos_unity" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
+            '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" autocomplete="off">' +
+            '<input name="item_nr" type="text" class="ui-widget-content ui-corner-all itemNr elem" autocomplete="off">' +
+            '<input name="pos_description" type="text" class="ui-autocomplete-input partpicker-undefined ui-widget-content ui-corner-all description elem" autocomplete="on">' +
+            '<select name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
                 '<option selected="selected"></option>' + //!get via AJAX
-                '<option>Stk</option>' +
+                '<option>Stck</option>' +
+                '<option>kg</option>' +
                 '<option>Std</option>' +
             '</select>' +
-            '<input name="lxc_a_pos_price" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
-            '<input name="lxc_a_pos_discount" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
-            '<input name="lxc_a_pos_total" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
-            '<select name="lxc_a_pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
+            '<input name="pos_price" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
+            '<input name="pos_discount" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
+            '<input name="pos_total" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
+            '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
                 '<option value="0" selected="selected"></option>' +
                 '<option value="1">Mechaniker</option>' +
                 '<option value="2">Monteur</option>' +
             '</select>' +
-            '<select name="lxc_a_pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
+            '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
                 '<option value="0" selected="true"></option>' +
                 '<option value="1">gelesen</option>' +
                 '<option value="2">Bearbeitung</option>' +
                 '<option value="3">erledigt</option>' +
             '</select>' +
-            '<label name="lxc_a_pos_id" class="posID elem"></label>' +
+            '<label name="pos_id" class="posID elem"></label>' +
           '</li>').appendTo('#sortable');//.attr('id','NewId_' + cnt);
 
         zaehler();
@@ -169,39 +170,27 @@ $(document).ready(function() {
             $(this).attr('value', y);
 
             if( $( this ).parent().hasClass( 'new' ) ){                                //INSERT wenn der Container die Klasse "new" aufweist
-                $( this ).parent().removeClass( 'new' )                            //Entfernen der Klasse "new" bei dem aktuellen Container
                 insertIntoDatabase();
+                $( this ).parent().removeClass( 'new' )                            //Entfernen der Klasse "new" bei dem aktuellen Container
 
             } else {
                     updateDatabase();
             }
         });
 
-
-
-
-
-
         $(function () {
             grp_name = 'Werkstatt';
             $.ajax({
-                url: 'ajax/order.php?action=getUsers&data=' + grp_name,
+                url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
                 type: 'GET',
                 success: function (data) {
-                    console.log(JSON.stringify(data));
+                    //console.log(JSON.stringify(data));
                     //console.log(data);
-                    console.log('jens');
+                    //console.log('jens');
                 },
                 error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
             })
         });
-
-
-
-
-
-
-
 
         //Holen der Artikelbezeichnung für Autocomplete der neuen Positionen
         $(function () {
@@ -228,20 +217,24 @@ $(document).ready(function() {
                         select: function (event, ui) {
                             articleDescription = ui.item.value;
                             //alert(articleDescription);
+                            /*
                             $.ajax({
                                 url: 'ajax/order.php?action=getArticle&data=' + articleDescription,
                                 type: 'GET',
                                 success: function (data) {
                                     alert(JSON.stringify(data));
                                     //console.log(JSON.stringify(data));
-                                    //console.log(data);
+                                    console.log(data);
                                 },
                                 error:  function(){ alert("fehlgeschlagen!"); }
                             })
+                            */
+
                         }
                     });
+
                 },
-                error:  function(){ alert("fehlgeschlagen!"); }
+                error:  function(){ alert("Holen der Artikelbezeichnung fehlgeschlagen!"); }
             })
         });
 
@@ -252,25 +245,43 @@ $(document).ready(function() {
                 var posObject = {};
                 var posArray = $( this ).parent( '.position' ).children( '.elem' );
                 //console.log( posArray );
-                $.each( posArray, function( index, item ){
-                    posObject[item.name] = item.value;
-                });
-                posObject['lxc_a_pos_aid'] = id;
-                //console.log( posObject );
+
+                    var insertDataJSON = new Array;
+                    $( '.new' ).each( function(){
+                        insertDataJSON.push({
+                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                            "order_id": $('#head02').text(),
+                            "order_nr": $( this ).children( '.pos' ).val(),
+                            "item_nr": $( this ).children( '.itemNr' ).val(),
+                            "pos_description": $( this ).children( '.description' ).val(),
+                            "pos_unit": $( this ).children( '.unity' ).val(),
+                            "pos_price": $( this ).children( '.price' ).val(),
+                            "pos_discount": $( this ).children( '.discount' ).val(),
+                            "pos_total": $( this ).children( '.total' ).val(),
+                            "pos_emp": $( this ).children( '.mechanics' ).val(),
+                            "pos_status": $( this ).children( '.status' ).val(),
+                            "pos_id": $( this ).children( '.posID' ).text()
+                        });
+                    })
+                    console.log(insertDataJSON);
+
+
                 // Insert
                 $.ajax({
                     url: 'ajax/order.php',
-                    data: { action: "newEntry", data: JSON.stringify(posObject) },
+                    data: { action: "newEntry", data: JSON.stringify(insertDataJSON) },
                     type: "POST",
                     success: function(){
                         //alert('Gesendet');
                     },
                     error:   function(){
-                        alert('Senden der Daten fehlgeschlagen!');
+                        alert('Insert der Daten fehlgeschlagen!');
                     }
                 });
 
+
                 newPositionContainer();
+
 
                 //holen der neu vergebenen PositionID
                 $.ajax({
@@ -278,13 +289,15 @@ $(document).ready(function() {
                     type: 'GET',
                     success: function (data) {
                         for (i = 0; i < data.length; i++) {
-                            $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].lxc_a_pos_id);
+                            $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].pos_id);
                         }
                     },
-                    error:  function(){ alert("fehlgeschlagen!"); }
+                    error:  function(){ alert(" Holen der neu vegebenen Positions-ID fehlgeschlagen!"); }
                 })
+
     }
 
+/*
     function updateDatabase() {
                 clearTimeout( timer );
                 timer = setTimeout( function(){   //calls click event after a certain time
@@ -292,16 +305,16 @@ $(document).ready(function() {
                     $( 'ul#sortable > li' ).each( function(){
                         updateDataJSON.push({
                             //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-                            "lxc_a_pos_order_nr": $( this ).children( '.pos' ).val(),
-                            "lxc_a_pos_item_nr": $( this ).children( '.itemNr' ).val(),
-                            "lxc_a_pos_todo": $( this ).children( '.description' ).val(),
-                            "lxc_a_pos_unity": $( this ).children( '.unity' ).val(),
-                            "lxc_a_pos_price": $( this ).children( '.price' ).val(),
-                            "lxc_a_pos_discount": $( this ).children( '.discount' ).val(),
-                            "lxc_a_pos_total": $( this ).children( '.total' ).val(),
-                            "lxc_a_pos_emp": $( this ).children( '.mechanics' ).val(),
-                            "lxc_a_pos_status": $( this ).children( '.status' ).val(),
-                            "lxc_a_pos_id": $( this ).children( '.posID' ).text()
+                            "order_nr": $( this ).children( '.pos' ).val(),
+                            "item_nr": $( this ).children( '.itemNr' ).val(),
+                            "pos_description": $( this ).children( '.description' ).val(),
+                            "pos_unit": $( this ).children( '.unity' ).val(),
+                            "pos_price": $( this ).children( '.price' ).val(),
+                            "pos_discount": $( this ).children( '.discount' ).val(),
+                            "pos_total": $( this ).children( '.total' ).val(),
+                            "pos_emp": $( this ).children( '.mechanics' ).val(),
+                            "pos_status": $( this ).children( '.status' ).val(),
+                            "pos_id": $( this ).children( '.posID' ).text()
                         });
                     })
 
@@ -322,7 +335,7 @@ $(document).ready(function() {
 
                 }, 800 );
     }
-
+*/
     function zaehler() {
         $( '.position' ).each( function( cnt, list ){
             $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) );
@@ -335,6 +348,7 @@ $(document).ready(function() {
         })
     }
 
+    var orderID;
     if( id > '0' ){
         //Head-Area
         $.ajax({
@@ -343,51 +357,65 @@ $(document).ready(function() {
             success: function (data) {
                 //console.log(JSON.stringify(data));
                 //console.log(data);
-                $('#head02').text(data[0].lxc_a_id);
-                $('#head04').text(data[0].kundenname);
+                $('#head02').text(data[0].order_id);
+                $('#head04').text(data[0].customer_name);
+                $('#head10').text(kivi.myconfig.name);
+                /*
                 $('#head06').val(data[0].lxc_a_finish_time)
                 $('#head08').val(data[0].lxc_a_km);
-                $('#head10').text(kivi.myconfig.name);
                 $('#head12').text(data[0].lxc_a_modified_on);
                 $('#head16').text(data[0].lxc_a_init_time);
                 $('#head20').text(data[0].c_ln);
+                */
+                orderID = data[0].order_id;
+                //alert(orderID);
             },
-            error:  function(){ alert("fehlgeschlagen!"); }
+            error:  function(){ alert("Holen des Auftrages fehlgeschlagen!"); }
         })
 
-        //Data-Area
-        $.ajax({
-            url: 'ajax/order.php?action=getPosition&data=' + id,
-            type: 'GET',
-            success: function (data) {
-                //alert(JSON.stringify(data));
-                //console.log(JSON.stringify(data));
-                //console.log(data);
+        clearTimeout( timer );
+        timer = setTimeout( function(){
+            //Data-Area
+            $.ajax({
+                url: 'ajax/order.php?action=getPosition&data=' + orderID,
+                type: 'GET',
+                success: function (data) {
+                    //alert(JSON.stringify(data));
+                    //console.log(JSON.stringify(data));
+                    //console.log(data);
 
-                for (i = 0; i < data.length; i++) {
-                    $('#pos__' + ( i +  1 ) + '__elem__3').val(data[i].lxc_a_pos_todo)
+                    for (i = 0; i < data.length; i++) {
+                        $('#pos__' + ( i +  1 ) + '__elem__2').val(data[i].parts_id);
+                        $('#pos__' + ( i +  1 ) + '__elem__3').val(data[i].description);
+                        $('#pos__' + ( i +  1 ) + '__elem__4').val(data[i].unit);
+                        $('#pos__' + ( i +  1 ) + '__elem__5').val(data[i].sellprice);
+                        $('#pos__' + ( i +  1 ) + '__elem__6').val(data[i].discount);
+                        $('#pos__' + ( i +  1 ) + '__elem__7').val(data[i].marge_total);
+                        /*
+                        if ($(".mechanics option[value='" + data[i].pos_emp + "']").val() == data[i].pos_emp) {
+                            $('#pos__' + (i+1) + '__elem__8').val(data[i].pos_emp)
+                        } else {
+                            $('#pos__' + (i+1) + '__elem__8').append('<option selected="selected">' + data[i].pos_emp + '</option>')
+                        }
 
-                    if ($(".mechanics option[value='" + data[i].lxc_a_pos_emp + "']").val() == data[i].lxc_a_pos_emp) {
-                        $('#pos__' + (i+1) + '__elem__8').val(data[i].lxc_a_pos_emp)
-                    } else {
-                        $('#pos__' + (i+1) + '__elem__8').append('<option selected="selected">' + data[i].lxc_a_pos_emp + '</option>')
+                        if ($(".status option[value='" + data[i].pos_status + "']").val() == data[i].pos_status) {
+                            $('#pos__' + (i+1) + '__elem__9').val(data[i].pos_status)
+                        } else {
+                            $('#pos__' + (i+1) + '__elem__9').append('<option selected="selected">' + data[i].pos_status + '</option>')
+                        }
+                        */
+
+                        $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].position_id).attr('value', data[i].position_id)
+
+                        $('.position').removeClass('new');
+
+                        newPositionContainer();
                     }
 
-                    if ($(".status option[value='" + data[i].lxc_a_pos_status + "']").val() == data[i].lxc_a_pos_status) {
-                        $('#pos__' + (i+1) + '__elem__9').val(data[i].lxc_a_pos_status)
-                    } else {
-                        $('#pos__' + (i+1) + '__elem__9').append('<option selected="selected">' + data[i].lxc_a_pos_status + '</option>')
-                    }
-
-                    $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].lxc_a_pos_id).attr('value', data[i].lxc_a_pos_id)
-
-                    $('.position').removeClass('new');
-
-                    newPositionContainer();
-                }
-            },
-            error:  function(){ alert("fehlgeschlagen!"); }
-        })
+                },
+                error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
+            })
+        }, 200 );
     }
 
 }); //Ende $(document).ready()

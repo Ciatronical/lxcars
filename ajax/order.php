@@ -3,18 +3,23 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
-    $rs = $GLOBALS['dbh']->getOne( 'SELECT lxc_a_id, name AS kundenname, lxc_a_finish_time, lxc_a_init_time, lxc_a_km, lxc_a_modified_on, c_ln FROM lxc_a, lxc_cars, customer WHERE lxc_a_id = '.$id.' AND lxc_a_c_id = c_id AND c_ow = id', true );
+    //writeLog( $id );
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.id AS order_id, customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
+    //writeLog($rs);
     echo $rs;
 }
 
-function getPosition( $id ){
-    echo $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_a_pos WHERE lxc_a_pos_aid = '.$id.'ORDER BY lxc_a_pos_order_nr', true );
+function getPosition( $orderID ){
+    //writeLog( $orderID );
+    echo $GLOBALS['dbh']->getAll( "SELECT id AS position_id, parts_id, description, position AS item_position, unit, sellprice, marge_total, discount FROM orderitems WHERE trans_id = '".$orderID."' ORDER BY item_position", true );
 }
 
 function newEntry( $data ){
     $data = json_decode( $data );
     $data = ( array ) $data;
-    $rs = $GLOBALS[ 'dbh' ]->insert( 'lxc_a_pos', array( 'lxc_a_pos_aid', 'lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status' ), array( $data['lxc_a_pos_aid'], $data['lxc_a_pos_order_nr'], $data['lxc_a_pos_todo'],$data['lxc_a_pos_emp'], $data['lxc_a_pos_status']), 'lxc_a_pos_id' );
+    writeLog($data);
+    $rs = $GLOBALS[ 'dbh' ]->insert( 'orderitems', array( 'id', 'description', 'position', 'unit', 'sellprice', 'marge_total', 'discount' ), array( $data['order_id'], $data['pos_description'], $data['order_nr'], $data['pos_unit'], $data['pos_price'], $data['pos_total'], $data['pos_discount']), 'id' );
+    //$rs = $GLOBALS[ 'dbh' ]->insert( 'lxc_a_pos', array( 'lxc_a_pos_aid', 'lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status' ), array( $data['lxc_a_pos_aid'], $data['lxc_a_pos_order_nr'], $data['lxc_a_pos_todo'],$data['lxc_a_pos_emp'], $data['lxc_a_pos_status']), 'lxc_a_pos_id' );
     echo 1;
 }
 
@@ -32,7 +37,9 @@ function delPosition( $data ){
 }
 
 function getArticleDescription( $data ){
-    echo $GLOBALS['dbh']->getAll( 'SELECT description FROM parts', true );
+    writeLog($data);
+    echo $GLOBALS['dbh']->getAll( "SELECT description FROM parts", true );
+    //writeLog($GLOBALS);
 }
 
 function getUsersFromGroup( $data ){
