@@ -14,14 +14,30 @@ function getPosition( $orderID ){
     echo $GLOBALS['dbh']->getAll( "SELECT id AS position_id, parts_id, description, position AS item_position, unit, sellprice, marge_total, discount FROM orderitems WHERE trans_id = '".$orderID."' ORDER BY item_position", true );
 }
 
+
+
+
+
+
+
 function newEntry( $data ){
-    $data = json_decode( $data );
-    $data = ( array ) $data;
+    //writeLog($data);
+    //$data = json_decode( $data );
+    //$data = ( array ) $data;
     writeLog($data);
-    $rs = $GLOBALS[ 'dbh' ]->insert( 'orderitems', array( 'id', 'description', 'position', 'unit', 'sellprice', 'marge_total', 'discount' ), array( $data['order_id'], $data['pos_description'], $data['order_nr'], $data['pos_unit'], $data['pos_price'], $data['pos_total'], $data['pos_discount']), 'id' );
+    foreach( $data as $key => $value ){
+        $GLOBALS['dbh']->insert( 'orderitems', array( 'position', 'trans_id', 'description'), array( $value['order_nr'], $value['order_id'], $value['pos_description']), 'id', 'orderitemsid');
+    }
+    //$rs = $GLOBALS[ 'dbh' ]->insert( 'orderitems', array( 'trans_id', 'description', 'position', 'unit', 'sellprice', 'marge_total', 'discount' ), array( $data['order_id'], $data['pos_description'], $data['order_nr'], $data['pos_unit'], $data['pos_price'], $data['pos_total'], $data['pos_discount']), 'id', 'orderitemsid' );
     //$rs = $GLOBALS[ 'dbh' ]->insert( 'lxc_a_pos', array( 'lxc_a_pos_aid', 'lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status' ), array( $data['lxc_a_pos_aid'], $data['lxc_a_pos_order_nr'], $data['lxc_a_pos_todo'],$data['lxc_a_pos_emp'], $data['lxc_a_pos_status']), 'lxc_a_pos_id' );
     echo 1;
 }
+
+
+
+
+
+
 
 function updatePositions( $data) {
     $GLOBALS['dbh']->begin();

@@ -242,34 +242,33 @@ $(document).ready(function() {
     };
 
     function insertIntoDatabase() {
-                var posObject = {};
-                var posArray = $( this ).parent( '.position' ).children( '.elem' );
+                //var posObject = {};
+                //var posArray = $( this ).parent( '.position' ).children( '.elem' );
                 //console.log( posArray );
 
                     var insertDataJSON = new Array;
-                    $( '.new' ).each( function(){
                         insertDataJSON.push({
-                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                            //"Bezeichnung des Arrays": Inhalt fuer den Array
                             "order_id": $('#head02').text(),
-                            "order_nr": $( this ).children( '.pos' ).val(),
-                            "item_nr": $( this ).children( '.itemNr' ).val(),
-                            "pos_description": $( this ).children( '.description' ).val(),
-                            "pos_unit": $( this ).children( '.unity' ).val(),
-                            "pos_price": $( this ).children( '.price' ).val(),
-                            "pos_discount": $( this ).children( '.discount' ).val(),
-                            "pos_total": $( this ).children( '.total' ).val(),
-                            "pos_emp": $( this ).children( '.mechanics' ).val(),
-                            "pos_status": $( this ).children( '.status' ).val(),
-                            "pos_id": $( this ).children( '.posID' ).text()
+                            "order_nr": $( '.new' ).children( '.pos' ).val(),
+                            "item_nr": $( '.new' ).children( '.itemNr' ).val(),
+                            "pos_description": $( '.new' ).children( '.description' ).val(),
+                            "pos_unit": $( '.new' ).children( '.unity' ).val(),
+                            "pos_price": $( '.new' ).children( '.price' ).val(),
+                            "pos_discount": $( '.new' ).children( '.discount' ).val(),
+                            "pos_total": $( '.new' ).children( '.total' ).val(),
+                            "pos_emp": $( '.new' ).children( '.mechanics' ).val(),
+                            "pos_status": $( '.new' ).children( '.status' ).val()
+                            //"pos_id": $( this ).children( '.posID' ).text()
                         });
-                    })
                     console.log(insertDataJSON);
 
 
                 // Insert
                 $.ajax({
                     url: 'ajax/order.php',
-                    data: { action: "newEntry", data: JSON.stringify(insertDataJSON) },
+                    //data: { action: "newEntry", data: JSON.stringify(insertDataJSON) },
+                    data: { action: "newEntry", data: insertDataJSON },
                     type: "POST",
                     success: function(){
                         //alert('Gesendet');
@@ -294,6 +293,7 @@ $(document).ready(function() {
                     },
                     error:  function(){ alert(" Holen der neu vegebenen Positions-ID fehlgeschlagen!"); }
                 })
+
 
     }
 
@@ -338,7 +338,7 @@ $(document).ready(function() {
 */
     function zaehler() {
         $( '.position' ).each( function( cnt, list ){
-            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) );
+            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
             //For-Schleife um in den einzelnen ListenElementen die Felder
             //durch zu zählen und zu nummerieren
             var elements = $( this ).children( '.elem' );
