@@ -16,6 +16,10 @@
 ?>
 
 
+  <script type="text/javascript" src="../../js/autocomplete_customer.js"></script>
+  <script type="text/javascript" src="../../js/autocomplete_part.js"></script>
+  <script type="text/javascript" src="../../js/kivi.Order.js"></script>
+
 <script>
 
 $(document).ready(function() {
@@ -110,16 +114,16 @@ $(document).ready(function() {
             '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
             '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" autocomplete="off">' +
             '<input name="item_nr" type="text" class="ui-widget-content ui-corner-all itemNr elem" autocomplete="off">' +
-            '<input name="pos_description" type="text" class="ui-autocomplete-input partpicker-undefined ui-widget-content ui-corner-all description elem" autocomplete="on">' +
+            '<input name="pos_description" type="text" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description elem" autocomplete="on">' +
             '<select name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
                 '<option selected="selected"></option>' + //!get via AJAX
                 '<option>Stck</option>' +
                 '<option>kg</option>' +
                 '<option>Std</option>' +
             '</select>' +
-            '<input name="pos_price" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
-            '<input name="pos_discount" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
-            '<input name="pos_total" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
+            '<input name="pos_price" value="0" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
+            '<input name="pos_discount" value="0" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
+            '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
             '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
                 '<option value="0" selected="selected"></option>' +
                 '<option value="1">Mechaniker</option>' +
@@ -136,7 +140,8 @@ $(document).ready(function() {
 
         zaehler();
 
-        $( '.pos' ).attr( 'readonly', true )
+        $( '.posID' ).val( '0' );
+        $( '.pos' ).attr( 'readonly', true );
         //$( '.posID' ).hide();
 
         $( 'select' ).change( function (){
@@ -192,6 +197,9 @@ $(document).ready(function() {
             })
         });
 
+
+
+/*
         //Holen der Artikelbezeichnung für Autocomplete der neuen Positionen
         $(function () {
             $.ajax({
@@ -199,7 +207,7 @@ $(document).ready(function() {
                 type: 'GET',
                 success: function (data) {
                     //console.log(JSON.stringify(data));
-                    //console.log(data);
+                    console.log(data);
 
                     var availablePosition = 0;
                     var available = [];
@@ -215,20 +223,22 @@ $(document).ready(function() {
                         delay: 500,
                         minLength: 1,
                         select: function (event, ui) {
-                            articleDescription = ui.item.value;
-                            //alert(articleDescription);
-                            /*
+                            //articleDescription = ui.item.value;
+                            //console.log(articleDescription);
+
+
                             $.ajax({
                                 url: 'ajax/order.php?action=getArticle&data=' + articleDescription,
                                 type: 'GET',
                                 success: function (data) {
-                                    alert(JSON.stringify(data));
+                                    //alert(JSON.stringify(data));
                                     //console.log(JSON.stringify(data));
                                     console.log(data);
+                                    //alert(data[0].id);
                                 },
-                                error:  function(){ alert("fehlgeschlagen!"); }
+                                error:  function(){ alert("holen der Datensaetze fehlgeschlagen!"); }
                             })
-                            */
+
 
                         }
                     });
@@ -237,41 +247,29 @@ $(document).ready(function() {
                 error:  function(){ alert("Holen der Artikelbezeichnung fehlgeschlagen!"); }
             })
         });
-
+*/
 
     };
 
     function insertIntoDatabase() {
-                //var posObject = {};
-                //var posArray = $( this ).parent( '.position' ).children( '.elem' );
+                var posObject = {};
+                var posArray = $( '.new' ).children( '.elem' );
                 //console.log( posArray );
-
-                    var insertDataJSON = new Array;
-                        insertDataJSON.push({
-                            //"Bezeichnung des Arrays": Inhalt fuer den Array
-                            "order_id": $('#head02').text(),
-                            "order_nr": $( '.new' ).children( '.pos' ).val(),
-                            "item_nr": $( '.new' ).children( '.itemNr' ).val(),
-                            "pos_description": $( '.new' ).children( '.description' ).val(),
-                            "pos_unit": $( '.new' ).children( '.unity' ).val(),
-                            "pos_price": $( '.new' ).children( '.price' ).val(),
-                            "pos_discount": $( '.new' ).children( '.discount' ).val(),
-                            "pos_total": $( '.new' ).children( '.total' ).val(),
-                            "pos_emp": $( '.new' ).children( '.mechanics' ).val(),
-                            "pos_status": $( '.new' ).children( '.status' ).val()
-                            //"pos_id": $( this ).children( '.posID' ).text()
-                        });
-                    console.log(insertDataJSON);
-
+                $.each( posArray, function( index, item ){
+                    posObject[item.name] = item.value;
+                });
+                posObject['order_id'] = orderID;
+                //console.log( posObject );
 
                 // Insert
                 $.ajax({
                     url: 'ajax/order.php',
-                    //data: { action: "newEntry", data: JSON.stringify(insertDataJSON) },
-                    data: { action: "newEntry", data: insertDataJSON },
+                    //data: { action: "newEntry", data: JSON.stringify(sendData) },
+                    data: { action: "newEntry", data: posObject },
                     type: "POST",
-                    success: function(){
-                        //alert('Gesendet');
+                    success: function(result){
+                        //alert(result);
+                            $('#pos__' + ( i +  1 ) + '__elem__10').text(result);
                     },
                     error:   function(){
                         alert('Insert der Daten fehlgeschlagen!');
@@ -280,19 +278,6 @@ $(document).ready(function() {
 
 
                 newPositionContainer();
-
-
-                //holen der neu vergebenen PositionID
-                $.ajax({
-                    url: 'ajax/order.php?action=getPosition&data=' + id,
-                    type: 'GET',
-                    success: function (data) {
-                        for (i = 0; i < data.length; i++) {
-                            $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].pos_id);
-                        }
-                    },
-                    error:  function(){ alert(" Holen der neu vegebenen Positions-ID fehlgeschlagen!"); }
-                })
 
 
     }
@@ -367,7 +352,7 @@ $(document).ready(function() {
                 $('#head16').text(data[0].lxc_a_init_time);
                 $('#head20').text(data[0].c_ln);
                 */
-                orderID = data[0].order_id;
+                orderID = data[0].oe_id;
                 //alert(orderID);
             },
             error:  function(){ alert("Holen des Auftrages fehlgeschlagen!"); }
