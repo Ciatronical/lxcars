@@ -16,10 +16,10 @@
 ?>
 
 
-  <script type="text/javascript" src="../../js/autocomplete_customer.js"></script>
-  <script type="text/javascript" src="../../js/autocomplete_part.js"></script>
-  <script type="text/javascript" src="../../js/kivi.Order.js"></script>
-  
+  <script type="text/javascript" src="autocomplete_customer.js"></script>
+  <script type="text/javascript" src="autocomplete_part.js"></script>
+  <script type="text/javascript" src="kivi.Order.js"></script>
+
 <script>
 
 $(document).ready(function() {
@@ -44,14 +44,109 @@ $(document).ready(function() {
 
     //Einfügen beim Laden
         //$("#pos__" + mycnt ).off( 'change' ); //detaching changehandler
+
+        /*
+        $('<li class="position new">' +
+            '<input type="text" id="test_text_input_01">' +
+            '<input type="text" id="add_item_parts_id_name">' +
+            '<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
+            '<input type="text" id="test_text_input_03">' +
+            '<input type="text" id="test_text_input_04">' +
+            '<input type="text" id="test_text_input_05">' +
+        '</li>').appendTo('body');
+        */
+
+        //newPositionContainer();
+
         //Container for inputs
-        $('<span class="part_picker">' + 
-        '<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
-        '<span class="ui-helper-hidden-accessible" aria-live="polite" role="status">'+
-            '4 results are available, use up and down arrow keys to navigate.'+
-        '</span>'+
-        '<input style="width: 300px" class="add_item_input" type="text" id="add_item_parts_id_name" name="" value="">'+
-        '</span>').appendTo('body');//.attr('id','NewId_' + cnt);
+
+        //function newPositionContainer() {
+            $('<div class="ui-widget-content">' +
+        '<div id="tmp"></div>' +
+            '<div>' +
+                '<p class="tools ui-state-highlight ui-corner-all lang " style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">' +
+                    '<label id="head01">Auftragsnummer:</label>' +
+                    '<label id="head02">0000</label>' +
+                    '<label id="head03">Auftraggeber:</label>' +
+                    '<label id="head04"></label></br>' +
+                    '<label id="head05">Fertigstellung:</label>' +
+                    '<input id="head06" type="text">' +
+                    '<label id="head07">KM-Stand:</label>' +
+                    '<input id="head08" type="text"></br>' +
+                    '<label id="head09">bearbeitet von:</label>' +
+                    '<label id="head19">Amtl.-Kennz.:</label>' +
+                    '<label id="head20"></label>' +
+                    '<label id="head10"></label>' +
+                    '<label id="head11">bearbeitet am:</label>' +
+                    '<label id="head12"></label></br>' +
+                    '<label id="head13">KfZ:</label>' +
+                    '<select id="head14" type="text">' +
+                        '<option>Auto nicht hier</option>' +
+                        '<option selected="selected">Auto hier</option>' +
+                        '<option>Sonstiges zur Reparatur gebracht</option>' +
+                        '<option>Bestellung</option>' +
+                    '</select></br>' +
+                    '<label id="head15">erstellt am:</label>' +
+                    '<label id="head16"></label>' +
+                    '<label id="head17">Status:</label>' +
+                    '<select id="head18" type="text">' +
+                        '<option>angenommen</option>' +
+                        '<option>bearbeitet</option>' +
+                        '<option selected="selected">abgerechnet</option>' +
+                    '</select>' +
+                '</p>' +
+            '</div>' +
+            '<div>' +
+                '<img src="' + baseUrl + '/image/updown.png" class="lblPositioning lblPos1">' +
+                '<img src="' + baseUrl + '/image/close.png" class="lblPositioning lblPos2">' +
+                '<label name="position" class="lblPositioning lblPos3">Position</label>' +
+                '<label name="art_nr" class="lblPositioning lblPos4">Artikel-Nr.</label>' +
+                '<label name="bezeichnung" class="lblPositioning lblPos5">Beschreibung</label>' +
+                '<label name="einheit" class="lblPositioning lblPos6">Einheit</label>' +
+                '<label name="preis" class="lblPositioning lblPos7">Preis</label>' +
+                '<label name="rabatt" class="lblPositioning lblPos8">Rabatt</label>' +
+                '<label name="gesamt" class="lblPositioning lblPos9">Gesamt</label>' +
+                '<label name="mechaniker" class="lblPositioning lblPos10">Mechaniker</label>' +
+                '<label name="status" class="lblPositioning lblPos11">Status</label>' +
+            '</div>' +
+                '<form id="myform">' +
+                    '<ul id="sortable">' +
+                        '<li class="insertInput">' +
+                            '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
+                            '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
+                            '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
+                            '<input type="text" id="test_text_input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
+                            '<span class="part_picker">' +
+                                '<input type="text" id="add_item_parts_id_name" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description elem">' +
+                                '<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
+                            '</span>' +
+                            '<select id="test_text_input_03" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
+                                '<option selected="selected"></option>' + //!get via AJAX
+                                '<option>Stck</option>' +
+                                '<option>kg</option>' +
+                                '<option>Std</option>' +
+                            '</select>' +
+                            '<input type="text" id="test_text_input_04" class="ui-widget-content ui-corner-all price elem">' +
+                            '<input type="text" id="test_text_input_05" class="ui-widget-content ui-corner-all discount elem">' +
+                            '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
+                            '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
+                                '<option value="0" selected="selected"></option>' +
+                                '<option value="1">Mechaniker</option>' +
+                                '<option value="2">Monteur</option>' +
+                            '</select>' +
+                            '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
+                                '<option value="0" selected="true"></option>' +
+                                '<option value="1">gelesen</option>' +
+                                '<option value="2">Bearbeitung</option>' +
+                                '<option value="3">erledigt</option>' +
+                            '</select>' +
+                            '<label name="pos_id" class="posID elem">test</label>' +
+                        '</li>' +
+                    '</ul>' +
+                '</form>' +
+        '</div>').appendTo('body');
+        //}
+
 
 }); //Ende $(document).ready()
 
@@ -59,6 +154,8 @@ $(document).ready(function() {
 <style>
 
 table.tablesorter { width:auto; cursor:pointer; }
+
+    .test_text_input_02{width: 248px;}
 
     #head01 {position: absolute; top: 135px; left: 5px; font-size: 12px;}
     #head02 {position: absolute; top: 135px; left: 125px; font-size: 12px;}
@@ -95,20 +192,30 @@ table.tablesorter { width:auto; cursor:pointer; }
     .lblPos7 {  position:relative; left: 570px;}
     .lblPos8 {  position:relative; left: 645px;}
     .lblPos9 {  position:relative; left: 710px;}
-    .lblPos10 {  position:relative; left: 765px;}
-    .lblPos11 { position: relative; left: 835px;}
+    .lblPos10 {  position:relative; left: 770px;}
+    .lblPos11 { position: relative; left: 840px;}
     .mv {  position:relative; left: 5px; top: 3px;}
     .rmv {  position:relative; left: 10px; top: 3px;}
-    .pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}
+    /*.pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}*/
+    .pos {  position:relative; left: 20px; width: 50px; text-align: right;}
     .itemNr {  position:relative; left: 23px; width: 65px;}
-    .description {  position:relative; left: 28px; width: 570px;}
-    .unity {  position:relative; left: 33px; width: 50px}
-    .price {  position:relative; left: 40px; width: 100px; text-align: right;}
-    .discount {  position:relative; left: 45px; width: 100px;text-align: right;}
-    .total {  position:relative; left: 50px; width: 100px;text-align: right;}
-    .mechanics {  position:relative; left: 55px; width: 140px;}
-    .status { position: relative; left: 60px; width: 140px;}
-    .posID { position: relative; left: 65px; font-size: 12px; }
+    /*.description {  position:relative; left: 48px; width: 570px;}*/
+    .description {  position:relative; left: 48px; width: 577px;}
+    .description2 {  position:relative; left: 25px; width: 577px;}
+    .unity {  position:relative; left: 608px; width: 50px}
+    .unity2 {  position:relative; left: 28px; width: 50px}
+    .price {  position:relative; left: 615px; width: 100px; text-align: right;}
+    .price2 {  position:relative; left: 33px; width: 100px; text-align: right;}
+    .discount {  position:relative; left: 620px; width: 100px;text-align: right;}
+    .discount2 {  position:relative; left: 37px; width: 100px;text-align: right;}
+    .total {  position:relative; left: 625px; width: 100px;text-align: right;}
+    .total2 {  position:relative; left: 42px; width: 100px;text-align: right;}
+    .mechanics {  position:relative; left: 630px; width: 140px;}
+    .mechanics2 {  position:relative; left: 48px; width: 140px;}
+    .status { position: relative; left: 635px; width: 140px;}
+    .status2 { position: relative; left: 55px; width: 140px;}
+    .posID { position: relative; left: 640px; font-size: 12px; }
+    .posID2 { position: relative; left: 62px; font-size: 12px; }
 
 </style>
 </head>
