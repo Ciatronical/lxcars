@@ -10,14 +10,11 @@ function getOrder( $id ){
 }
 
 function getPosition( $orderID ){
-    writeLog( $orderID );
-    $rs = $GLOBALS['dbh']->getAll( "SELECT id AS position_id, parts_id, description, position AS item_position, unit, sellprice, marge_total, discount FROM orderitems WHERE trans_id = '".$orderID."' ORDER BY item_position", true );
+    //writeLog( $orderID );
+    $rs = $GLOBALS['dbh']->getAll( "SELECT id AS position_id, parts_id, partnumber, description, position AS item_position, unit, sellprice, marge_total, discount FROM orderitems WHERE trans_id = '".$orderID."' ORDER BY item_position", true );
     //writeLog( $rs );
     echo $rs;
 }
-
-
-
 
 function newEntry( $data ){
     //writeLog($data);
@@ -30,7 +27,9 @@ function newEntry( $data ){
 function updatePositions( $data) {
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
-        //$GLOBALS['dbh']->update( 'orderitems', array('position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
+        //writeLog($data);
+        //$GLOBALS['dbh']->update( 'orderitems', array('position', 'trans_id', 'description'), array($value['order_nr'], $value['item_nr'], $value['pos_description']), 'id = '.$value['pos_id'] );
+        $GLOBALS['dbh']->update( 'orderitems', array('position', 'parts_id','partnumber' , 'description', 'unit', 'sellprice', 'discount', 'marge_total'), array($value['order_nr'], $value['partID'], $value['item_nr'], $value['pos_description'], $value['pos_unit'], $value['pos_price'], $value['pos_discount'], $value['pos_total']), 'id = '.$value['pos_id'] );
         //$GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
     }
     $GLOBALS['dbh']->commit();
@@ -41,11 +40,17 @@ function delPosition( $data ){
     echo $GLOBALS['dbh']->query( "DELETE FROM lxc_a_pos WHERE lxc_a_pos_id = ".$data );
 }
 
-function getArticleDescription( $data ){
-    //writeLog($data);
-    echo $GLOBALS['dbh']->getAll( "SELECT id, description, sellprice, unit FROM parts", true );
+function getUsersFromGroup( $data ){
+    echo json_encode( ERPUsersfromGroup( $data ) );
 }
 
+
+/*
+function getArticleNumbers( $z ){
+    //writeLog($data);
+    echo $GLOBALS['dbh']->getAll( "SELECT id, partnumber FROM parts WHERE id = ".$z , true );
+}
+*/
 
 
 
@@ -63,10 +68,6 @@ function getArticle( $articleDescription ) {
 
 
 
-
-function getUsersFromGroup( $data ){
-    echo json_encode( ERPUsersfromGroup( $data ) );
-}
 
 
 

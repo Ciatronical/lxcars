@@ -95,22 +95,22 @@ namespace('kivi', function(k){
             $real.trigger('set_item:PartPicker', rsp);
 
 /***************************************************/
-console.log(rsp);
-    $('<li class="inserted new">' +
+//console.log(rsp);
+    $('<li class="orderPos new positions">' +
         '<img src="../../image/updown.png" class="mv">' +
         '<img src="../../image/close.png" class="rmv">' +
         '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
-        '<input type="text" id="test_text_input_01" class="test_text_input_01 ui-widget-content ui-corner-all itemNr elem">' +
-        '<input type="text" id="test_text_input_02" class="test_text_input_02 ui-widget-content ui-corner-all description elem">' +
-        '<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
-        '<select id="test_text_input_03" name="pos_unit" type="text" class="test_text_input_03 ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
+        '<input name="itemNr" type="text" id="input_01" class="input_01 ui-widget-content ui-corner-all itemNr elem">' +
+        '<input name="pos_description" type="text" id="input_02" class="input_02 ui-widget-content ui-corner-all description elem">' +
+        //'<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
+        '<select id="input_03" name="pos_unit" type="text" class="input_03 ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
             '<option selected="selected"></option>' + //!get via AJAX
             '<option>Stck</option>' +
             '<option>kg</option>' +
             '<option>Std</option>' +
         '</select>' +
-        '<input type="text" id="test_text_input_04" class="test_text_input_04 ui-widget-content ui-corner-all price elem">' +
-        '<input type="text" id="test_text_input_05" class="test_text_input_05 ui-widget-content ui-corner-all discount elem">' +
+        '<input type="text" id="input_04" class="input_04 ui-widget-content ui-corner-all price elem">' +
+        '<input type="text" id="input_05" class="input_05 ui-widget-content ui-corner-all discount elem">' +
         '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
         '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
             '<option value="0" selected="selected"></option>' +
@@ -123,23 +123,39 @@ console.log(rsp);
             '<option value="2">Bearbeitung</option>' +
             '<option value="3">erledigt</option>' +
         '</select>' +
-        '<label name="pos_id" class="posID elem">test</label>' +
-    '</li>').insertBefore('.insertInput');
-        $('.new').children('.test_text_input_01').val(rsp.partnumber);
-        $('.new').children('.test_text_input_02').val(rsp.description);
-        $('.new').children('.test_text_input_03').val(rsp.unit);
-        $('.new').children('.test_text_input_04').val(rsp.sellprice);
-        $('.new').children('.test_text_input_05').val(rsp.not_discountable);
-        $('.inserted').removeClass('new');
+        '<label name="pos_id" class="posID elem"></label>' +
+        '<label name="partID" class="partID">test</label>' +
+    '</li>').insertBefore('.newOrderPos');
+        $('.new').children('.input_01').val(rsp.partnumber);
+        $('.new').children('.input_02').val(rsp.description);
+        $('.new').children('.input_03').val(rsp.unit);
+        $('.new').children('.input_04').val(rsp.sellprice);
+        $('.new').children('.input_05').val(rsp.not_discountable);
+        $('.new').children('.partID').text(rsp.id);
+        $('.new').children('.posID').text($('#pos__' + ( i +  1 ) + '__elem__9').text());
+        $('#pos__' + ( i +  1 ) + '__elem__9').text('');
+        $('.orderPos').removeClass('new');
         $('#add_item_parts_id_name').val('');
-        $('.inserted').children('.description').addClass('description2');
-        $('.inserted').children('.unity').addClass('unity2');
-        $('.inserted').children('.price').addClass('price2');
-        $('.inserted').children('.discount').addClass('discount2');
-        $('.inserted').children('.total').addClass('total2');
-        $('.inserted').children('.mechanics').addClass('mechanics2');
-        $('.inserted').children('.status').addClass('status2');
-        $('.inserted').children('.posID').addClass('posID2');
+        $('.orderPos').children('.description').addClass('description2');
+        $('.orderPos').children('.unity').addClass('unity2');
+        $('.orderPos').children('.price').addClass('price2');
+        $('.orderPos').children('.discount').addClass('discount2');
+        $('.orderPos').children('.total').addClass('total2');
+        $('.orderPos').children('.mechanics').addClass('mechanics2');
+        $('.orderPos').children('.status').addClass('status2');
+        $('.orderPos').children('.posID').addClass('posID2');
+        $('.orderPos').children('.partID').addClass('partID2');
+
+        $( '.positions' ).each( function( cnt, list ){
+            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
+            //For-Schleife um in den einzelnen ListenElementen die Felder
+            //durch zu zählen und zu nummerieren
+            var elements = $( this ).children( '.elem' );
+            for( var i = 0; i < elements.length; i++ ){
+                elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
+            }
+        })
+        updateDatabase();
 /***************************************************/
 
           },
@@ -149,6 +165,51 @@ console.log(rsp);
       }
       annotate_state();
     }
+
+/***************************************************/
+
+    function updateDatabase() {
+                clearTimeout( timer );
+                timer = setTimeout( function(){   //calls click event after a certain time
+                    var updateDataJSON = new Array;
+                    $( 'ul#sortable > li' ).each( function(){
+                        updateDataJSON.push({
+                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                            "order_nr": $( this ).children( '.pos' ).val(),
+                            "item_nr": $( this ).children( '.itemNr' ).val(),
+                            "pos_description": $( this ).children( '.description' ).val(),
+                            "pos_unit": $( this ).children( '.unity' ).val(),
+                            "pos_price": $( this ).children( '.price' ).val(),
+                            "pos_discount": $( this ).children( '.discount' ).val(),
+                            "pos_total": $( this ).children( '.total' ).val(),
+                            "pos_emp": $( this ).children( '.mechanics' ).val(),
+                            "pos_status": $( this ).children( '.status' ).val(),
+                            "pos_id": $( this ).children( '.posID' ).text(),
+                            "partID": $( this ).children( '.partID' ).text()
+                        });
+                    })
+
+                    updateDataJSON.pop();
+                    //console.log(updateDataJSON);
+
+                    $.ajax({
+                        url: 'ajax/order.php',
+                        //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                        data: { action: "updatePositions", data: updateDataJSON },
+                        type: "POST",
+                            success: function(){
+                                //alert( 'send all posdata' );
+                            },
+                            error:  function(){
+                                alert( 'error sending posdata' );
+                            }
+                    });
+
+
+                }, 800 );
+    }
+
+/***************************************************/
 
     function make_defined_state () {
       if (state == STATES.PICKED) {
