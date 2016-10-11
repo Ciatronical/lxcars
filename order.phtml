@@ -99,6 +99,7 @@ $(document).ready(function() {
 
     newPositionContainer();
 
+
     $('#sortable').sortable({
         update: function() {
             zaehler();
@@ -362,7 +363,7 @@ $(document).ready(function() {
         timer = setTimeout( function(){
             //Data-Area
             $.ajax({
-                url: 'ajax/order.php?action=getPosition&data=' + orderID,
+                url: 'ajax/order.php?action=getPositions&data=' + orderID,
                 type: 'GET',
                 success: function (data) {
                     //alert(JSON.stringify(data));

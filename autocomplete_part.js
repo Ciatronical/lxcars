@@ -96,13 +96,13 @@ namespace('kivi', function(k){
 
 /***************************************************/
 //console.log(rsp);
+    $('.mechanics').removeClass('mechOld');
     $('<li class="orderPos new positions">' +
         '<img src="../../image/updown.png" class="mv">' +
         '<img src="../../image/close.png" class="rmv">' +
         '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
         '<input name="itemNr" type="text" id="input_01" class="input_01 ui-widget-content ui-corner-all itemNr elem">' +
         '<input name="pos_description" type="text" id="input_02" class="input_02 ui-widget-content ui-corner-all description elem">' +
-        //'<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
         '<select id="input_03" name="pos_unit" type="text" class="input_03 ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
             '<option selected="selected"></option>' + //!get via AJAX
             '<option>Stck</option>' +
@@ -112,10 +112,8 @@ namespace('kivi', function(k){
         '<input type="text" id="input_04" class="input_04 ui-widget-content ui-corner-all price elem">' +
         '<input type="text" id="input_05" class="input_05 ui-widget-content ui-corner-all discount elem">' +
         '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
-        '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
-            '<option value="0" selected="selected"></option>' +
-            '<option value="1">Mechaniker</option>' +
-            '<option value="2">Monteur</option>' +
+        '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics mechOld elem" autocomplete="off">' +
+            '<option class="opt mech__0" selected="selected"></option>' +
         '</select>' +
         '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
             '<option value="0" selected="true"></option>' +
@@ -124,8 +122,32 @@ namespace('kivi', function(k){
             '<option value="3">erledigt</option>' +
         '</select>' +
         '<label name="pos_id" class="posID elem"></label>' +
-        '<label name="partID" class="partID">test</label>' +
+        '<label name="partID" class="partID"></label>' +
     '</li>').insertBefore('.newOrderPos');
+
+        $( '.posID' ).hide();
+        $( '.partID' ).hide();
+            grp_name = 'Werkstatt';
+            $.ajax({
+                url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
+                type: 'GET',
+                success: function (data) {
+                    //console.log(JSON.stringify(data));
+                    //console.log(data);
+                    //console.log(data.length);
+                    $.each( data, function (index, item) {
+                        //console.log(item.name);
+                        if ($('.new').children('.mechOld').children('.opt').hasClass('mech__' + item.id) ) {
+                            //console.log('habe ich schon');
+                        } else {
+                            //console.log('habe ich noch nicht');
+                            $( '<option class="opt mech__'+item.id+'">'+item.name+'</option>').appendTo('.mechOld');
+                        }
+                    } )
+                },
+                error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
+            });
+
         $('.new').children('.input_01').val(rsp.partnumber);
         $('.new').children('.input_02').val(rsp.description);
         $('.new').children('.input_03').val(rsp.unit);
@@ -167,6 +189,8 @@ namespace('kivi', function(k){
     }
 
 /***************************************************/
+
+
 
     function updateDatabase() {
                 clearTimeout( timer );

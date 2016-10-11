@@ -130,9 +130,7 @@ $(document).ready(function() {
                             '<input type="text" id="input_05" class="ui-widget-content ui-corner-all discount elem">' +
                             '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
                             '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
-                                '<option value="0" selected="selected"></option>' +
-                                '<option value="1">Mechaniker</option>' +
-                                '<option value="2">Monteur</option>' +
+                                '<option class="opt mech__0" selected="selected"></option>' +
                             '</select>' +
                             '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
                                 '<option value="0" selected="true"></option>' +
@@ -145,7 +143,7 @@ $(document).ready(function() {
                         '</li>' +
                     '</ul>' +
                 '</form>' +
-                //'<input type="button" id="updateBtn" value="UPDATE">' +
+                //'<input type="button" id="updateBtn" value="TEST">' +
         '</div>').appendTo('body');
         //}
 
@@ -157,7 +155,6 @@ $(document).ready(function() {
             updateDatabase();
         })
 */
-
 
     function updateDatabase() {
                 clearTimeout( timer );
@@ -192,7 +189,7 @@ $(document).ready(function() {
                                 //alert( 'send all posdata' );
                             },
                             error:  function(){
-                                alert( 'error sending posdata' );
+                                alert( 'Update fehlgeschlagen' );
                             }
                     });
 
@@ -229,7 +226,7 @@ $(document).ready(function() {
         timer = setTimeout( function(){
             //Data-Area
             $.ajax({
-                url: 'ajax/order.php?action=getPosition&data=' + orderID,
+                url: 'ajax/order.php?action=getPositions&data=' + orderID,
                 type: 'GET',
                 success: function (data) {
                     //alert(JSON.stringify(data));
@@ -255,9 +252,7 @@ $(document).ready(function() {
                             '<input type="text" id="input_05" class="input_05 ui-widget-content ui-corner-all discount elem">' +
                             '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
                             '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
-                                '<option value="0" selected="selected"></option>' +
-                                '<option value="1">Mechaniker</option>' +
-                                '<option value="2">Monteur</option>' +
+                                '<option class="opt mech__0" selected="selected"></option>' +
                             '</select>' +
                             '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
                                 '<option value="0" selected="true"></option>' +
@@ -312,14 +307,68 @@ $(document).ready(function() {
                         //newPositionContainer();
                         zaehler();
 
+                        $( '.rmv' ).click( function (){
+                            //var posToDel = {};
+                            var posToDel = $(this).parent().children('.posID').text();
+                            //console.log(posToDel);
+                            //console.log('remove');
+
+                                $.ajax({
+                                    url: 'ajax/order.php',
+                                    data: { action: "delPosition", data: posToDel },
+                                    type: "POST",
+                                    success: function(){
+                                        //alert('Gesendet');
+                                    },
+                                    error:   function(){
+                                        alert('löschen der Daten fehlgeschlagen!');
+                                    }
+                                });
+                            $( this ).parent().remove();
+                            zaehler();
+                            //updateDatabase();
+
+                        });
+
+                        //bei Änderung des Textes in ".elem"
+                        $( '.elem' ).on( 'keyup', function(){
+                            //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
+                            var y = $(this).val();
+                            $(this).attr('value', y);
+                            //console.log(y);
+                                clearTimeout( timer );
+                                timer = setTimeout( function(){   //calls click event after a certain time
+                                //console.log(y);
+                                updateDatabase();
+                                }, 2000 );
+                        });
+
                     }
+                        grp_name = 'Werkstatt';
+                        $.ajax({
+                            url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
+                            type: 'GET',
+                            success: function (data) {
+                                //console.log(JSON.stringify(data));
+                                //console.log(data);
+                                //console.log(data.length);
+                                $.each( data, function (index, item) {
+                                        //console.log(item.name);
+                                    if ($('.mechanics').children('.opt').hasClass('mech__' + item.id) ) {
+                                        //console.log('habe ich schon');
+                                    } else {
+                                        //console.log('habe ich noch nicht');
+                                        $( '<option class="opt mech__'+item.id+'">'+item.name+'</option>').appendTo('.mechanics');
+                                    }
+                                } )
+                        },
+                            error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
+                        })
 
                 },
                 error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
             })
         }, 200 );
-
-
 
     }
 
@@ -333,15 +382,16 @@ $(document).ready(function() {
                 elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
             }
         })
+        updateDatabase();
     }
 
-        //bei Änderung des Textes in ".elem"
+        //bei Eingabe des ersten Buchstaben in ".description"
         $( '.description' ).on( 'keyup', function(){
             //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
             var y = $(this).val();
             $(this).attr('value', y);
 
-            if( $( this ).parent().parent().hasClass( 'newOrderPos' ) ){                                //INSERT wenn der Container die Klasse "new" aufweist
+            if( $( this ).parent().parent().hasClass( 'newOrderPos' ) ){                                //INSERT wenn der Container die Klasse "newOrderPos" aufweist
                 if (y.length == 1) {
                     insertIntoDatabase();
                 }
@@ -350,6 +400,7 @@ $(document).ready(function() {
                     //updateDatabase();
             }
         });
+
 
     function insertIntoDatabase() {
                 var posObject = {};
@@ -361,7 +412,7 @@ $(document).ready(function() {
                 });
                 posObject['order_id'] = orderID;
                 posObject['description'] = $( '.newOrderPos' ).children().children( '.elem' ).val();
-                console.log( posObject );
+                //console.log( posObject );
 
                 // Insert
                 $.ajax({
