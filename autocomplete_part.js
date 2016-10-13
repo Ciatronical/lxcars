@@ -96,77 +96,36 @@ namespace('kivi', function(k){
 
 /***************************************************/
 //console.log(rsp);
-    $('.mechanics').removeClass('mechOld');
-    $('<li class="orderPos new positions">' +
-        '<img src="../../image/updown.png" class="mv">' +
-        '<img src="../../image/close.png" class="rmv">' +
-        '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
-        '<input name="itemNr" type="text" id="input_01" class="input_01 ui-widget-content ui-corner-all itemNr elem">' +
-        '<input name="pos_description" type="text" id="input_02" class="input_02 ui-widget-content ui-corner-all description elem">' +
-        '<select id="input_03" name="pos_unit" type="text" class="input_03 ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
-            '<option selected="selected"></option>' + //!get via AJAX
-            '<option>Stck</option>' +
-            '<option>kg</option>' +
-            '<option>Std</option>' +
-        '</select>' +
-        '<input type="text" id="input_04" class="input_04 ui-widget-content ui-corner-all price elem">' +
-        '<input type="text" id="input_05" class="input_05 ui-widget-content ui-corner-all discount elem">' +
-        '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
-        '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics mechOld elem" autocomplete="off">' +
-            '<option class="opt mech__0" selected="selected"></option>' +
-        '</select>' +
-        '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
-            '<option value="0" selected="true"></option>' +
-            '<option value="1">gelesen</option>' +
-            '<option value="2">Bearbeitung</option>' +
-            '<option value="3">erledigt</option>' +
-        '</select>' +
-        '<label name="pos_id" class="posID elem"></label>' +
-        '<label name="partID" class="partID"></label>' +
-    '</li>').insertBefore('.newOrderPos');
 
-        $( '.posID' ).hide();
-        $( '.partID' ).hide();
-            grp_name = 'Werkstatt';
-            $.ajax({
-                url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
-                type: 'GET',
-                success: function (data) {
-                    //console.log(JSON.stringify(data));
-                    //console.log(data);
-                    //console.log(data.length);
-                    $.each( data, function (index, item) {
-                        //console.log(item.name);
-                        if ($('.new').children('.mechOld').children('.opt').hasClass('mech__' + item.id) ) {
-                            //console.log('habe ich schon');
-                        } else {
-                            //console.log('habe ich noch nicht');
-                            $( '<option class="opt mech__'+item.id+'">'+item.name+'</option>').appendTo('.mechOld');
-                        }
-                    } )
-                },
-                error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
-            });
+        $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
+        $('.newOrderPos').children().children('.description').val(rsp.description);
+        $('.newOrderPos').children('.unity').val(rsp.unit);
+        $('.newOrderPos').children('.price').val(rsp.sellprice);
+        $('.newOrderPos').children('.discount').val(rsp.not_discountable);
+        $('.newOrderPos').children('.partID').text(rsp.id);
 
-        $('.new').children('.input_01').val(rsp.partnumber);
-        $('.new').children('.input_02').val(rsp.description);
-        $('.new').children('.input_03').val(rsp.unit);
-        $('.new').children('.input_04').val(rsp.sellprice);
-        $('.new').children('.input_05').val(rsp.not_discountable);
-        $('.new').children('.partID').text(rsp.id);
-        $('.new').children('.posID').text($('#pos__' + ( i +  1 ) + '__elem__9').text());
-        $('#pos__' + ( i +  1 ) + '__elem__9').text('');
-        $('.orderPos').removeClass('new');
-        $('#add_item_parts_id_name').val('');
-        $('.orderPos').children('.description').addClass('description2');
-        $('.orderPos').children('.unity').addClass('unity2');
-        $('.orderPos').children('.price').addClass('price2');
-        $('.orderPos').children('.discount').addClass('discount2');
-        $('.orderPos').children('.total').addClass('total2');
-        $('.orderPos').children('.mechanics').addClass('mechanics2');
-        $('.orderPos').children('.status').addClass('status2');
-        $('.orderPos').children('.posID').addClass('posID2');
-        $('.orderPos').children('.partID').addClass('partID2');
+$('.orderPos').removeClass('oP');
+$('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
+
+$('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
+$('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
+//oPunity
+
+$('.oP').children('.oPdescription').val(rsp.description);
+$('.oP').children('.oPunity').val(rsp.unit);
+
+//$('.op').children('.posID').text($('.newOrderPos').children('.posID').text());
+
+$('.orderPos').children('.part_picker').remove();
+$('.orderPos').children('.nPunity').remove();
+
+        $('.newOrderPos').children('.itemNr').val('');
+        $('.newOrderPos').children().children('#add_item_parts_id_name').val('');
+        $('.newOrderPos').children('.unity').val('');
+        $('.newOrderPos').children('.price').val('');
+        $('.newOrderPos').children('.discount').val('');
+        $('.newOrderPos').children('.partID').text('');
+        $('.newOrderPos').children('.posID').text('');
 
         $( '.positions' ).each( function( cnt, list ){
             $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
@@ -177,7 +136,18 @@ namespace('kivi', function(k){
                 elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
             }
         })
+
+        $('.orderPos').children('.description').addClass('description2');
+        $('.orderPos').children('.unity').addClass('unity2');
+        $('.orderPos').children('.price').addClass('price2');
+        $('.orderPos').children('.discount').addClass('discount2');
+        $('.orderPos').children('.total').addClass('total2');
+        $('.orderPos').children('.mechanics').addClass('mechanics2');
+        $('.orderPos').children('.status').addClass('status2');
+        $('.orderPos').children('.posID').addClass('posID2');
+        $('.orderPos').children('.partID').addClass('partID2');
         updateDatabase();
+
 /***************************************************/
 
           },
