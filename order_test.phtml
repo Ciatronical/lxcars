@@ -35,7 +35,7 @@ $(document).ready(function() {
     var articleDescription;
     var grp_name;
     var grpSel;
-    var grpMbr;
+    var grpMbr = new Array;
     var getMembers = new Array;
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
@@ -45,32 +45,25 @@ $(document).ready(function() {
     //console.log(kivi_global)
     //console.log(kivi_global.erp_all_groups)
 
-    function getMbrFromGrp() {
         grp_name = 'Werkstatt';
         $.ajax({
             url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
             type: 'GET',
             success: function (data) {
                 //console.log(JSON.stringify(data));
-                console.log(data);
+                //console.log(data);
                 //console.log(data.length);
 
                 $.each( data, function (index, item) {
                     //console.log(item);
-                    $('.mechanics').append($('<option class="opt mech__'+item.id+'" value="'+item.name+'">'+item.name+'</option>'));
-                        $.each(getMembers,function (index, item) {
-                            $('.orderPos').each(function () {
-                                if ($(this).children('.pos').val() == item.position) {
-                                   //console.log('Auf Position ' + $(this).children('.pos').val() + ' befindet sich ' + item.mechanic);
-                                   $(this).children('.mechanics').val(item.mechanic);
-                                }
-                            })
-                        })
+                    getMembers.push(
+                        item.name
+                    )
+                    //console.log(getMembers)
                 } )
             },
             error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
         })
-    }
 
     var orderID;
     if( id > '0' ){
@@ -139,24 +132,36 @@ $(document).ready(function() {
                         $( '.posID' ).hide();
                         $( '.partID' ).hide();
 
+                        if( $.inArray( item.u_id, getMembers ) != -1 ){
+                            //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
+                        } else {
+                            //console.log( 'item: ' + item.u_id + ' nicht vorhanden!' )
+                            getMembers.push(
+                                item.u_id
+                            )
+                        }
 
-
-                        getMembers.push({
+                        grpMbr.push( {
                             "position": item.item_position,
-                            "mechanic": item.u_id,
-                            "status": item.status
-                        });
+                            "mechanics": item.u_id
+                        } )
 
 
                     })
-                    getMbrFromGrp();
+                    //console.log(grpMbr)
                     //console.log(getMembers);
+                    $.each( getMembers, function ( index, item ) {
+                        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
+                    } )
 
-                    /*
-                    $.each(getMembers, function (index, item) {
-                        console.log(item);
-                    })
-                    */
+                        $.each(grpMbr,function (index, item) {
+                            $('.orderPos').each(function () {
+                                if ($(this).children('.pos').val() == item.position) {
+                                   //console.log('Auf Position ' + $(this).children('.pos').val() + ' befindet sich ' + item.mechanics);
+                                   $(this).children('.mechanics').val(item.mechanics);
+                                }
+                            })
+                        })
 
                     /*
                     for (i = 0; i < data.length; i++) {
@@ -313,9 +318,9 @@ $(document).ready(function() {
                             '</select>' +
                             '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
                                 '<option value="0" selected="true"></option>' +
-                                '<option value="1">gelesen</option>' +
-                                '<option value="2">Bearbeitung</option>' +
-                                '<option value="3">erledigt</option>' +
+                                '<option value="gelesen">gelesen</option>' +
+                                '<option value="Bearbeitung">Bearbeitung</option>' +
+                                '<option value="erledigt">erledigt</option>' +
                             '</select>' +
                             '<label name="pos_id" class="posID elem"></label>' +
                             '<label name="part_id" class="partID elem"></label>' +

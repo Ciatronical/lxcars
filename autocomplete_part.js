@@ -148,6 +148,15 @@ $('.orderPos').children('.nPunity').remove();
         $('.orderPos').children('.partID').addClass('partID2');
         updateDatabase();
 
+                        $('.elem').change(function (e) {
+                            updateDatabase();
+                        }).on( 'keyup', function(){
+                                //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
+                                var y = $(this).val();
+                                $(this).attr('value', y);
+                                updateDatabase();
+                        } )
+
 /***************************************************/
 
           },
