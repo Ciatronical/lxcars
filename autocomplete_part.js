@@ -127,18 +127,11 @@ $('.orderPos').children('.nPunity').remove();
         $('.newOrderPos').children('.partID').text('');
         $('.newOrderPos').children('.posID').text('');
 
-        $( '.positions' ).each( function( cnt, list ){
-            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
-            //For-Schleife um in den einzelnen ListenElementen die Felder
-            //durch zu zählen und zu nummerieren
-            var elements = $( this ).children( '.elem' );
-            for( var i = 0; i < elements.length; i++ ){
-                elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
-            }
-        })
+        zaehler();
 
         $('.orderPos').children('.description').addClass('description2');
         $('.orderPos').children('.unity').addClass('unity2');
+        $('.orderPos').children('.number').addClass('number2');
         $('.orderPos').children('.price').addClass('price2');
         $('.orderPos').children('.discount').addClass('discount2');
         $('.orderPos').children('.total').addClass('total2');
@@ -146,16 +139,57 @@ $('.orderPos').children('.nPunity').remove();
         $('.orderPos').children('.status').addClass('status2');
         $('.orderPos').children('.posID').addClass('posID2');
         $('.orderPos').children('.partID').addClass('partID2');
+
         updateDatabase();
 
-                        $('.elem').change(function (e) {
-                            updateDatabase();
-                        }).on( 'keyup', function(){
-                                //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
-                                var y = $(this).val();
-                                $(this).attr('value', y);
-                                updateDatabase();
-                        } )
+        $('.elem').change(function (e) {
+            updateDatabase();
+        }).on( 'keyup', function(){
+            //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
+            var y = $(this).val();
+            $(this).attr('value', y);
+            updateDatabase();
+        } )
+
+        $( '.number' ).on( 'keyup', function () {
+            var x = $( this ).val();
+            var y = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+            //var z = ( x * y );
+            $(this ).parent( '.orderPos' ).children( '.total' ).val( x * y );
+            //console.log( z );
+        } )
+
+        $( '.discount' ).on( 'keyup', function () {
+            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val();
+            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+            var discount = ( 1 - ($( this ).val() / 100) );
+            //var z = ( (number * price) * (1 - discount) )
+            $( this ).parent( '.orderPos' ).children( '.total' ).val( ( number * price ) * discount );
+            //console.log( z );
+        } )
+
+        $( '.rmv' ).click( function (){
+            //var posToDel = {};
+            var posToDel = $(this).parent().children('.posID').text();
+            //console.log(posToDel);
+            //console.log('remove');
+
+                $.ajax({
+                    url: 'ajax/order.php',
+                    data: { action: "delPosition", data: posToDel },
+                    type: "POST",
+                    success: function(){
+                        //alert('Gesendet');
+                    },
+                    error:   function(){
+                        alert('löschen der Daten fehlgeschlagen!');
+                    }
+                });
+
+            $( this ).parent().remove();
+            zaehler();
+            updateDatabase();
+        });
 
 /***************************************************/
 
@@ -169,7 +203,17 @@ $('.orderPos').children('.nPunity').remove();
 
 /***************************************************/
 
-
+    function zaehler() {
+        $( '.positions' ).each( function( cnt, list ){
+            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
+            //For-Schleife um in den einzelnen ListenElementen die Felder
+            //durch zu zählen und zu nummerieren
+            var elements = $( this ).children( '.elem' );
+            for( var i = 0; i < elements.length; i++ ){
+                elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
+            }
+        })
+    }
 
     function updateDatabase() {
                 clearTimeout( timer );
@@ -182,6 +226,7 @@ $('.orderPos').children('.nPunity').remove();
                             "item_nr": $( this ).children( '.itemNr' ).val(),
                             "pos_description": $( this ).children( '.description' ).val(),
                             "pos_unit": $( this ).children( '.unity' ).val(),
+                            "pos_qty": $( this ).children( '.number' ).val(),
                             "pos_price": $( this ).children( '.price' ).val(),
                             "pos_discount": $( this ).children( '.discount' ).val(),
                             "pos_total": $( this ).children( '.total' ).val(),

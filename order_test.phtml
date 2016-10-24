@@ -110,6 +110,7 @@ $(document).ready(function() {
                             '<input value="'+item.partnumber+'" name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                             '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
                             '<input value="'+item.unit+'" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity unity2 elem" autocomplete="off">' +
+                            '<input value="'+item.qty+'" type="text" class="ui-widget-content ui-corner-all number number2 elem">' +
                             '<input value="'+item.sellprice+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem">' +
                             '<input value="'+item.discount+'" type="text" id="input_05" class="ui-widget-content ui-corner-all discount discount2 elem">' +
                             '<input value="'+item.marge_total+'" name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total total2 elem" autocomplete="off">' +
@@ -129,8 +130,8 @@ $(document).ready(function() {
                         $('.new').children('.status2').val(item.status);
                         $('.new').children('.mechanics2').val(item.u_id);
                         $('.new').removeClass('new');
-                        $( '.posID' ).hide();
-                        $( '.partID' ).hide();
+                        //$( '.posID' ).hide();
+                        //$( '.partID' ).hide();
 
                         if( $.inArray( item.u_id, getMembers ) != -1 ){
                             //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
@@ -234,9 +235,34 @@ $(document).ready(function() {
                             zaehler();
                             updateDatabase();
                         });
+
                         $('.mechanics, .status').change(function (e) {
                             updateDatabase();
                         })
+
+                        $( '.elem' ).on( 'keyup', function () {
+                            var y = $( this ).val();
+                            $( this ).attr( 'value', y );
+                            //console.log(y);
+                            updateDatabase();
+                        } )
+
+                        $( '.number' ).on( 'keyup', function () {
+                            var number = $( this ).val();
+                            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+                            //var z = ( x * y );
+                            $( this ).parent( '.orderPos' ).children( '.total' ).val( number * price );
+                            //console.log( z );
+                        } )
+
+                        $( '.discount' ).on( 'keyup', function () {
+                            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val();
+                            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+                            var discount = ( 1 - ($( this ).val() / 100) );
+                            //var z = ( (number * price) * (1 - discount) )
+                            $( this ).parent( '.orderPos' ).children( '.total' ).val( ( number * price ) * discount );
+                            //console.log( z );
+                        } )
 
                 },
                 error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
@@ -287,6 +313,7 @@ $(document).ready(function() {
                 '<label name="art_nr" class="lblPositioning lblPos4">Artikel-Nr.</label>' +
                 '<label name="bezeichnung" class="lblPositioning lblPos5">Beschreibung</label>' +
                 '<label name="einheit" class="lblPositioning lblPos6">Einheit</label>' +
+                '<label name="anzahl" class="lblPositioning lblPos12">Anzahl</label>' +
                 '<label name="preis" class="lblPositioning lblPos7">Preis</label>' +
                 '<label name="rabatt" class="lblPositioning lblPos8">Rabatt</label>' +
                 '<label name="gesamt" class="lblPositioning lblPos9">Gesamt</label>' +
@@ -310,6 +337,7 @@ $(document).ready(function() {
                                 '<option>kg</option>' +
                                 '<option>Std</option>' +
                             '</select>' +
+                            '<input type="text" value="0" class="ui-widget-content ui-corner-all number elem">' +
                             '<input type="text" id="input_04" class="ui-widget-content ui-corner-all price elem">' +
                             '<input type="text" id="input_05" class="ui-widget-content ui-corner-all discount elem">' +
                             '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
@@ -413,6 +441,7 @@ $(document).ready(function() {
                             "item_nr": $( this ).children( '.itemNr' ).val(),
                             "pos_description": $( this ).children( '.description' ).val(),
                             "pos_unit": $( this ).children( '.unity' ).val(),
+                            "pos_qty": $( this ).children( '.number' ).val(),
                             "pos_price": $( this ).children( '.price' ).val(),
                             "pos_discount": $( this ).children( '.discount' ).val(),
                             "pos_total": $( this ).children( '.total' ).val(),
@@ -485,6 +514,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     .lblPos4 {  position:relative; left: 60px;}
     .lblPos5 {  position:relative; left: 65px;}
     .lblPos6 {  position:relative; left: 555px;}
+    .lblPos12 {  position:relative; left: 560px;}
     .lblPos7 {  position:relative; left: 570px;}
     .lblPos8 {  position:relative; left: 645px;}
     .lblPos9 {  position:relative; left: 710px;}
@@ -493,27 +523,29 @@ table.tablesorter { width:auto; cursor:pointer; }
     .mv {  position:relative; left: 5px; top: 3px;}
     .rmv {  position:relative; left: 10px; top: 3px;}
     /*.pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}*/
-    .pos {  position:relative; left: 20px; width: 50px; text-align: right;}
+    .pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}
     .itemNr {  position:relative; left: 23px; width: 65px; text-align: right;}
     /*.description {  position:relative; left: 48px; width: 570px;}*/
     .description {  position:relative; left: 48px; width: 577px;}
     .description2 {  position:relative; left: 25px; width: 577px;}
-    .unity {  position:relative; left: 608px; width: 50px}
+    .unity {  position:relative; left: 608px; width: 55px}
     .unity2 {  position:relative; left: 28px; width: 50px}
-    .price {  position:relative; left: 615px; width: 100px; text-align: right;}
-    .price2 {  position:relative; left: 33px; width: 100px; text-align: right;}
-    .discount {  position:relative; left: 620px; width: 100px;text-align: right;}
-    .discount2 {  position:relative; left: 37px; width: 100px;text-align: right;}
-    .total {  position:relative; left: 625px; width: 100px;text-align: right;}
-    .total2 {  position:relative; left: 42px; width: 100px;text-align: right;}
-    .mechanics {  position:relative; left: 630px; width: 140px;}
-    .mechanics2 {  position:relative; left: 48px; width: 140px;}
-    .status { position: relative; left: 635px; width: 140px;}
-    .status2 { position: relative; left: 55px; width: 140px;}
-    .posID { position: relative; left: 640px; font-size: 12px; }
-    .posID2 { position: relative; left: 62px; font-size: 12px; }
-    .partID { position: relative; left: 700px; }
-    .partID2 { position: relative; left: 65px; }
+    .number {  position:relative; left: 614px; width: 50px; text-align: right;}
+    .number2 {  position:relative; left: 35px; width: 50px; text-align: right;}
+    .price {  position:relative; left: 617px; width: 100px; text-align: right;}
+    .price2 {  position:relative; left: 37px; width: 100px; text-align: right;}
+    .discount {  position:relative; left: 622px; width: 100px;text-align: right;}
+    .discount2 {  position:relative; left: 42px; width: 100px;text-align: right;}
+    .total {  position:relative; left: 627px; width: 100px;text-align: right;}
+    .total2 {  position:relative; left: 47px; width: 100px;text-align: right;}
+    .mechanics {  position:relative; left: 632px; width: 140px;}
+    .mechanics2 {  position:relative; left: 53px; width: 140px;}
+    .status { position: relative; left: 637px; width: 140px;}
+    .status2 { position: relative; left: 60px; width: 140px;}
+    .posID { position: relative; left: 642px; font-size: 12px; }
+    .posID2 { position: relative; left: 67px; font-size: 12px; }
+    .partID { position: relative; left: 702px; }
+    .partID2 { position: relative; left: 70px; }
 
 </style>
 </head>
