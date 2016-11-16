@@ -130,8 +130,8 @@ $(document).ready(function() {
                         $('.new').children('.status2').val(item.status);
                         $('.new').children('.mechanics2').val(item.u_id);
                         $('.new').removeClass('new');
-                        //$( '.posID' ).hide();
-                        //$( '.partID' ).hide();
+                        $( '.posID' ).hide();
+                        $( '.partID' ).hide();
 
                         if( $.inArray( item.u_id, getMembers ) != -1 ){
                             //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
@@ -267,7 +267,7 @@ $(document).ready(function() {
                 },
                 error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
             })
-        }, 200 );
+        }, 500 );
     }
 
         //function newPositionContainer() {
@@ -355,21 +355,37 @@ $(document).ready(function() {
                         '</li>' +
                     '</ul>' +
                 '</form>' +
-                //'<input type="button" id="updateBtn" value="TEST">' +
+                //'<input type="button" id="testBtn" value="TEST">' +
         '</div>').appendTo('body');
         //}
 
         $( '.posID' ).hide();
         $( '.partID' ).hide();
 
+        $('#sortable').sortable({
+            update: function() {
+                zaehler();
+                updateDatabase();
+            }
+        });
 
 /*
-        $('#updateBtn').click(function () {
-            //alert('hello');
-            updateDatabase();
+        $('#testBtn').click(function () {
+            var testText = $(this).val();
+            //alert(testText);
+                                                $.ajax({
+                                                    url: 'ajax/order.php',
+                                                    type: "POST",
+                                                    data: { action: "newPart", data: testText },
+                                                        success: function(){
+                                                            alert( 'send all artData' );
+                                                        },
+                                                        error:  function(){
+                                                            alert( 'Insert des neuen Artikels fehlgeschlagen' );
+                                                        }
+                                                });
         })
 */
-
 
         $( '.description' ).on( 'keyup', function(){
             //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
@@ -394,6 +410,7 @@ $(document).ready(function() {
             var elements = $( this ).children( '.elem' );
             for( var i = 0; i < elements.length; i++ ){
                 elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
+                //alert(elements[i].id + ' wird neu sortiert');
             }
         })
         //updateDatabase();
@@ -419,6 +436,7 @@ $(document).ready(function() {
                     type: "POST",
                     success: function(result){
                         //alert(result);
+                        //console.log(result);
                             $('.newOrderPos').children('.posID').text(result);
                             //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
                     },
