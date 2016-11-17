@@ -65,6 +65,22 @@ $(document).ready(function() {
             error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
         })
 
+        //get Units
+        $.ajax({
+            url: 'ajax/order.php?action=getUnits',
+            type: 'GET',
+            success: function (data) {
+
+                $.each(data, function (index, item) {
+                    //console.log(item);
+                    $('.unity').append($('<option class="opt unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+                    //$('#selectArtAnlUnits').append($('<option id="unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+                })
+
+            },
+            error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
+        })
+
     var orderID;
     if( id > '0' ){
         //Head-Area
@@ -328,14 +344,11 @@ $(document).ready(function() {
                             '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
                             '<input name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                             '<span class="part_picker">' +
-                                '<input name="pos_description" type="text" id="add_item_parts_id_name" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description elem">' +
+                                '<input name="pos_description" type="text" id="add_item_parts_id_name" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description descrNewPos elem">' +
                                 '<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
                             '</span>' +
                             '<select id="input_03" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity nPunity elem" autocomplete="off">' +
-                                '<option selected="selected"></option>' + //!get via AJAX
-                                '<option>Stck</option>' +
-                                '<option>kg</option>' +
-                                '<option>Std</option>' +
+                                '<option class="opt unit__0" value="0"></option>' +
                             '</select>' +
                             '<input type="text" value="0" class="ui-widget-content ui-corner-all number elem">' +
                             '<input type="text" id="input_04" class="ui-widget-content ui-corner-all price elem">' +
@@ -373,17 +386,6 @@ $(document).ready(function() {
         $('#testBtn').click(function () {
             var testText = $(this).val();
             //alert(testText);
-                                                $.ajax({
-                                                    url: 'ajax/order.php',
-                                                    type: "POST",
-                                                    data: { action: "newPart", data: testText },
-                                                        success: function(){
-                                                            alert( 'send all artData' );
-                                                        },
-                                                        error:  function(){
-                                                            alert( 'Insert des neuen Artikels fehlgeschlagen' );
-                                                        }
-                                                });
         })
 */
 
@@ -392,10 +394,19 @@ $(document).ready(function() {
             var y = $(this).val();
             $(this).attr('value', y);
 
-            if( $( this ).parent().parent().hasClass( 'newOrderPos' ) ){                                //INSERT wenn der Container die Klasse "newOrderPos" aufweist
-                if (y.length == 1) {
-                    insertIntoDatabase();
-                }
+          /***************************************************
+          *insert only if the value has a length of 1
+          *and the class descrNewPos
+          *the error was: if you type in value and delete this,
+          *it takes everytime an insert if the value has
+          *a length of 1
+          *with the remove of the class  it gives no error.
+          *in autocomplete_part the class will added back.
+          ***************************************************/
+
+            if( y.length == 1 && $(this).hasClass( 'descrNewPos' ) ){
+                insertIntoDatabase();
+                $(this).removeClass('descrNewPos');
                 //alert('will insert')
             } else {
                     //updateDatabase();
@@ -532,12 +543,12 @@ table.tablesorter { width:auto; cursor:pointer; }
     .lblPos4 {  position:relative; left: 60px;}
     .lblPos5 {  position:relative; left: 65px;}
     .lblPos6 {  position:relative; left: 555px;}
-    .lblPos12 {  position:relative; left: 560px;}
-    .lblPos7 {  position:relative; left: 570px;}
-    .lblPos8 {  position:relative; left: 645px;}
-    .lblPos9 {  position:relative; left: 710px;}
-    .lblPos10 {  position:relative; left: 770px;}
-    .lblPos11 { position: relative; left: 840px;}
+    .lblPos12 {  position:relative; left: 570px;}
+    .lblPos7 {  position:relative; left: 585px;}
+    .lblPos8 {  position:relative; left: 660px;}
+    .lblPos9 {  position:relative; left: 725px;}
+    .lblPos10 {  position:relative; left: 785px;}
+    .lblPos11 { position: relative; left: 855px;}
     .mv {  position:relative; left: 5px; top: 3px;}
     .rmv {  position:relative; left: 10px; top: 3px;}
     /*.pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}*/

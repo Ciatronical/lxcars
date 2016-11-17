@@ -59,18 +59,12 @@ function getBuchungsgruppen(){
     echo $rs;
 }
 
-/*
-function getPartnumber(){
-    //writeLog( $orderID );
-    $rs = $GLOBALS['dbh']->getAll( "SELECT partnumber FROM parts ORDER BY ID DESC LIMIT 1", true );
-    echo $rs;
-}
-*/
-
 function newPart( $data ){
     writeLog($data);
     //echo 1;
-    echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
+    $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
+    $rs = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
+    echo $rs;
     //echo 1;
 }
 

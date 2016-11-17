@@ -93,34 +93,55 @@ namespace('kivi', function(k){
           data: { id: item.id },
           success: function(rsp) {
             $real.trigger('set_item:PartPicker', rsp);
+            //console.log(rsp);
 
 /***************************************************/
     /*******************************************/
         /***********************************/
             /***************************/
-//console.log(rsp);
 
-        $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
-        $('.newOrderPos').children().children('.description').val(rsp.description);
-        $('.newOrderPos').children('.unity').val(rsp.unit);
-        $('.newOrderPos').children('.price').val(rsp.sellprice);
-        $('.newOrderPos').children('.discount').val(rsp.not_discountable);
-        $('.newOrderPos').children('.partID').text(rsp.id);
+/***************************************************
+*if part exist
+***************************************************/
 
-        $('.orderPos').removeClass('oP');
-        $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
+            $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
+            $('.newOrderPos').children().children('.description').val(rsp.description);
+            $('.newOrderPos').children('.unity').val(rsp.unit);
+            $('.newOrderPos').children('.price').val(rsp.sellprice);
+            $('.newOrderPos').children('.discount').val(rsp.not_discountable);
+            $('.newOrderPos').children('.partID').text(rsp.id);
+            $('.newOrderPos').children().children('.description').addClass('descrNewPos');
 
-        $('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
-        $('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
-        //oPunity
+            $('.orderPos').removeClass('oP');
+            $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
 
-        $('.oP').children('.oPdescription').val(rsp.description);
-        $('.oP').children('.oPunity').val(rsp.unit);
+            $('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
+            $('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
+            //oPunity
 
-        //$('.op').children('.posID').text($('.newOrderPos').children('.posID').text());
+            $('.oP').children('.oPdescription').val(rsp.description);
+            $('.oP').children('.oPunity').val(rsp.unit);
+
+            //$('.op').children('.posID').text($('.newOrderPos').children('.posID').text());
+
+            newPosition();
+
+          },
+        });
+      } else {
+        $real.trigger('set_item:PartPicker', item);
+      }
+      annotate_state();
+    }
+
+    function newPosition() {
 
         $('.orderPos').children('.part_picker').remove();
         $('.orderPos').children('.nPunity').remove();
+
+/***************************************************
+*set values to empty string
+***************************************************/
 
         $('.newOrderPos').children('.itemNr').val('');
         $('.newOrderPos').children().children('#add_item_parts_id_name').val('');
@@ -131,6 +152,10 @@ namespace('kivi', function(k){
         $('.newOrderPos').children('.posID').text('');
 
         zaehler();
+
+/***************************************************
+*add classes for positioning
+***************************************************/
 
         $('.orderPos').children('.description').addClass('description2');
         $('.orderPos').children('.unity').addClass('unity2');
@@ -144,6 +169,11 @@ namespace('kivi', function(k){
         $('.orderPos').children('.partID').addClass('partID2');
 
         updateDatabase();
+
+/***************************************************
+*add function and
+*mathematical calculations to elements
+***************************************************/
 
         $('.elem').change(function (e) {
             updateDatabase();
@@ -200,24 +230,12 @@ namespace('kivi', function(k){
                 updateDatabase();
             }
         });
-
-            /***************************/
-        /***********************************/
-    /*******************************************/
-/***************************************************/
-
-          },
-        });
-      } else {
-        $real.trigger('set_item:PartPicker', item);
-      }
-      annotate_state();
     }
 
-/***************************************************/
-    /*******************************************/
-        /***********************************/
-            /***************************/
+/***************************************************
+*count all positions and set the value of
+*position-nr to his count
+***************************************************/
 
     function zaehler() {
         $( '.positions' ).each( function( cnt, list ){
@@ -230,6 +248,10 @@ namespace('kivi', function(k){
             }
         })
     }
+
+/***************************************************
+*updated database if changes in each position
+***************************************************/
 
     function updateDatabase() {
                 clearTimeout( timer );
@@ -374,43 +396,9 @@ namespace('kivi', function(k){
         /***********************************/
             /***************************/
 
-            /*
-            //console.log(data);
-            if (data.length == 0) {
-                var r = confirm("Keine Übereinstimmung!\nNeuen Artikel anlegen? (OK)\nEingabe korrigieren? (Abbrechen)");
-                if (r == true) {
-                    console.log("You pressed OK!");
-                } else {
-                    console.log("You pressed Abbrechen!");
-                }
-            }
-            */
-            /*
-            if (data.length == 0) {
-                $('<div></div>').appendTo('body')
-                  .html(
-                        'Bitte überprüfen Sie Ihre Eingabe:<br>' +
-                        '<h4>' + $('#add_item_parts_id_name').val() + '</h4>' +
-                        'Legen Sie den Artikel erst an oder<br>' +
-                        'korrigieren Sie Ihre Eingabe!'
-                  )
-                  .dialog({
-                      modal: true, title: 'Keine Übereinstimmung', zIndex: 10000, autoOpen: true,
-                      width: '300px', resizable: false,
-                      buttons: {
-                          Yes: function () {
-                              $(this).dialog("close");
-                          },
-                          No: function () {
-                              $(this).dialog("close");
-                          }
-                      },
-                      close: function (event, ui) {
-                          $(this).remove();
-                      }
-                });
-            }
-            */
+/***************************************************
+*if part_picker dont find any part like your value,
+***************************************************/
 
             if (data.length == 0) {
                 $('<div></div>').appendTo('body').html(
@@ -422,10 +410,19 @@ namespace('kivi', function(k){
                       modal: true, title: 'Keine Übereinstimmung', zIndex: 10000, autoOpen: true,
                       width: 'auto', resizable: false,
                       buttons: [{
+
+                          /***************************************************
+                          *button to write an article
+                          ***************************************************/
+
                           text: 'Artikel anlegen',
                           'id': 'anlegen',
                           click: function () {
                               $(this).dialog("close");
+
+                              /***************************************************
+                              *input-table for article-values
+                              ***************************************************/
 
                               var buchungsgruppen_id;
                               $('<div></div>').appendTo('body').html(
@@ -479,16 +476,14 @@ namespace('kivi', function(k){
                                       modal: true, title: 'Artikel anlegen', zIndex: 10000, autoOpen: true,
                                       width: 'auto', resizable: false,
                                       buttons: [{
+
+                                          /***************************************************
+                                          *button to insert this article in DB
+                                          ***************************************************/
+
                                           text: 'Artikel anlegen',
                                           'id': 'insertArtikel',
                                           click: function () {
-                                              //$(this).dialog("close");
-
-/********************************************************************************************************************************************************************/
-/********************************************************************************************************************************************************************/
-/********************************************************************************************************************************************************************/
-/********************************************************************************************************************************************************************/
-
                                                 //insert new parts in DB
                                                 var artObject = {};
                                                 //var artArray = [part, descr];
@@ -504,7 +499,27 @@ namespace('kivi', function(k){
                                                     url: 'ajax/order.php',
                                                     data: { action: "newPart", data: artObject },
                                                     type: "POST",
-                                                        success: function(){
+                                                        success: function(data){
+                                                            $('.newOrderPos').children('.itemNr').val(artObject['part']);
+                                                            $('#add_item_parts_id_name').val(artObject['description']);
+                                                            $('.newOrderPos').children('.unity').val(artObject['unit']);
+                                                            $('.newOrderPos').children('.price').val(artObject['sellprice']);
+                                                            $('.newOrderPos').children('.discount').val('0');
+                                                            $('.newOrderPos').children( '.partID' ).text(data[0].id);
+                                                            $('.newOrderPos').children().children('.description').addClass('descrNewPos');
+
+                                                            $('.orderPos').removeClass('oP');
+                                                            $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
+
+                                                            $('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
+                                                            $('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
+                                                            //oPunity
+
+                                                            $('.oP').children('.oPdescription').val(artObject['description']);
+                                                            $('.oP').children('.oPunity').val(artObject['unit']);
+
+                                                            newPosition();
+
                                                             alert( 'Artikel erfolgreich angelegt' );
                                                         },
                                                         error:  function(){
@@ -514,6 +529,11 @@ namespace('kivi', function(k){
                                             $(this).dialog("close");
                                           },
                                       },{
+
+                                          /***************************************************
+                                          *cancel-button
+                                          ***************************************************/
+
                                           text: 'Abbrechen',
                                           'id': 'abbrechen',
                                           click: function () {
@@ -532,20 +552,10 @@ namespace('kivi', function(k){
                                     //alert(buchungsgruppen_id);
                                 })
 
-                                /*
-                                //get last partnumber from parts
-                                $.ajax({
-                                    url: 'ajax/order.php?action=getPartnumber',
-                                    type: 'GET',
-                                    success: function (data) {
-                                            console.log(data);
-                                            //$('#selectArtAnlUnits').append($('<option id="unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
-                                    },
-                                    error:  function(){ alert("Holen der Artikelnummer fehlgeschlagen!"); }
-                                })
-                                */
+                              /***************************************************
+                              *get units
+                              ***************************************************/
 
-                                //get Units
                                 $.ajax({
                                     url: 'ajax/order.php?action=getUnits',
                                     type: 'GET',
@@ -560,7 +570,10 @@ namespace('kivi', function(k){
                                     error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
                                 })
 
-                                //get Buchungsgruppen
+                              /***************************************************
+                              *get Buchungsgruppen
+                              ***************************************************/
+
                                 $.ajax({
                                     url: 'ajax/order.php?action=getBuchungsgruppen',
                                     type: 'GET',
@@ -576,6 +589,11 @@ namespace('kivi', function(k){
                                 })
                           },
                       },{
+
+                          /***************************************************
+                          *button to change value
+                          ***************************************************/
+
                           text: 'Eingabe korrigieren',
                           'id': 'korrigieren',
                           click: function () {
