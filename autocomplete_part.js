@@ -36,6 +36,9 @@ namespace('kivi', function(k){
     var last_real = $real.val();
     var last_dummy = $dummy.val();
     var timer;
+    var defaults_id;
+    var unit;
+    var artNrZaehler = 0;
 
     function open_dialog () {
       k.popup_dialog({
@@ -100,9 +103,9 @@ namespace('kivi', function(k){
         /***********************************/
             /***************************/
 
-/***************************************************
-*if part exist
-***************************************************/
+            /***************************************************
+            *if part exist
+            ***************************************************/
 
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
@@ -139,9 +142,9 @@ namespace('kivi', function(k){
         $('.orderPos').children('.part_picker').remove();
         $('.orderPos').children('.nPunity').remove();
 
-/***************************************************
-*set values to empty string
-***************************************************/
+        /***************************************************
+        *set values to empty string
+        ***************************************************/
 
         $('.newOrderPos').children('.itemNr').val('');
         $('.newOrderPos').children().children('#add_item_parts_id_name').val('');
@@ -153,9 +156,9 @@ namespace('kivi', function(k){
 
         zaehler();
 
-/***************************************************
-*add classes for positioning
-***************************************************/
+        /***************************************************
+        *add classes for positioning
+        ***************************************************/
 
         $('.orderPos').children('.description').addClass('description2');
         $('.orderPos').children('.unity').addClass('unity2');
@@ -170,15 +173,17 @@ namespace('kivi', function(k){
 
         updateDatabase();
 
-/***************************************************
-*add function and
-*mathematical calculations to elements
-***************************************************/
+        /***************************************************
+        *add function and
+        *mathematical calculations to elements
+        ***************************************************/
 
         $('.elem').change(function (e) {
             updateDatabase();
         }).on( 'keyup', function(){
-            //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
+            /***************************************************
+            *Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
+            ***************************************************/
             var y = $(this).val();
             $(this).attr('value', y);
             updateDatabase();
@@ -187,26 +192,18 @@ namespace('kivi', function(k){
         $( '.number' ).on( 'keyup', function () {
             var x = $( this ).val();
             var y = $( this ).parent( '.orderPos' ).children( '.price' ).val();
-            //var z = ( x * y );
             $(this ).parent( '.orderPos' ).children( '.total' ).val( x * y );
-            //console.log( z );
         } )
 
         $( '.discount' ).on( 'keyup', function () {
             var number = $( this ).parent( '.orderPos' ).children( '.number' ).val();
             var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
             var discount = ( 1 - ($( this ).val() / 100) );
-            //var z = ( (number * price) * (1 - discount) )
             $( this ).parent( '.orderPos' ).children( '.total' ).val( ( number * price ) * discount );
-            //console.log( z );
         } )
 
         $( '.rmv' ).click( function (){
-            //var posToDel = {};
             var posToDel = $(this).parent().children('.posID').text();
-            //console.log(posToDel);
-            //console.log('remove');
-
                 $.ajax({
                     url: 'ajax/order.php',
                     data: { action: "delPosition", data: posToDel },
@@ -218,30 +215,31 @@ namespace('kivi', function(k){
                         alert('löschen der Daten fehlgeschlagen!');
                     }
                 });
-
             $( this ).parent().remove();
             zaehler();
             updateDatabase();
         });
-
         $('#sortable').sortable({
             update: function() {
                 zaehler();
                 updateDatabase();
             }
         });
+        $('#add_item_parts_id_name').focus();
     }
 
-/***************************************************
-*count all positions and set the value of
-*position-nr to his count
-***************************************************/
+    /***************************************************
+    *count all positions and set the value of
+    *position-nr to his count
+    ***************************************************/
 
     function zaehler() {
         $( '.positions' ).each( function( cnt, list ){
             $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
-            //For-Schleife um in den einzelnen ListenElementen die Felder
-            //durch zu zählen und zu nummerieren
+            /***************************************************
+            *For-Schleife um in den einzelnen ListenElementen die Felder
+            *durch zu zählen und zu nummerieren
+            ***************************************************/
             var elements = $( this ).children( '.elem' );
             for( var i = 0; i < elements.length; i++ ){
                 elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
@@ -249,50 +247,44 @@ namespace('kivi', function(k){
         })
     }
 
-/***************************************************
-*updated database if changes in each position
-***************************************************/
+    /***************************************************
+    *updated database if changes in each position
+    ***************************************************/
 
     function updateDatabase() {
-                clearTimeout( timer );
-                timer = setTimeout( function(){   //calls click event after a certain time
-                    var updateDataJSON = new Array;
-                    $( 'ul#sortable > li' ).each( function(){
-                        updateDataJSON.push({
-                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-                            "order_nr": $( this ).children( '.pos' ).val(),
-                            "item_nr": $( this ).children( '.itemNr' ).val(),
-                            "pos_description": $( this ).children( '.description' ).val(),
-                            "pos_unit": $( this ).children( '.unity' ).val(),
-                            "pos_qty": $( this ).children( '.number' ).val(),
-                            "pos_price": $( this ).children( '.price' ).val(),
-                            "pos_discount": $( this ).children( '.discount' ).val(),
-                            "pos_total": $( this ).children( '.total' ).val(),
-                            "pos_emp": $( this ).children( '.mechanics' ).val(),
-                            "pos_status": $( this ).children( '.status' ).val(),
-                            "pos_id": $( this ).children( '.posID' ).text(),
-                            "partID": $( this ).children( '.partID' ).text()
-                        });
-                    })
-
-                    updateDataJSON.pop();
-                    //console.log(updateDataJSON);
-
-                    $.ajax({
-                        url: 'ajax/order.php',
-                        //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
-                        data: { action: "updatePositions", data: updateDataJSON },
-                        type: "POST",
-                            success: function(){
-                                //alert( 'send all posdata' );
-                            },
-                            error:  function(){
-                                alert( 'error sending posdata' );
-                            }
-                    });
-
-
-                }, 800 );
+        clearTimeout( timer );
+        timer = setTimeout( function(){   //calls click event after a certain time
+            var updateDataJSON = new Array;
+            $( 'ul#sortable > li' ).each( function(){
+                updateDataJSON.push({
+                    //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                    "order_nr": $( this ).children( '.pos' ).val(),
+                    "item_nr": $( this ).children( '.itemNr' ).val(),
+                    "pos_description": $( this ).children( '.description' ).val(),
+                    "pos_unit": $( this ).children( '.unity' ).val(),
+                    "pos_qty": $( this ).children( '.number' ).val(),
+                    "pos_price": $( this ).children( '.price' ).val(),
+                    "pos_discount": $( this ).children( '.discount' ).val(),
+                    "pos_total": $( this ).children( '.total' ).val(),
+                    "pos_emp": $( this ).children( '.mechanics' ).val(),
+                    "pos_status": $( this ).children( '.status' ).val(),
+                    "pos_id": $( this ).children( '.posID' ).text(),
+                    "partID": $( this ).children( '.partID' ).text()
+                });
+            })
+            updateDataJSON.pop();
+            $.ajax({
+                url: 'ajax/order.php',
+                data: { action: "updatePositions", data: updateDataJSON },
+                type: "POST",
+                    success: function(){
+                        //alert( 'send all posdata' );
+                    },
+                    error:  function(){
+                        alert( 'error sending posdata' );
+                    }
+            });
+        }, 800 );
     }
 
             /***************************/
@@ -383,243 +375,240 @@ namespace('kivi', function(k){
           success:  function (data){
             rsp(data);
 
-
-
-
-
-
-
-
-
 /***************************************************/
     /*******************************************/
         /***********************************/
             /***************************/
 
-/***************************************************
-*if part_picker dont find any part like your value,
-***************************************************/
+                /***************************************************
+                *if part_picker dont find any part like your value,
+                ***************************************************/
 
-            if (data.length == 0) {
-                $('<div></div>').appendTo('body').html(
-                        'Bitte überprüfen Sie Ihre Eingabe:<br>' +
-                        '<h4>' + $('#add_item_parts_id_name').val() + '</h4>' +
-                        'Legen Sie den Artikel erst an oder<br>' +
-                        'korrigieren Sie Ihre Eingabe!'
-                  ).dialog({
-                      modal: true, title: 'Keine Übereinstimmung', zIndex: 10000, autoOpen: true,
-                      width: 'auto', resizable: false,
-                      buttons: [{
+                clearTimeout( timer );
+                timer = setTimeout( function(){   //calls click event after a certain time
+                    if (data.length == 0) {
+                        $('<div></div>').appendTo('body').html(
+                                'Bitte überprüfen Sie Ihre Eingabe:<br>' +
+                                '<h4>' + $('#add_item_parts_id_name').val() + '</h4>' +
+                                'Legen Sie den Artikel erst an oder<br>' +
+                                'korrigieren Sie Ihre Eingabe!'
+                          ).dialog({
+                              modal: true, title: 'Keine Übereinstimmung', zIndex: 10000, autoOpen: true,
+                              width: 'auto', resizable: false,
+                              buttons: [{
 
-                          /***************************************************
-                          *button to write an article
-                          ***************************************************/
+                                  /***************************************************
+                                  *button to write an article
+                                  ***************************************************/
 
-                          text: 'Artikel anlegen',
-                          'id': 'anlegen',
-                          click: function () {
-                              $(this).dialog("close");
+                                  text: 'Artikel anlegen',
+                                  'id': 'anlegen',
+                                  click: function () {
+                                      $(this).dialog("close");
 
-                              /***************************************************
-                              *input-table for article-values
-                              ***************************************************/
+                                      /***************************************************
+                                      *input-table for article-values
+                                      ***************************************************/
 
-                              var buchungsgruppen_id;
-                              $('<div></div>').appendTo('body').html(
-                                        '<table>' +
-                                            '<tr>' +
-                                                '<td>' +
-                                                    'Artikel-Nr.:' +
-                                                '</td>' +
-                                                '<td>' +
-                                                    '<input type="text" id="txtArtAnlArtikelNr">' +
-                                                '</td>' +
-                                            '</tr>' +
-                                            '<tr>' +
-                                                '<td>' +
-                                                    'Beschreibung:' +
-                                                '</td>' +
-                                                '<td>' +
-                                                    '<input type="text" id="txtArtAnlBeschreibung" value="' + $('#add_item_parts_id_name').val() + '">' +
-                                                '</td>' +
-                                            '</tr>' +
-                                            '<tr>' +
-                                                '<td>' +
-                                                    'Einheit:' +
-                                                '</td>' +
-                                                '<td>' +
-                                                    '<select id="selectArtAnlUnits" name="units" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
-                                                        '<option selected="selected"></option>' +
-                                                    '</select>' +
-                                                '</td>' +
-                                            '</tr>' +
-                                            '<tr>' +
-                                                '<td>' +
-                                                    'Preis:' +
-                                                '</td>' +
-                                                '<td>' +
-                                                    '<input type="text" id="txtArtAnlPreis">' +
-                                                '</td>' +
-                                            '</tr>' +
-                                            '<tr>' +
-                                                '<td>' +
-                                                    'Buchungsgruppe:' +
-                                                '</td>' +
-                                                '<td>' +
-                                                    '<select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
-                                                        '<option selected="selected"></option>' +
-                                                    '</select>' +
-                                                '</td>' +
-                                            '</tr>' +
-                                        '</table>'
-                                  ).dialog({
-                                      modal: true, title: 'Artikel anlegen', zIndex: 10000, autoOpen: true,
-                                      width: 'auto', resizable: false,
-                                      buttons: [{
+                                      var buchungsgruppen_id;
+                                      $('<div></div>').appendTo('body').html(
+                                                '<table>' +
+                                                    '<tr>' +
+                                                        '<td>' +
+                                                            'Artikel-Nr.:' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="text" id="txtArtAnlArtikelNr">' +
+                                                        '</td>' +
+                                                    '</tr>' +
+                                                    '<tr>' +
+                                                        '<td>' +
+                                                            'Beschreibung:' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="text" id="txtArtAnlBeschreibung" value="' + $('#add_item_parts_id_name').val() + '">' +
+                                                        '</td>' +
+                                                    '</tr>' +
+                                                    '<tr>' +
+                                                        '<td>' +
+                                                            'Einheit:' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<select id="selectArtAnlUnits" name="units" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
+                                                                '<option selected="selected"></option>' +
+                                                            '</select>' +
+                                                        '</td>' +
+                                                    '</tr>' +
+                                                    '<tr>' +
+                                                        '<td>' +
+                                                            'Preis:' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="text" id="txtArtAnlPreis">' +
+                                                        '</td>' +
+                                                    '</tr>' +
+                                                    '<tr>' +
+                                                        '<td>' +
+                                                            'Buchungsgruppe:' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
+                                                                '<option selected="selected"></option>' +
+                                                            '</select>' +
+                                                        '</td>' +
+                                                    '</tr>' +
+                                                '</table>'
+                                          ).dialog({
+                                              modal: true, title: 'Artikel anlegen', zIndex: 10000, autoOpen: true,
+                                              width: 'auto', resizable: false,
+                                              buttons: [{
 
-                                          /***************************************************
-                                          *button to insert this article in DB
-                                          ***************************************************/
+                                                  /***************************************************
+                                                  *button to insert this article in DB
+                                                  ***************************************************/
 
-                                          text: 'Artikel anlegen',
-                                          'id': 'insertArtikel',
-                                          click: function () {
-                                                //insert new parts in DB
-                                                var artObject = {};
-                                                //var artArray = [part, descr];
-                                                //console.log(artArray);
-                                                artObject['part'] = $('#txtArtAnlArtikelNr').val();
-                                                artObject['description'] = $('#txtArtAnlBeschreibung').val();
-                                                artObject['unit'] = $('#selectArtAnlUnits').val();
-                                                artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
-                                                artObject['buchungsgruppen_id'] = buchungsgruppen_id;
-                                                //console.log(artObject);
+                                                  text: 'Artikel anlegen',
+                                                  'id': 'insertArtikel',
+                                                  click: function () {
+                                                        var artObject = {};
+                                                        artObject['part'] = $('#txtArtAnlArtikelNr').val();
+                                                        artObject['description'] = $('#txtArtAnlBeschreibung').val();
+                                                        artObject['unit'] = $('#selectArtAnlUnits').val();
+                                                        artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
+                                                        artObject['buchungsgruppen_id'] = buchungsgruppen_id;
+                                                        $.ajax({
+                                                            url: 'ajax/order.php',
+                                                            data: { action: "newPart", data: artObject },
+                                                            type: "POST",
+                                                                success: function(data){
+                                                                    $('.newOrderPos').children('.itemNr').val(artObject['part']);
+                                                                    $('#add_item_parts_id_name').val(artObject['description']);
+                                                                    $('.newOrderPos').children('.unity').val(artObject['unit']);
+                                                                    $('.newOrderPos').children('.price').val(artObject['sellprice']);
+                                                                    $('.newOrderPos').children('.discount').val('0');
+                                                                    $('.newOrderPos').children( '.partID' ).text(data[0].id);
+                                                                    $('.newOrderPos').children().children('.description').addClass('descrNewPos');
 
-                                                $.ajax({
-                                                    url: 'ajax/order.php',
-                                                    data: { action: "newPart", data: artObject },
-                                                    type: "POST",
-                                                        success: function(data){
-                                                            $('.newOrderPos').children('.itemNr').val(artObject['part']);
-                                                            $('#add_item_parts_id_name').val(artObject['description']);
-                                                            $('.newOrderPos').children('.unity').val(artObject['unit']);
-                                                            $('.newOrderPos').children('.price').val(artObject['sellprice']);
-                                                            $('.newOrderPos').children('.discount').val('0');
-                                                            $('.newOrderPos').children( '.partID' ).text(data[0].id);
-                                                            $('.newOrderPos').children().children('.description').addClass('descrNewPos');
+                                                                    $('.orderPos').removeClass('oP');
+                                                                    $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
 
-                                                            $('.orderPos').removeClass('oP');
-                                                            $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
+                                                                    $('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
+                                                                    $('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
+                                                                    //oPunity
 
-                                                            $('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
-                                                            $('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
-                                                            //oPunity
+                                                                    $('.oP').children('.oPdescription').val(artObject['description']);
+                                                                    $('.oP').children('.oPunity').val(artObject['unit']);
 
-                                                            $('.oP').children('.oPdescription').val(artObject['description']);
-                                                            $('.oP').children('.oPunity').val(artObject['unit']);
+                                                                    newPosition();
+                                                                    increaseArticleNumber();
 
-                                                            newPosition();
+                                                                    alert( 'Artikel erfolgreich angelegt' );
+                                                                },
+                                                                error:  function(){
+                                                                    alert( 'Artikel konnte nicht angelegt werden' );
+                                                                }
+                                                        });
+                                                    $(this).dialog("close");
+                                                  },
+                                              },{
 
-                                                            alert( 'Artikel erfolgreich angelegt' );
-                                                        },
-                                                        error:  function(){
-                                                            alert( 'Artikel konnte nicht angelegt werden' );
-                                                        }
-                                                });
-                                            $(this).dialog("close");
-                                          },
-                                      },{
+                                                  /***************************************************
+                                                  *cancel-button
+                                                  ***************************************************/
 
-                                          /***************************************************
-                                          *cancel-button
-                                          ***************************************************/
+                                                  text: 'Abbrechen',
+                                                  'id': 'abbrechen',
+                                                  click: function () {
+                                                      $(this).dialog("close");
+                                                  },
+                                              }],
+                                              close: function (event, ui) {
+                                                  $(this).remove();
+                                              }
+                                        });
 
-                                          text: 'Abbrechen',
-                                          'id': 'abbrechen',
-                                          click: function () {
-                                              $(this).dialog("close");
-                                          },
-                                      }],
-                                      close: function (event, ui) {
-                                          $(this).remove();
-                                      }
-                                });
+                                        $('#txtArtAnlPreis').focus();
 
-                                $('#add_item_parts_id_name').val('');
+                                        $('#add_item_parts_id_name').val('');
 
-                                $('#selectArtAnlBuchungsgruppen').change(function () {
-                                    buchungsgruppen_id = $(this).children(':selected').attr('id');
-                                    //alert(buchungsgruppen_id);
-                                })
-
-                              /***************************************************
-                              *get units
-                              ***************************************************/
-
-                                $.ajax({
-                                    url: 'ajax/order.php?action=getUnits',
-                                    type: 'GET',
-                                    success: function (data) {
-
-                                        $.each(data, function (index, item) {
-                                            //console.log(item);
-                                            $('#selectArtAnlUnits').append($('<option id="unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+                                        $('#selectArtAnlBuchungsgruppen').change(function () {
+                                            buchungsgruppen_id = $(this).children(':selected').attr('id');
+                                            //alert(buchungsgruppen_id);
                                         })
 
-                                    },
-                                    error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
-                                })
-
-                              /***************************************************
-                              *get Buchungsgruppen
-                              ***************************************************/
-
-                                $.ajax({
-                                    url: 'ajax/order.php?action=getBuchungsgruppen',
-                                    type: 'GET',
-                                    success: function (data) {
-
-                                        $.each(data, function (index, item) {
-                                            //console.log(item);
-                                            $('#selectArtAnlBuchungsgruppen').append($('<option id="'+item.id+'" value="'+item.description+'">'+item.description+'</option>'));
+                                        $('#selectArtAnlUnits').change(function () {
+                                            unit = $(this).val();
+                                            //console.log(unit);
+                                            getArtikelNr();
                                         })
 
-                                    },
-                                    error:  function(){ alert("Holen der Buchungsgruppen fehlgeschlagen!"); }
-                                })
-                          },
-                      },{
+                                      /***************************************************
+                                      *get units
+                                      ***************************************************/
 
-                          /***************************************************
-                          *button to change value
-                          ***************************************************/
+                                        $.ajax({
+                                            url: 'ajax/order.php?action=getUnits',
+                                            type: 'GET',
+                                            success: function (data) {
 
-                          text: 'Eingabe korrigieren',
-                          'id': 'korrigieren',
-                          click: function () {
-                              $(this).dialog("close");
-                          },
-                      }],
-                      close: function (event, ui) {
-                          $(this).remove();
-                      }
-                });
-            }
+                                                $.each(data, function (index, item) {
+                                                    //console.log(item);
+                                                    $('#selectArtAnlUnits').append($('<option id="unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+                                                    if (item.name == 'Std') {
+                                                        $('#selectArtAnlUnits').children('#unit__'+item.name).attr('selected', 'selected');
+                                                        unit = item.name;
+                                                        getArtikelNr();
+                                                    }
+                                                })
 
+                                            },
+                                            error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
+                                        })
 
+                                      /***************************************************
+                                      *get Buchungsgruppen
+                                      ***************************************************/
+
+                                        $.ajax({
+                                            url: 'ajax/order.php?action=getBuchungsgruppen',
+                                            type: 'GET',
+                                            success: function (data) {
+
+                                                $.each(data, function (index, item) {
+                                                    //console.log(item);
+                                                    $('#selectArtAnlBuchungsgruppen').append($('<option id="'+item.id+'" value="'+item.description+'">'+item.description+'</option>'));
+                                                    if (item.id == 859) {
+                                                        $('#selectArtAnlBuchungsgruppen').children('#'+item.id).attr('selected', 'selected');
+                                                    }
+                                                })
+
+                                            },
+                                            error:  function(){ alert("Holen der Buchungsgruppen fehlgeschlagen!"); }
+                                        })
+                                  },
+                              },{
+
+                                  /***************************************************
+                                  *button to change value
+                                  ***************************************************/
+
+                                  text: 'Eingabe korrigieren',
+                                  'id': 'korrigieren',
+                                  click: function () {
+                                      $(this).dialog("close");
+                                  },
+                              }],
+                              close: function (event, ui) {
+                                  $(this).remove();
+                              }
+                        });
+                    }
+                }, 1000 );
 
             /***************************/
         /***********************************/
     /*******************************************/
 /***************************************************/
-
-
-
-
-
-
-
-
 
           }
         }));
@@ -628,6 +617,59 @@ namespace('kivi', function(k){
         set_item(ui.item);
       },
     });
+
+/***************************************************/
+    /*******************************************/
+        /***********************************/
+            /***************************/
+
+    /***************************************************
+    *get Article-Number
+    ***************************************************/
+
+    function getArtikelNr() {
+        $.ajax({
+            url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
+            type: 'GET',
+            success: function (data) {
+                defaults_id = data[0].defaults_id;
+                $('#txtArtAnlArtikelNr').val(data[0].art_nr);
+                artNrZaehler = parseInt( data[0].art_nr );
+                artNrZaehler = (artNrZaehler + 1);
+            },
+            error:  function(){ alert("Holen der Artikel-Nr. fehlgeschlagen!"); }
+        })
+    }
+
+    /***************************************************
+    *increase article-number in DB defaults
+    ***************************************************/
+
+    function increaseArticleNumber() {
+        var updArtNr = new Array;
+        updArtNr.push({
+            'id': defaults_id,
+            'unit': unit,
+            'artNr': artNrZaehler
+        });
+        $.ajax({
+            url: 'ajax/order.php',
+            data: { action: "increaseArticleNr", data: updArtNr },
+            type: "POST",
+                success: function(data){
+                    //alert( 'Artikel-Nr erfolgreich erhöht' );
+                },
+                error:  function(){
+                    //alert( 'Artikel-Nr konnte nicht erhöht werden' );
+                }
+        });
+    }
+
+            /***************************/
+        /***********************************/
+    /*******************************************/
+/***************************************************/
+
     /*  In case users are impatient and want to skip ahead:
      *  Capture <enter> key events and check if it's a unique hit.
      *  If it is, go ahead and assume it was selected. If it wasn't don't do

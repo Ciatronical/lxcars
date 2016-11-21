@@ -4,7 +4,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -60,12 +60,37 @@ function getBuchungsgruppen(){
 }
 
 function newPart( $data ){
-    writeLog($data);
+    //writeLog($data);
     //echo 1;
     $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
     $rs = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
     echo $rs;
     //echo 1;
+}
+
+function getArticleNumber( $unit ){
+    //writeLog( $unit );
+    if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml') {
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber AS art_nr FROM defaults", true);
+    }elseif($unit == 'Tag' || $unit == 'Std' || $unit == 'min') {
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber AS art_nr FROM defaults", true);
+    }
+    echo $rs;
+}
+
+function increaseArticleNr( $updArtNr) {
+    //writeLog( $updArtNr );
+    $GLOBALS['dbh']->begin();
+    foreach( $updArtNr as $key => $value ){
+        if($value['unit'] == 'Stck' || $value['unit'] == 't' || $value['unit'] == 'kg' || $value['unit'] == 'g' || $value['unit'] == 'mg' || $value['unit'] == 'L' || $value['unit'] == 'ml') {
+            $GLOBALS['dbh']->update( 'defaults', array('articlenumber'), array($value['artNr']), 'id = '.$value['id']);
+            writeLog($value['id']);
+        }elseif($value['unit'] == 'Tag' || $value['unit'] == 'Std' || $value['unit'] == 'min') {
+            $GLOBALS['dbh']->update( 'defaults', array('servicenumber'), array($value['artNr']), 'id = '.$value['id']);
+        }
+    }
+    $GLOBALS['dbh']->commit();
+    echo 1;
 }
 
 

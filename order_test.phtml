@@ -93,11 +93,11 @@ $(document).ready(function() {
                 $('#head02').text(data[0].order_id);
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
+                $('#head16').text(data[0].transdate);
                 /*
                 $('#head06').val(data[0].lxc_a_finish_time)
                 $('#head08').val(data[0].lxc_a_km);
                 $('#head12').text(data[0].lxc_a_modified_on);
-                $('#head16').text(data[0].lxc_a_init_time);
                 $('#head20').text(data[0].c_ln);
                 */
                 orderID = data[0].oe_id;
@@ -119,6 +119,15 @@ $(document).ready(function() {
 
                     $.each(data, function (index, item) {
                         //console.log(item);
+                        /*
+                        var sellprice = item.sellprice;
+                        sellprice = sellprice.toLocaleString('en-US', {minimumFractionDigits: 2}).replace('.', ',');
+                        var discount = item.discount;
+                        discount = discount.toLocaleString('en-US', {minimumFractionDigits: 1}).replace('.', ',');
+                        var marge_total = item.marge_total;
+                        marge_total = marge_total.toLocaleString('en-US', {minimumFractionDigits: 2}).replace('.', ',');
+                        */
+                        //console.log(marge_total);
                         $('<li class="orderPos positions new">' +
                             '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
                             '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
@@ -165,11 +174,10 @@ $(document).ready(function() {
 
 
                     })
-                    //console.log(grpMbr)
-                    //console.log(getMembers);
-                    $.each( getMembers, function ( index, item ) {
-                        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
-                    } )
+
+                        $.each( getMembers, function ( index, item ) {
+                            $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
+                        } )
 
                         $.each(grpMbr,function (index, item) {
                             $('.orderPos').each(function () {
@@ -372,6 +380,7 @@ $(document).ready(function() {
         '</div>').appendTo('body');
         //}
 
+        $('#add_item_parts_id_name').focus();
         $( '.posID' ).hide();
         $( '.partID' ).hide();
 
@@ -393,18 +402,7 @@ $(document).ready(function() {
             //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
             var y = $(this).val();
             $(this).attr('value', y);
-
-          /***************************************************
-          *insert only if the value has a length of 1
-          *and the class descrNewPos
-          *the error was: if you type in value and delete this,
-          *it takes everytime an insert if the value has
-          *a length of 1
-          *with the remove of the class  it gives no error.
-          *in autocomplete_part the class will added back.
-          ***************************************************/
-
-            if( y.length == 1 && $(this).hasClass( 'descrNewPos' ) ){
+            if( y.length >= 1 && $(this).hasClass( 'descrNewPos' ) ){
                 insertIntoDatabase();
                 $(this).removeClass('descrNewPos');
                 //alert('will insert')
@@ -428,78 +426,67 @@ $(document).ready(function() {
     }
 
     function insertIntoDatabase() {
-                var posObject = {};
-                var posArray = $( '.newOrderPos' ).children( '.elem' );
-                //console.log( posArray );
-                $.each( posArray, function( index, item ){
-                    posObject[item.name] = item.value;
-                    //console.log( posObject );
-                });
-                posObject['order_id'] = orderID;
-                posObject['description'] = $( '.newOrderPos' ).children().children( '.elem' ).val();
-                //console.log( posObject );
-
-                // Insert
-                $.ajax({
-                    url: 'ajax/order.php',
-                    //data: { action: "newEntry", data: JSON.stringify(sendData) },
-                    data: { action: "newEntry", data: posObject },
-                    type: "POST",
-                    success: function(result){
-                        //alert(result);
-                        //console.log(result);
-                            $('.newOrderPos').children('.posID').text(result);
-                            //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
-                    },
-                    error:   function(){
-                        alert('Insert der Daten fehlgeschlagen!');
-                    }
-                });
-
+        var posObject = {};
+        var posArray = $( '.newOrderPos' ).children( '.elem' );
+        $.each( posArray, function( index, item ){
+            posObject[item.name] = item.value;
+        });
+        posObject['order_id'] = orderID;
+        posObject['description'] = $( '.newOrderPos' ).children().children( '.elem' ).val();
+        // Insert
+        $.ajax({
+            url: 'ajax/order.php',
+            //data: { action: "newEntry", data: JSON.stringify(sendData) },
+            data: { action: "newEntry", data: posObject },
+            type: "POST",
+            success: function(result){
+                    $('.newOrderPos').children('.posID').text(result);
+                    //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
+            },
+            error:   function(){
+                alert('Insert der Daten fehlgeschlagen!');
+            }
+        });
     }
 
     function updateDatabase() {
-                clearTimeout( timer );
-                timer = setTimeout( function(){   //calls click event after a certain time
-                    var updateDataJSON = new Array;
-                    $( 'ul#sortable > li' ).each( function(){
-                        //var mechOptSel = $('option:selected', this).attr('u-id');
-                        updateDataJSON.push({
-                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-                            "order_nr": $( this ).children( '.pos' ).val(),
-                            "item_nr": $( this ).children( '.itemNr' ).val(),
-                            "pos_description": $( this ).children( '.description' ).val(),
-                            "pos_unit": $( this ).children( '.unity' ).val(),
-                            "pos_qty": $( this ).children( '.number' ).val(),
-                            "pos_price": $( this ).children( '.price' ).val(),
-                            "pos_discount": $( this ).children( '.discount' ).val(),
-                            "pos_total": $( this ).children( '.total' ).val(),
-                            "pos_emp": $( this ).children( '.mechanics' ).val(),
-                            "pos_status": $( this ).children( '.status' ).val(),
-                            "pos_id": $( this ).children( '.posID' ).text(),
-                            "partID": $( this ).children( '.partID' ).text()
-                        });
-                    })
+        clearTimeout( timer );
+        timer = setTimeout( function(){   //calls click event after a certain time
+            var updateDataJSON = new Array;
+            $( 'ul#sortable > li' ).each( function(){
+                //var mechOptSel = $('option:selected', this).attr('u-id');
+                updateDataJSON.push({
+                    //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                    "order_nr": $( this ).children( '.pos' ).val(),
+                    "item_nr": $( this ).children( '.itemNr' ).val(),
+                    "pos_description": $( this ).children( '.description' ).val(),
+                    "pos_unit": $( this ).children( '.unity' ).val(),
+                    "pos_qty": $( this ).children( '.number' ).val(),
+                    "pos_price": $( this ).children( '.price' ).val(),
+                    "pos_discount": $( this ).children( '.discount' ).val(),
+                    "pos_total": $( this ).children( '.total' ).val(),
+                    "pos_emp": $( this ).children( '.mechanics' ).val(),
+                    "pos_status": $( this ).children( '.status' ).val(),
+                    "pos_id": $( this ).children( '.posID' ).text(),
+                    "partID": $( this ).children( '.partID' ).text()
+                });
+            })
 
-                    updateDataJSON.pop();
-                    //console.log(updateDataJSON);
-                    //console.log('will update');
+            updateDataJSON.pop();
 
-                    $.ajax({
-                        url: 'ajax/order.php',
-                        //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
-                        data: { action: "updatePositions", data: updateDataJSON },
-                        type: "POST",
-                            success: function(){
-                                //alert( 'send all posdata' );
-                            },
-                            error:  function(){
-                                alert( 'Update fehlgeschlagen' );
-                            }
-                    });
-
-
-                }, 800 );
+            $.ajax({
+                url: 'ajax/order.php',
+                //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                data: { action: "updatePositions", data: updateDataJSON },
+                type: "POST",
+                    success: function(){
+                        //alert( 'send all posdata' );
+                    },
+                    error:  function(){
+                        alert( 'Update fehlgeschlagen' );
+                    }
+            });
+        }, 800 );
     }
 
 }); //Ende $(document).ready()
