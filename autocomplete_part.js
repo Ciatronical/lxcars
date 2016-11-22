@@ -110,7 +110,7 @@ namespace('kivi', function(k){
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
             $('.newOrderPos').children('.unity').val(rsp.unit);
-            $('.newOrderPos').children('.price').val(rsp.sellprice);
+            $('.newOrderPos').children('.price').val((rsp.sellprice).replace('.', ','));
             $('.newOrderPos').children('.discount').val(rsp.not_discountable);
             $('.newOrderPos').children('.partID').text(rsp.id);
             $('.newOrderPos').children().children('.description').addClass('descrNewPos');
@@ -190,16 +190,32 @@ namespace('kivi', function(k){
         } )
 
         $( '.number' ).on( 'keyup', function () {
-            var x = $( this ).val();
-            var y = $( this ).parent( '.orderPos' ).children( '.price' ).val();
-            $(this ).parent( '.orderPos' ).children( '.total' ).val( x * y );
+            var number = $( this ).val().replace(',', '.');
+            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
+            var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+            //console.log('NUMBERCHANGE = ' + price + ', ' + number + ', ' + discount);
+            //var z = ( x * y );
+            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+            //console.log( (number * price) * discount );
+        } )
+
+        $( '.price' ).on( 'keyup', function () {
+            var price = $( this ).val().replace(',', '.');
+            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+            var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+            //console.log('PRICECHANGE = ' + price + ', ' + number + ', ' + discount);
+            //var z = ( x * y );
+            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+            //console.log( z );
         } )
 
         $( '.discount' ).on( 'keyup', function () {
-            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val();
-            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
             var discount = ( 1 - ($( this ).val() / 100) );
-            $( this ).parent( '.orderPos' ).children( '.total' ).val( ( number * price ) * discount );
+            //var z = ( (number * price) * (1 - discount) )
+            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+            //console.log( z );
         } )
 
         $( '.rmv' ).click( function (){
@@ -263,9 +279,9 @@ namespace('kivi', function(k){
                     "pos_description": $( this ).children( '.description' ).val(),
                     "pos_unit": $( this ).children( '.unity' ).val(),
                     "pos_qty": $( this ).children( '.number' ).val(),
-                    "pos_price": $( this ).children( '.price' ).val(),
+                    "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
                     "pos_discount": $( this ).children( '.discount' ).val(),
-                    "pos_total": $( this ).children( '.total' ).val(),
+                    "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
                     "pos_emp": $( this ).children( '.mechanics' ).val(),
                     "pos_status": $( this ).children( '.status' ).val(),
                     "pos_id": $( this ).children( '.posID' ).text(),
@@ -484,7 +500,7 @@ namespace('kivi', function(k){
                                                                     $('.newOrderPos').children('.itemNr').val(artObject['part']);
                                                                     $('#add_item_parts_id_name').val(artObject['description']);
                                                                     $('.newOrderPos').children('.unity').val(artObject['unit']);
-                                                                    $('.newOrderPos').children('.price').val(artObject['sellprice']);
+                                                                    $('.newOrderPos').children('.price').val((artObject['sellprice']).replace('.', ','));
                                                                     $('.newOrderPos').children('.discount').val('0');
                                                                     $('.newOrderPos').children( '.partID' ).text(data[0].id);
                                                                     $('.newOrderPos').children().children('.description').addClass('descrNewPos');
@@ -503,6 +519,9 @@ namespace('kivi', function(k){
                                                                     increaseArticleNumber();
 
                                                                     alert( 'Artikel erfolgreich angelegt' );
+
+                                                                    updateDatabase();
+
                                                                 },
                                                                 error:  function(){
                                                                     alert( 'Artikel konnte nicht angelegt werden' );

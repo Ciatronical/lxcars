@@ -136,9 +136,9 @@ $(document).ready(function() {
                             '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
                             '<input value="'+item.unit+'" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity unity2 elem" autocomplete="off">' +
                             '<input value="'+item.qty+'" type="text" class="ui-widget-content ui-corner-all number number2 elem">' +
-                            '<input value="'+item.sellprice+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem">' +
+                            '<input value="'+item.sellprice.toFixed(2).replace('.', ',')+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem">' +
                             '<input value="'+item.discount+'" type="text" id="input_05" class="ui-widget-content ui-corner-all discount discount2 elem">' +
-                            '<input value="'+item.marge_total+'" name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total total2 elem" autocomplete="off">' +
+                            '<input value="'+item.marge_total.toFixed(2).replace('.', ',')+'" name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total total2 elem" autocomplete="off">' +
                             '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics mechanics2 elem" autocomplete="off">' +
                                 '<option class="opt mech__0" value="0"></option>' +
                             '</select>' +
@@ -272,19 +272,31 @@ $(document).ready(function() {
                         } )
 
                         $( '.number' ).on( 'keyup', function () {
-                            var number = $( this ).val();
-                            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+                            var number = $( this ).val().replace(',', '.');
+                            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
+                            var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+                            //console.log('NUMBERCHANGE = ' + price + ', ' + number + ', ' + discount);
                             //var z = ( x * y );
-                            $( this ).parent( '.orderPos' ).children( '.total' ).val( number * price );
+                            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                            //console.log( (number * price) * discount );
+                        } )
+
+                        $( '.price' ).on( 'keyup', function () {
+                            var price = $( this ).val().replace(',', '.');
+                            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+                            var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+                            //console.log('PRICECHANGE = ' + price + ', ' + number + ', ' + discount);
+                            //var z = ( x * y );
+                            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                             //console.log( z );
                         } )
 
                         $( '.discount' ).on( 'keyup', function () {
-                            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val();
-                            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val();
+                            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+                            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
                             var discount = ( 1 - ($( this ).val() / 100) );
                             //var z = ( (number * price) * (1 - discount) )
-                            $( this ).parent( '.orderPos' ).children( '.total' ).val( ( number * price ) * discount );
+                            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                             //console.log( z );
                         } )
 
@@ -462,9 +474,9 @@ $(document).ready(function() {
                     "pos_description": $( this ).children( '.description' ).val(),
                     "pos_unit": $( this ).children( '.unity' ).val(),
                     "pos_qty": $( this ).children( '.number' ).val(),
-                    "pos_price": $( this ).children( '.price' ).val(),
+                    "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
                     "pos_discount": $( this ).children( '.discount' ).val(),
-                    "pos_total": $( this ).children( '.total' ).val(),
+                    "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
                     "pos_emp": $( this ).children( '.mechanics' ).val(),
                     "pos_status": $( this ).children( '.status' ).val(),
                     "pos_id": $( this ).children( '.posID' ).text(),
