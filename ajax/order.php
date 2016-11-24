@@ -3,7 +3,7 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
-    //writeLog( $id );
+    writeLog( $id );
     $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
     //writeLog($rs);
     echo $rs;
@@ -11,7 +11,7 @@ function getOrder( $id ){
 
 function getPositions( $orderID ){
     //writeLog( $orderID );
-    $rs = $GLOBALS['dbh']->getAll( "SELECT orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE trans_id = '".$orderID."'AND parts.id = orderitems.parts_id ORDER BY item_position", true );
+    $rs = $GLOBALS['dbh']->getAll( "SELECT orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."'AND parts.id = orderitems.parts_id ORDER BY item_position", true );
     //$rs = $GLOBALS['dbh']->getAll( "SELECT id AS position_id, parts_id, description, position AS item_position, unit, sellprice, marge_total, discount FROM orderitems WHERE trans_id = '".$orderID."' ORDER BY item_position", true );
     //writeLog( $rs );
     echo $rs;
@@ -62,7 +62,7 @@ function getBuchungsgruppen(){
 function newPart( $data ){
     //writeLog($data);
     //echo 1;
-    $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
+    $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
     $rs = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
     echo $rs;
     //echo 1;
@@ -72,7 +72,7 @@ function getArticleNumber( $unit ){
     //writeLog( $unit );
     if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml') {
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber AS art_nr FROM defaults", true);
-    }elseif($unit == 'Tag' || $unit == 'Std' || $unit == 'min') {
+    }elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min') {
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber AS art_nr FROM defaults", true);
     }
     echo $rs;
@@ -85,7 +85,7 @@ function increaseArticleNr( $updArtNr) {
         if($value['unit'] == 'Stck' || $value['unit'] == 't' || $value['unit'] == 'kg' || $value['unit'] == 'g' || $value['unit'] == 'mg' || $value['unit'] == 'L' || $value['unit'] == 'ml') {
             $GLOBALS['dbh']->update( 'defaults', array('articlenumber'), array($value['artNr']), 'id = '.$value['id']);
             writeLog($value['id']);
-        }elseif($value['unit'] == 'Tag' || $value['unit'] == 'Std' || $value['unit'] == 'min') {
+        }elseif($value['unit'] == 'psch' || $value['unit'] == 'Tag' || $value['unit'] == 'Std' || $value['unit'] == 'min') {
             $GLOBALS['dbh']->update( 'defaults', array('servicenumber'), array($value['artNr']), 'id = '.$value['id']);
         }
     }

@@ -39,6 +39,7 @@ namespace('kivi', function(k){
     var defaults_id;
     var unit;
     var artNrZaehler = 0;
+    var steuerSatz;
 
     function open_dialog () {
       k.popup_dialog({
@@ -107,10 +108,13 @@ namespace('kivi', function(k){
             *if part exist
             ***************************************************/
 
+            var sellprice = parseFloat(rsp.sellprice).toFixed(2);
+            //console.log(sellprice);
+
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
             $('.newOrderPos').children('.unity').val(rsp.unit);
-            $('.newOrderPos').children('.price').val((rsp.sellprice).replace('.', ','));
+            $('.newOrderPos').children('.price').val((sellprice).replace('.', ','));
             $('.newOrderPos').children('.discount').val(rsp.not_discountable);
             $('.newOrderPos').children('.partID').text(rsp.id);
             $('.newOrderPos').children().children('.description').addClass('descrNewPos');
@@ -190,32 +194,38 @@ namespace('kivi', function(k){
         } )
 
         $( '.number' ).on( 'keyup', function () {
-            var number = $( this ).val().replace(',', '.');
-            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
-            var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
-            //console.log('NUMBERCHANGE = ' + price + ', ' + number + ', ' + discount);
-            //var z = ( x * y );
-            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
-            //console.log( (number * price) * discount );
+            if ($(this).parent('.positions').hasClass('orderPos')) {
+                var number = $( this ).val().replace(',', '.');
+                var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
+                var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+                //console.log('NUMBERCHANGE = ' + price + ', ' + number + ', ' + discount);
+                //var z = ( x * y );
+                $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                //console.log( (number * price) * discount );
+            }
         } )
 
         $( '.price' ).on( 'keyup', function () {
-            var price = $( this ).val().replace(',', '.');
-            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
-            var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
-            //console.log('PRICECHANGE = ' + price + ', ' + number + ', ' + discount);
-            //var z = ( x * y );
-            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
-            //console.log( z );
+            if ($(this).parent('.positions').hasClass('orderPos')) {
+                var price = $( this ).val().replace(',', '.');
+                var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+                var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+                //console.log('PRICECHANGE = ' + price + ', ' + number + ', ' + discount);
+                //var z = ( x * y );
+                $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                //console.log( z );
+            }
         } )
 
         $( '.discount' ).on( 'keyup', function () {
-            var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
-            var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
-            var discount = ( 1 - ($( this ).val() / 100) );
-            //var z = ( (number * price) * (1 - discount) )
-            $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
-            //console.log( z );
+            if ($(this).parent('.positions').hasClass('orderPos')) {
+                var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+                var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
+                var discount = ( 1 - ($( this ).val() / 100) );
+                //var z = ( (number * price) * (1 - discount) )
+                $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                //console.log( z );
+            }
         } )
 
         $( '.rmv' ).click( function (){
@@ -457,7 +467,15 @@ namespace('kivi', function(k){
                                                     '</tr>' +
                                                     '<tr>' +
                                                         '<td>' +
-                                                            'Preis:' +
+                                                            'Einkaufspreis:' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="text" id="txtArtAnlEinkaufspreis">' +
+                                                        '</td>' +
+                                                    '</tr>' +
+                                                    '<tr>' +
+                                                        '<td>' +
+                                                            'Verkaufspreis:' +
                                                         '</td>' +
                                                         '<td>' +
                                                             '<input type="text" id="txtArtAnlPreis">' +
@@ -490,6 +508,11 @@ namespace('kivi', function(k){
                                                         artObject['part'] = $('#txtArtAnlArtikelNr').val();
                                                         artObject['description'] = $('#txtArtAnlBeschreibung').val();
                                                         artObject['unit'] = $('#selectArtAnlUnits').val();
+                                                        if ($('#txtArtAnlEinkaufspreis').val() == '') {
+                                                            artObject['listprice'] = '0';
+                                                        } else {
+                                                            artObject['listprice'] = $('#txtArtAnlEinkaufspreis').val().replace(',', '.');
+                                                        }
                                                         artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
                                                         artObject['buchungsgruppen_id'] = buchungsgruppen_id;
                                                         $.ajax({
@@ -546,13 +569,30 @@ namespace('kivi', function(k){
                                               }
                                         });
 
-                                        $('#txtArtAnlPreis').focus();
+                         /***************************************/
+                           /**********************************/
+                             /*****************************/
+                               /************************/
+                                 /*******************/
+
+                        $('#txtArtAnlEinkaufspreis').focus().on('keyup', function () {
+                            console.log($('#selectArtAnlBuchungsgruppen').find('option:selected').attr('id'));
+                        });
+
+                                  /*******************/
+                                /***********************/
+                              /***************************/
+                            /*******************************/
+                          /***********************************/
 
                                         $('#add_item_parts_id_name').val('');
 
                                         $('#selectArtAnlBuchungsgruppen').change(function () {
                                             buchungsgruppen_id = $(this).children(':selected').attr('id');
-                                            //alert(buchungsgruppen_id);
+                                            //console.log(buchungsgruppen_id);
+                                            //steuerSatz = $(this).children(':selected').val();
+                                            //steuerSatz = steuerSatz.replace(/\D/g,'');
+                                            //console.log(steuerSatz);
                                         })
 
                                         $('#selectArtAnlUnits').change(function () {
@@ -598,6 +638,10 @@ namespace('kivi', function(k){
                                                     $('#selectArtAnlBuchungsgruppen').append($('<option id="'+item.id+'" value="'+item.description+'">'+item.description+'</option>'));
                                                     if (item.id == 859) {
                                                         $('#selectArtAnlBuchungsgruppen').children('#'+item.id).attr('selected', 'selected');
+                                                        buchungsgruppen_id = item.id;
+                                                        //steuerSatz = item.description;
+                                                        //steuerSatz = steuerSatz.replace(/\D/g,'');
+                                                        //console.log(steuerSatz);
                                                     }
                                                 })
 
