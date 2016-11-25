@@ -100,11 +100,11 @@ $(document).ready(function() {
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
                 $('#head16').text(data[0].transdate);
+                $('#head06').val(data[0].reqdate);
+                $('#head08').val(data[0].km_stnd);
+                $('#head20').val(data[0].amtl_kennz);
+                $('#head18').val(data[0].order_status);
                 /*
-                $('#head06').val(data[0].lxc_a_finish_time)
-                $('#head08').val(data[0].lxc_a_km);
-                $('#head12').text(data[0].lxc_a_modified_on);
-                $('#head20').text(data[0].c_ln);
                 */
                 orderID = data[0].oe_id;
                 //console.log(orderID);
@@ -183,7 +183,7 @@ $(document).ready(function() {
                     })
 
                         $.each( getMembers, function ( index, item ) {
-                            if (item != null) {
+                            if (item != '') {
                                 //console.log('item: ' + item + ' != NULL');
                                 $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
                             }
@@ -353,6 +353,7 @@ $(document).ready(function() {
                     '<label id="head16"></label>' +
                     '<label id="head17">Status:</label>' +
                     '<select id="head18" type="text">' +
+                        '<option></option>' +
                         '<option>angenommen</option>' +
                         '<option>bearbeitet</option>' +
                         '<option selected="selected">abgerechnet</option>' +
@@ -392,7 +393,7 @@ $(document).ready(function() {
                             '<input type="text" id="input_05" class="ui-widget-content ui-corner-all discount elem">' +
                             '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
                             '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
-                                '<option class="opt mech__0" value="0"></option>' +
+                                '<option class="opt mech__0" value=""></option>' +
                             '</select>' +
                             '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
                                 '<option value="0" selected="true"></option>' +
@@ -405,7 +406,7 @@ $(document).ready(function() {
                         '</li>' +
                     '</ul>' +
                 '</form>' +
-                '<input type="button" id="testBtn" value="TEST">' +
+                //'<input type="button" id="testBtn" value="TEST">' +
         '</div>').appendTo('body');
 
         $('#add_item_parts_id_name').focus();
@@ -419,13 +420,21 @@ $(document).ready(function() {
             }
         });
 
-
+/*
         $('#testBtn').click(function () {
             updateOrderDatabase();
             //var testText = $(this).val();
             //alert(testText);
         })
+*/
 
+        $('#head08, #head20, #head06').on('keyup', function () {
+            updateOrderDatabase();
+        });
+
+        $('#head18').change(function () {
+            updateOrderDatabase();
+        });
 
         $( '.description' ).on( 'keyup', function(){
             //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
@@ -524,29 +533,29 @@ $(document).ready(function() {
             var updateDataJSON = new Array;
             updateDataJSON.push({
                 //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-                "order_id": id,
+                "ordnumber": orderID,
                 "km_stnd": $('#head08').val(),
                 "amtl_kennz": $('#head20').val(),
                 "status": $('#head18').val(),
                 "fertigstellung": $('#head06').val()
             });
-            console.log(updateDataJSON);
+            //console.log(updateDataJSON);
 
             //updateDataJSON.pop();
-            /*
+
             $.ajax({
                 url: 'ajax/order.php',
                 //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
-                data: { action: "updatePositions", data: updateDataJSON },
+                data: { action: "updateOrder", data: updateDataJSON },
                 type: "POST",
                     success: function(){
                         //alert( 'send all posdata' );
                     },
                     error:  function(){
-                        alert( 'Update fehlgeschlagen' );
+                        alert( 'Update des Auftrages fehlgeschlagen' );
                     }
             });
-            */
+
         }, 800 );
     }
 

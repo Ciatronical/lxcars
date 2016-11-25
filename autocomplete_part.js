@@ -539,7 +539,7 @@ namespace('kivi', function(k){
                                                                     $('.oP').children('.oPunity').val(artObject['unit']);
 
                                                                     newPosition();
-                                                                    increaseArticleNumber();
+                                                                    //increaseArticleNumber();
 
                                                                     alert( 'Artikel erfolgreich angelegt' );
 
@@ -576,7 +576,7 @@ namespace('kivi', function(k){
                                  /*******************/
 
                         $('#txtArtAnlEinkaufspreis').focus().on('keyup', function () {
-                            console.log($('#selectArtAnlBuchungsgruppen').find('option:selected').attr('id'));
+                            //console.log($('#selectArtAnlBuchungsgruppen').find('option:selected').attr('id'));
                         });
 
                                   /*******************/
@@ -707,7 +707,7 @@ namespace('kivi', function(k){
     /***************************************************
     *increase article-number in DB defaults
     ***************************************************/
-
+    /*
     function increaseArticleNumber() {
         var updArtNr = new Array;
         updArtNr.push({
@@ -727,7 +727,7 @@ namespace('kivi', function(k){
                 }
         });
     }
-
+    */
             /***************************/
         /***********************************/
     /*******************************************/

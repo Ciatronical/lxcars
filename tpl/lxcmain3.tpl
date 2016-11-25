@@ -86,6 +86,10 @@
         $( 'button' ).button();
         $( '#mkbwahl' ).selectmenu({ width: 110 });
         $( '#g_art_drop' ).selectmenu({ width: 140 });
+
+        $('#auftragExp').button().click(function () {
+            window.location = "orderlist.phtml";
+        });
     });
 
 </script>
@@ -159,7 +163,9 @@
 <button tabindex="21" type="submit" name="update" id="speichern" value="speichern">speichern</button>&nbsp;&nbsp;&nbsp;
 <button tabindex="22" type="button" name="close" onClick="myclose(document.car.owner.value);">schließen</button>&nbsp;&nbsp;&nbsp;
 <button tabindex="23" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);">Auftrag</button>&nbsp;&nbsp;&nbsp;
+<button id="auftragExp">Auftrag (exp.)</button>&nbsp;&nbsp;&nbsp;
 <button tabindex="24" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');"  style="visibility:{FhzTypVis}">KBA DB bearbeiten</button>&nbsp;
+
 {SPECIAL}
 </form>
 </left>
