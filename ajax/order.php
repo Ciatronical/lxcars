@@ -4,7 +4,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate, oe.reqdate, oe.km_stnd, oe.amtl_kennz, oe.status AS order_status , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -100,7 +100,7 @@ function updateOrder( $data) {
     //foreach( $data as $key => $value ){
         //writeLog($data);
         //$GLOBALS['dbh']->update( 'orderitems', array('position', 'trans_id', 'description'), array($value['order_nr'], $value['item_nr'], $value['pos_description']), 'id = '.$value['pos_id'] );
-        $GLOBALS['dbh']->update( 'oe', array('km_stnd', 'amtl_kennz', 'status'), array($data[0]['km_stnd'], $data[0]['amtl_kennz'], $data[0]['status']), 'id = '.$data[0]['ordnumber'] );
+        $GLOBALS['dbh']->update( 'oe', array('km_stnd', 'c_id', 'status'), array($data[0]['km_stnd'], $data[0]['c_id'], $data[0]['status']), 'id = '.$data[0]['ordnumber'] );
         //$GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
     //}
     //$GLOBALS['dbh']->commit();

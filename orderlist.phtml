@@ -26,6 +26,23 @@
                 Beispiel automatische Übersetzung
     ******************************************************************************************************************************/
 
+/*************************************************************/
+/************************ LxCars Auftrag *********************/
+/************** ronny@lxcars.de, April 2010 ******************/
+/*************************************************************/
+//include_once( "../inc/stdLib.php" );
+include_once("inc/lxcLib.php");
+include_once("../inc/template.inc");
+include_once("../inc/UserLib.php");
+include_once ( "../inc/crmLib.php" );
+
+ob_start();
+$task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
+$c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
+$owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
+$a_id = $_GET["a_id"] ? $_GET["a_id"] : $_POST["a_id"];
+$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
+$cd = ShowCar( $c_id );//Fahrzeugdaten holen
 ?>
 
 
@@ -48,7 +65,7 @@ $(document).ready(function() {
         if( $( this ).is( ":input" ) ) $( this ).attr( 'title',  typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
             else $( this ).text( typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
         });
-
+/*
     $("#senddialog").dialog({
         autoOpen: false,
         width:400,
@@ -178,6 +195,22 @@ $(document).ready(function() {
     });
 
     $(window).resize();
+*/
+
+    $("#showtable").tablesorter().tablesorterPager({
+        container: $("#pager"),
+        size: 9999
+    });
+
+    $('.showtableRow').click(function () {
+        //console.log($(this).attr('id'));
+        window.location = 'order_test.phtml?id='+$(this).attr('id');
+    })
+
+    $('#btnNewOrder').button().click(function () {
+        console.log($('#ownerID').text());
+        window.location = 'order_test.phtml';
+    });
 
 });
 
@@ -201,9 +234,81 @@ $(document).ready(function() {
 
  <p class="ui-state-highlight ui-corner-all tools lang" style="margin-top: 20px; padding: 0.6em;" data-lang="TESTFILE">Testfile</p>
 
+<?php
+//echo $task;
+//echo $c_id;
+//echo $owner;
+//echo $a_id;
+//echo $b;
+//printArray($cd);
+//+++++++++++++$rs = $GLOBALS['dbh']->getAll('SELECT oe.ordnumber, oe.transdate, oe.amount, oe.status, oe.employee_id, employee.id, employee.name FROM oe, employee WHERE oe.c_id = '.$c_id.' AND employee.id = oe.employee_id ORDER BY ordnumber');
+//printArray($rs);
+
+
+
+//$rs = $GLOBALS['dbh']->getAll('SELECT oe.ordnumber, oe.transdate, oe.amount, oe.status, oe.employee_id, employee.id, employee.name FROM oe, employee WHERE oe.customer_id = '.$owner.' AND oe.c_id = '.$c_id.' AND employee.id = oe.employee_id ORDER BY ordnumber');
+$rs = $GLOBALS['dbh']->getAll('
+                    SELECT
+                        oe.ordnumber,
+                        oe.transdate,
+                        oe.amount,
+                        oe.status,
+                        oe.employee_id,
+                        orderitems.trans_id,
+                        orderitems.description,
+                        employee.id,
+                        employee.name
+                    FROM
+                        oe,
+                        orderitems,
+                        employee
+                    WHERE
+                        oe.customer_id = '.$owner.'
+                    AND
+                        oe.c_id = '.$c_id.'
+                    AND
+                        orderitems.trans_id = oe.id
+                    AND
+                        orderitems.position = 1
+                    AND
+                        employee.id = oe.employee_id
+                    ORDER BY
+                        oe.ordnumber');
+//printArray($rs);
+
+    echo (' <table id="showtable" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Auftrags-Nr.</th>
+                        <th>Erster Posten</th>
+                        <th>Betrag</th>
+                        <th>Bearbeitet von</th>
+                    </tr>
+                </thead>
+                <tbody>');
+                    foreach ($rs as $value){
+                        //$var = sprintf(round($value['amount'], 2) == intval($value['amount']) ? "%d" : "%.2f", $value['amount']);
+                        //$var = number_format($value['amount'], 2, ',', '.');
+                        //echo $var;
+                        echo ('
+                            <tr id="'.$value['ordnumber'].'" class="showtableRow">
+                                <td>'.$value['transdate'].'</td>
+                                <td>'.$value['ordnumber'].'</td>
+                                <td>'.$value['description'].'</td>
+                                <td align="right">'.number_format($value['amount'], 2, ',', '.').'</td>
+                                <td>'.$value['name'].'</td>
+                            </tr>');
+                        //echo ($value['ordnumber'].', '.$value['transdate'].', '.number_format($value['amount'], 2, ',', '.').', '.$value['name'].'<br>');
+                    }
+    echo ('     </tbody>
+            </table>
+            <input type="button" id="btnNewOrder" value="Neuer Auftrag">');
+
+?>
 
  <div id="senddialog" > </div>
-
+<!--
  <div id="gdtable" class="gdtable">
   <table id="showtable" class="tablesorter" >
    <thead>
@@ -223,6 +328,8 @@ $(document).ready(function() {
  </div>
 
  <div id="newbtn" ></div>
+-->
+
 
 <!-- <div id="pager"> <?php echo $head['JQTABLE-PAGER']; ?> </div> -->
 
