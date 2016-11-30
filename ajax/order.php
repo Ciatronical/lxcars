@@ -108,6 +108,28 @@ function updateOrder( $data) {
 
 }
 
+function getCar( $c_id ){
+    //writeLog( $c_id );
+    //$rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
+    //writeLog($rs);
+    echo $rs;
+}
+
+function newOrder( $data ) {
+    //writeLog( $data );
+    echo $GLOBALS['dbh']->insert( 'oe', array( 'ordnumber', 'customer_id', 'c_id', 'taxzone_id', 'currency_id'), array( $data[0]['ordnumber'], $data[0]['customer_id'], $data[0]['c_id'], $data[0]['taxzone_id'], $data[0]['currency_id']), FALSE);
+    //$GLOBALS['dbh']->update( 'defaults', array('sonumber'), array('sonumber + 1'), 'id = '.$data[0]['defaults_id'] );
+
+    $GLOBALS['dbh']->begin();
+    foreach( $data as $key => $value ){
+        $GLOBALS['dbh']->update( 'defaults', array('sonumber'), array($value['ordnumber']), 'id = '.$value['defaults_id']);
+    }
+    $GLOBALS['dbh']->commit();
+
+    echo 1;
+}
+
 
 
 

@@ -30,7 +30,9 @@ $(document).ready(function() {
         else return decodeURIComponent( results[1] || 0 );
     }
 
-    var id = $.urlParam( 'id' );
+    //console.log($.urlParam( 'owner' ))
+
+    //var id = $.urlParam( 'id' );
     var timer;
     var articleDescription;
     var grp_name;
@@ -42,6 +44,8 @@ $(document).ready(function() {
     var baseUrl = kivi_global.baseurl;
     var numberFormat = kivi.myconfig.numberformat;
     var dateFormat = kivi.myconfig.dateformat;
+
+    var orderTotalPrice = 0;
 
     //var nbr = new Number;
 
@@ -88,8 +92,9 @@ $(document).ready(function() {
         })
 
     var orderID;
-    if( id > '0' ){
+    if( $.urlParam( 'id' ) > '0' ){
         //Head-Area
+        var id = $.urlParam( 'id' );
         $.ajax({
             url: 'ajax/order.php?action=getOrder&data=' + id,
             type: 'GET',
@@ -158,6 +163,11 @@ $(document).ready(function() {
                             '<label value="'+item.parts_id+'" name="partID" class="partID partID2 elem">'+item.parts_id+'</label>' +
                         '</li>').insertBefore('.newOrderPos');
                         //alert(item.status);
+
+                        orderTotalPrice = (orderTotalPrice + item.marge_total);
+                        $('#orderTotal').val((orderTotalPrice).toFixed(2).replace('.', ','));
+
+                        //console.log((orderTotalPrice).toFixed(2).replace('.', ','));
 
                         $('.new').children('.status2').val(item.status);
                         $('.new').children('.mechanics2').val(item.u_id);
@@ -321,7 +331,43 @@ $(document).ready(function() {
             })
         }, 1000 );
     } else {
-        alert('ich bin <= ...');
+        var c_id = $.urlParam( 'c_id' );
+        $.ajax({
+            url: 'ajax/order.php?action=getCar&data=' + c_id,
+            type: 'GET',
+            success: function (data) {
+                //console.log(data);
+                var nextOrderNr = (parseInt( data[0].last_order_nr ) + 1);
+                var newOrderData = new Array;
+
+                $('#head02').text(nextOrderNr);
+                $('#head04').text(data[0].customer_name);
+                $('#head20').val(data[0].amtl_kennz);
+
+                newOrderData.push({
+                    'defaults_id': data[0].defaults_id,
+                    'ordnumber': $('#head02').text(),
+                    'customer_id': data[0].customer_id,
+                    'c_id': data[0].car_id,
+                    'taxzone_id': data[0].taxzone_id,
+                    'currency_id': data[0].currency_id
+                })
+
+                $.ajax({
+                    url: 'ajax/order.php',
+                    data: { action: "newOrder", data: newOrderData },
+                    type: 'POST',
+                    success: function () {
+                        //console.log(data);
+                    },
+                    error:  function(){ alert("erstellen eines neuen Auftrages fehlgeschlagen!"); }
+                })
+
+            },
+            error:  function(){ alert("Holen der Fahrzeugdaten fehlgeschlagen!"); }
+        })
+
+        //alert('ich bin <= ...');
     }
 
         //function newPositionContainer() {
@@ -407,6 +453,9 @@ $(document).ready(function() {
                             '<label name="part_id" class="partID elem"></label>' +
                         '</li>' +
                     '</ul>' +
+                        '<li>' +
+                            '<input name="pos_orderTotal" value="0" type="text" id="orderTotal" class="ui-widget-content ui-corner-all" autocomplete="off">' +
+                        '</li>' +
                 '</form>' +
                 //'<input type="button" id="testBtn" value="TEST">' +
         '</div>').appendTo('body');
@@ -590,6 +639,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
     #head19 {position: absolute; top: 150px; left: 770px; font-size: 12px;}
     #head20 {position: absolute; top: 150px; left: 870px; font-size: 12px;}
+    #orderTotal { position: absolute; left: 1133px; width: 100px; text-align: right; }
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
     #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
@@ -624,8 +674,8 @@ table.tablesorter { width:auto; cursor:pointer; }
     .price2 {  position:relative; left: 37px; width: 100px; text-align: right;}
     .discount {  position:relative; left: 622px; width: 100px;text-align: right;}
     .discount2 {  position:relative; left: 42px; width: 100px;text-align: right;}
-    .total {  position:relative; left: 627px; width: 100px;text-align: right;}
-    .total2 {  position:relative; left: 47px; width: 100px;text-align: right;}
+    .total {  position:relative; left: 627px; width: 100px; text-align: right;}
+    .total2 {  position:relative; left: 47px; width: 100px; text-align: right;}
     .mechanics {  position:relative; left: 632px; width: 140px;}
     .mechanics2 {  position:relative; left: 53px; width: 140px;}
     .status { position: relative; left: 637px; width: 140px;}

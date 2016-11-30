@@ -51,151 +51,20 @@ $cd = ShowCar( $c_id );//Fahrzeugdaten holen
 
 $(document).ready(function() {
 
-        //URL-Parameter lesen
-        $.urlParam = function( name ){
-            var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-            if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-            else decodeURIComponent( results[1] || 0 );        }
+    //URL-Parameter lesen
+    $.urlParam = function( name ){
+        var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+        if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+        else decodeURIComponent( results[1] || 0 );        }
 
-        //alert( $.urlParam( 'param2' ) );
+    //alert( $.urlParam( 'param2' ) );
 
     var language = kivi.myconfig.countrycode;
     $( ".lang" ).each( function(){
         var key = $( this ).attr( "data-lang" );
         if( $( this ).is( ":input" ) ) $( this ).attr( 'title',  typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
-            else $( this ).text( typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
-        });
-/*
-    $("#senddialog").dialog({
-        autoOpen: false,
-        width:400,
-        height:250,
-        minWidth:300,
-        minHeight:200,
-        maxWidth:800,
-        maxHeight:800,
-        buttons: [{
-            text: langData[language]['SAVE'],
-            id: 'saveButton',
-            click: function() {
-                saveData();
-                getData();
-                $(this).dialog('close');
-
-            }
-        },
-        {    text: langData[language]['CLOSE'],
-             click: function(){
-                 $(this).dialog('close')
-             }
-        }]
+        else $( this ).text( typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
     });
-
-
-    $( "#newbtn" ).button().text(langData[language]['NEW']).click(function() {
-        $("#senddialog").dialog("open")
-            .html('<p> <form id="fsend">' +
-                '<table> <tr> <td><label >'+ langData[language]['BIRTHDAY'] +'</label></td>' +
-                '<td><input type="text" name="datetime" id="datetime"></td> </tr>' +
-                '<tr> <td><label>'+ langData[language]['NAME'] +'</label></td> <td><input type="text" name="name" id="name"></td> </tr>' +
-                '<tr> <td><label>'+ langData[language]['AGE'] +'</label></td> <td><input type="text" name="age" id="age"></td> </tr>' +
-                '<tr> <td><label>'+ langData[language]['COMMENTS'] +'</label></td> <td><input type="text" name="comments" id="comments"></td>' +
-                '</tr> </table> </form> </p>');
-
-        $("#datetime").datetimepicker({
-            //dateFormat: 'yy-mm-dd',
-            stepMinute: 5,
-            hour: 1,
-            hourMin: 6,
-            hourMax: 19,
-            //timeSuffix: ' Uhr',
-            timeSuffix: '',
-            timeText: 'Zeit',
-            hourText: 'Stunde',
-            closeText: 'fertig',
-            currentText: 'jetzt'
-        });
-
-    });
-
-    function drawTable(data) {
-        $("#tbody").empty();
-        for (var i = 0; i < data.length; i++) {
-            drawRow(data[i]);
-        }
-    }
-
-    function drawRow( rowData ) {
-        var row = $("<tr>");
-        $("#tbody0").append(row);
-        row.append($("<td>" + rowData.id + "</td>"));
-        row.append($("<td>" + rowData.date_time + "</td>"));
-        row.append($("<td>" + rowData.c_name + "</td>"));
-        row.append($("<td>" + rowData.c_age + "</td>"));
-        row.append($("<td>" + rowData.c_comments + "</td></tr>"));
-    }
-
-
-    function getData() {
-        $.ajax({
-            dataType: 'json',
-            url: 'ajax/example.php?action=getData',
-            method: "GET",
-            success: function( json ) {
-                $("#tbody0").empty();
-                drawTable(json);
-
-                $("#showtable").trigger("update");
-                $("#showtable").trigger("appendCache");
-            },
-            error:  function(){
-                alert("Holen der Daten fehlgeschlagen!");
-            }
-        })
-    }
-
-    function saveData() {
-        var obj = {};
-        var array = $('#fsend').serializeArray();
-        // Ein object aus dem array machen
-        $.each(array, function(index, item) {
-            obj[item.name] = item.value;
-        });
-        $.ajax({
-            data: { action: "newEntry", data: JSON.stringify(obj)},
-            dataType: 'json',
-            type: 'POST',
-            url: "ajax/example.php",
-            success: function(){
-                alert(langData[language]['SEND_SUCCESS']);
-            },
-            error:  function(){
-                alert(langData[language]['SEND_ERROR'] + '. ' + langData[language]['NO_DATA'] + '?');
-            }
-        })
-    }
-
-    getData();
-    $("#showtable").tablesorter().tablesorterPager({
-        container: $("#pager"),
-        size: 9999
-    });
-
-
-    $(window).resize(function (){
-        $("#gdtable").css({
-            width: 'auto',
-            height: 'auto',
-            position: 'absolute',
-            marginLeft: 'auto',
-            marginTop: 'auto',
-            left: (($(window).width() - $('#showTable').outerWidth())/3),
-//            overflow: 'auto'
-        });
-    });
-
-    $(window).resize();
-*/
 
     $("#showtable").tablesorter().tablesorterPager({
         container: $("#pager"),
@@ -209,7 +78,7 @@ $(document).ready(function() {
 
     $('#btnNewOrder').button().click(function () {
         console.log($('#ownerID').text());
-        window.location = 'order_test.phtml';
+        window.location = 'order_test.phtml?id=0&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
     });
 
 });
