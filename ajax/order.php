@@ -116,19 +116,35 @@ function getCar( $c_id ){
     echo $rs;
 }
 
+function getOrderNumber() {
+    echo $rs = $GLOBALS['dbh']->getOne( "SELECT sonumber FROM defaults", true );
+}
+
+function getDataForNewOrder( $data ) {
+    //writeLog( $data );
+    echo $rs = $GLOBALS['dbh']->getOne( "SELECT customer.name AS customer_name, customer.taxzone_id, customer.currency_id, lxc_cars.c_ln FROM customer, lxc_cars WHERE customer.id = '".$data[0]['customer']."' AND lxc_cars.c_id = '".$data[0]['c_id']."' AND lxc_cars.c_ow = '".$data[0]['customer']."'", true );
+}
+
+
 function newOrder( $data ) {
     //writeLog( $data );
     echo $GLOBALS['dbh']->insert( 'oe', array( 'ordnumber', 'customer_id', 'c_id', 'taxzone_id', 'currency_id'), array( $data[0]['ordnumber'], $data[0]['customer_id'], $data[0]['c_id'], $data[0]['taxzone_id'], $data[0]['currency_id']), FALSE);
-    //$GLOBALS['dbh']->update( 'defaults', array('sonumber'), array('sonumber + 1'), 'id = '.$data[0]['defaults_id'] );
 
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
-        $GLOBALS['dbh']->update( 'defaults', array('sonumber'), array($value['ordnumber']), 'id = '.$value['defaults_id']);
+        $GLOBALS['dbh']->update( 'defaults', array('sonumber'), array($value['ordnumber']), 'id = 1');
     }
     $GLOBALS['dbh']->commit();
 
     echo 1;
 }
+
+
+
+
+
+
+
 
 
 

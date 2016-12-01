@@ -245,13 +245,29 @@ namespace('kivi', function(k){
             zaehler();
             updateDatabase();
         });
+
         $('#sortable').sortable({
             update: function() {
                 zaehler();
                 updateDatabase();
             }
         });
+
         $('#add_item_parts_id_name').focus();
+
+        berechneOrderPriceTotal();
+    }
+
+    function berechneOrderPriceTotal() {
+        var y = 0;
+        $( 'ul#sortable > li' ).each( function(){
+            if ($(this).hasClass('orderPos')) {
+                var x = parseFloat( $(this).children('.total2').val().replace(',', '.') );
+                y = y + x;
+            }
+        });
+                //console.log(y.toFixed(2));
+                $('#orderTotal').val(y.toFixed(2).replace('.', ','));
     }
 
     /***************************************************
