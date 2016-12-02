@@ -92,6 +92,12 @@ $(document).ready(function() {
         })
     });
 
+    $('#btnBack').button().click(function () {
+        //console.log($('#ownerID').text());
+        //window.location = 'order_test.phtml?id=0&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
+                window.location = 'lxcmain.php?task=<?php echo $task ?>&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
+    });
+
 });
 
 </script>
@@ -135,13 +141,10 @@ $rs = $GLOBALS['dbh']->getAll('
                         oe.status,
                         oe.employee_id,
                         orderitems.trans_id,
-                        orderitems.description,
-                        employee.id,
-                        employee.name
+                        orderitems.description
                     FROM
                         oe,
-                        orderitems,
-                        employee
+                        orderitems
                     WHERE
                         oe.customer_id = '.$owner.'
                     AND
@@ -150,8 +153,6 @@ $rs = $GLOBALS['dbh']->getAll('
                         orderitems.trans_id = oe.id
                     AND
                         orderitems.position = 1
-                    AND
-                        employee.id = oe.employee_id
                     ORDER BY
                         oe.ordnumber');
 //printArray($rs);
@@ -163,7 +164,6 @@ $rs = $GLOBALS['dbh']->getAll('
                         <th>Auftrags-Nr.</th>
                         <th>Erster Posten</th>
                         <th>Betrag</th>
-                        <th>Bearbeitet von</th>
                     </tr>
                 </thead>
                 <tbody>');
@@ -177,13 +177,13 @@ $rs = $GLOBALS['dbh']->getAll('
                                 <td>'.$value['ordnumber'].'</td>
                                 <td>'.$value['description'].'</td>
                                 <td align="right">'.number_format($value['amount'], 2, ',', '.').'</td>
-                                <td>'.$value['name'].'</td>
                             </tr>');
                         //echo ($value['ordnumber'].', '.$value['transdate'].', '.number_format($value['amount'], 2, ',', '.').', '.$value['name'].'<br>');
                     }
     echo ('     </tbody>
             </table>
-            <input type="button" id="btnNewOrder" value="Neuer Auftrag">');
+            <input type="button" id="btnNewOrder" value="Neuer Auftrag">
+            <input type="button" id="btnBack" value="Zur&uuml;ck">');
 
 ?>
 

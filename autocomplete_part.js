@@ -555,7 +555,7 @@ namespace('kivi', function(k){
                                                                     $('.oP').children('.oPunity').val(artObject['unit']);
 
                                                                     newPosition();
-                                                                    //increaseArticleNumber();
+                                                                    increaseArticleNumber();
 
                                                                     alert( 'Artikel erfolgreich angelegt' );
 
@@ -712,9 +712,9 @@ namespace('kivi', function(k){
             type: 'GET',
             success: function (data) {
                 defaults_id = data[0].defaults_id;
-                $('#txtArtAnlArtikelNr').val(data[0].art_nr);
                 artNrZaehler = parseInt( data[0].art_nr );
                 artNrZaehler = (artNrZaehler + 1);
+                $('#txtArtAnlArtikelNr').val(artNrZaehler);
             },
             error:  function(){ alert("Holen der Artikel-Nr. fehlgeschlagen!"); }
         })
@@ -723,7 +723,7 @@ namespace('kivi', function(k){
     /***************************************************
     *increase article-number in DB defaults
     ***************************************************/
-    /*
+
     function increaseArticleNumber() {
         var updArtNr = new Array;
         updArtNr.push({
@@ -739,11 +739,11 @@ namespace('kivi', function(k){
                     //alert( 'Artikel-Nr erfolgreich erhöht' );
                 },
                 error:  function(){
-                    //alert( 'Artikel-Nr konnte nicht erhöht werden' );
+                    alert( 'Artikel-Nr konnte nicht erhöht werden' );
                 }
         });
     }
-    */
+
             /***************************/
         /***********************************/
     /*******************************************/

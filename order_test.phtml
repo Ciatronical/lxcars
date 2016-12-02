@@ -75,6 +75,14 @@ $(document).ready(function() {
                     )
                     //console.log(getMembers)
                 } )
+
+                                $.each( getMembers, function ( index, item ) {
+                                    if (item != '') {
+                                        //console.log('item: ' + item + ' != NULL');
+                                        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
+                                    }
+                                } )
+
             },
             error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
         })
@@ -111,7 +119,7 @@ $(document).ready(function() {
                 $('#head16').text(data[0].transdate);
                 $('#head06').val(data[0].reqdate);
                 $('#head08').val(data[0].km_stnd);
-                $('#head20').val(data[0].amtl_kennz);
+                $('#head20').val(data[0].c_ln);
                 $('#head18').val(data[0].order_status);
 
                 orderID = data[0].oe_id;
@@ -300,9 +308,9 @@ $(document).ready(function() {
                 var selDataForNewOrder = new Array;
                 selDataForNewOrder.push({
                     'customer': ow,
-                    'c_id': car
+                    'c_id': car,
+                    'employee': kivi.myconfig.name
                 });
-                //console.log(selDataForNewOrder);
 
                 $.ajax({
                     url: 'ajax/order.php',
@@ -312,6 +320,7 @@ $(document).ready(function() {
                         //console.log(data);
                         $('#head02').text(newOrdNr);
                         $('#head04').text(data[0].customer_name);
+                        $('#head10').text(kivi.myconfig.name);
                         $('#head20').val(data[0].c_ln);
                         // Vorbereitung des Insert
                         var dataForNewOrder = new Array;
@@ -320,16 +329,24 @@ $(document).ready(function() {
                             'customer_id': ow,
                             'c_id': car,
                             'taxzone_id': data[0].taxzone_id,
-                            'currency_id': data[0].currency_id
+                            'currency_id': data[0].currency_id,
+                            'employee_id': data[0].employee_id
                         });
-                        //console.log(dataForNewOrder);
                         // Insert des neuen Auftrages
                         $.ajax({
                             url: 'ajax/order.php',
                             data: { action: "newOrder", data: dataForNewOrder },
                             type: 'POST',
                             success: function () {
-
+                                $.ajax({
+                                    url: 'ajax/order.php',
+                                    data: { action: "getOrderID", data: newOrdNr },
+                                    type: 'POST',
+                                    success: function ( data ) {
+                                        orderID = data[0].auftrags_id;
+                                    },
+                                    error:  function(){ alert("holen der Auftrags-ID fehlgeschlagen!"); }
+                                })
                             },
                             error:  function(){ alert("Insert des neuen Auftrag fehlgeschlagen!"); }
                         })
@@ -447,7 +464,7 @@ $(document).ready(function() {
                         '<li class="newOrderPos positions">' +
                             '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
                             '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
-                            '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
+                            '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" value="1">' +
                             '<input name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                             '<span class="part_picker">' +
                                 '<input name="pos_description" type="text" id="add_item_parts_id_name" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description descrNewPos elem">' +

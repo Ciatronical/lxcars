@@ -4,7 +4,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status , customer.name AS customer_name, lxc_cars.c_ln FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -61,7 +61,16 @@ function getBuchungsgruppen(){
 
 function newPart( $data ){
     //writeLog($data);
-    //echo 1;
+    $rs = $GLOBALS['dbh']->getAll( "select substring(partnumber from '[0-9]+'),articlenumber from parts, defaults where parts.partnumber = '".$data['part']."'" );
+
+        if($rs[0][substring] != null ) {
+            //writeLog($rs[0][substring]);
+            $val = (intval($rs[0][substring])+1);
+            writeLog($val);
+        } else {
+            writeLog('substring existiert nicht ...');
+        }
+
     $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
     $rs = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
     echo $rs;
@@ -84,7 +93,7 @@ function increaseArticleNr( $updArtNr) {
     foreach( $updArtNr as $key => $value ){
         if($value['unit'] == 'Stck' || $value['unit'] == 't' || $value['unit'] == 'kg' || $value['unit'] == 'g' || $value['unit'] == 'mg' || $value['unit'] == 'L' || $value['unit'] == 'ml') {
             $GLOBALS['dbh']->update( 'defaults', array('articlenumber'), array($value['artNr']), 'id = '.$value['id']);
-            writeLog($value['id']);
+            //writeLog($value['id']);
         }elseif($value['unit'] == 'psch' || $value['unit'] == 'Tag' || $value['unit'] == 'Std' || $value['unit'] == 'min') {
             $GLOBALS['dbh']->update( 'defaults', array('servicenumber'), array($value['artNr']), 'id = '.$value['id']);
         }
@@ -122,13 +131,14 @@ function getOrderNumber() {
 
 function getDataForNewOrder( $data ) {
     //writeLog( $data );
-    echo $rs = $GLOBALS['dbh']->getOne( "SELECT customer.name AS customer_name, customer.taxzone_id, customer.currency_id, lxc_cars.c_ln FROM customer, lxc_cars WHERE customer.id = '".$data[0]['customer']."' AND lxc_cars.c_id = '".$data[0]['c_id']."' AND lxc_cars.c_ow = '".$data[0]['customer']."'", true );
+    $employee = $data[0]['employee'];
+    echo $rs = $GLOBALS['dbh']->getOne( "SELECT customer.name AS customer_name, customer.taxzone_id, customer.currency_id, lxc_cars.c_ln, employee.id AS employee_id, employee.name AS employee_name FROM customer, lxc_cars, employee WHERE customer.id = '".$data[0]['customer']."' AND lxc_cars.c_id = '".$data[0]['c_id']."' AND lxc_cars.c_ow = '".$data[0]['customer']."' AND employee.name = '".$employee."'", true );
 }
 
 
 function newOrder( $data ) {
     //writeLog( $data );
-    echo $GLOBALS['dbh']->insert( 'oe', array( 'ordnumber', 'customer_id', 'c_id', 'taxzone_id', 'currency_id'), array( $data[0]['ordnumber'], $data[0]['customer_id'], $data[0]['c_id'], $data[0]['taxzone_id'], $data[0]['currency_id']), FALSE);
+    echo $GLOBALS['dbh']->insert( 'oe', array( 'ordnumber', 'customer_id', 'c_id', 'taxzone_id', 'currency_id', 'employee_id'), array( $data[0]['ordnumber'], $data[0]['customer_id'], $data[0]['c_id'], $data[0]['taxzone_id'], $data[0]['currency_id'], $data[0]['employee_id']), FALSE);
 
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
@@ -137,6 +147,11 @@ function newOrder( $data ) {
     $GLOBALS['dbh']->commit();
 
     echo 1;
+}
+
+function getOrderID( $newOrdNr ) {
+    //writeLog( $newOrdNr );
+    echo $rs = $GLOBALS['dbh']->getOne( "SELECT id AS auftrags_id FROM oe WHERE ordnumber = '".$newOrdNr."'", true );
 }
 
 
