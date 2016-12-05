@@ -11,6 +11,7 @@
     echo $head['JQUERY'];
     echo $head['JQUERYUI'];
     echo $head['JQTABLE'];
+    //echo $head['JQTABLE-PAGER'];
     echo $head['THEME'];
     echo $head['JUI-DROPDOWN'];
     echo $head['TRANSLATION'];
@@ -73,7 +74,7 @@ $(document).ready(function() {
 
     $('.showtableRow').click(function () {
         //console.log($(this).attr('id'));
-        window.location = 'order_test.phtml?id='+$(this).attr('id');
+        window.location = 'order_test.phtml?task=<?php echo $task ?>&id='+$(this).attr('id')+'&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
     })
 
     $('#btnNewOrder').button().click(function () {
@@ -129,11 +130,21 @@ $(document).ready(function() {
 //printArray($cd);
 //+++++++++++++$rs = $GLOBALS['dbh']->getAll('SELECT oe.ordnumber, oe.transdate, oe.amount, oe.status, oe.employee_id, employee.id, employee.name FROM oe, employee WHERE oe.c_id = '.$c_id.' AND employee.id = oe.employee_id ORDER BY ordnumber');
 //printArray($rs);
-
-
-
 //$rs = $GLOBALS['dbh']->getAll('SELECT oe.ordnumber, oe.transdate, oe.amount, oe.status, oe.employee_id, employee.id, employee.name FROM oe, employee WHERE oe.customer_id = '.$owner.' AND oe.c_id = '.$c_id.' AND employee.id = oe.employee_id ORDER BY ordnumber');
-$rs = $GLOBALS['dbh']->getAll('
+//printArray($rs);
+
+    echo (' <table id="showtable" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Auftrags-Nr.</th>
+                        <th>Erster Posten</th>
+                        <th>Betrag</th>
+                    </tr>
+                </thead>
+                <tbody>');
+                
+                $rs = $GLOBALS['dbh']->getAll('
                     SELECT
                         oe.ordnumber,
                         oe.transdate,
@@ -155,18 +166,7 @@ $rs = $GLOBALS['dbh']->getAll('
                         orderitems.position = 1
                     ORDER BY
                         oe.ordnumber');
-//printArray($rs);
-
-    echo (' <table id="showtable" class="tablesorter">
-                <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Auftrags-Nr.</th>
-                        <th>Erster Posten</th>
-                        <th>Betrag</th>
-                    </tr>
-                </thead>
-                <tbody>');
+                        
                     foreach ($rs as $value){
                         //$var = sprintf(round($value['amount'], 2) == intval($value['amount']) ? "%d" : "%.2f", $value['amount']);
                         //$var = number_format($value['amount'], 2, ',', '.');
@@ -180,10 +180,10 @@ $rs = $GLOBALS['dbh']->getAll('
                             </tr>');
                         //echo ($value['ordnumber'].', '.$value['transdate'].', '.number_format($value['amount'], 2, ',', '.').', '.$value['name'].'<br>');
                     }
-    echo ('     </tbody>
-            </table>
-            <input type="button" id="btnNewOrder" value="Neuer Auftrag">
-            <input type="button" id="btnBack" value="Zur&uuml;ck">');
+                    echo (  '</tbody></table>'
+                            .$head["JQTABLE-PAGER"].
+                            '<input type="button" id="btnNewOrder" value="Neuer Auftrag">
+                            <input type="button" id="btnBack" value="Zur&uuml;ck">');
 
 ?>
 

@@ -40,7 +40,8 @@ namespace('kivi', function(k){
     var unit;
     var artNrZaehler = 0;
     var steuerSatz;
-
+    var newOrdNr = $.urlParam( 'id' );
+    
     function open_dialog () {
       k.popup_dialog({
         url: '../../controller.pl?action=Part/part_picker_search',
@@ -142,6 +143,7 @@ namespace('kivi', function(k){
     }
 
     function newPosition() {
+        //console.log( orderID );
 
         $('.orderPos').children('.part_picker').remove();
         $('.orderPos').children('.nPunity').remove();
@@ -202,6 +204,8 @@ namespace('kivi', function(k){
                 //var z = ( x * y );
                 $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                 //console.log( (number * price) * discount );
+                newOrderTotalPrice();
+                updateOrderDatabase();
             }
         } )
 
@@ -214,6 +218,8 @@ namespace('kivi', function(k){
                 //var z = ( x * y );
                 $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                 //console.log( z );
+                newOrderTotalPrice();
+                updateOrderDatabase();
             }
         } )
 
@@ -225,6 +231,8 @@ namespace('kivi', function(k){
                 //var z = ( (number * price) * (1 - discount) )
                 $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                 //console.log( z );
+                newOrderTotalPrice();
+                updateOrderDatabase();
             }
         } )
 
@@ -244,6 +252,8 @@ namespace('kivi', function(k){
             $( this ).parent().remove();
             zaehler();
             updateDatabase();
+            newOrderTotalPrice();
+            updateOrderDatabase();
         });
 
         $('#sortable').sortable({
@@ -255,21 +265,63 @@ namespace('kivi', function(k){
 
         $('#add_item_parts_id_name').focus();
 
-        berechneOrderPriceTotal();
+        newOrderTotalPrice();
+            updateOrderDatabase();
     }
-
-    function berechneOrderPriceTotal() {
-        var y = 0;
+                                
+    function newOrderTotalPrice() {
+        var nOTP = parseFloat(0);
         $( 'ul#sortable > li' ).each( function(){
-            if ($(this).hasClass('orderPos')) {
-                var x = parseFloat( $(this).children('.total2').val().replace(',', '.') );
-                y = y + x;
-            }
-        });
-                //console.log(y.toFixed(2));
-                $('#orderTotal').val(y.toFixed(2).replace('.', ','));
+            nOTP = (nOTP + parseFloat( ($(this).children('.total').val()).replace(',', '.')) );
+        })
+            //console.log(nOTP);
+            $('#orderTotal').val((nOTP).toFixed(2).replace('.', ','));
     }
-
+    
+    function updateOrderDatabase() {
+        $.ajax({
+            url: 'ajax/order.php?action=getOrderID&data='+newOrdNr,
+            type: "GET",
+                success: function ( data ) {
+                    //console.log( data );
+                    var netamount = $('#orderTotal').val().replace(',', '.');
+                    //console.log( netamount );
+                    clearTimeout( timer );
+                    timer = setTimeout( function(){   //calls click event after a certain time
+                        var updateDataJSON = new Array;
+                        updateDataJSON.push({
+                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                            "ordnumber": data[0].auftrags_id,
+                            "km_stnd": $('#head08').val(),
+                            "netamount": netamount,
+                            "status": $('#head18').val(),
+                            "fertigstellung": $('#head06').val()
+                        });
+                        //console.log(updateDataJSON);
+            
+                        //updateDataJSON.pop();
+            
+                        $.ajax({
+                            url: 'ajax/order.php',
+                            //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                            data: { action: "updateOrder", data: updateDataJSON },
+                            type: "POST",
+                                success: function(){
+                                    //alert( 'send all posdata' );
+                                },
+                                error:  function(){
+                                    alert( 'Update des Auftrages fehlgeschlagen' );
+                                }
+                        });
+            
+                    }, 800 );
+                },
+                error: function () {
+                    //console.log( 'autoc_part holen fehlgeschlagen ...' );
+                }
+        });
+    }
+    
     /***************************************************
     *count all positions and set the value of
     *position-nr to his count

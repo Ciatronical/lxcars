@@ -47,6 +47,7 @@ $(document).ready(function() {
 
     var orderTotalPrice = 0;
 
+    var task = $.urlParam( 'task' );
     var newOrdNr = $.urlParam( 'id' );
     var ow = $.urlParam( 'owner' );
     var car = $.urlParam( 'c_id' );
@@ -76,12 +77,12 @@ $(document).ready(function() {
                     //console.log(getMembers)
                 } )
 
-                                $.each( getMembers, function ( index, item ) {
-                                    if (item != '') {
-                                        //console.log('item: ' + item + ' != NULL');
-                                        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
-                                    }
-                                } )
+                                //$.each( getMembers, function ( index, item ) {
+                                //    if (item != '') {
+                                //        //console.log('item: ' + item + ' != NULL');
+                                //        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
+                                //    }
+                                //} )
 
             },
             error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
@@ -113,6 +114,12 @@ $(document).ready(function() {
             success: function (data) {
                 //console.log(JSON.stringify(data));
                 //console.log(data);
+                
+                if (data[0].km_stnd == null) {
+                	//alert('km_stnd is empty');
+                	data[0].km_stnd = '0';
+                }
+                
                 $('#head02').text(data[0].order_id);
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
@@ -121,6 +128,7 @@ $(document).ready(function() {
                 $('#head08').val(data[0].km_stnd);
                 $('#head20').val(data[0].c_ln);
                 $('#head18').val(data[0].order_status);
+                ow = data[0].customer_id;
 
                 orderID = data[0].oe_id;
                 //console.log(orderID);
@@ -163,11 +171,6 @@ $(document).ready(function() {
                                 '</li>').insertBefore('.newOrderPos');
                                 //alert(item.status);
 
-                                orderTotalPrice = (orderTotalPrice + item.marge_total);
-                                $('#orderTotal').val((orderTotalPrice).toFixed(2).replace('.', ','));
-
-                                //console.log((orderTotalPrice).toFixed(2).replace('.', ','));
-
                                 $('.new').children('.status2').val(item.status);
                                 $('.new').children('.mechanics2').val(item.u_id);
                                 $('.new').removeClass('new');
@@ -190,6 +193,7 @@ $(document).ready(function() {
 
 
                             })
+                                newOrderTotalPrice()
 
                                 $.each( getMembers, function ( index, item ) {
                                     if (item != '') {
@@ -214,6 +218,15 @@ $(document).ready(function() {
                                 //newPositionContainer();
                                 zaehler();
                                 //getMembersOfGroup();
+                                
+                                function newOrderTotalPrice() {
+                                    var nOTP = parseFloat(0);
+                                    $( 'ul#sortable > li' ).each( function(){
+                                        nOTP = (nOTP + parseFloat( ($(this).children('.total').val()).replace(',', '.')) );
+                                    })
+                                        //console.log(nOTP);
+                                        $('#orderTotal').val((nOTP).toFixed(2).replace('.', ','));
+                                }
 
                                 $( '.rmv' ).click( function (){
                                     //var posToDel = {};
@@ -236,6 +249,8 @@ $(document).ready(function() {
                                     $( this ).parent().remove();
                                     zaehler();
                                     updatePositionDatabase();
+                                    newOrderTotalPrice();
+                                    updateOrderDatabase();
                                 });
 
                                 $('.mechanics, .status').change(function (e) {
@@ -258,6 +273,8 @@ $(document).ready(function() {
                                         //var z = ( x * y );
                                         $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                                         //console.log( (number * price) * discount );
+                                        newOrderTotalPrice();
+                                        updateOrderDatabase();
                                     }
                                 } )
 
@@ -270,6 +287,8 @@ $(document).ready(function() {
                                         //var z = ( x * y );
                                         $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                                         //console.log( z );
+                                        newOrderTotalPrice();
+                                        updateOrderDatabase();
                                     }
                                 } )
 
@@ -281,6 +300,8 @@ $(document).ready(function() {
                                         //var z = ( (number * price) * (1 - discount) )
                                         $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
                                         //console.log( z );
+                                        newOrderTotalPrice();
+                                        updateOrderDatabase();
                                     }
                                 } )
 
@@ -343,7 +364,9 @@ $(document).ready(function() {
                                     data: { action: "getOrderID", data: newOrdNr },
                                     type: 'POST',
                                     success: function ( data ) {
+                                        //console.log(data[0].auftrags_id);
                                         orderID = data[0].auftrags_id;
+                                        //console.log(orderID);
                                     },
                                     error:  function(){ alert("holen der Auftrags-ID fehlgeschlagen!"); }
                                 })
@@ -366,46 +389,7 @@ $(document).ready(function() {
 
             }
         })
-    } else {
-        //console.log(newOrdNr + '; ' + ow + '; ' + car);
-        /*
-        $.ajax({
-            url: 'ajax/order.php?action=getCar&data=' + c_id,
-            type: 'GET',
-            success: function (data) {
-                //console.log(data);
-                var nextOrderNr = (parseInt( data[0].last_order_nr ) + 1);
-                var newOrderData = new Array;
-
-                $('#head02').text(nextOrderNr);
-                $('#head04').text(data[0].customer_name);
-                $('#head20').val(data[0].amtl_kennz);
-
-                newOrderData.push({
-                    'defaults_id': data[0].defaults_id,
-                    'ordnumber': $('#head02').text(),
-                    'customer_id': data[0].customer_id,
-                    'c_id': data[0].car_id,
-                    'taxzone_id': data[0].taxzone_id,
-                    'currency_id': data[0].currency_id
-                })
-
-                $.ajax({
-                    url: 'ajax/order.php',
-                    data: { action: "newOrder", data: newOrderData },
-                    type: 'POST',
-                    success: function () {
-                        //console.log(data);
-                    },
-                    error:  function(){ alert("erstellen eines neuen Auftrages fehlgeschlagen!"); }
-                })
-
-            },
-            error:  function(){ alert("Holen der Fahrzeugdaten fehlgeschlagen!"); }
-        })
-        */
-        //alert('ich bin <= ...');
-    }
+    } 
 
         //function newPositionContainer() {
         $('<div class="ui-widget-content">' +
@@ -495,12 +479,26 @@ $(document).ready(function() {
                         '</li>' +
                 '</form>' +
                 //'<input type="button" id="testBtn" value="TEST">' +
+                '<button id="backToCRM">CRM</button>' +
+                '<button id="backToOrderList">Zurück</button>' +
         '</div>').appendTo('body');
 
         $('#add_item_parts_id_name').focus();
         $( '.posID' ).hide();
         $( '.partID' ).hide();
-
+        
+        $( "#backToCRM" ).button().click(function () {
+        //alert( document.lxcauf.owner.value );
+            location.href = 'http://192.168.178.25/kivitendo-dev-jens/crm/firma1.php?Q=C&id=' + ow;
+            return false;
+        });
+        
+        $( "#backToOrderList" ).button().click(function () {
+        //alert( document.lxcauf.owner.value );
+            window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
+            return false;
+        });
+        
         $('#sortable').sortable({
             update: function() {
                 zaehler();
@@ -508,13 +506,14 @@ $(document).ready(function() {
             }
         });
 
-/*
+        /*
         $('#testBtn').click(function () {
-            updateOrderDatabase();
+            //updateOrderDatabase();
             //var testText = $(this).val();
             //alert(testText);
+            //console.log(orderID);
         })
-*/
+        */
 
         $('#head08, #head20, #head06').on('keyup', function () {
             updateOrderDatabase();
@@ -616,6 +615,7 @@ $(document).ready(function() {
     }
 
     function updateOrderDatabase() {
+        var netamount = $('#orderTotal').val().replace(',', '.');
         clearTimeout( timer );
         timer = setTimeout( function(){   //calls click event after a certain time
             var updateDataJSON = new Array;
@@ -623,7 +623,7 @@ $(document).ready(function() {
                 //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
                 "ordnumber": orderID,
                 "km_stnd": $('#head08').val(),
-                "amtl_kennz": $('#head20').val(),
+                "netamount": netamount,
                 "status": $('#head18').val(),
                 "fertigstellung": $('#head06').val()
             });
@@ -663,7 +663,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head05 {position: absolute; top: 150px; left: 5px; font-size: 12px;}
     #head06 {position: absolute; top: 150px; left: 125px; font-size: 12px;}
     #head07 {position: absolute; top: 150px; left: 500px; font-size: 12px;}
-    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px; width: 100px}
+    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px;}
     #head09 {position: absolute; top: 165px; left: 5px; font-size: 12px;}
     #head10 {position: absolute; top: 165px; left: 125px; font-size: 12px;}
     #head11 {position: absolute; top: 165px; left: 500px; font-size: 12px;}
@@ -674,8 +674,8 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head16 {position: absolute; top: 200px; left: 125px; font-size: 12px;}
     #head17 {position: absolute; top: 200px; left: 500px; font-size: 12px;}
     #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
-    #head19 {position: absolute; top: 150px; left: 770px; font-size: 12px;}
-    #head20 {position: absolute; top: 150px; left: 870px; font-size: 12px;}
+    #head19 {position: absolute; top: 150px; left: 850px; font-size: 12px;}
+    #head20 {position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
     #orderTotal { position: absolute; left: 1133px; width: 100px; text-align: right; }
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
