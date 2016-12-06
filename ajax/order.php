@@ -4,7 +4,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, customer.name AS customer_name, lxc_cars.c_ln FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.c_ln FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -26,6 +26,7 @@ function newEntry( $data ){
 }
 
 function updatePositions( $data) {
+    writeLog($data);
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
         //writeLog($data);
@@ -107,10 +108,10 @@ function updateOrder( $data) {
 
     //$GLOBALS['dbh']->begin();
     //foreach( $data as $key => $value ){
-        writeLog($data);
+        //writeLog($data);
         //$GLOBALS['dbh']->update( 'orderitems', array('position', 'trans_id', 'description'), array($value['order_nr'], $value['item_nr'], $value['pos_description']), 'id = '.$value['pos_id'] );
         //$GLOBALS['dbh']->update( 'oe', array('km_stnd', 'c_id', 'status'), array($data[0]['km_stnd'], $data[0]['c_id'], $data[0]['status']), 'id = '.$data[0]['ordnumber'] );
-        $GLOBALS['dbh']->update( 'oe', array('km_stnd', 'status', 'netamount'), array($data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount']), 'id = '.$data[0]['ordnumber'] );
+        $GLOBALS['dbh']->update( 'oe', array('km_stnd', 'status', 'netamount', 'amount', 'car_status'), array($data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status']), 'id = '.$data[0]['ordnumber'] );
         //$GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
     //}
     //$GLOBALS['dbh']->commit();
@@ -151,7 +152,7 @@ function newOrder( $data ) {
 }
 
 function getOrderID( $newOrdNr ) {
-    writeLog( $newOrdNr );
+    //writeLog( $newOrdNr );
     echo $rs = $GLOBALS['dbh']->getOne( "SELECT id AS auftrags_id FROM oe WHERE ordnumber = '".$newOrdNr."'", true );
 }
 

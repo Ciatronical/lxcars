@@ -206,6 +206,7 @@ namespace('kivi', function(k){
                 //console.log( (number * price) * discount );
                 newOrderTotalPrice();
                 updateOrderDatabase();
+                updateDatabase();
             }
         } )
 
@@ -220,6 +221,7 @@ namespace('kivi', function(k){
                 //console.log( z );
                 newOrderTotalPrice();
                 updateOrderDatabase();
+                updateDatabase();
             }
         } )
 
@@ -233,6 +235,7 @@ namespace('kivi', function(k){
                 //console.log( z );
                 newOrderTotalPrice();
                 updateOrderDatabase();
+                updateDatabase();
             }
         } )
 
@@ -266,16 +269,19 @@ namespace('kivi', function(k){
         $('#add_item_parts_id_name').focus();
 
         newOrderTotalPrice();
-            updateOrderDatabase();
     }
                                 
     function newOrderTotalPrice() {
         var nOTP = parseFloat(0);
+        var nOTPBr = parseFloat(0);
         $( 'ul#sortable > li' ).each( function(){
             nOTP = (nOTP + parseFloat( ($(this).children('.total').val()).replace(',', '.')) );
         })
             //console.log(nOTP);
-            $('#orderTotal').val((nOTP).toFixed(2).replace('.', ','));
+            $('#orderTotalNetto').val((nOTP).toFixed(2).replace('.', ','));
+            nOTPBr = ( nOTP * 1.19 );
+            $('#orderTotalBrutto').val((nOTPBr).toFixed(2).replace('.', ','));
+            //console.log(nOTPBr);
     }
     
     function updateOrderDatabase() {
@@ -284,7 +290,8 @@ namespace('kivi', function(k){
             type: "GET",
                 success: function ( data ) {
                     //console.log( data );
-                    var netamount = $('#orderTotal').val().replace(',', '.');
+                    var netamount = $('#orderTotalNetto').val().replace(',', '.');
+                    var amount = $('#orderTotalBrutto').val().replace(',', '.');
                     //console.log( netamount );
                     clearTimeout( timer );
                     timer = setTimeout( function(){   //calls click event after a certain time
@@ -294,8 +301,10 @@ namespace('kivi', function(k){
                             "ordnumber": data[0].auftrags_id,
                             "km_stnd": $('#head08').val(),
                             "netamount": netamount,
+                            "amount": amount,
                             "status": $('#head18').val(),
-                            "fertigstellung": $('#head06').val()
+                            "fertigstellung": $('#head06').val(),
+                            "car_status": $('#head14').val()
                         });
                         //console.log(updateDataJSON);
             
@@ -367,6 +376,7 @@ namespace('kivi', function(k){
                 });
             })
             updateDataJSON.pop();
+            //console.log(updateDataJSON);
             $.ajax({
                 url: 'ajax/order.php',
                 data: { action: "updatePositions", data: updateDataJSON },

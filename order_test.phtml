@@ -13,6 +13,24 @@
     //echo $head['JQTABLE'];
     echo $head['THEME'];
 
+/*************************************************************/
+/************************ LxCars Auftrag *********************/
+/************** ronny@lxcars.de, April 2010 ******************/
+/*************************************************************/
+//include_once( "../inc/stdLib.php" );
+include_once("inc/lxcLib.php");
+include_once("../inc/template.inc");
+include_once("../inc/UserLib.php");
+include_once ( "../inc/crmLib.php" );
+
+ob_start();
+$task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
+$c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
+$owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
+$a_id = $_GET["a_id"] ? $_GET["a_id"] : $_POST["a_id"];
+$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
+$cd = ShowCar( $c_id );//Fahrzeugdaten holen
+
 ?>
 
 
@@ -44,8 +62,6 @@ $(document).ready(function() {
     var baseUrl = kivi_global.baseurl;
     var numberFormat = kivi.myconfig.numberformat;
     var dateFormat = kivi.myconfig.dateformat;
-
-    var orderTotalPrice = 0;
 
     var task = $.urlParam( 'task' );
     var newOrdNr = $.urlParam( 'id' );
@@ -119,6 +135,10 @@ $(document).ready(function() {
                 	//alert('km_stnd is empty');
                 	data[0].km_stnd = '0';
                 }
+                if (data[0].car_status == null) {
+                	//alert('car_status is empty');
+                	data[0].car_status = 'Auto hier';
+                }
                 
                 $('#head02').text(data[0].order_id);
                 $('#head04').text(data[0].customer_name);
@@ -128,6 +148,7 @@ $(document).ready(function() {
                 $('#head08').val(data[0].km_stnd);
                 $('#head20').val(data[0].c_ln);
                 $('#head18').val(data[0].order_status);
+                $('#head14').val(data[0].car_status);
                 ow = data[0].customer_id;
 
                 orderID = data[0].oe_id;
@@ -221,11 +242,15 @@ $(document).ready(function() {
                                 
                                 function newOrderTotalPrice() {
                                     var nOTP = parseFloat(0);
+                                    var nOTPBr = parseFloat(0);
                                     $( 'ul#sortable > li' ).each( function(){
                                         nOTP = (nOTP + parseFloat( ($(this).children('.total').val()).replace(',', '.')) );
                                     })
                                         //console.log(nOTP);
-                                        $('#orderTotal').val((nOTP).toFixed(2).replace('.', ','));
+                                        $('#orderTotalNetto').val((nOTP).toFixed(2).replace('.', ','));
+                                        nOTPBr = ( nOTP * 1.19 );
+                                        $('#orderTotalBrutto').val((nOTPBr).toFixed(2).replace('.', ','));
+                                        //console.log(nOTPBr);
                                 }
 
                                 $( '.rmv' ).click( function (){
@@ -275,6 +300,7 @@ $(document).ready(function() {
                                         //console.log( (number * price) * discount );
                                         newOrderTotalPrice();
                                         updateOrderDatabase();
+                                        updatePositionDatabase();
                                     }
                                 } )
 
@@ -289,6 +315,7 @@ $(document).ready(function() {
                                         //console.log( z );
                                         newOrderTotalPrice();
                                         updateOrderDatabase();
+                                        updatePositionDatabase();
                                     }
                                 } )
 
@@ -302,6 +329,7 @@ $(document).ready(function() {
                                         //console.log( z );
                                         newOrderTotalPrice();
                                         updateOrderDatabase();
+                                        updatePositionDatabase();
                                     }
                                 } )
 
@@ -343,6 +371,7 @@ $(document).ready(function() {
                         $('#head04').text(data[0].customer_name);
                         $('#head10').text(kivi.myconfig.name);
                         $('#head20').val(data[0].c_ln);
+                        $('#head08').val('0');
                         // Vorbereitung des Insert
                         var dataForNewOrder = new Array;
                         dataForNewOrder.push({
@@ -475,7 +504,12 @@ $(document).ready(function() {
                         '</li>' +
                     '</ul>' +
                         '<li>' +
-                            '<input name="pos_orderTotal" value="0" type="text" id="orderTotal" class="ui-widget-content ui-corner-all" autocomplete="off">' +
+                            '<label id="netto">Netto:</label>' +
+                            '<input name="pos_orderTotalNetto" value="0" type="text" id="orderTotalNetto" class="ui-widget-content ui-corner-all" autocomplete="off">' +
+                        '</li></br>' +
+                        '<li>' +
+                            '<label id="brutto">Brutto:</label>' +
+                            '<input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="ui-widget-content ui-corner-all" autocomplete="off">' +
                         '</li>' +
                 '</form>' +
                 //'<input type="button" id="testBtn" value="TEST">' +
@@ -495,7 +529,8 @@ $(document).ready(function() {
         
         $( "#backToOrderList" ).button().click(function () {
         //alert( document.lxcauf.owner.value );
-            window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
+            //window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
+            window.location = 'orderlist.phtml?task=<?php echo $task ?>&owner='+ow+'&c_id='+car;
             return false;
         });
         
@@ -519,7 +554,7 @@ $(document).ready(function() {
             updateOrderDatabase();
         });
 
-        $('#head18').change(function () {
+        $('#head18, #head14').change(function () {
             updateOrderDatabase();
         });
 
@@ -615,7 +650,8 @@ $(document).ready(function() {
     }
 
     function updateOrderDatabase() {
-        var netamount = $('#orderTotal').val().replace(',', '.');
+        var netamount = $('#orderTotalNetto').val().replace(',', '.');
+        var amount = $('#orderTotalBrutto').val().replace(',', '.');
         clearTimeout( timer );
         timer = setTimeout( function(){   //calls click event after a certain time
             var updateDataJSON = new Array;
@@ -624,8 +660,10 @@ $(document).ready(function() {
                 "ordnumber": orderID,
                 "km_stnd": $('#head08').val(),
                 "netamount": netamount,
+                "amount": amount,
                 "status": $('#head18').val(),
-                "fertigstellung": $('#head06').val()
+                "fertigstellung": $('#head06').val(),
+                "car_status": $('#head14').val()
             });
             //console.log(updateDataJSON);
 
@@ -676,7 +714,10 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
     #head19 {position: absolute; top: 150px; left: 850px; font-size: 12px;}
     #head20 {position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
-    #orderTotal { position: absolute; left: 1133px; width: 100px; text-align: right; }
+    #netto { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalNetto { position: absolute; left: 1133px; width: 100px; text-align: right; }
+    #brutto { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalBrutto { position: absolute; left: 1133px; width: 100px; text-align: right; }
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
     #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
