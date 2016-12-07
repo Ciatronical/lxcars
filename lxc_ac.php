@@ -12,14 +12,17 @@ $acSrc = "localdb";
 //global $db;
 $mode = 0;
 $q = '';
+
 if( isset( $_GET['q'] ) ){
     $q = $_GET['q'];
 }
+
 $plz = '';
 if( isset( $_GET['plz'] ) ){
     $plz = $_GET['plz'];
     $mode = 1;
 }
+
 if( isset( $_GET['street'] ) ){
     $mode = 2;
 }
@@ -27,15 +30,19 @@ if( isset( $_GET['street'] ) ){
 if( $_GET['case']=='owner' ){
     $mode = 3;
 }
+
 if( $_GET['case']=='g_art' ){
     $mode = 4;
 }
+
 if( $_GET['case']=='kz' ){
     $mode = 5;
 }
+
 if( $_GET['case']=='fastsearch' ){
     $mode = 6;
 }
+
 switch( $mode ){
     case 0:   //Plz vervollständigen und zurückgeben
         if( $acSrc == "localdb" || $acSrc == "localdb,geodb" ){

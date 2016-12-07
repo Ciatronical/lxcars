@@ -156,6 +156,29 @@ function getOrderID( $newOrdNr ) {
     echo $rs = $GLOBALS['dbh']->getOne( "SELECT id AS auftrags_id FROM oe WHERE ordnumber = '".$newOrdNr."'", true );
 }
 
+function getOrderList( $statusSearch ) {
+    writeLog($statusSearch);
+    if( $statusSearch == '1' ) {
+        echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
+                                                    oe.id AS auftragsnummer, 
+                                                    oe.transdate AS auftragsdatum, 
+                                                    oe.status AS auftragsstatus,
+                                                    orderitems.description AS ersteposition,
+                                                    customer.name AS besitzer
+                                                FROM 
+                                                    oe,
+                                                    orderitems,
+                                                    customer
+                                                WHERE
+                                                    customer.id = oe.customer_id
+                                                AND
+                                                    orderitems.trans_id = oe.id
+                                                AND
+                                                    orderitems.position = 1
+                                                ORDER BY oe.id", true );
+    }
+}
+
 
 
 

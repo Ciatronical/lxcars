@@ -13,12 +13,30 @@
     //echo $head['JQTABLE'];
     echo $head['THEME'];
 
+/*************************************************************/
+/************************ LxCars Auftrag *********************/
+/************** ronny@lxcars.de, April 2010 ******************/
+/*************************************************************/
+//include_once( "../inc/stdLib.php" );
+include_once("inc/lxcLib.php");
+include_once("../inc/template.inc");
+include_once("../inc/UserLib.php");
+include_once ( "../inc/crmLib.php" );
+
+ob_start();
+$task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
+$c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
+$owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
+$a_id = $_GET["a_id"] ? $_GET["a_id"] : $_POST["a_id"];
+$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
+$cd = ShowCar( $c_id );//Fahrzeugdaten holen
+
 ?>
 
 
-  <script type="text/javascript" src="../../js/autocomplete_customer.js"></script>
-  <script type="text/javascript" src="../../js/autocomplete_part.js"></script>
-  <script type="text/javascript" src="../../js/kivi.Order.js"></script>
+  <script type="text/javascript" src="autocomplete_customer.js"></script>
+  <script type="text/javascript" src="autocomplete_part.js"></script>
+  <script type="text/javascript" src="kivi.Order.js"></script>
 
 <script>
 
@@ -26,382 +44,645 @@ $(document).ready(function() {
 
     $.urlParam = function( name ){
         var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-        if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+        if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
         else return decodeURIComponent( results[1] || 0 );
     }
 
-    var id = $.urlParam( 'id' );
+    //console.log($.urlParam( 'id' ) + '; ' + $.urlParam( 'owner' ) + '; ' + $.urlParam( 'c_id' ));
+
+    //var id = $.urlParam( 'id' );
     var timer;
     var articleDescription;
     var grp_name;
+    var grpSel;
+    var grpMbr = new Array;
+    var getMembers = new Array;
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
+    var numberFormat = kivi.myconfig.numberformat;
+    var dateFormat = kivi.myconfig.dateformat;
 
-    //console.log( baseUrl )
-    //console.log(kivi_global)
-    //console.log(kivi_global.erp_all_groups)
+    var task = $.urlParam( 'task' );
+    var newOrdNr = $.urlParam( 'id' );
+    var ow = $.urlParam( 'owner' );
+    var car = $.urlParam( 'c_id' );
 
-    //Einfügen beim Laden
-    $('<div class="ui-widget-content">' +
-        '<div id="tmp"></div>' +
-        '<div>' +
-            '<p class="tools ui-state-highlight ui-corner-all lang " style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">' +
-                '<label id="head01">Auftragsnummer:</label>' +
-                '<label id="head02">0000</label>' +
-                '<label id="head03">Auftraggeber:</label>' +
-                '<label id="head04"></label></br>' +
-                '<label id="head05">Fertigstellung:</label>' +
-                '<input id="head06" type="text">' +
-                '<label id="head07">KM-Stand:</label>' +
-                '<input id="head08" type="text"></br>' +
-                '<label id="head09">bearbeitet von:</label>' +
-                '<label id="head19">Amtl.-Kennz.:</label>' +
-                '<label id="head20"></label>' +
-                '<label id="head10"></label>' +
-                '<label id="head11">bearbeitet am:</label>' +
-                '<label id="head12"></label></br>' +
-                '<label id="head13">KfZ:</label>' +
-                '<select id="head14" type="text">' +
-                    '<option>Auto nicht hier</option>' +
-                    '<option selected="selected">Auto hier</option>' +
-                    '<option>Sonstiges zur Reparatur gebracht</option>' +
-                    '<option>Bestellung</option>' +
-                '</select></br>' +
-                '<label id="head15">erstellt am:</label>' +
-                '<label id="head16"></label>' +
-                '<label id="head17">Status:</label>' +
-                '<select id="head18" type="text">' +
-                    '<option>angenommen</option>' +
-                    '<option>bearbeitet</option>' +
-                    '<option selected="selected">abgerechnet</option>' +
-                '</select>' +
-            '</p>' +
-        '</div>' +
-        '<div>' +
-            '<img src="' + baseUrl + '/image/updown.png" class="lblPositioning lblPos1">' +
-            '<img src="' + baseUrl + '/image/close.png" class="lblPositioning lblPos2">' +
-            '<label name="position" class="lblPositioning lblPos3">Position</label>' +
-            '<label name="art_nr" class="lblPositioning lblPos4">Artikel-Nr.</label>' +
-            '<label name="bezeichnung" class="lblPositioning lblPos5">Beschreibung</label>' +
-            '<label name="einheit" class="lblPositioning lblPos6">Einheit</label>' +
-            '<label name="preis" class="lblPositioning lblPos7">Preis</label>' +
-            '<label name="rabatt" class="lblPositioning lblPos8">Rabatt</label>' +
-            '<label name="gesamt" class="lblPositioning lblPos9">Gesamt</label>' +
-            '<label name="mechaniker" class="lblPositioning lblPos10">Mechaniker</label>' +
-            '<label name="status" class="lblPositioning lblPos11">Status</label>' +
-        '</div>' +
-        '<form id="myform">' +
-            '<ul id="sortable">' +
-            '</ul>' +
-        '</form>' +
-    '</div>').appendTo('body');
+    //var nbr = new Number;
 
-    newPositionContainer();
+    //console.log( baseUrl );
+    //console.log(kivi_global);
+    //console.log(kivi_global.erp_all_groups);
+    //console.log(numberFormat);
+    //console.log(dateFormat);
 
+        grp_name = 'Werkstatt';
+        $.ajax({
+            url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
+            type: 'GET',
+            success: function (data) {
+                //console.log(JSON.stringify(data));
+                //console.log(data);
+                //console.log(data.length);
 
-    $('#sortable').sortable({
-        update: function() {
-            zaehler();
-            updateDatabase();
-        }
-    });
+                $.each( data, function (index, item) {
+                    //console.log(item);
+                    getMembers.push(
+                        item.name
+                    )
+                    //console.log(getMembers)
+                } )
 
-    function newPositionContainer() {
-        //$("#pos__" + mycnt ).off( 'change' ); //detaching changehandler
-        //Container for inputs
-        $('<li  class="ui-state-default position new">' +
-            '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
-            '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
-            '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" autocomplete="off">' +
-            '<input name="item_nr" type="text" class="ui-widget-content ui-corner-all itemNr elem" autocomplete="off">' +
-            '<input name="pos_description" type="text" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description elem" autocomplete="on">' +
-            '<select name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity elem" autocomplete="off">' +
-                '<option selected="selected"></option>' + //!get via AJAX
-                '<option>Stck</option>' +
-                '<option>kg</option>' +
-                '<option>Std</option>' +
-            '</select>' +
-            '<input name="pos_price" value="0" type="text" class="ui-widget-content ui-corner-all price elem" autocomplete="off">' +
-            '<input name="pos_discount" value="0" type="text" class="ui-widget-content ui-corner-all discount elem" autocomplete="off">' +
-            '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
-            '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
-                '<option value="0" selected="selected"></option>' +
-                '<option value="1">Mechaniker</option>' +
-                '<option value="2">Monteur</option>' +
-            '</select>' +
-            '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
-                '<option value="0" selected="true"></option>' +
-                '<option value="1">gelesen</option>' +
-                '<option value="2">Bearbeitung</option>' +
-                '<option value="3">erledigt</option>' +
-            '</select>' +
-            '<label name="pos_id" class="posID elem"></label>' +
-          '</li>').appendTo('#sortable');//.attr('id','NewId_' + cnt);
+                                //$.each( getMembers, function ( index, item ) {
+                                //    if (item != '') {
+                                //        //console.log('item: ' + item + ' != NULL');
+                                //        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
+                                //    }
+                                //} )
 
-        zaehler();
-
-        $( '.posID' ).val( '0' );
-        $( '.pos' ).attr( 'readonly', true );
-        //$( '.posID' ).hide();
-
-        $( 'select' ).change( function (){
-            var y = $(this).val()
-            $(this).attr('value', y)
+            },
+            error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
         })
 
-        $( '.rmv' ).click( function (){
-            var posToDel = $(this).parent().children('.posID').text();
-            //alert(posToDel);
-                $.ajax({
-                    url: 'ajax/order.php',
-                    data: { action: "delPosition", data: posToDel },
-                    type: "POST",
-                    success: function(){
-                        //alert('Gesendet');
-                    },
-                    error:   function(){
-                        alert('Senden der Daten fehlgeschlagen!');
-                    }
-                });
-            $( this ).parent().remove();
-            zaehler();
-            updateDatabase();
-        });
+        //get Units
+        $.ajax({
+            url: 'ajax/order.php?action=getUnits',
+            type: 'GET',
+            success: function (data) {
 
-        //bei Änderung des Textes in ".elem"
-        $( '.elem' ).on( 'keyup', function(){
-            //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
-            var y = $(this).val();
-            $(this).attr('value', y);
+                $.each(data, function (index, item) {
+                    //console.log(item);
+                    $('.unity').append($('<option class="opt unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+                    //$('#selectArtAnlUnits').append($('<option id="unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+                })
 
-            if( $( this ).parent().hasClass( 'new' ) ){                                //INSERT wenn der Container die Klasse "new" aufweist
-                insertIntoDatabase();
-                $( this ).parent().removeClass( 'new' )                            //Entfernen der Klasse "new" bei dem aktuellen Container
-
-            } else {
-                    updateDatabase();
-            }
-        });
-
-        $(function () {
-            grp_name = 'Werkstatt';
-            $.ajax({
-                url: 'ajax/order.php?action=getUsersFromGroup&data=' + grp_name,
-                type: 'GET',
-                success: function (data) {
-                    //console.log(JSON.stringify(data));
-                    //console.log(data);
-                    //console.log('jens');
-                },
-                error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
-            })
-        });
-
-
-
-/*
-        //Holen der Artikelbezeichnung für Autocomplete der neuen Positionen
-        $(function () {
-            $.ajax({
-                url: 'ajax/order.php?action=getArticleDescription',
-                type: 'GET',
-                success: function (data) {
-                    //console.log(JSON.stringify(data));
-                    console.log(data);
-
-                    var availablePosition = 0;
-                    var available = [];
-                    $.each(data, function (index, item) {
-                        //console.log(item);
-                        available[availablePosition++] = item.description;
-                    })
-                        //console.log(available);
-
-                    $('.description').autocomplete({
-                        source:available,
-                        minLength:2,
-                        delay: 500,
-                        minLength: 1,
-                        select: function (event, ui) {
-                            //articleDescription = ui.item.value;
-                            //console.log(articleDescription);
-
-
-                            $.ajax({
-                                url: 'ajax/order.php?action=getArticle&data=' + articleDescription,
-                                type: 'GET',
-                                success: function (data) {
-                                    //alert(JSON.stringify(data));
-                                    //console.log(JSON.stringify(data));
-                                    console.log(data);
-                                    //alert(data[0].id);
-                                },
-                                error:  function(){ alert("holen der Datensaetze fehlgeschlagen!"); }
-                            })
-
-
-                        }
-                    });
-
-                },
-                error:  function(){ alert("Holen der Artikelbezeichnung fehlgeschlagen!"); }
-            })
-        });
-*/
-
-    };
-
-    function insertIntoDatabase() {
-                var posObject = {};
-                var posArray = $( '.new' ).children( '.elem' );
-                //console.log( posArray );
-                $.each( posArray, function( index, item ){
-                    posObject[item.name] = item.value;
-                });
-                posObject['order_id'] = orderID;
-                //console.log( posObject );
-
-                // Insert
-                $.ajax({
-                    url: 'ajax/order.php',
-                    //data: { action: "newEntry", data: JSON.stringify(sendData) },
-                    data: { action: "newEntry", data: posObject },
-                    type: "POST",
-                    success: function(result){
-                        //alert(result);
-                            $('#pos__' + ( i +  1 ) + '__elem__10').text(result);
-                    },
-                    error:   function(){
-                        alert('Insert der Daten fehlgeschlagen!');
-                    }
-                });
-
-
-                newPositionContainer();
-
-
-    }
-
-/*
-    function updateDatabase() {
-                clearTimeout( timer );
-                timer = setTimeout( function(){   //calls click event after a certain time
-                    var updateDataJSON = new Array;
-                    $( 'ul#sortable > li' ).each( function(){
-                        updateDataJSON.push({
-                            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-                            "order_nr": $( this ).children( '.pos' ).val(),
-                            "item_nr": $( this ).children( '.itemNr' ).val(),
-                            "pos_description": $( this ).children( '.description' ).val(),
-                            "pos_unit": $( this ).children( '.unity' ).val(),
-                            "pos_price": $( this ).children( '.price' ).val(),
-                            "pos_discount": $( this ).children( '.discount' ).val(),
-                            "pos_total": $( this ).children( '.total' ).val(),
-                            "pos_emp": $( this ).children( '.mechanics' ).val(),
-                            "pos_status": $( this ).children( '.status' ).val(),
-                            "pos_id": $( this ).children( '.posID' ).text()
-                        });
-                    })
-
-                    updateDataJSON.pop()
-
-                    $.ajax({
-                        url: 'ajax/order.php',
-                        //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
-                        data: { action: "updatePositions", data: updateDataJSON },
-                        type: "POST",
-                            success: function(){
-                                //alert( 'send all posdata' );
-                            },
-                            error:  function(){
-                                alert( 'error sending posdata' );
-                            }
-                    });
-
-                }, 800 );
-    }
-*/
-    function zaehler() {
-        $( '.position' ).each( function( cnt, list ){
-            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
-            //For-Schleife um in den einzelnen ListenElementen die Felder
-            //durch zu zählen und zu nummerieren
-            var elements = $( this ).children( '.elem' );
-            for( var i = 0; i < elements.length; i++ ){
-                elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
-            }
+            },
+            error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
         })
-    }
 
     var orderID;
-    if( id > '0' ){
+    if( $.urlParam( 'id' ) > '0' ){
         //Head-Area
+        var id = $.urlParam( 'id' );
         $.ajax({
             url: 'ajax/order.php?action=getOrder&data=' + id,
             type: 'GET',
             success: function (data) {
                 //console.log(JSON.stringify(data));
                 //console.log(data);
+                
+                if (data[0].km_stnd == null) {
+                	//alert('km_stnd is empty');
+                	data[0].km_stnd = '0';
+                }
+                if (data[0].car_status == null) {
+                	//alert('car_status is empty');
+                	data[0].car_status = 'Auto hier';
+                }
+                
                 $('#head02').text(data[0].order_id);
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
-                /*
-                $('#head06').val(data[0].lxc_a_finish_time)
-                $('#head08').val(data[0].lxc_a_km);
-                $('#head12').text(data[0].lxc_a_modified_on);
-                $('#head16').text(data[0].lxc_a_init_time);
-                $('#head20').text(data[0].c_ln);
-                */
+                $('#head16').text(data[0].transdate);
+                $('#head06').val(data[0].reqdate);
+                $('#head08').val(data[0].km_stnd);
+                $('#head20').val(data[0].c_ln);
+                $('#head18').val(data[0].order_status);
+                $('#head14').val(data[0].car_status);
+                ow = data[0].customer_id;
+
                 orderID = data[0].oe_id;
-                //alert(orderID);
+                //console.log(orderID);
+
+                //clearTimeout( timer );
+                //timer = setTimeout( function(){
+                    //Data-Area
+                    $.ajax({
+                        url: 'ajax/order.php?action=getPositions&data=' + orderID,
+                        type: 'GET',
+                        success: function (data) {
+                            //alert(JSON.stringify(data));
+                            //console.log(JSON.stringify(data));
+                            //console.log(data);
+
+                            $.each(data, function (index, item) {
+                                //console.log(item);
+                                $('<li class="orderPos positions new">' +
+                                    '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
+                                    '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
+                                    '<input value="'+item.item_position+'" name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
+                                    '<input value="'+item.partnumber+'" name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
+                                    '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
+                                    '<input value="'+item.unit+'" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity unity2 elem" autocomplete="off">' +
+                                    '<input value="'+item.qty+'" type="text" class="ui-widget-content ui-corner-all number number2 elem">' +
+                                    '<input value="'+item.sellprice.toFixed(2).replace('.', ',')+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem">' +
+                                    '<input value="'+item.discount+'" type="text" id="input_05" class="ui-widget-content ui-corner-all discount discount2 elem">' +
+                                    '<input value="'+item.marge_total.toFixed(2).replace('.', ',')+'" name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total total2 elem" autocomplete="off">' +
+                                    '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics mechanics2 elem" autocomplete="off">' +
+                                        '<option class="opt mech__0" value="0"></option>' +
+                                    '</select>' +
+                                    '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status status2 elem" autocomplete="off">' +
+                                        '<option value="0" selected="true"></option>' +
+                                        '<option value="gelesen">gelesen</option>' +
+                                        '<option value="Bearbeitung">Bearbeitung</option>' +
+                                        '<option value="erledigt">erledigt</option>' +
+                                    '</select>' +
+                                    '<label value="'+item.position_id+'" name="pos_id" class="posID posID2 elem">'+item.position_id+'</label>' +
+                                    '<label value="'+item.parts_id+'" name="partID" class="partID partID2 elem">'+item.parts_id+'</label>' +
+                                '</li>').insertBefore('.newOrderPos');
+                                //alert(item.status);
+
+                                $('.new').children('.status2').val(item.status);
+                                $('.new').children('.mechanics2').val(item.u_id);
+                                $('.new').removeClass('new');
+                                $( '.posID' ).hide();
+                                $( '.partID' ).hide();
+
+                                    if( $.inArray( item.u_id, getMembers ) != -1 ){
+                                        //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
+                                    } else {
+                                        //console.log( 'item: ' + item.u_id + ' nicht vorhanden!' )
+                                        getMembers.push(
+                                            item.u_id
+                                        )
+                                    }
+
+                                grpMbr.push( {
+                                    "position": item.item_position,
+                                    "mechanics": item.u_id
+                                } )
+
+
+                            })
+                                newOrderTotalPrice()
+
+                                $.each( getMembers, function ( index, item ) {
+                                    if (item != '') {
+                                        //console.log('item: ' + item + ' != NULL');
+                                        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
+                                    }
+                                } )
+
+                                $.each(grpMbr,function (index, item) {
+                                    $('.orderPos').each(function () {
+                                        if ($(this).children('.pos').val() == item.position) {
+                                           //console.log('Auf Position ' + $(this).children('.pos').val() + ' befindet sich ' + item.mechanics);
+                                           $(this).children('.mechanics').val(item.mechanics);
+                                        }
+                                    })
+                                })
+
+                                //$('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].position_id).attr('value', data[i].position_id)
+
+                                //$('.position').removeClass('new');
+
+                                //newPositionContainer();
+                                zaehler();
+                                //getMembersOfGroup();
+                                
+                                function newOrderTotalPrice() {
+                                    var nOTP = parseFloat(0);
+                                    var nOTPBr = parseFloat(0);
+                                    $( 'ul#sortable > li' ).each( function(){
+                                        nOTP = (nOTP + parseFloat( ($(this).children('.total').val()).replace(',', '.')) );
+                                    })
+                                        //console.log(nOTP);
+                                        $('#orderTotalNetto').val((nOTP).toFixed(2).replace('.', ','));
+                                        nOTPBr = ( nOTP * 1.19 );
+                                        $('#orderTotalBrutto').val((nOTPBr).toFixed(2).replace('.', ','));
+                                        //console.log(nOTPBr);
+                                }
+
+                                $( '.rmv' ).click( function (){
+                                    //var posToDel = {};
+                                    var posToDel = $(this).parent().children('.posID').text();
+                                    //console.log(posToDel);
+                                    //console.log('remove');
+
+                                        $.ajax({
+                                            url: 'ajax/order.php',
+                                            data: { action: "delPosition", data: posToDel },
+                                            type: "POST",
+                                            success: function(){
+                                                //alert('Gesendet');
+                                            },
+                                            error:   function(){
+                                                alert('löschen der Daten fehlgeschlagen!');
+                                            }
+                                        });
+
+                                    $( this ).parent().remove();
+                                    zaehler();
+                                    updatePositionDatabase();
+                                    newOrderTotalPrice();
+                                    updateOrderDatabase();
+                                });
+
+                                $('.mechanics, .status').change(function (e) {
+                                    updatePositionDatabase();
+                                })
+
+                                $( '.elem' ).on( 'keyup', function () {
+                                    var y = $( this ).val();
+                                    $( this ).attr( 'value', y );
+                                    //console.log(y);
+                                    updatePositionDatabase();
+                                } )
+
+                                $( '.number' ).on( 'keyup', function () {
+                                    if ($(this).parent('.positions').hasClass('orderPos')) {
+                                        var number = $( this ).val().replace(',', '.');
+                                        var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
+                                        var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+                                        //console.log('NUMBERCHANGE = ' + price + ', ' + number + ', ' + discount);
+                                        //var z = ( x * y );
+                                        $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                                        //console.log( (number * price) * discount );
+                                        newOrderTotalPrice();
+                                        updateOrderDatabase();
+                                        updatePositionDatabase();
+                                    }
+                                } )
+
+                                $( '.price' ).on( 'keyup', function () {
+                                    if ($(this).parent('.positions').hasClass('orderPos')) {
+                                        var price = $( this ).val().replace(',', '.');
+                                        var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+                                        var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
+                                        //console.log('PRICECHANGE = ' + price + ', ' + number + ', ' + discount);
+                                        //var z = ( x * y );
+                                        $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                                        //console.log( z );
+                                        newOrderTotalPrice();
+                                        updateOrderDatabase();
+                                        updatePositionDatabase();
+                                    }
+                                } )
+
+                                $( '.discount' ).on( 'keyup', function () {
+                                    if ($(this).parent('.positions').hasClass('orderPos')) {
+                                        var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
+                                        var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
+                                        var discount = ( 1 - ($( this ).val() / 100) );
+                                        //var z = ( (number * price) * (1 - discount) )
+                                        $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
+                                        //console.log( z );
+                                        newOrderTotalPrice();
+                                        updateOrderDatabase();
+                                        updatePositionDatabase();
+                                    }
+                                } )
+
+                        },
+                        error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
+                    })
+                //}, 1000 );
             },
-            error:  function(){ alert("Holen des Auftrages fehlgeschlagen!"); }
+            error:  function(){
+                //alert("Holen des Auftrages fehlgeschlagen!");
+                //console.log(newOrdNr + '; ' + ow + '; ' + car);
+
+
+                /**********************************************/
+                /**********************************************/
+                /**********************************************/
+                /* Hier beginnt das weitere Vorgehen,         */
+                /* falls zu der id noch kein Auftrag vorliegt */
+                /**********************************************/
+                /**********************************************/
+                /**********************************************/
+
+                // Sammeln der daten zum Abrufen der fuer den
+                // Insert des neuen Auftrags benoetigten Daten
+                var selDataForNewOrder = new Array;
+                selDataForNewOrder.push({
+                    'customer': ow,
+                    'c_id': car,
+                    'employee': kivi.myconfig.name
+                });
+
+                $.ajax({
+                    url: 'ajax/order.php',
+                    data: { action: "getDataForNewOrder", data: selDataForNewOrder },
+                    type: 'POST',
+                    success: function ( data ) {
+                        //console.log(data);
+                        $('#head02').text(newOrdNr);
+                        $('#head04').text(data[0].customer_name);
+                        $('#head10').text(kivi.myconfig.name);
+                        $('#head20').val(data[0].c_ln);
+                        $('#head08').val('0');
+                        // Vorbereitung des Insert
+                        var dataForNewOrder = new Array;
+                        dataForNewOrder.push({
+                            'ordnumber': newOrdNr,
+                            'customer_id': ow,
+                            'c_id': car,
+                            'taxzone_id': data[0].taxzone_id,
+                            'currency_id': data[0].currency_id,
+                            'employee_id': data[0].employee_id
+                        });
+                        // Insert des neuen Auftrages
+                        $.ajax({
+                            url: 'ajax/order.php',
+                            data: { action: "newOrder", data: dataForNewOrder },
+                            type: 'POST',
+                            success: function () {
+                                $.ajax({
+                                    url: 'ajax/order.php',
+                                    data: { action: "getOrderID", data: newOrdNr },
+                                    type: 'POST',
+                                    success: function ( data ) {
+                                        //console.log(data[0].auftrags_id);
+                                        orderID = data[0].auftrags_id;
+                                        //console.log(orderID);
+                                    },
+                                    error:  function(){ alert("holen der Auftrags-ID fehlgeschlagen!"); }
+                                })
+                            },
+                            error:  function(){ alert("Insert des neuen Auftrag fehlgeschlagen!"); }
+                        })
+                    },
+                    error:  function(){ alert("holen der Daten für den neuen Auftrag fehlgeschlagen!"); }
+                })
+
+
+                /**********************************************/
+                /**********************************************/
+                /**********************************************/
+                /* Hier endet das weitere Vorgehen,           */
+                /* falls zu der id noch kein Auftrag vorliegt */
+                /**********************************************/
+                /**********************************************/
+                /**********************************************/
+
+            }
         })
+    } 
 
+        //function newPositionContainer() {
+        $('<div class="ui-widget-content">' +
+            '<div id="tmp"></div>' +
+            '<div>' +
+                '<p class="tools ui-state-highlight ui-corner-all lang " style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">' +
+                    '<label id="head01">Auftragsnummer:</label>' +
+                    '<label id="head02">0000</label>' +
+                    '<label id="head03">Auftraggeber:</label>' +
+                    '<label id="head04"></label></br>' +
+                    '<label id="head05">Fertigstellung:</label>' +
+                    '<input id="head06" type="text">' +
+                    '<label id="head07">KM-Stand:</label>' +
+                    '<input id="head08" type="text"></br>' +
+                    '<label id="head09">bearbeitet von:</label>' +
+                    '<label id="head19">Amtl.-Kennz.:</label>' +
+                    '<input id="head20" type="text"></br>' +
+                    //'<label id="head20">sssssssssssssss</label>' +
+                    '<label id="head10"></label>' +
+                    '<label id="head11">bearbeitet am:</label>' +
+                    '<label id="head12"></label></br>' +
+                    '<label id="head13">KfZ:</label>' +
+                    '<select id="head14" type="text">' +
+                        '<option>Auto nicht hier</option>' +
+                        '<option selected="selected">Auto hier</option>' +
+                        '<option>Sonstiges zur Reparatur gebracht</option>' +
+                        '<option>Bestellung</option>' +
+                    '</select></br>' +
+                    '<label id="head15">erstellt am:</label>' +
+                    '<label id="head16"></label>' +
+                    '<label id="head17">Status:</label>' +
+                    '<select id="head18" type="text">' +
+                        '<option></option>' +
+                        '<option>angenommen</option>' +
+                        '<option>bearbeitet</option>' +
+                        '<option selected="selected">abgerechnet</option>' +
+                    '</select>' +
+                '</p>' +
+            '</div>' +
+            '<div>' +
+                '<img src="' + baseUrl + '/image/updown.png" class="lblPositioning lblPos1">' +
+                '<img src="' + baseUrl + '/image/close.png" class="lblPositioning lblPos2">' +
+                '<label name="position" class="lblPositioning lblPos3">Position</label>' +
+                '<label name="art_nr" class="lblPositioning lblPos4">Artikel-Nr.</label>' +
+                '<label name="bezeichnung" class="lblPositioning lblPos5">Beschreibung</label>' +
+                '<label name="einheit" class="lblPositioning lblPos6">Einheit</label>' +
+                '<label name="anzahl" class="lblPositioning lblPos12">Anzahl</label>' +
+                '<label name="preis" class="lblPositioning lblPos7">Preis</label>' +
+                '<label name="rabatt" class="lblPositioning lblPos8">Rabatt</label>' +
+                '<label name="gesamt" class="lblPositioning lblPos9">Gesamt</label>' +
+                '<label name="mechaniker" class="lblPositioning lblPos10">Mechaniker</label>' +
+                '<label name="status" class="lblPositioning lblPos11">Status</label>' +
+            '</div>' +
+                '<form id="myform">' +
+                    '<ul id="sortable">' +
+                        '<li class="newOrderPos positions">' +
+                            '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
+                            '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
+                            '<input name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem" value="1">' +
+                            '<input name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
+                            '<span class="part_picker">' +
+                                '<input name="pos_description" type="text" id="add_item_parts_id_name" class="add_item_input part_autocomplete partpicker_fat_set_item ui-widget-content ui-corner-all description descrNewPos elem">' +
+                                '<input type="hidden" class="add_item_input part_autocomplete partpicker_fat_set_item" id="add_item_parts_id" name="add_item.parts_id" value="">'+
+                            '</span>' +
+                            '<select id="input_03" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity nPunity elem" autocomplete="off">' +
+                                '<option class="opt unit__0" value="0"></option>' +
+                            '</select>' +
+                            '<input type="text" value="0" class="ui-widget-content ui-corner-all number elem">' +
+                            '<input type="text" id="input_04" class="ui-widget-content ui-corner-all price elem">' +
+                            '<input type="text" id="input_05" class="ui-widget-content ui-corner-all discount elem">' +
+                            '<input name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total elem" autocomplete="off">' +
+                            '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics elem" autocomplete="off">' +
+                                '<option class="opt mech__0" value=""></option>' +
+                            '</select>' +
+                            '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status elem" autocomplete="off">' +
+                                '<option value="0" selected="true"></option>' +
+                                '<option value="gelesen">gelesen</option>' +
+                                '<option value="Bearbeitung">Bearbeitung</option>' +
+                                '<option value="erledigt">erledigt</option>' +
+                            '</select>' +
+                            '<label name="pos_id" class="posID elem"></label>' +
+                            '<label name="part_id" class="partID elem"></label>' +
+                        '</li>' +
+                    '</ul>' +
+                        '<li>' +
+                            '<label id="netto">Netto:</label>' +
+                            '<input name="pos_orderTotalNetto" value="0" type="text" id="orderTotalNetto" class="ui-widget-content ui-corner-all" autocomplete="off">' +
+                        '</li></br>' +
+                        '<li>' +
+                            '<label id="brutto">Brutto:</label>' +
+                            '<input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="ui-widget-content ui-corner-all" autocomplete="off">' +
+                        '</li>' +
+                '</form>' +
+                //'<input type="button" id="testBtn" value="TEST">' +
+                '<button id="backToCRM">CRM</button>' +
+                '<button id="backToOrderList">Zurück</button>' +
+        '</div>').appendTo('body');
+
+        $('#add_item_parts_id_name').focus();
+        $( '.posID' ).hide();
+        $( '.partID' ).hide();
+        
+        $( "#backToCRM" ).button().click(function () {
+        //alert( document.lxcauf.owner.value );
+            location.href = 'http://192.168.178.25/kivitendo-dev-jens/crm/firma1.php?Q=C&id=' + ow;
+            return false;
+        });
+        
+        $( "#backToOrderList" ).button().click(function () {
+        //alert( document.lxcauf.owner.value );
+            //window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
+            window.location = 'orderlist.phtml?task=<?php echo $task ?>&owner='+ow+'&c_id='+car;
+            return false;
+        });
+        
+        $('#sortable').sortable({
+            update: function() {
+                zaehler();
+                updatePositionDatabase();
+            }
+        });
+
+        /*
+        $('#testBtn').click(function () {
+            //updateOrderDatabase();
+            //var testText = $(this).val();
+            //alert(testText);
+            //console.log(orderID);
+        })
+        */
+
+        $('#head08, #head20, #head06').on('keyup', function () {
+            updateOrderDatabase();
+        });
+
+        $('#head18, #head14').change(function () {
+            updateOrderDatabase();
+        });
+
+        $( '.description' ).on( 'keyup', function(){
+            //Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
+            var y = $(this).val();
+            $(this).attr('value', y);
+            if( y.length >= 1 && $(this).hasClass( 'descrNewPos' ) ){
+                insertIntoDatabase();
+                $(this).removeClass('descrNewPos');
+                //alert('will insert')
+            } else {
+                    //updatePositionDatabase();
+            }
+        });
+
+    function zaehler() {
+        $( '.positions' ).each( function( cnt, list ){
+            $( list ).attr( 'id', 'pos__' + ( cnt + 1 ) ).children( '.pos' ).val( ( cnt + 1 ) ).attr('value', (cnt + 1));
+            //For-Schleife um in den einzelnen ListenElementen die Felder
+            //durch zu zählen und zu nummerieren
+            var elements = $( this ).children( '.elem' );
+            for( var i = 0; i < elements.length; i++ ){
+                elements[i].id = $( list ).attr( 'id' ) + '__elem__' + ( i + 1 );
+                //alert(elements[i].id + ' wird neu sortiert');
+            }
+        })
+        //updatePositionDatabase();
+    }
+
+    function insertIntoDatabase() {
+        var posObject = {};
+        var posArray = $( '.newOrderPos' ).children( '.elem' );
+        $.each( posArray, function( index, item ){
+            posObject[item.name] = item.value;
+        });
+        posObject['order_id'] = orderID;
+        posObject['description'] = $( '.newOrderPos' ).children().children( '.elem' ).val();
+        // Insert
+        $.ajax({
+            url: 'ajax/order.php',
+            //data: { action: "newEntry", data: JSON.stringify(sendData) },
+            data: { action: "newEntry", data: posObject },
+            type: "POST",
+            success: function(result){
+                    $('.newOrderPos').children('.posID').text(result);
+                    //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
+            },
+            error:   function(){
+                alert('Insert der Daten fehlgeschlagen!');
+            }
+        });
+    }
+
+    function updatePositionDatabase() {
         clearTimeout( timer );
-        timer = setTimeout( function(){
-            //Data-Area
-            $.ajax({
-                url: 'ajax/order.php?action=getPositions&data=' + orderID,
-                type: 'GET',
-                success: function (data) {
-                    //alert(JSON.stringify(data));
-                    //console.log(JSON.stringify(data));
-                    //console.log(data);
-
-                    for (i = 0; i < data.length; i++) {
-                        $('#pos__' + ( i +  1 ) + '__elem__2').val(data[i].parts_id);
-                        $('#pos__' + ( i +  1 ) + '__elem__3').val(data[i].description);
-                        $('#pos__' + ( i +  1 ) + '__elem__4').val(data[i].unit);
-                        $('#pos__' + ( i +  1 ) + '__elem__5').val(data[i].sellprice);
-                        $('#pos__' + ( i +  1 ) + '__elem__6').val(data[i].discount);
-                        $('#pos__' + ( i +  1 ) + '__elem__7').val(data[i].marge_total);
-                        /*
-                        if ($(".mechanics option[value='" + data[i].pos_emp + "']").val() == data[i].pos_emp) {
-                            $('#pos__' + (i+1) + '__elem__8').val(data[i].pos_emp)
-                        } else {
-                            $('#pos__' + (i+1) + '__elem__8').append('<option selected="selected">' + data[i].pos_emp + '</option>')
-                        }
-
-                        if ($(".status option[value='" + data[i].pos_status + "']").val() == data[i].pos_status) {
-                            $('#pos__' + (i+1) + '__elem__9').val(data[i].pos_status)
-                        } else {
-                            $('#pos__' + (i+1) + '__elem__9').append('<option selected="selected">' + data[i].pos_status + '</option>')
-                        }
-                        */
-
-                        $('#pos__' + ( i +  1 ) + '__elem__10').text(data[i].position_id).attr('value', data[i].position_id)
-
-                        $('.position').removeClass('new');
-
-                        newPositionContainer();
-                    }
-
-                },
-                error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
+        timer = setTimeout( function(){   //calls click event after a certain time
+            var updateDataJSON = new Array;
+            $( 'ul#sortable > li' ).each( function(){
+                //var mechOptSel = $('option:selected', this).attr('u-id');
+                updateDataJSON.push({
+                    //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                    "order_nr": $( this ).children( '.pos' ).val(),
+                    "item_nr": $( this ).children( '.itemNr' ).val(),
+                    "pos_description": $( this ).children( '.description' ).val(),
+                    "pos_unit": $( this ).children( '.unity' ).val(),
+                    "pos_qty": $( this ).children( '.number' ).val(),
+                    "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
+                    "pos_discount": $( this ).children( '.discount' ).val(),
+                    "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
+                    "pos_emp": $( this ).children( '.mechanics' ).val(),
+                    "pos_status": $( this ).children( '.status' ).val(),
+                    "pos_id": $( this ).children( '.posID' ).text(),
+                    "partID": $( this ).children( '.partID' ).text()
+                });
             })
-        }, 200 );
+
+            updateDataJSON.pop();
+
+            $.ajax({
+                url: 'ajax/order.php',
+                //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                data: { action: "updatePositions", data: updateDataJSON },
+                type: "POST",
+                    success: function(){
+                        //alert( 'send all posdata' );
+                    },
+                    error:  function(){
+                        alert( 'Update fehlgeschlagen' );
+                    }
+            });
+        }, 800 );
+    }
+
+    function updateOrderDatabase() {
+        var netamount = $('#orderTotalNetto').val().replace(',', '.');
+        var amount = $('#orderTotalBrutto').val().replace(',', '.');
+        clearTimeout( timer );
+        timer = setTimeout( function(){   //calls click event after a certain time
+            var updateDataJSON = new Array;
+            updateDataJSON.push({
+                //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+                "ordnumber": orderID,
+                "km_stnd": $('#head08').val(),
+                "netamount": netamount,
+                "amount": amount,
+                "status": $('#head18').val(),
+                "fertigstellung": $('#head06').val(),
+                "car_status": $('#head14').val()
+            });
+            //console.log(updateDataJSON);
+
+            //updateDataJSON.pop();
+
+            $.ajax({
+                url: 'ajax/order.php',
+                //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+                data: { action: "updateOrder", data: updateDataJSON },
+                type: "POST",
+                    success: function(){
+                        //alert( 'send all posdata' );
+                    },
+                    error:  function(){
+                        alert( 'Update des Auftrages fehlgeschlagen' );
+                    }
+            });
+
+        }, 800 );
     }
 
 }); //Ende $(document).ready()
@@ -411,6 +692,8 @@ $(document).ready(function() {
 
 table.tablesorter { width:auto; cursor:pointer; }
 
+    .input_02{width: 248px;}
+
     #head01 {position: absolute; top: 135px; left: 5px; font-size: 12px;}
     #head02 {position: absolute; top: 135px; left: 125px; font-size: 12px;}
     #head03 {position: absolute; top: 135px; left: 500px; font-size: 12px;}
@@ -418,7 +701,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head05 {position: absolute; top: 150px; left: 5px; font-size: 12px;}
     #head06 {position: absolute; top: 150px; left: 125px; font-size: 12px;}
     #head07 {position: absolute; top: 150px; left: 500px; font-size: 12px;}
-    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px; width: 100px}
+    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px;}
     #head09 {position: absolute; top: 165px; left: 5px; font-size: 12px;}
     #head10 {position: absolute; top: 165px; left: 125px; font-size: 12px;}
     #head11 {position: absolute; top: 165px; left: 500px; font-size: 12px;}
@@ -429,8 +712,12 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head16 {position: absolute; top: 200px; left: 125px; font-size: 12px;}
     #head17 {position: absolute; top: 200px; left: 500px; font-size: 12px;}
     #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
-    #head19 {position: absolute; top: 150px; left: 770px; font-size: 12px;}
-    #head20 {position: absolute; top: 150px; left: 870px; font-size: 12px;}
+    #head19 {position: absolute; top: 150px; left: 850px; font-size: 12px;}
+    #head20 {position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
+    #netto { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalNetto { position: absolute; left: 1133px; width: 100px; text-align: right; }
+    #brutto { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalBrutto { position: absolute; left: 1133px; width: 100px; text-align: right; }
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
     #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
@@ -443,23 +730,38 @@ table.tablesorter { width:auto; cursor:pointer; }
     .lblPos4 {  position:relative; left: 60px;}
     .lblPos5 {  position:relative; left: 65px;}
     .lblPos6 {  position:relative; left: 555px;}
-    .lblPos7 {  position:relative; left: 570px;}
-    .lblPos8 {  position:relative; left: 645px;}
-    .lblPos9 {  position:relative; left: 710px;}
-    .lblPos10 {  position:relative; left: 765px;}
-    .lblPos11 { position: relative; left: 835px;}
+    .lblPos12 {  position:relative; left: 570px;}
+    .lblPos7 {  position:relative; left: 585px;}
+    .lblPos8 {  position:relative; left: 660px;}
+    .lblPos9 {  position:relative; left: 725px;}
+    .lblPos10 {  position:relative; left: 785px;}
+    .lblPos11 { position: relative; left: 855px;}
     .mv {  position:relative; left: 5px; top: 3px;}
     .rmv {  position:relative; left: 10px; top: 3px;}
+    /*.pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}*/
     .pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}
-    .itemNr {  position:relative; left: 23px; width: 65px;}
-    .description {  position:relative; left: 28px; width: 570px;}
-    .unity {  position:relative; left: 33px; width: 50px}
-    .price {  position:relative; left: 40px; width: 100px; text-align: right;}
-    .discount {  position:relative; left: 45px; width: 100px;text-align: right;}
-    .total {  position:relative; left: 50px; width: 100px;text-align: right;}
-    .mechanics {  position:relative; left: 55px; width: 140px;}
-    .status { position: relative; left: 60px; width: 140px;}
-    .posID { position: relative; left: 65px; font-size: 12px; }
+    .itemNr {  position:relative; left: 23px; width: 65px; text-align: right;}
+    /*.description {  position:relative; left: 48px; width: 570px;}*/
+    .description {  position:relative; left: 48px; width: 577px;}
+    .description2 {  position:relative; left: 25px; width: 577px;}
+    .unity {  position:relative; left: 608px; width: 55px}
+    .unity2 {  position:relative; left: 28px; width: 50px}
+    .number {  position:relative; left: 614px; width: 50px; text-align: right;}
+    .number2 {  position:relative; left: 35px; width: 50px; text-align: right;}
+    .price {  position:relative; left: 617px; width: 100px; text-align: right;}
+    .price2 {  position:relative; left: 37px; width: 100px; text-align: right;}
+    .discount {  position:relative; left: 622px; width: 100px;text-align: right;}
+    .discount2 {  position:relative; left: 42px; width: 100px;text-align: right;}
+    .total {  position:relative; left: 627px; width: 100px; text-align: right;}
+    .total2 {  position:relative; left: 47px; width: 100px; text-align: right;}
+    .mechanics {  position:relative; left: 632px; width: 140px;}
+    .mechanics2 {  position:relative; left: 53px; width: 140px;}
+    .status { position: relative; left: 637px; width: 140px;}
+    .status2 { position: relative; left: 60px; width: 140px;}
+    .posID { position: relative; left: 642px; font-size: 12px; }
+    .posID2 { position: relative; left: 67px; font-size: 12px; }
+    .partID { position: relative; left: 702px; }
+    .partID2 { position: relative; left: 70px; }
 
 </style>
 </head>

@@ -14,7 +14,7 @@ foreach($gruppen as $key=>$value){
 }
 
 if( !$schrauber ){
-	echo "<b>Gruppe Werstatt nicht angelegt oder ihr keine  Mitglieder zugewiesn. install.txt lesn!!</br>CRM->Admin->Gruppen</b>";
+	echo "<b>Gruppe Werkstatt nicht angelegt oder ihr keine  Mitglieder zugewiesen. install.txt lesen!!</br>CRM->Admin->Gruppen</b>";
 }
 $emp = -1;
 foreach( $schrauber as $key => $value ){

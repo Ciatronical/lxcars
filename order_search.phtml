@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+<?php
+    require_once( __DIR__."/../inc/stdLib.php" );
+    $menu = $_SESSION['menu'];
+    echo $menu['stylesheets'];
+    echo $menu['javascripts'];
+    echo $head['JQUERY'];
+    echo $head['JQUERYUI'];
+    echo $head['JQTABLE'];
+    echo $head['THEME'];
+    echo $head['JUI-DROPDOWN'];
+    echo $head['TRANSLATION'];
+
+/*************************************************************/
+/************************ LxCars Auftrag *********************/
+/************** ronny@lxcars.de, April 2010 ******************/
+/*************************************************************/
+//include_once( "../inc/stdLib.php" );
+include_once("inc/lxcLib.php");
+include_once("../inc/template.inc");
+include_once("../inc/UserLib.php");
+include_once ( "../inc/crmLib.php" );
+
+?>
+
+
+  <script type="text/javascript" src="autocomplete_customer.js"></script>
+  <script type="text/javascript" src="autocomplete_part.js"></script>
+  <script type="text/javascript" src="kivi.Order.js"></script>
+
+<script>
+
+$(document).ready(function() {
+
+    $.urlParam = function( name ){
+        var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+        if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+        else return decodeURIComponent( results[1] || 0 );
+    }
+    
+    /*****************************/
+     /**************************/
+      /***********************/
+       /********************/
+        /*****************/
+    
+    $('button').button();
+    
+    var statusSearch = $('#txtStatus').val();
+    
+    $('#txtStatus').change(function () {
+    	statusSearch = $(this).val();
+    	//console.log(statusSearch);
+    	getOrderList();
+    })
+    
+    function getOrderList() {
+        if (statusSearch == '1') {
+            $.ajax({
+                url: 'ajax/order.php?action=getOrderList&data='+statusSearch,
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    $.each(data, function (index, item) {
+                        if (item.auftragsstatus == null) {
+                        	item.auftragsstatus = '';
+                        }
+                        $(  '<tr>'+
+                                '<td>'+item.auftragsstatus+'</td>'+
+                                '<td></td>'+
+                                '<td>'+item.besitzer+'</td>'+
+                                '<td>'+item.auftragsdatum+'</td>'+
+                                '<td>'+item.ersteposition+'</td>'+
+                                '<td>'+item.auftragsnummer+'</td>'+
+                            '</tr>'
+                        ).appendTo('#showtableTBody');
+                    })
+                },
+                error: function () {
+                    alert('holen der Orderliste fehlgeschlagen');
+                }
+            })
+        }
+    }
+    
+        /*****************/
+       /********************/
+      /***********************/
+     /**************************/
+    /*****************************/
+    
+}); //Ende $(document).ready()
+
+</script>
+<style>
+
+table.tablesorter { width:auto; cursor:pointer; }
+#show { position: absolute;top: 100px;left: 350px; }
+ .tablesorter { width:auto; cursor:pointer; widgets: ['zebra']; sortList: [[0,0]];}
+.tdLeft { text-align:right; }
+.tblSearchTxt { width: 200px; }
+
+#btnDelete { margin-left: 10px; }
+
+</style>
+</head>
+
+<body>
+<?php
+    echo $menu['pre_content'];
+    echo $menu['start_content'];
+?>
+
+<?php echo $menu['end_content']; ?>
+
+<p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Testfile</p>
+
+    <table id="searchTable">
+        <tr>
+            <td class="tdLeft">
+                Kennzeichen:
+            </td>
+            <td>
+                <input type="text" id="txtKennzeichen" class="tblSearchTxt">
+            </td>
+        </tr>
+        <tr>
+            <td class="tdLeft">
+                Kundenname:
+            </td>
+            <td>
+                <input type="text" id="txtKundenname" class="tblSearchTxt">
+            </td>
+        </tr>
+        <tr>
+            <td class="tdLeft">
+                Datum von:
+            </td>
+            <td>
+                <input type="text" id="txtDatumVon" class="tblSearchTxt">
+            </td>
+        </tr>
+        <tr>
+            <td class="tdLeft">
+                Datum bis:
+            </td>
+            <td>
+                <input type="text" id="txtDatumBis" class="tblSearchTxt">
+            </td>
+        </tr>
+        <tr>
+            <td class="tdLeft">
+                Status:
+            </td>
+            <td>
+                <select id="txtStatus" class="tblSearchTxt">
+                    <option value="1">alle</option>
+                    <option value="2">angenommen</option>
+                    <option value="3">bearbeitet</option>
+                    <option value="4">abgerechnet</option>
+                    <option value="5" selected="true">nicht abgerechnet</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="tdLeft">
+            </td>
+            <td>
+                <button id="btnSearch">Suchen</button>
+                <button id="btnDelete">Löschen</button>
+            </td>
+        </tr>
+    </table>
+    
+    <div id="show">
+        <table id="showtable" class="tablesorter">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Kennzeichen</th>
+                    <th>Besitzer</th>
+                    <th>Auftragsdatum</th>
+                    <th>Erste Position</th>
+                    <th>Auftrags-Nr.</th>
+                </tr>
+            </thead>
+            <tbody id="showtableTBody">
+            </tbody>
+        </table>
+        <?php    
+        echo $head["JQTABLE-PAGER"];
+        ?>
+    </div>
+</body>
+</html>
