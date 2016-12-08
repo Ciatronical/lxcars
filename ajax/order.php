@@ -158,16 +158,18 @@ function getOrderID( $newOrdNr ) {
 
 function getOrderList( $statusSearch ) {
     writeLog($statusSearch);
-    if( $statusSearch == '1' ) {
+    if( $statusSearch == 'alle' ) {
         echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
                                                     oe.id AS auftragsnummer, 
                                                     oe.transdate AS auftragsdatum, 
                                                     oe.status AS auftragsstatus,
                                                     orderitems.description AS ersteposition,
+                                                    lxc_cars.c_ln AS kennzeichen,
                                                     customer.name AS besitzer
                                                 FROM 
                                                     oe,
                                                     orderitems,
+                                                    lxc_cars,
                                                     customer
                                                 WHERE
                                                     customer.id = oe.customer_id
@@ -175,6 +177,32 @@ function getOrderList( $statusSearch ) {
                                                     orderitems.trans_id = oe.id
                                                 AND
                                                     orderitems.position = 1
+                                                AND 
+                                                    lxc_cars.c_id = oe.c_id
+                                                ORDER BY oe.id", true );
+    }else {
+        echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
+                                                    oe.id AS auftragsnummer, 
+                                                    oe.transdate AS auftragsdatum, 
+                                                    oe.status AS auftragsstatus,
+                                                    orderitems.description AS ersteposition,
+                                                    lxc_cars.c_ln AS kennzeichen,
+                                                    customer.name AS besitzer
+                                                FROM 
+                                                    oe,
+                                                    orderitems,
+                                                    lxc_cars,
+                                                    customer
+                                                WHERE
+                                                    customer.id = oe.customer_id
+                                                AND
+                                                    orderitems.trans_id = oe.id
+                                                AND
+                                                    orderitems.position = 1
+                                                AND 
+                                                    lxc_cars.c_id = oe.c_id
+                                                AND
+                                                    oe.status = '".$statusSearch."'
                                                 ORDER BY oe.id", true );
     }
 }
