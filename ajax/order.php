@@ -156,54 +156,57 @@ function getOrderID( $newOrdNr ) {
     echo $rs = $GLOBALS['dbh']->getOne( "SELECT id AS auftrags_id FROM oe WHERE ordnumber = '".$newOrdNr."'", true );
 }
 
-function getOrderList( $statusSearch ) {
-    writeLog($statusSearch);
-    if( $statusSearch == 'alle' ) {
+function getOrderList( $data ) {
+    //writeLog($data['kennzeichen'].', '.$data['kundenname'].', '.$data['datum_von'].', '.$data['datum_bis'].', '.$data['statusSearch']);
+    
+    if($data['statusSearch'] == 'alle') {
         echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
-                                                    oe.id AS auftragsnummer, 
-                                                    oe.transdate AS auftragsdatum, 
                                                     oe.status AS auftragsstatus,
+                                                    oe.transdate AS auftragsdatum,
+                                                    oe.ordnumber AS auftragsnummer,
                                                     orderitems.description AS ersteposition,
+                                                    customer.name AS besitzer,
+                                                    customer.id AS owner,
                                                     lxc_cars.c_ln AS kennzeichen,
-                                                    customer.name AS besitzer
-                                                FROM 
+                                                    lxc_cars.c_id AS c_id
+                                                FROM
                                                     oe,
                                                     orderitems,
-                                                    lxc_cars,
-                                                    customer
+                                                    customer,
+                                                    lxc_cars
                                                 WHERE
-                                                    customer.id = oe.customer_id
+                                                    orderitems.trans_id = oe.id AND orderitems.position = 1
                                                 AND
-                                                    orderitems.trans_id = oe.id
+                                                    customer.name = '".$data['kundenname']."' AND customer.id = oe.customer_id
                                                 AND
-                                                    orderitems.position = 1
-                                                AND 
-                                                    lxc_cars.c_id = oe.c_id
-                                                ORDER BY oe.id", true );
+                                                    lxc_cars.c_ln = '".$data['kennzeichen']."' AND lxc_cars.c_id = oe.c_id
+                                                ORDER BY 
+                                                    oe.ordnumber", true );
     }else {
         echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
-                                                    oe.id AS auftragsnummer, 
-                                                    oe.transdate AS auftragsdatum, 
                                                     oe.status AS auftragsstatus,
+                                                    oe.transdate AS auftragsdatum,
+                                                    oe.ordnumber AS auftragsnummer,
                                                     orderitems.description AS ersteposition,
+                                                    customer.name AS besitzer,
+                                                    customer.id AS owner,
                                                     lxc_cars.c_ln AS kennzeichen,
-                                                    customer.name AS besitzer
-                                                FROM 
+                                                    lxc_cars.c_id AS c_id
+                                                FROM
                                                     oe,
                                                     orderitems,
-                                                    lxc_cars,
-                                                    customer
+                                                    customer,
+                                                    lxc_cars
                                                 WHERE
-                                                    customer.id = oe.customer_id
+                                                    oe.status = '".$data['statusSearch']."' AND oe.transdate BETWEEN '".$data['datum_von']."' AND '".$data['datum_bis']."'
                                                 AND
-                                                    orderitems.trans_id = oe.id
+                                                    orderitems.trans_id = oe.ordnumber AND orderitems.position = 1
                                                 AND
-                                                    orderitems.position = 1
-                                                AND 
-                                                    lxc_cars.c_id = oe.c_id
+                                                    customer.name = '".$data['kundenname']."' AND customer.id = oe.customer_id
                                                 AND
-                                                    oe.status = '".$statusSearch."'
-                                                ORDER BY oe.id", true );
+                                                    lxc_cars.c_ln = '".$data['kennzeichen']."' AND lxc_cars.c_id = oe.c_id
+                                                ORDER BY 
+                                                    oe.ordnumber", true );
     }
 }
 

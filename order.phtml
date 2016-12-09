@@ -24,6 +24,7 @@ include_once("../inc/UserLib.php");
 include_once ( "../inc/crmLib.php" );
 
 ob_start();
+$url = $_GET["url"] ? $_GET["url"] : $_POST["url"];
 $task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
 $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
 $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
@@ -530,7 +531,7 @@ $(document).ready(function() {
         $( "#backToOrderList" ).button().click(function () {
         //alert( document.lxcauf.owner.value );
             //window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
-            window.location = 'orderlist.phtml?task=<?php echo $task ?>&owner='+ow+'&c_id='+car;
+            window.location = '<?php echo $url ?>?task=<?php echo $task ?>&owner='+ow+'&c_id='+car+'&s=1';
             return false;
         });
         

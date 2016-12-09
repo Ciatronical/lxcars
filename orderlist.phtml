@@ -38,6 +38,7 @@ include_once("../inc/UserLib.php");
 include_once ( "../inc/crmLib.php" );
 
 ob_start();
+$url = $_SERVER['SCRIPT_NAME'];
 $task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
 $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
 $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
@@ -57,7 +58,7 @@ $(document).ready(function() {
         var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
         if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
         else decodeURIComponent( results[1] || 0 );        }
-
+        
     //alert( $.urlParam( 'param2' ) );
 
     var language = kivi.myconfig.countrycode;
@@ -74,7 +75,7 @@ $(document).ready(function() {
 
     $('.showtableRow').click(function () {
         //console.log($(this).attr('id'));
-        window.location = 'order.phtml?task=<?php echo $task ?>&id='+$(this).attr('id')+'&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
+        window.location = 'order.phtml?task=<?php echo $task ?>&id='+$(this).attr('id')+'&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>&url=<?php echo $url ?>';
     })
 
     $('#btnNewOrder').button().click(function () {
@@ -122,6 +123,7 @@ $(document).ready(function() {
  <p class="ui-state-highlight ui-corner-all tools lang" style="margin-top: 20px; padding: 0.6em;" data-lang="TESTFILE">Testfile</p>
 
 <?php
+//echo $url;
 //echo $task;
 //echo $c_id;
 //echo $owner;

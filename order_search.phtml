@@ -25,6 +25,8 @@ include_once("../inc/template.inc");
 include_once("../inc/UserLib.php");
 include_once ( "../inc/crmLib.php" );
 
+ob_start();
+$url = $_SERVER['SCRIPT_NAME'];
 ?>
 
 
@@ -53,22 +55,9 @@ $(document).ready(function() {
     var datum_von;
     var datum_bis;
     var statusSearch = $('#txtStatus').val();
-    var dataArray = new Array;
+    var dataObject = {};
     
     $('button').button();
-    
-    $('#btnSearch').click(function () {
-    	$('.showtableTr').remove();
-    	//getOrderList();
-    	dataArray.push({
-    	   'kennzeichen': kennzeichen,
-    	   'kundenname': kundenname,
-    	   'datum_von': datum_von,
-    	   'datum_bis': datum_bis,
-    	   'statusSearch': statusSearch
-    	});
-    	console.log(dataArray);
-    })
     
     $('#txtKennzeichen').on('keyup', function () {
         kennzeichen = $(this).val();
@@ -91,6 +80,17 @@ $(document).ready(function() {
     	//console.log(statusSearch);
     })
     
+    $('#btnSearch').click(function () {
+        $('.showtableRow').remove();
+        dataObject['kennzeichen'] = kennzeichen;
+        dataObject['kundenname'] = kundenname;
+        dataObject['datum_von'] = datum_von;
+        dataObject['datum_bis'] = datum_bis;
+        dataObject['statusSearch'] = statusSearch;
+        //console.log(dataObject);
+        getOrderList();
+    })
+    
     /*
     $('.tblSearchTxt').on('keyup', function () {
         $('#showtableTBody tr').show();
@@ -101,24 +101,47 @@ $(document).ready(function() {
     function getOrderList() {
         //if (statusSearch == 'alle') {
             $.ajax({
-                url: 'ajax/order.php?action=getOrderList&data='+dataArray,
-                type: 'GET',
+                url: 'ajax/order.php',
+                data: { action: "getOrderList", data: dataObject },
+                type: "GET",
                 success: function (data) {
                     //console.log(data);
+                    
                     $.each(data, function (index, item) {
                         if (item.auftragsstatus == null) {
                         	item.auftragsstatus = '';
                         }
-                        $(  '<tr class="showtableTr">'+
-                                '<td>'+item.auftragsstatus+'</td>'+
+                        $(  '<tr id="'+item.auftragsnummer+'" class="showtableRow">'+
+                                '<td class="'+item.auftragsstatus+'">'+item.auftragsstatus+'</td>'+
                                 '<td>'+item.kennzeichen+'</td>'+
                                 '<td>'+item.besitzer+'</td>'+
                                 '<td>'+item.auftragsdatum+'</td>'+
                                 '<td>'+item.ersteposition+'</td>'+
                                 '<td>'+item.auftragsnummer+'</td>'+
+                                '<td class="vals v1">'+item.owner+'</td>'+
+                                '<td class="vals v2">'+item.c_id+'</td>'+
                             '</tr>'
                         ).appendTo('#showtableTBody');
+                        
+                        if (item.auftragsstatus == 'bearbeitet') {
+                        	$('.bearbeitet').css({
+                        	   backgroundColor: 'red'
+                        	})
+                        }else if (item.auftragsstatus == 'angenommen') {
+                        	$('.angenommen').css({
+                        	   backgroundColor: 'green'
+                        	})
+                        }
+
+                        $('.showtableRow').click(function () {
+                            console.log($(this).attr('id'));
+                            window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).children('.v1').text()+'&c_id='+$(this).children('.v2').text()+'&url=<?php echo $url ?>';
+                        })
+    
+                        $('.vals').hide();
+    
                     })
+                    
                 },
                 error: function () {
                     alert('holen der Orderliste fehlgeschlagen');
