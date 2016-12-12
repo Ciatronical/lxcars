@@ -27,6 +27,7 @@ include_once ( "../inc/crmLib.php" );
 
 ob_start();
 $url = $_SERVER['SCRIPT_NAME'];
+$s = $_GET["s"] ? $_GET["s"] : $_POST["s"];
 ?>
 
 
@@ -49,6 +50,21 @@ $(document).ready(function() {
       /***********************/
        /********************/
         /*****************/
+                    
+                    window.onbeforeunload = function() {
+                        localStorage['dataObject'] = JSON.stringify(dataObject);
+                    }
+                    
+                    window.onload = function() {
+                        dataObject = JSON.parse(localStorage['dataObject']);
+                        //console.log(dataObject);
+                        $('#txtKennzeichen').val(dataObject['kennzeichen']);
+                        $('#txtKundenname').val(dataObject['kundenname']);
+                        $('#txtDatumVon').val(dataObject['datum_von']);
+                        $('#txtDatumBis').val(dataObject['datum_bis']);
+                        $('#txtStatus').val(dataObject['statusSearch']);
+                        getOrderList();
+                    }
     
     var kennzeichen;
     var kundenname;
@@ -106,13 +122,18 @@ $(document).ready(function() {
                 type: "GET",
                 success: function (data) {
                     //console.log(data);
-                    
+            
                     $.each(data, function (index, item) {
                         if (item.auftragsstatus == null) {
                         	item.auftragsstatus = '';
                         }
+                        if (item.car_status == null) {
+                        	item.car_status = '';
+                        }else {
+                        	item.car_status = ' / '+item.car_status;
+                        }
                         $(  '<tr id="'+item.auftragsnummer+'" class="showtableRow">'+
-                                '<td class="'+item.auftragsstatus+'">'+item.auftragsstatus+'</td>'+
+                                '<td class="back">'+item.auftragsstatus + '' + item.car_status+'</td>'+
                                 '<td>'+item.kennzeichen+'</td>'+
                                 '<td>'+item.besitzer+'</td>'+
                                 '<td>'+item.auftragsdatum+'</td>'+
@@ -122,25 +143,50 @@ $(document).ready(function() {
                                 '<td class="vals v2">'+item.c_id+'</td>'+
                             '</tr>'
                         ).appendTo('#showtableTBody');
-                        
-                        if (item.auftragsstatus == 'bearbeitet') {
-                        	$('.bearbeitet').css({
-                        	   backgroundColor: 'red'
-                        	})
-                        }else if (item.auftragsstatus == 'angenommen') {
-                        	$('.angenommen').css({
-                        	   backgroundColor: 'green'
-                        	})
-                        }
 
                         $('.showtableRow').click(function () {
-                            console.log($(this).attr('id'));
+                            //console.log($(this).attr('id'));
                             window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).children('.v1').text()+'&c_id='+$(this).children('.v2').text()+'&url=<?php echo $url ?>';
                         })
     
                         $('.vals').hide();
+                        
+                        $('#showtable').trigger('update');
     
                     })
+                    
+                    $('#showtable tr').each( function () {
+                        if (
+                            $(this).children('.back').text() == '') {
+                        	    $(this).children('.back').css({
+                        	       backgroundColor: 'none'
+                        	    })
+                    	}else if (
+                            $(this).children('.back').text() == 'angenommen / Auto hier' || 
+                            $(this).children('.back').text() == 'angenommen / Sonstiges zur Reparatur gebracht' || 
+                            $(this).children('.back').text() == 'angenommen / Bestellung') {
+                        	    $(this).children('.back').css({
+                        	       backgroundColor: 'yellow'
+                        	    })
+                    	}else if (
+                            $(this).children('.back').text() == 'bearbeitet / Auto hier' || 
+                            $(this).children('.back').text() == 'bearbeitet / Sonstiges zur Reparatur gebracht' || 
+                            $(this).children('.back').text() == 'bearbeitet / Bestellung') {
+                        	    $(this).children('.back').css({
+                        	       backgroundColor: 'green'
+                        	    })
+                    	}else if (
+                            $(this).children('.back').text() == 'angenommen / Auto nicht hier' ||
+                            $(this).children('.back').text() == 'nicht abgerechnet / Auto nicht hier') {
+                        	    $(this).children('.back').css({
+                        	       backgroundColor: 'red'
+                        	    })
+                    	} else {
+                        	    $(this).children('.back').css({
+                        	       backgroundColor: 'lightgrey'
+                        	    })
+                    	}
+                    } )
                     
                 },
                 error: function () {
@@ -161,9 +207,8 @@ $(document).ready(function() {
 </script>
 <style>
 
-table.tablesorter { width:auto; cursor:pointer; }
 #show { position: absolute;top: 100px;left: 350px; }
- .tablesorter { width:auto; cursor:pointer; widgets: ['zebra']; sortList: [[0,0]];}
+.tablesorter { width:auto; cursor:pointer; widgets: ['zebra']; sortList: [[0,0]];}
 .tdLeft { text-align:right; }
 .tblSearchTxt { width: 200px; }
 
@@ -254,11 +299,11 @@ table.tablesorter { width:auto; cursor:pointer; }
             <tbody id="showtableTBody">
             </tbody>
         </table>
-        <!--
+        
         <?php    
         echo $head["JQTABLE-PAGER"];
         ?>
-        -->
+        
     </div>
 </body>
 </html>

@@ -164,6 +164,7 @@ function getOrderList( $data ) {
                                                     oe.status AS auftragsstatus,
                                                     oe.transdate AS auftragsdatum,
                                                     oe.ordnumber AS auftragsnummer,
+                                                    oe.car_status AS car_status,
                                                     orderitems.description AS ersteposition,
                                                     customer.name AS besitzer,
                                                     customer.id AS owner,
@@ -187,6 +188,7 @@ function getOrderList( $data ) {
                                                     oe.status AS auftragsstatus,
                                                     oe.transdate AS auftragsdatum,
                                                     oe.ordnumber AS auftragsnummer,
+                                                    oe.car_status AS car_status,
                                                     orderitems.description AS ersteposition,
                                                     customer.name AS besitzer,
                                                     customer.id AS owner,
@@ -200,7 +202,7 @@ function getOrderList( $data ) {
                                                 WHERE
                                                     oe.status = '".$data['statusSearch']."' AND oe.transdate BETWEEN '".$data['datum_von']."' AND '".$data['datum_bis']."'
                                                 AND
-                                                    orderitems.trans_id = oe.ordnumber AND orderitems.position = 1
+                                                    orderitems.trans_id = oe.id AND orderitems.position = 1
                                                 AND
                                                     customer.name = '".$data['kundenname']."' AND customer.id = oe.customer_id
                                                 AND
