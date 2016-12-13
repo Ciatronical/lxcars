@@ -26,7 +26,7 @@ function newEntry( $data ){
 }
 
 function updatePositions( $data) {
-    writeLog($data);
+    //writeLog($data);
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
         //writeLog($data);
@@ -104,7 +104,7 @@ function increaseArticleNr( $updArtNr) {
 }
 
 function updateOrder( $data) {
-    //writeLog($data[0]['ordnumber']);
+    //writeLog($data[0]);
 
     //$GLOBALS['dbh']->begin();
     //foreach( $data as $key => $value ){

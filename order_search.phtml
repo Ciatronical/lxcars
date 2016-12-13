@@ -54,21 +54,23 @@ $(document).ready(function() {
       /***********************/
        /********************/
         /*****************/
+        
+/*
+    window.onbeforeunload = function() {
+        localStorage['dataObject'] = JSON.stringify(dataObject);
+    }
 
-                    window.onbeforeunload = function() {
-                        localStorage['dataObject'] = JSON.stringify(dataObject);
-                    }
-
-                    window.onload = function() {
-                        dataObject = JSON.parse(localStorage['dataObject']);
-                        //console.log(dataObject);
-                        $('#txtKennzeichen').val(dataObject['kennzeichen']);
-                        $('#txtKundenname').val(dataObject['kundenname']);
-                        $('#txtDatumVon').val(dataObject['datum_von']);
-                        $('#txtDatumBis').val(dataObject['datum_bis']);
-                        $('#txtStatus').val(dataObject['statusSearch']);
-                        getOrderList();
-                    }
+    window.onload = function() {
+        dataObject = JSON.parse(localStorage['dataObject']);
+        //console.log(dataObject);
+        $('#txtKennzeichen').val(dataObject['kennzeichen']);
+        $('#txtKundenname').val(dataObject['kundenname']);
+        $('#txtDatumVon').val(dataObject['datum_von']);
+        $('#txtDatumBis').val(dataObject['datum_bis']);
+        $('#txtStatus').val(dataObject['statusSearch']);
+        getOrderList();
+    }
+*/
 
     var kennzeichen;
     var kundenname;

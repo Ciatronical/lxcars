@@ -640,6 +640,7 @@ $(document).ready(function() {
                 type: "POST",
                     success: function(){
                         //alert( 'send all posdata' );
+                        updateOrderDatabase();
                     },
                     error:  function(){
                         alert( 'Update fehlgeschlagen' );

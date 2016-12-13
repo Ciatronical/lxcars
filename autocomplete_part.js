@@ -383,6 +383,7 @@ namespace('kivi', function(k){
                 type: "POST",
                     success: function(){
                         //alert( 'send all posdata' );
+                        updateOrderDatabase();
                     },
                     error:  function(){
                         alert( 'error sending posdata' );
