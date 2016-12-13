@@ -33,7 +33,7 @@
 /*************************************************************/
 //include_once( "../inc/stdLib.php" );
 include_once("inc/lxcLib.php");
-include_once("../inc/template.inc");
+//include_once("../inc/template.inc");
 include_once("../inc/UserLib.php");
 include_once ( "../inc/crmLib.php" );
 
@@ -43,7 +43,7 @@ $task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
 $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
 $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
 $a_id = $_GET["a_id"] ? $_GET["a_id"] : $_POST["a_id"];
-$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
+//$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
 $cd = ShowCar( $c_id );//Fahrzeugdaten holen
 ?>
 
@@ -53,13 +53,21 @@ $cd = ShowCar( $c_id );//Fahrzeugdaten holen
 
 $(document).ready(function() {
 
-    //URL-Parameter lesen
     $.urlParam = function( name ){
         var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
         if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-        else decodeURIComponent( results[1] || 0 );        }
-        
-    //alert( $.urlParam( 'param2' ) );
+        else return decodeURIComponent( results[1] || 0 );
+    }
+    var task  = $.urlParam( 'task'  );
+    var owner = $.urlParam( 'owner' );
+    var c_id  = $.urlParam( 'c_id'  ); //Car-Id
+
+    var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
+
+    //Filename of this script
+    var url = window.location.pathname;
+    var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
+
 
     var language = kivi.myconfig.countrycode;
     $( ".lang" ).each( function(){
@@ -75,7 +83,7 @@ $(document).ready(function() {
 
     $('.showtableRow').click(function () {
         //console.log($(this).attr('id'));
-        window.location = 'order.phtml?task=<?php echo $task ?>&id='+$(this).attr('id')+'&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>&url=<?php echo $url ?>';
+        window.location = 'order.phtml?task=' + task + '&id='+$(this).attr('id')+'&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename;
     })
 
     $('#btnNewOrder').button().click(function () {
@@ -145,7 +153,7 @@ $(document).ready(function() {
                     </tr>
                 </thead>
                 <tbody>');
-                
+
                 $rs = $GLOBALS['dbh']->getAll('
                     SELECT
                         oe.ordnumber,
@@ -168,7 +176,7 @@ $(document).ready(function() {
                         orderitems.position = 1
                     ORDER BY
                         oe.ordnumber');
-                        
+
                     foreach ($rs as $value){
                         //$var = sprintf(round($value['amount'], 2) == intval($value['amount']) ? "%d" : "%.2f", $value['amount']);
                         //$var = number_format($value['amount'], 2, ',', '.');

@@ -21,7 +21,7 @@
 /*************************************************************/
 //include_once( "../inc/stdLib.php" );
 include_once("inc/lxcLib.php");
-include_once("../inc/template.inc");
+//include_once("../inc/template.inc");
 include_once("../inc/UserLib.php");
 include_once ( "../inc/crmLib.php" );
 
@@ -44,17 +44,21 @@ $(document).ready(function() {
         if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
         else return decodeURIComponent( results[1] || 0 );
     }
-    
+
+    //Filename of this script
+    var url = window.location.pathname;
+    var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
+
     /*****************************/
      /**************************/
       /***********************/
        /********************/
         /*****************/
-                    
+
                     window.onbeforeunload = function() {
                         localStorage['dataObject'] = JSON.stringify(dataObject);
                     }
-                    
+
                     window.onload = function() {
                         dataObject = JSON.parse(localStorage['dataObject']);
                         //console.log(dataObject);
@@ -65,37 +69,37 @@ $(document).ready(function() {
                         $('#txtStatus').val(dataObject['statusSearch']);
                         getOrderList();
                     }
-    
+
     var kennzeichen;
     var kundenname;
     var datum_von;
     var datum_bis;
     var statusSearch = $('#txtStatus').val();
     var dataObject = {};
-    
+
     $('button').button();
-    
+
     $('#txtKennzeichen').on('keyup', function () {
         kennzeichen = $(this).val();
     })
-    
+
     $('#txtKundenname').on('keyup', function () {
         kundenname = $(this).val();
     })
-    
+
     $('#txtDatumVon').on('keyup', function () {
         datum_von = $(this).val();
     })
-    
+
     $('#txtDatumBis').on('keyup', function () {
         datum_bis = $(this).val();
     })
-    
+
     $('#txtStatus').change(function () {
-    	statusSearch = $(this).val();
-    	//console.log(statusSearch);
+        statusSearch = $(this).val();
+        //console.log(statusSearch);
     })
-    
+
     $('#btnSearch').click(function () {
         $('.showtableRow').remove();
         dataObject['kennzeichen'] = kennzeichen;
@@ -106,14 +110,14 @@ $(document).ready(function() {
         //console.log(dataObject);
         getOrderList();
     })
-    
+
     /*
     $('.tblSearchTxt').on('keyup', function () {
         $('#showtableTBody tr').show();
         $('#showtableTBody tr:not(:contains(' + $(this).val() + '))').hide();
     })
     */
-    
+
     function getOrderList() {
         //if (statusSearch == 'alle') {
             $.ajax({
@@ -122,15 +126,15 @@ $(document).ready(function() {
                 type: "GET",
                 success: function (data) {
                     //console.log(data);
-            
+
                     $.each(data, function (index, item) {
                         if (item.auftragsstatus == null) {
-                        	item.auftragsstatus = '';
+                            item.auftragsstatus = '';
                         }
                         if (item.car_status == null) {
-                        	item.car_status = '';
+                            item.car_status = '';
                         }else {
-                        	item.car_status = ' / '+item.car_status;
+                            item.car_status = ' / '+item.car_status;
                         }
                         $(  '<tr id="'+item.auftragsnummer+'" class="showtableRow">'+
                                 '<td class="back">'+item.auftragsstatus + '' + item.car_status+'</td>'+
@@ -146,48 +150,48 @@ $(document).ready(function() {
 
                         $('.showtableRow').click(function () {
                             //console.log($(this).attr('id'));
-                            window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).children('.v1').text()+'&c_id='+$(this).children('.v2').text()+'&url=<?php echo $url ?>';
+                            window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).children('.v1').text()+'&c_id='+$(this).children('.v2').text() + '&previous=' + filename;
                         })
-    
+
                         $('.vals').hide();
-                        
+
                         $('#showtable').trigger('update');
-    
+
                     })
-                    
+
                     $('#showtable tr').each( function () {
                         if (
                             $(this).children('.back').text() == '') {
-                        	    $(this).children('.back').css({
-                        	       backgroundColor: 'none'
-                        	    })
-                    	}else if (
-                            $(this).children('.back').text() == 'angenommen / Auto hier' || 
-                            $(this).children('.back').text() == 'angenommen / Sonstiges zur Reparatur gebracht' || 
+                                $(this).children('.back').css({
+                                   backgroundColor: 'none'
+                                })
+                        }else if (
+                            $(this).children('.back').text() == 'angenommen / Auto hier' ||
+                            $(this).children('.back').text() == 'angenommen / Sonstiges zur Reparatur gebracht' ||
                             $(this).children('.back').text() == 'angenommen / Bestellung') {
-                        	    $(this).children('.back').css({
-                        	       backgroundColor: 'yellow'
-                        	    })
-                    	}else if (
-                            $(this).children('.back').text() == 'bearbeitet / Auto hier' || 
-                            $(this).children('.back').text() == 'bearbeitet / Sonstiges zur Reparatur gebracht' || 
+                                $(this).children('.back').css({
+                                   backgroundColor: 'yellow'
+                                })
+                        }else if (
+                            $(this).children('.back').text() == 'bearbeitet / Auto hier' ||
+                            $(this).children('.back').text() == 'bearbeitet / Sonstiges zur Reparatur gebracht' ||
                             $(this).children('.back').text() == 'bearbeitet / Bestellung') {
-                        	    $(this).children('.back').css({
-                        	       backgroundColor: 'green'
-                        	    })
-                    	}else if (
+                                $(this).children('.back').css({
+                                   backgroundColor: 'green'
+                                })
+                        }else if (
                             $(this).children('.back').text() == 'angenommen / Auto nicht hier' ||
                             $(this).children('.back').text() == 'nicht abgerechnet / Auto nicht hier') {
-                        	    $(this).children('.back').css({
-                        	       backgroundColor: 'red'
-                        	    })
-                    	} else {
-                        	    $(this).children('.back').css({
-                        	       backgroundColor: 'lightgrey'
-                        	    })
-                    	}
+                                $(this).children('.back').css({
+                                   backgroundColor: 'red'
+                                })
+                        } else {
+                                $(this).children('.back').css({
+                                   backgroundColor: 'lightgrey'
+                                })
+                        }
                     } )
-                    
+
                 },
                 error: function () {
                     alert('holen der Orderliste fehlgeschlagen');
@@ -195,13 +199,13 @@ $(document).ready(function() {
             })
         //}
     }
-    
+
         /*****************/
        /********************/
       /***********************/
      /**************************/
     /*****************************/
-    
+
 }); //Ende $(document).ready()
 
 </script>
@@ -283,7 +287,7 @@ $(document).ready(function() {
             </td>
         </tr>
     </table>
-    
+
     <div id="show">
         <table id="showtable" class="tablesorter">
             <thead>
@@ -299,11 +303,11 @@ $(document).ready(function() {
             <tbody id="showtableTBody">
             </tbody>
         </table>
-        
-        <?php    
+
+        <?php
         echo $head["JQTABLE-PAGER"];
         ?>
-        
+
     </div>
 </body>
 </html>

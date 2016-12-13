@@ -68,6 +68,7 @@ $(document).ready(function() {
     var newOrdNr = $.urlParam( 'id' );
     var ow = $.urlParam( 'owner' );
     var car = $.urlParam( 'c_id' );
+    var previous = $.urlParam( 'previous' );
 
     //var nbr = new Number;
 
@@ -528,9 +529,7 @@ $(document).ready(function() {
         });
 
         $( "#backToOrderList" ).button().click(function () {
-        //alert( document.lxcauf.owner.value );
-            //window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
-            window.location = '<?php echo $url ?>?task=<?php echo $task ?>&owner='+ow+'&c_id='+car+'&s=1';
+            window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
             return false;
         });
 
