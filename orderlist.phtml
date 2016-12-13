@@ -13,32 +13,16 @@
     echo $head['JQTABLE'];
     //echo $head['JQTABLE-PAGER'];
     echo $head['THEME'];
-    echo $head['JUI-DROPDOWN'];
+    //echo $head['JUI-DROPDOWN'];
     echo $head['TRANSLATION'];
 
 
-    /*****************************************************************************************************************************
-    Grundsätze: Content wird via Ajax im Json-Format geholt und an die entsprechenden Container verteilt
-                Daten werden ohne Reload einfach via Ajax gespeichert.
-                Fürs Holen und Schreiben von Daten befindet sich unter jqhelp eine gleichnamige Datei mit der Extension ".php"
-                Auf das Benutzen der Variable $_SESSION sollte weitestgehend verzichtet werden.
-                Statt JS einzusetzen sollte auf die jQuery-Methoden zurückgegriffen werden.
-                Url-Parameter können mit $.urlParam( 'ParameterName' ) gelesen werden.
-                Beispiel automatische Übersetzung
-    ******************************************************************************************************************************/
-
-/*************************************************************/
-/************************ LxCars Auftrag *********************/
-/************** ronny@lxcars.de, April 2010 ******************/
-/*************************************************************/
-//include_once( "../inc/stdLib.php" );
-include_once("inc/lxcLib.php");
-//include_once("../inc/template.inc");
-include_once("../inc/UserLib.php");
-include_once ( "../inc/crmLib.php" );
+    include_once( 'inc/lxcLib.php' );
+    include_once( '../inc/UserLib.php' );
+    include_once ( '../inc/crmLib.php' );
 
 ob_start();
-$url = $_SERVER['SCRIPT_NAME'];
+
 $task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
 $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
 $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
@@ -87,8 +71,6 @@ $(document).ready(function() {
     })
 
     $('#btnNewOrder').button().click(function () {
-        //console.log($('#ownerID').text());
-        //window.location = 'order_test.phtml?id=0&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
         $.ajax({
             url: 'ajax/order.php?action=getOrderNumber',
             type: 'GET',
@@ -96,16 +78,14 @@ $(document).ready(function() {
                 var newOrderNr;
                 newOrderNr = parseInt( data[0]['sonumber'] );
                 newOrderNr =  newOrderNr + 1;
-                window.location = 'order.phtml?task=<?php echo $task ?>&id='+newOrderNr+'&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
+                window.location = 'order.phtml?task=' + task + '&id=' + newOrderNr + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename;
             },
             error:  function(){ alert("Holen der Auftrags-Nr fehlgeschlagen!"); }
         })
     });
 
     $('#btnBack').button().click(function () {
-        //console.log($('#ownerID').text());
-        //window.location = 'order_test.phtml?id=0&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
-                window.location = 'lxcmain.php?task=<?php echo $task ?>&owner=<?php echo $owner;?>&c_id=<?php echo $c_id;?>';
+        window.location = 'lxcmain.php?task=' + task + '&owner=' + owner + '&c_id=' + c_id;
     });
 
 });
@@ -193,65 +173,9 @@ $(document).ready(function() {
                     echo (  '</tbody></table>'
                             .$head["JQTABLE-PAGER"].
                             '<input type="button" id="btnNewOrder" value="Neuer Auftrag">
-                            <input type="button" id="btnBack" value="Zur&uuml;ck">');
+                             <input type="button" id="btnBack" value="Zur&uuml;ck">');
 
 ?>
-
- <div id="senddialog" > </div>
-<!--
- <div id="gdtable" class="gdtable">
-  <table id="showtable" class="tablesorter" >
-   <thead>
-    <tr>
-     <th>ID</th>
-     <th data-lang='BIRTHDAY' class='lang'>Birthday</th>
-     <th data-lang='NAME' class='lang'>Name</th>
-     <th data-lang='AGE' class='lang'>Age</th>
-     <th data-lang='COMMENTS' class='lang'>Comments</th>
-    </tr>
-   </thead>
-   <tbody id="tbody0"></tbody>
-   <tfoot></tfoot>
-  </table>
-  <div id="pager"> <?php echo $head['JQTABLE-PAGER']; ?> </div>
-
- </div>
-
- <div id="newbtn" ></div>
--->
-
-
-<!-- <div id="pager"> <?php echo $head['JQTABLE-PAGER']; ?> </div> -->
-
-
-
-
-<!-- <table class="tablesorter">
-  <thead>
-    <tr>
-     <th>Name</th>
-     <th>Alter</th>
-     <th>Bemerkungen</th>
-    </tr>
-  </thead>
-  <tbody id="tsok">
-   <tr>
-    <td>Anton</td>
-    <td>89</td>
-    <td>alt</td>
-   </tr>
-   <tr>
-    <td>Berta</td>
-    <td>45</td>
-    <td>jünger</td>
-   </tr>
-   <tr>
-    <td>Cäsar</td>
-    <td>1000</td>
-    <td>ganz alt</td>
-   </tr>
-  </tbody>
- </table>-->
 
 
 
