@@ -131,16 +131,16 @@ $(document).ready(function() {
             success: function (data) {
                 //console.log(JSON.stringify(data));
                 //console.log(data);
-                
+
                 if (data[0].km_stnd == null) {
-                	//alert('km_stnd is empty');
-                	data[0].km_stnd = '0';
+                    //alert('km_stnd is empty');
+                    data[0].km_stnd = '0';
                 }
                 if (data[0].car_status == null) {
-                	//alert('car_status is empty');
-                	data[0].car_status = 'Auto hier';
+                    //alert('car_status is empty');
+                    data[0].car_status = 'Auto hier';
                 }
-                
+
                 $('#head02').text(data[0].order_id);
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
@@ -240,7 +240,7 @@ $(document).ready(function() {
                                 //newPositionContainer();
                                 zaehler();
                                 //getMembersOfGroup();
-                                
+
                                 function newOrderTotalPrice() {
                                     var nOTP = parseFloat(0);
                                     var nOTPBr = parseFloat(0);
@@ -419,7 +419,7 @@ $(document).ready(function() {
 
             }
         })
-    } 
+    }
 
         //function newPositionContainer() {
         $('<div class="ui-widget-content">' +
@@ -521,20 +521,19 @@ $(document).ready(function() {
         $('#add_item_parts_id_name').focus();
         $( '.posID' ).hide();
         $( '.partID' ).hide();
-        
+
         $( "#backToCRM" ).button().click(function () {
-        //alert( document.lxcauf.owner.value );
-            location.href = 'http://192.168.178.25/kivitendo-dev-jens/crm/firma1.php?Q=C&id=' + ow;
+            location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + ow;
             return false;
         });
-        
+
         $( "#backToOrderList" ).button().click(function () {
         //alert( document.lxcauf.owner.value );
             //window.location = 'orderlist.phtml?task='+task+'&owner='+ow+'&c_id='+car;
             window.location = '<?php echo $url ?>?task=<?php echo $task ?>&owner='+ow+'&c_id='+car+'&s=1';
             return false;
         });
-        
+
         $('#sortable').sortable({
             update: function() {
                 zaehler();
