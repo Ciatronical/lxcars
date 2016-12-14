@@ -159,9 +159,9 @@ function getOrderID( $newOrdNr ) {
 }
 
 function getOrderList( $data ) {
-    $statusSearchString = " oe.status = '".$data['statusSearch']."' AND ";//tenärer Operator
-    $dateStringFrom = " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND ";
-    $dateStringTo   = " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND ";
+    $statusSearchString = $data['statusSearch'] == 'alle' ? '' : " oe.status = '".$data['statusSearch']."' AND ";//tenärer Operator
+    $dateStringFrom = $data['datum_von'] ? " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND " : '';
+    $dateStringTo   = $data['datum_bis'] ?  " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND " : '';
     //writeLog($data['kennzeichen'].', '.$data['kundenname'].', '.$data['datum_von'].', '.$data['datum_bis'].', '.$data['statusSearch']);
     $sql = "
         SELECT
@@ -184,10 +184,8 @@ function getOrderList( $data ) {
             .$dateStringFrom
             .$dateStringTo
             ."orderitems.trans_id = oe.id AND orderitems.position = 1 AND
-
-            customer.name ILIKE '".$data['kundenname']."' AND customer.id = oe.customer_id AND
-
-            lxc_cars.c_ln = '".$data['kennzeichen']."' AND lxc_cars.c_id = oe.c_id
+             customer.name ILIKE '%".$data['kundenname']."%' AND customer.id = oe.customer_id AND
+             lxc_cars.c_ln = '%".$data['kennzeichen']."%' AND lxc_cars.c_id = oe.c_id
         ORDER BY
             oe.ordnumber";
     writeLog( $sql );
