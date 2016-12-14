@@ -1,4 +1,6 @@
 <?php
+
+//require_once __DIR__.'/../../inc/stdLib.php'; // for debug
 require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
@@ -157,60 +159,66 @@ function getOrderID( $newOrdNr ) {
 }
 
 function getOrderList( $data ) {
+    $statusSearchString = " oe.status = '".$data['statusSearch']."' AND ";//tenärer Operator
+    $dateStringFrom = " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND ";
+    $dateStringTo   = " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND ";
     //writeLog($data['kennzeichen'].', '.$data['kundenname'].', '.$data['datum_von'].', '.$data['datum_bis'].', '.$data['statusSearch']);
-    
-    if($data['statusSearch'] == 'alle') {
-        echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
-                                                    oe.status AS auftragsstatus,
-                                                    oe.transdate AS auftragsdatum,
-                                                    oe.ordnumber AS auftragsnummer,
-                                                    oe.car_status AS car_status,
-                                                    orderitems.description AS ersteposition,
-                                                    customer.name AS besitzer,
-                                                    customer.id AS owner,
-                                                    lxc_cars.c_ln AS kennzeichen,
-                                                    lxc_cars.c_id AS c_id
-                                                FROM
-                                                    oe,
-                                                    orderitems,
-                                                    customer,
-                                                    lxc_cars
-                                                WHERE
-                                                    orderitems.trans_id = oe.id AND orderitems.position = 1
-                                                AND
-                                                    customer.name = '".$data['kundenname']."' AND customer.id = oe.customer_id
-                                                AND
-                                                    lxc_cars.c_ln = '".$data['kennzeichen']."' AND lxc_cars.c_id = oe.c_id
-                                                ORDER BY 
-                                                    oe.ordnumber", true );
-    }else {
-        echo $rs = $GLOBALS['dbh']->getAll( "   SELECT 
-                                                    oe.status AS auftragsstatus,
-                                                    oe.transdate AS auftragsdatum,
-                                                    oe.ordnumber AS auftragsnummer,
-                                                    oe.car_status AS car_status,
-                                                    orderitems.description AS ersteposition,
-                                                    customer.name AS besitzer,
-                                                    customer.id AS owner,
-                                                    lxc_cars.c_ln AS kennzeichen,
-                                                    lxc_cars.c_id AS c_id
-                                                FROM
-                                                    oe,
-                                                    orderitems,
-                                                    customer,
-                                                    lxc_cars
-                                                WHERE
-                                                    oe.status = '".$data['statusSearch']."' AND oe.transdate BETWEEN '".$data['datum_von']."' AND '".$data['datum_bis']."'
-                                                AND
-                                                    orderitems.trans_id = oe.id AND orderitems.position = 1
-                                                AND
-                                                    customer.name = '".$data['kundenname']."' AND customer.id = oe.customer_id
-                                                AND
-                                                    lxc_cars.c_ln = '".$data['kennzeichen']."' AND lxc_cars.c_id = oe.c_id
-                                                ORDER BY 
-                                                    oe.ordnumber", true );
-    }
+    $sql = "
+        SELECT
+            oe.status AS auftragsstatus,
+            oe.transdate AS auftragsdatum,
+            oe.ordnumber AS auftragsnummer,
+            oe.car_status AS car_status,
+            orderitems.description AS ersteposition,
+            customer.name AS besitzer,
+            customer.id AS owner,
+            lxc_cars.c_ln AS kennzeichen,
+            lxc_cars.c_id AS c_id
+        FROM
+            oe,
+            orderitems,
+            customer,
+            lxc_cars
+        WHERE"
+            .$statusSearchString
+            .$dateStringFrom
+            .$dateStringTo
+            ."orderitems.trans_id = oe.id AND orderitems.position = 1 AND
+
+            customer.name ILIKE '".$data['kundenname']."' AND customer.id = oe.customer_id AND
+
+            lxc_cars.c_ln = '".$data['kennzeichen']."' AND lxc_cars.c_id = oe.c_id
+        ORDER BY
+            oe.ordnumber";
+    writeLog( $sql );
+    echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
+
 }
+
+
+        SELECT
+            oe.status AS auftragsstatus,
+            oe.transdate AS auftragsdatum,
+            oe.ordnumber AS auftragsnummer,
+            oe.car_status AS car_status,
+            orderitems.description AS ersteposition,
+            customer.name AS besitzer,
+            customer.id AS owner,
+            lxc_cars.c_ln AS kennzeichen,
+            lxc_cars.c_id AS c_id
+        FROM
+            oe,
+            orderitems,
+            customer,
+            lxc_cars
+        WHERE
+    oe.status = 'nicht abgerechnet' AND
+     oe.transdate >= '2011-11-01' AND
+     oe.transdate <= '2019-11-23' AND
+         orderitems.trans_id = oe.id AND orderitems.position = 1 AND
+         customer.name ILIKE '%%' AND customer.id = oe.customer_id AND
+         lxc_cars.c_ln ILIKE '%%' AND lxc_cars.c_id = oe.c_id
+        ORDER BY oe.ordnumber;
 
 
 
