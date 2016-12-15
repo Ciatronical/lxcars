@@ -160,8 +160,8 @@ function getOrderID( $newOrdNr ) {
 
 function getOrderList( $data ) {
     $statusSearchString = $data['statusSearch'] == 'alle' ? '' : " oe.status = '".$data['statusSearch']."' AND ";//tenärer Operator
-    $dateStringFrom = $data['datum_von'] ? " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND " : '';
-    $dateStringTo   = $data['datum_bis'] ?  " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND " : '';
+    $dateStringFrom = varExist( $data['datum_von'] ) ? " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND " : '';
+    $dateStringTo   = varExist( $data['datum_bis'] ) ?  " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND " : '';
     //writeLog($data['kennzeichen'].', '.$data['kundenname'].', '.$data['datum_von'].', '.$data['datum_bis'].', '.$data['statusSearch']);
     $sql = "
         SELECT
@@ -183,66 +183,13 @@ function getOrderList( $data ) {
             .$statusSearchString
             .$dateStringFrom
             .$dateStringTo
-            ."orderitems.trans_id = oe.id AND orderitems.position = 1 AND
+            ." orderitems.trans_id = oe.id AND orderitems.position = 1 AND
              customer.name ILIKE '%".$data['kundenname']."%' AND customer.id = oe.customer_id AND
-             lxc_cars.c_ln = '%".$data['kennzeichen']."%' AND lxc_cars.c_id = oe.c_id
+             lxc_cars.c_ln ILIKE '%".$data['kennzeichen']."%' AND lxc_cars.c_id = oe.c_id
         ORDER BY
             oe.ordnumber";
-    writeLog( $sql );
+    //writeLog( $sql );
     echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
 
 }
-
-
-        SELECT
-            oe.status AS auftragsstatus,
-            oe.transdate AS auftragsdatum,
-            oe.ordnumber AS auftragsnummer,
-            oe.car_status AS car_status,
-            orderitems.description AS ersteposition,
-            customer.name AS besitzer,
-            customer.id AS owner,
-            lxc_cars.c_ln AS kennzeichen,
-            lxc_cars.c_id AS c_id
-        FROM
-            oe,
-            orderitems,
-            customer,
-            lxc_cars
-        WHERE
-    oe.status = 'nicht abgerechnet' AND
-     oe.transdate >= '2011-11-01' AND
-     oe.transdate <= '2019-11-23' AND
-         orderitems.trans_id = oe.id AND orderitems.position = 1 AND
-         customer.name ILIKE '%%' AND customer.id = oe.customer_id AND
-         lxc_cars.c_ln ILIKE '%%' AND lxc_cars.c_id = oe.c_id
-        ORDER BY oe.ordnumber;
-
-
-
-
-
-
-
-
-
-
-
-/*
-//function getArticle( $articleDescription ) {
-    //writeLog( $articleDescription );
-    //$rs = $GLOBALS['dbh']->getOne( "SELECT id, description, unit, sellprice FROM parts WHERE description = '".$articleDescription."'", true );
-    //writeLog( $rs );
-    //echo $rs;
-//}
-*/
-
-
-
-
-
-
-
-
-
 ?>
