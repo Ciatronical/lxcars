@@ -12,26 +12,6 @@
     echo $head['JQUERYUI'];
     //echo $head['JQTABLE'];
     echo $head['THEME'];
-
-/*************************************************************/
-/************************ LxCars Auftrag *********************/
-/************** ronny@lxcars.de, April 2010 ******************/
-/*************************************************************/
-//include_once( "../inc/stdLib.php" );
-include_once("inc/lxcLib.php");
-include_once("../inc/template.inc");
-include_once("../inc/UserLib.php");
-include_once ( "../inc/crmLib.php" );
-
-ob_start();
-$url = $_GET["url"] ? $_GET["url"] : $_POST["url"];
-$task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
-$c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
-$owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
-$a_id = $_GET["a_id"] ? $_GET["a_id"] : $_POST["a_id"];
-$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
-$cd = ShowCar( $c_id );//Fahrzeugdaten holen
-
 ?>
 
 
@@ -515,22 +495,33 @@ $(document).ready(function() {
                         '</li>' +
                 '</form>' +
                 //'<input type="button" id="testBtn" value="TEST">' +
-                '<button id="backToCRM">CRM</button>' +
-                '<button id="backToOrderList">Zurück</button>' +
+                '<button id="backToCRM"></button>' +
+                '<button id="backToOrderList" ></button>' +
+                '<button id="printOrder"></button>' +
         '</div>').appendTo('body');
 
         $('#add_item_parts_id_name').focus();
         $( '.posID' ).hide();
         $( '.partID' ).hide();
 
-        $( "#backToCRM" ).button().click(function () {
+        $( "#backToCRM" ).button({
+            label: "CRM"
+        }).click(function () {
             location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + ow;
             return false;
         });
 
-        $( "#backToOrderList" ).button().click(function () {
+        $( "#backToOrderList" ).button({
+            label: "Back to Orderlist"
+        }).click(function () {
             window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
             return false;
+        });
+
+        $( "#printOrder" ).button({
+            label: "Print"
+        }).click(function () {
+            alert( 'Put Data via Ajax to Server and Print' );
         });
 
         $('#sortable').sortable({
