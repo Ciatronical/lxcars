@@ -89,6 +89,7 @@
 
         $('#auftragExp').button().click(function () {
             window.location = "orderlist.phtml?task=3&owner={owner}&c_id={c_id}";
+            return false;
         });
     });
 
