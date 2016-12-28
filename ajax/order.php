@@ -194,5 +194,6 @@ function getOrderList( $data ) {
 }
 function printOrder( $data ) {
     writeLog( $data );
+    echo 1;
 }
 ?>

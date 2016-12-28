@@ -527,7 +527,33 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click(function () {
-            alert( 'Put Data via Ajax to Server and Print' );
+            var netamount = $('#orderTotalNetto').val().replace(',', '.');//ToDo: Vorhandene Kivi-Funktion nutzen!!!!
+            var amount = $('#orderTotalBrutto').val().replace(',', '.');//ToDo
+            var printDataJSON = new Array;
+            printDataJSON.push({
+                "ordernumber": orderID,
+                "milage": $('#head08').val(),
+                "netamount": netamount,
+                "amount": amount,
+                "status": $('#head18').val(),
+                "completion": $('#head06').val(),
+                "car_status": $('#head14').val()
+            });
+            //console.log(updateDataJSON);
+            //updateDataJSON.pop();
+
+            $.ajax({
+                url: 'ajax/order.php',
+                data: { action: "printOrder", data: printDataJSON },
+                type: "POST",
+                    success: function(){
+                        alert( ' Go to printer...' );
+                    },
+                    error:  function(){
+                        alert( 'Error: Print Order' );
+                    }
+            });
+            //alert( 'Put Data via Ajax to Server and Print' );
 
         });
 
