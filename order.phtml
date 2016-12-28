@@ -506,6 +506,8 @@ $(document).ready(function() {
 
         $( "#backToCRM" ).button({
             label: "CRM"
+        }).css({
+            'margin':'5px'
         }).click(function () {
             location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + ow;
             return false;
@@ -513,6 +515,8 @@ $(document).ready(function() {
 
         $( "#backToOrderList" ).button({
             label: "Back to Orderlist"
+        }).css({
+            'margin':'5px'
         }).click(function () {
             window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
             return false;
@@ -520,8 +524,11 @@ $(document).ready(function() {
 
         $( "#printOrder" ).button({
             label: "Print"
+        }).css({
+            'margin':'5px'
         }).click(function () {
             alert( 'Put Data via Ajax to Server and Print' );
+
         });
 
         $('#sortable').sortable({
@@ -762,10 +769,11 @@ table.tablesorter { width:auto; cursor:pointer; }
     echo $menu['pre_content'];
     echo $menu['start_content'];
 ?>
+<p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Order</p>
 
 <?php echo $menu['end_content']; ?>
 
-<p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Testfile</p>
+
 
 
 

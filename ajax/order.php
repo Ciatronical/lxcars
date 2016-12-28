@@ -192,4 +192,7 @@ function getOrderList( $data ) {
     echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
 
 }
+function printOrder( $data ) {
+    writeLog( $data );
+}
 ?>
