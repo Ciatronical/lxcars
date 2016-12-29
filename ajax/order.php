@@ -204,11 +204,23 @@ function printOrder( $data ){
     $pdf->AddPage();
     $pdf->SetFont('Helvetica','B','18');
     $pdf->Text('20','26','Auto-Spar Reparaturauftrag');
-    $pdf->Text('160','26',$data[0]['plate']); //utf8_decode(
+    $pdf->Text('160','26',$data['0']['plate']); //utf8_decode(
     $pdf->SetFont('Helvetica','','14');
     //$pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
+    //writeLog(  $data['0']['printDoc']);
+    $result = 1;
+    if( $data['0']['printDoc'] ){
+        $result = $pdf->OutPut('Reparaturauftrag_'.$_GET["a_id"].'.pdf',"I");
+        writeLog('PDFFFFFFFFFFFFFFFF');
+    }
+    else{
+        $pdf->OutPut('out.pdf');
+        //system("$lpr out.pdf");
+        writeLog('PPPPPPPPPPPPRIIIINNNNNNNNNNNNT');
+        //header("Location: lxcmain.php?task=3&owner=".'ownera'."&c_id=".$c_id);
+    }
 
     writeLog( $data );
-    echo 1;
+    echo $result;
 }
 ?>

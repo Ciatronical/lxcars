@@ -528,7 +528,7 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
-            createPDF( true );
+            createPDF( 0 );
         });
 
         $( "#pdfOrder" ).button({
@@ -536,7 +536,7 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
-            createPDF( false );
+            createPDF( 1 );
         });
 
         $('#sortable').sortable({
@@ -731,8 +731,8 @@ $(document).ready(function() {
                 url: 'ajax/order.php',
                 data: { action: "printOrder", data: printDataJSON },
                 type: "POST",
-                    success: function(){
-                        alert( ' Go to printer...' );
+                    success: function(result){
+                        alert( result );
                     },
                     error:  function(){
                         alert( 'Error: Print Order' );
