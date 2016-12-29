@@ -192,7 +192,22 @@ function getOrderList( $data ) {
     echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
 
 }
-function printOrder( $data ) {
+function printOrder( $data ){
+    require("fpdf.php");
+    include_once( '../inc/config.php' );
+
+    define( 'FPDF_FONTPATH', '../font/');
+    define( 'x', 0 );
+    define( 'y' ,1 );
+
+    $pdf=new FPDF('P','mm','A4');
+    $pdf->AddPage();
+    $pdf->SetFont('Helvetica','B','18');
+    $pdf->Text('20','26','Auto-Spar Reparaturauftrag');
+    $pdf->Text('160','26',$data[0]['plate']); //utf8_decode(
+    $pdf->SetFont('Helvetica','','14');
+    //$pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
+
     writeLog( $data );
     echo 1;
 }

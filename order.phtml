@@ -498,6 +498,7 @@ $(document).ready(function() {
                 '<button id="backToCRM"></button>' +
                 '<button id="backToOrderList" ></button>' +
                 '<button id="printOrder"></button>' +
+                '<button id="pdfOrder"></button>' +
         '</div>').appendTo('body');
 
         $('#add_item_parts_id_name').focus();
@@ -526,53 +527,16 @@ $(document).ready(function() {
             label: "Print"
         }).css({
             'margin':'5px'
-        }).click(function () {
-            var netamount = $('#orderTotalNetto').val().replace(',', '.');//ToDo: Vorhandene Kivi-Funktion nutzen!!!!
-            var amount = $('#orderTotalBrutto').val().replace(',', '.');//ToDo
-            var printDataJSON = new Array;
-            //Creates $data[0]['ordernumber'],....
-            printDataJSON.push({
-                "ordernumber": orderID,
-                "milage": $('#head08').val(),
-                "netamount": netamount,
-                "amount": amount,
-                "status": $('#head18').val(),
-                "completion": $('#head06').val(),
-                "car_status": $('#head14').val()
-            });
-            //Creates $data[1..n]['item_nr'],...
-            var positions = $( 'ul#sortable > li' );
-            positions.splice( -1, 1 ); //Remove last element (it's always empty)
-            positions.each( function(){
-                printDataJSON.push({
-                    //"position": $( this ).children( '.pos' ).val(),
-                    "item_nr": $( this ).children( '.itemNr' ).val(),
-                    "pos_description": $( this ).children( '.description' ).val(),
-                    "pos_unit": $( this ).children( '.unity' ).val(),
-                    "pos_qty": $( this ).children( '.number' ).val(),
-                    "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
-                    "pos_discount": $( this ).children( '.discount' ).val(),
-                    "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
-                    "pos_emp": $( this ).children( '.mechanics' ).val(),
-                    "pos_status": $( this ).children( '.status' ).val(),
-                    "pos_id": $( this ).children( '.posID' ).text(),
-                    "partID": $( this ).children( '.partID' ).text()
-                });
-            })
+        }).click( function(){
+            createPDF( true );
+        });
 
-            $.ajax({
-                url: 'ajax/order.php',
-                data: { action: "printOrder", data: printDataJSON },
-                type: "POST",
-                    success: function(){
-                        alert( ' Go to printer...' );
-                    },
-                    error:  function(){
-                        alert( 'Error: Print Order' );
-                    }
-            });
-            //alert( 'Put Data via Ajax to Server and Print' );
-
+        $( "#pdfOrder" ).button({
+            label: "PDF"
+        }).css({
+            'margin':'5px'
+        }).click( function(){
+            createPDF( false );
         });
 
         $('#sortable').sortable({
@@ -725,6 +689,56 @@ $(document).ready(function() {
             });
 
         }, 800 );
+    }
+
+    function createPDF( printDoc ) {
+        var netamount = $('#orderTotalNetto').val().replace(',', '.');//ToDo: Vorhandene Kivi-Funktion nutzen!!!!
+            var amount = $('#orderTotalBrutto').val().replace(',', '.');//ToDo
+            var printDataJSON = new Array;
+            //Creates $data[0]['ordernumber'],....
+            printDataJSON.push({
+                "plate": $('#head20').val(),
+                "printDoc": printDoc,
+                "ordernumber": orderID,
+                "milage": $('#head08').val(),
+                "netamount": netamount,
+                "amount": amount,
+                "status": $('#head18').val(),
+                "completion": $('#head06').val(),
+                "car_status": $('#head14').val()
+            });
+            //Creates $data[1..n]['item_nr'],...
+            var positions = $( 'ul#sortable > li' );
+            positions.splice( -1, 1 ); //Remove last element (it's always empty)
+            positions.each( function(){
+                printDataJSON.push({
+                    //"position": $( this ).children( '.pos' ).val(),
+                    "item_nr": $( this ).children( '.itemNr' ).val(),
+                    "pos_description": $( this ).children( '.description' ).val(),
+                    "pos_unit": $( this ).children( '.unity' ).val(),
+                    "pos_qty": $( this ).children( '.number' ).val(),
+                    "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
+                    "pos_discount": $( this ).children( '.discount' ).val(),
+                    "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
+                    "pos_emp": $( this ).children( '.mechanics' ).val(),
+                    "pos_status": $( this ).children( '.status' ).val(),
+                    "pos_id": $( this ).children( '.posID' ).text(),
+                    "partID": $( this ).children( '.partID' ).text()
+                });
+            })
+
+            $.ajax({
+                url: 'ajax/order.php',
+                data: { action: "printOrder", data: printDataJSON },
+                type: "POST",
+                    success: function(){
+                        alert( ' Go to printer...' );
+                    },
+                    error:  function(){
+                        alert( 'Error: Print Order' );
+                    }
+            });
+            //alert( 'Put Data via Ajax to Server and Print' );
     }
 
 }); //Ende $(document).ready()
