@@ -40,7 +40,7 @@ $pdf->Text('22','80','Bearb.:');
 $pdf->Text('22','87','Farbe:');
 $pdf->Text('22','94','Hubr.:');
 $pdf->Text('22','100','Zr. Km:');
-$pdf->Text('22','106',utf8_decode('nächst. Zr-Wechsel').':');
+$pdf->Text('22','106',utf8_decode('nächst. ZR-Wechsel').':');
 $pdf->Text('124','45','KBA:');
 $pdf->Text('124','51','Baujahr:');
 $pdf->Text('124','58','FIN:');

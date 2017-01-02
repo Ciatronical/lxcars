@@ -2,7 +2,7 @@
 /******************************************************************************************
 **** lxcLib.php     Library for LxCars                                                  ***
 **** erdacht und geschrieben von Ronny Kumke ronny@lxcars.de                            ***
-**** Lizenz     GPL, Artistic License                                                    ***
+**** Lizenz     GPL, Artistic License                                                   ***
 ******************************************************************************************/
 include_once ( "../inc/stdLib.php" );
 include_once ( "../inc/FirmenLib.php" );

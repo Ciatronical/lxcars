@@ -112,6 +112,8 @@ $(document).ready(function() {
             success: function (data) {
                 //console.log(JSON.stringify(data));
                 //console.log(data);
+                car = data[0].c_id;
+                //alert(car);
 
                 if (data[0].km_stnd == null) {
                     //alert('km_stnd is empty');
@@ -522,6 +524,11 @@ $(document).ready(function() {
             window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
             return false;
         });
+        
+        
+        
+        
+        
 
         $( "#printOrder" ).button({
             label: "Print"
@@ -538,6 +545,12 @@ $(document).ready(function() {
         }).click( function(){
             createPDF( 1 );
         });
+        
+        
+        
+        
+        
+        
 
         $('#sortable').sortable({
             update: function() {
@@ -692,12 +705,13 @@ $(document).ready(function() {
     }
 
     function createPDF( printDoc ) {
-        var netamount = $('#orderTotalNetto').val().replace(',', '.');//ToDo: Vorhandene Kivi-Funktion nutzen!!!!
-            var amount = $('#orderTotalBrutto').val().replace(',', '.');//ToDo
+        var netamount = $('#orderTotalNetto').val().replace('.', ',');//ToDo: Vorhandene Kivi-Funktion nutzen!!!!
+            var amount = $('#orderTotalBrutto').val().replace('.', ',');//ToDo
             var printDataJSON = new Array;
             //Creates $data[0]['ordernumber'],....
             printDataJSON.push({
                 "plate": $('#head20').val(),
+                "c_id": car,
                 "printDoc": printDoc,
                 "ordernumber": orderID,
                 "milage": $('#head08').val(),
@@ -705,7 +719,8 @@ $(document).ready(function() {
                 "amount": amount,
                 "status": $('#head18').val(),
                 "completion": $('#head06').val(),
-                "car_status": $('#head14').val()
+                "car_status": $('#head14').val(),
+                "datum": $('#head16').text()
             });
             //Creates $data[1..n]['item_nr'],...
             var positions = $( 'ul#sortable > li' );
@@ -732,7 +747,7 @@ $(document).ready(function() {
                 data: { action: "printOrder", data: printDataJSON },
                 type: "POST",
                     success: function(result){
-                        alert( result );
+                        //alert( result );
                     },
                     error:  function(){
                         alert( 'Error: Print Order' );

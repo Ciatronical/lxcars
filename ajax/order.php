@@ -6,7 +6,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.c_ln FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -163,6 +163,7 @@ function getOrderList( $data ) {
     $dateStringFrom = varExist( $data['datum_von'] ) ? " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND " : '';
     $dateStringTo   = varExist( $data['datum_bis'] ) ?  " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND " : '';
     //writeLog($data['kennzeichen'].', '.$data['kundenname'].', '.$data['datum_von'].', '.$data['datum_bis'].', '.$data['statusSearch']);
+    //writeLog($data);
     $sql = "
         SELECT
             oe.status AS auftragsstatus,
@@ -193,34 +194,47 @@ function getOrderList( $data ) {
 
 }
 function printOrder( $data ){
+    writeLog( $data );
+    
     require("fpdf.php");
+    require_once("../inc/lxcLib.php");
     include_once( '../inc/config.php' );
+    $carData = ShowCar($data['0']['c_id']);
+    chdir('..');
+    writeLog($carData);
 
     define( 'FPDF_FONTPATH', '../font/');
     define( 'x', 0 );
-    define( 'y' ,1 );
+    define( 'y', 1 );
 
     $pdf=new FPDF('P','mm','A4');
     $pdf->AddPage();
-    $pdf->SetFont('Helvetica','B','18');
-    $pdf->Text('20','26','Auto-Spar Reparaturauftrag');
-    $pdf->Text('160','26',$data['0']['plate']); //utf8_decode(
-    $pdf->SetFont('Helvetica','','14');
+    
+    $pdf->SetFont('Helvetica','B','18'); //('font_family','font_weight','font_size')
+    $pdf->Text('20','26','Auto-Spar Reparaturauftrag'); //('pos_left','pos_top','text')
+    $pdf->Text('140','26',$data['0']['plate']); //utf8_decode(
+    
+    $pdf->SetFont('Helvetica','','10');
+    $pdf->Text('140','36','Datum:');
+    $pdf->Text('170','36',$data['0']['datum']);
+    $pdf->Text('140','41','Auftrags-Nr.: ');
+    $pdf->Text('170','41',$data['0']['ordernumber']);
+    
     //$pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
     //writeLog(  $data['0']['printDoc']);
     $result = 1;
+    
     if( $data['0']['printDoc'] ){
         $result = $pdf->OutPut('Reparaturauftrag_'.$_GET["a_id"].'.pdf',"I");
-        writeLog('PDFFFFFFFFFFFFFFFF');
+        //writeLog('PDFFFFFFFFFFFFFFFF');
     }
     else{
-        $pdf->OutPut('out.pdf');
-        //system("$lpr out.pdf");
-        writeLog('PPPPPPPPPPPPRIIIINNNNNNNNNNNNT');
+        $pdf->OutPut('../out.pdf');
+        system("$lpr out.pdf");
+        //writeLog('PPPPPPPPPPPPRIIIINNNNNNNNNNNNT');
         //header("Location: lxcmain.php?task=3&owner=".'ownera'."&c_id=".$c_id);
     }
-
-    writeLog( $data );
+    
     echo $result;
 }
 ?>
