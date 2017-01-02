@@ -4,9 +4,9 @@
 **** erdacht und geschrieben von Ronny Kumke ronny@lxcars.de                            ***
 **** Lizenz     GPL, Artistic License                                                   ***
 ******************************************************************************************/
-include_once ( "../inc/stdLib.php" );
-include_once ( "../inc/FirmenLib.php" );
-include_once ( "inc/config.php" );
+require_once ( __DIR__."/../../inc/stdLib.php" );
+require_once ( __DIR__."/../../inc/FirmenLib.php" );
+require_once ( __DIR__."/config.php" );
 function CheckLxCars ( ) {
     //Legt beim ersten Aufruf der Datenbank die benötigten Tabellen an und installiert lxc2db
     $sql="SELECT version, id FROM lxc_ver ORDER BY datum ASC";
