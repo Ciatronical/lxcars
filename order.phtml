@@ -131,7 +131,7 @@ $(document).ready(function() {
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
                 $('#head16').text(data[0].transdate);
-                $('#head06').val(data[0].reqdate);
+                $('#head06').val(data[0].finish_time);
                 $('#head08').val(data[0].km_stnd);
                 $('#head20').val(data[0].c_ln);
                 $('#head18').val(data[0].order_status);
@@ -577,11 +577,11 @@ $(document).ready(function() {
             items: "li:not( .newOrderPos )"
         });
 
-        $('#head08, #head20, #head06').on('keyup', function () {
+        $( '#head08, #head20, #head06' ).on( 'keyup', function(){
             updateOrderDatabase();
         });
 
-        $('#head18, #head14').change(function () {
+        $( '#head06, #head18, #head14' ).change( function(){
             updateOrderDatabase();
         });
 
@@ -690,7 +690,7 @@ $(document).ready(function() {
                 "netamount": netamount,
                 "amount": amount,
                 "status": $('#head18').val(),
-                "fertigstellung": $('#head06').val(),
+                "finish_time": $('#head06').val(),
                 "car_status": $('#head14').val()
             });
             //console.log(updateDataJSON);
@@ -715,64 +715,64 @@ $(document).ready(function() {
 
     function createPDF( printDoc ) {
         var netamount = $('#orderTotalNetto').val().replace('.', ',');//ToDo: Vorhandene Kivi-Funktion nutzen!!!!
-            var amount = $('#orderTotalBrutto').val().replace('.', ',');//ToDo
-            var printDataJSON = new Array;
-            //Creates $data[0]['ordernumber'],....
+        var amount = $('#orderTotalBrutto').val().replace('.', ',');//ToDo
+        var printDataJSON = new Array;
+        //Creates $data[0]['ordernumber'],....
+        printDataJSON.push({
+            "plate": $('#head20').val(),
+            "c_id": car,
+            "printDoc": printDoc,
+            "ordernumber": orderID,
+            "milage": $('#head08').val(),
+            "netamount": netamount,
+            "amount": amount,
+            "status": $('#head18').val(),
+            "finish_time": $('#head06').val(),
+            "car_status": $('#head14').val(),
+            "datum": $('#head16').text()
+        });
+        //Creates $data[1..n]['item_nr'],...
+        var positions = $( 'ul#sortable > li' );
+        positions.splice( -1, 1 ); //Remove last element (it's always empty)
+        positions.each( function(){
             printDataJSON.push({
-                "plate": $('#head20').val(),
-                "c_id": car,
-                "printDoc": printDoc,
-                "ordernumber": orderID,
-                "milage": $('#head08').val(),
-                "netamount": netamount,
-                "amount": amount,
-                "status": $('#head18').val(),
-                "completion": $('#head06').val(),
-                "car_status": $('#head14').val(),
-                "datum": $('#head16').text()
+                //"position": $( this ).children( '.pos' ).val(),
+                "item_nr": $( this ).children( '.itemNr' ).val(),
+                "pos_description": $( this ).children( '.description' ).val(),
+                "pos_unit": $( this ).children( '.unity' ).val(),
+                "pos_qty": $( this ).children( '.number' ).val(),
+                "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
+                "pos_discount": $( this ).children( '.discount' ).val(),
+                "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
+                "pos_emp": $( this ).children( '.mechanics' ).val(),
+                "pos_status": $( this ).children( '.status' ).val(),
+                "pos_id": $( this ).children( '.posID' ).text(),
+                "partID": $( this ).children( '.partID' ).text()
             });
-            //Creates $data[1..n]['item_nr'],...
-            var positions = $( 'ul#sortable > li' );
-            positions.splice( -1, 1 ); //Remove last element (it's always empty)
-            positions.each( function(){
-                printDataJSON.push({
-                    //"position": $( this ).children( '.pos' ).val(),
-                    "item_nr": $( this ).children( '.itemNr' ).val(),
-                    "pos_description": $( this ).children( '.description' ).val(),
-                    "pos_unit": $( this ).children( '.unity' ).val(),
-                    "pos_qty": $( this ).children( '.number' ).val(),
-                    "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
-                    "pos_discount": $( this ).children( '.discount' ).val(),
-                    "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
-                    "pos_emp": $( this ).children( '.mechanics' ).val(),
-                    "pos_status": $( this ).children( '.status' ).val(),
-                    "pos_id": $( this ).children( '.posID' ).text(),
-                    "partID": $( this ).children( '.partID' ).text()
-                });
-            })
+        })
 
-            $.ajax({
-                url: 'ajax/order.php',
-                data: { action: "printOrder", data: printDataJSON },
-                type: "POST",
-                    success: function(result){
-                        //alert( result );
-                    },
-                    error:  function(){
-                        alert( 'Error: Print Order' );
-                    }
-            });
-            //alert( 'Put Data via Ajax to Server and Print' );
+        $.ajax({
+            url: 'ajax/order.php',
+            data: { action: "printOrder", data: printDataJSON },
+            type: "POST",
+            //success: function( result ){
+            //alert( result );
+            //},
+            error: function(){
+                alert( 'Error: Print Order!' );
+            }
+        });
     }
 
     //DateTimePicker
     function AddButton( input ){
         setTimeout( function(){
-            var buttonPane = $(input).datepicker("widget").find( ".ui-datepicker-buttonpane" );
+            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
             var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
             btn.appendTo( buttonPane );
             btn.bind( "click", function(){
-                document.getElementById( "#head06" ).value = "Kunde wartet! SOFORT anfangen!!!";
+                $( "#head06" ).val("Kunde wartet! SOFORT anfangen!");
+                updateOrderDatabase();
             });
         }, 1 );
     }
@@ -782,7 +782,8 @@ $(document).ready(function() {
             AddButton(input);
         },
         onChangeMonthYear: function( year, month, inst ){
-            AddButton(inst.input);
+            AddButton( inst.input );
+            updateOrderDatabase();
         },
         stepMinute: 5,
         hour: 1,

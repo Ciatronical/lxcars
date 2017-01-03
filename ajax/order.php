@@ -6,7 +6,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, oe.finish_time, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -107,16 +107,7 @@ function increaseArticleNr( $updArtNr) {
 
 function updateOrder( $data) {
     //writeLog($data[0]);
-
-    //$GLOBALS['dbh']->begin();
-    //foreach( $data as $key => $value ){
-        //writeLog($data);
-        //$GLOBALS['dbh']->update( 'orderitems', array('position', 'trans_id', 'description'), array($value['order_nr'], $value['item_nr'], $value['pos_description']), 'id = '.$value['pos_id'] );
-        //$GLOBALS['dbh']->update( 'oe', array('km_stnd', 'c_id', 'status'), array($data[0]['km_stnd'], $data[0]['c_id'], $data[0]['status']), 'id = '.$data[0]['ordnumber'] );
-        $GLOBALS['dbh']->update( 'oe', array('km_stnd', 'status', 'netamount', 'amount', 'car_status'), array($data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status']), 'id = '.$data[0]['ordnumber'] );
-        //$GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
-    //}
-    //$GLOBALS['dbh']->commit();
+    $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['ordnumber'] );
     echo 1;
 
 }
@@ -194,7 +185,7 @@ function getOrderList( $data ) {
 
 }
 function printOrder( $data ){
-    writeLog( $data );
+    //writeLog( $data );
 
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
@@ -276,7 +267,7 @@ function printOrder( $data ){
     $pdf->SetTextColor(255, 0, 0);
     $pdf->Text('20','115','Fertigstellung:');
     $pdf->SetFont('Helvetica','','16');
-    $pdf->Text('75','115',utf8_decode($data[0]['fertigstellung']));
+    $pdf->Text('75','115',utf8_decode($data[0]['finish_time']));
     $pdf->SetTextColor(0, 0, 0);
 
 
