@@ -533,7 +533,7 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
-            createPDF( 0 );
+            createPDF( 1 );
         });
 
         $( "#pdfOrder" ).button({
@@ -541,17 +541,19 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
-            createPDF( 1 );
-            $.fancybox({
-                width: 600,
-                height: 850,
-                autoSize: false,
-                href: 'out.pdf',
-                type: 'iframe',
-                fitToView: true,
-
-            });
-        });
+            createPDF( 0 );
+            //wait for generate pdf on server
+            setTimeout( function(){
+                $.fancybox({
+                    width: 600,
+                    height: 850,
+                    autoSize: false,
+                    href: 'out.pdf',
+                    type: 'iframe',
+                    fitToView: true,
+                });
+            }, 100);
+        })
         //alternative https://mozilla.github.io/pdf.js/examples/
 
         $('#sortable').sortable({
@@ -560,8 +562,6 @@ $(document).ready(function() {
                 updatePositionDatabase();
             }
         });
-
-
 
         $('#head08, #head20, #head06').on('keyup', function () {
             updateOrderDatabase();
@@ -840,11 +840,6 @@ table.tablesorter { width:auto; cursor:pointer; }
 <p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Order</p>
 
 <?php echo $menu['end_content']; ?>
-
-
-
-
-
 
 </body>
 </html>

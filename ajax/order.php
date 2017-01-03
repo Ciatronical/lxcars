@@ -332,21 +332,15 @@ function printOrder( $data ){
 
 
 
-    //$pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
+
     //writeLog(  $data['0']['printDoc']);
-    $result = 1;
+    $pdf->OutPut( __DIR__.'/../out.pdf' );
 
-    if( $data['0']['printDoc'] ){
-        $result = $pdf->OutPut('Reparaturauftrag_'.$_GET["a_id"].'.pdf',"I");
-        //writeLog('PDFFFFFFFFFFFFFFFF');
-    }
-    else{
-        $pdf->OutPut('../out.pdf');
-        system("$lpr out.pdf");
-        //writeLog('PPPPPPPPPPPPRIIIINNNNNNNNNNNNT');
-        //header("Location: lxcmain.php?task=3&owner=".'ownera'."&c_id=".$c_id);
-    }
+    if( $data['0']['printDoc'] )  system("$lpr out.pdf");
 
-    echo $result;
+   echo 1;
+
+
+
 }
 ?>
