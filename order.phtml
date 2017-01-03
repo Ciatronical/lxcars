@@ -19,6 +19,9 @@
   <script type="text/javascript" src="autocomplete_part.js"></script>
   <script type="text/javascript" src="kivi.Order.js"></script>
 
+  <script type="text/javascript" src="jQueryAddOns/date-time-picker.js"></script>
+  <script type="text/javascript" src="jQueryAddOns/german-date-time-picker.js"></script>
+
 <script>
 
 $(document).ready(function() {
@@ -498,8 +501,8 @@ $(document).ready(function() {
                 '</form>' +
                 //'<input type="button" id="testBtn" value="TEST">' +
                 '<button id="backToCRM"></button>' +
-                '<button id="backToOrderList" ></button>' +
-                '<button id="backToCar" ></button>' +
+                '<button id="backToOrderList"></button>' +
+                '<button id="backToCar"></button>' +
                 '<button id="printOrder"></button>' +
                 '<button id="pdfOrder"></button>' +
 
@@ -762,6 +765,35 @@ $(document).ready(function() {
             //alert( 'Put Data via Ajax to Server and Print' );
     }
 
+    //DateTimePicker
+    function AddButton( input ){
+        setTimeout( function(){
+            var buttonPane = $(input).datepicker("widget").find( ".ui-datepicker-buttonpane" );
+            var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
+            btn.appendTo( buttonPane );
+            btn.bind( "click", function(){
+                document.getElementById( "#head06" ).value = "Kunde wartet! SOFORT anfangen!!!";
+            });
+        }, 1 );
+    }
+
+    $( "#head06" ).datetimepicker({
+        beforeShow: function( input ){
+            AddButton(input);
+        },
+        onChangeMonthYear: function( year, month, inst ){
+            AddButton(inst.input);
+        },
+        stepMinute: 5,
+        hour: 1,
+        hourMin: 6,
+        hourMax: 19,
+        timeSuffix: ' Uhr',
+        timeText: 'Zeit',
+        hourText: 'Stunde',
+        closeText: 'Fertig',
+        currentText: 'Jetzt'
+    });
 }); //Ende $(document).ready()
 
 </script>
