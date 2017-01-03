@@ -499,13 +499,14 @@ $(document).ready(function() {
                 //'<input type="button" id="testBtn" value="TEST">' +
                 '<button id="backToCRM"></button>' +
                 '<button id="backToOrderList" ></button>' +
+                '<button id="backToCar" ></button>' +
                 '<button id="printOrder"></button>' +
                 '<button id="pdfOrder"></button>' +
 
 
         '</div>').appendTo('body');
 
-        $('#add_item_parts_id_name').focus();
+        $( '#add_item_parts_id_name' ).focus();
         $( '.posID' ).hide();
         $( '.partID' ).hide();
 
@@ -513,7 +514,7 @@ $(document).ready(function() {
             label: "CRM"
         }).css({
             'margin':'5px'
-        }).click(function () {
+        }).click( function(){
             location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + ow;
             return false;
         });
@@ -522,8 +523,17 @@ $(document).ready(function() {
             label: "Back to Orderlist"
         }).css({
             'margin':'5px'
-        }).click(function () {
+        }).click( function(){
             window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
+            return false;
+        });
+
+        $( "#backToCar" ).button({
+            label: "Back to Car"
+        }).css({
+            'margin':'5px'
+        }).click( function(){
+            window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + ow + '&c_id=' + car + '&task=3';
             return false;
         });
 
