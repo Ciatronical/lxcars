@@ -6,7 +6,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id, oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -195,12 +195,13 @@ function getOrderList( $data ) {
 }
 function printOrder( $data ){
     writeLog( $data );
-    
+
     require("fpdf.php");
-    require_once("../inc/lxcLib.php");
-    include_once( '../inc/config.php' );
-    $carData = ShowCar($data['0']['c_id']);
-    chdir('..');
+    require_once( __DIR__.'/../inc/lxcLib.php' );
+    include_once( __DIR__.'/../inc/config.php' );
+
+    $carData = ShowCar( $data['0']['c_id'] );
+
     writeLog($carData);
 
     define( 'FPDF_FONTPATH', '../font/');
@@ -209,21 +210,21 @@ function printOrder( $data ){
 
     $pdf=new FPDF('P','mm','A4');
     $pdf->AddPage();
-    
+
     $pdf->SetFont('Helvetica','B','18'); //('font_family','font_weight','font_size')
     $pdf->Text('20','26','Auto-Spar Reparaturauftrag'); //('pos_left','pos_top','text')
     $pdf->Text('140','26',$data['0']['plate']); //utf8_decode(
-    
+
     $pdf->SetFont('Helvetica','','10');
     $pdf->Text('140','36','Datum:');
     $pdf->Text('170','36',$data['0']['datum']);
     $pdf->Text('140','41','Auftrags-Nr.: ');
     $pdf->Text('170','41',$data['0']['ordernumber']);
-    
+
     //$pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
     //writeLog(  $data['0']['printDoc']);
     $result = 1;
-    
+
     if( $data['0']['printDoc'] ){
         $result = $pdf->OutPut('Reparaturauftrag_'.$_GET["a_id"].'.pdf',"I");
         //writeLog('PDFFFFFFFFFFFFFFFF');
@@ -234,7 +235,7 @@ function printOrder( $data ){
         //writeLog('PPPPPPPPPPPPRIIIINNNNNNNNNNNNT');
         //header("Location: lxcmain.php?task=3&owner=".'ownera'."&c_id=".$c_id);
     }
-    
+
     echo $result;
 }
 ?>

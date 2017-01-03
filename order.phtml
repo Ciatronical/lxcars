@@ -10,7 +10,7 @@
     echo $menu['javascripts'];
     echo $head['JQUERY'];
     echo $head['JQUERYUI'];
-    //echo $head['JQTABLE'];
+    echo $head['FANCYBOX'];
     echo $head['THEME'];
 ?>
 
@@ -501,6 +501,8 @@ $(document).ready(function() {
                 '<button id="backToOrderList" ></button>' +
                 '<button id="printOrder"></button>' +
                 '<button id="pdfOrder"></button>' +
+
+
         '</div>').appendTo('body');
 
         $('#add_item_parts_id_name').focus();
@@ -524,11 +526,7 @@ $(document).ready(function() {
             window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
             return false;
         });
-        
-        
-        
-        
-        
+
 
         $( "#printOrder" ).button({
             label: "Print"
@@ -544,13 +542,17 @@ $(document).ready(function() {
             'margin':'5px'
         }).click( function(){
             createPDF( 1 );
+            $.fancybox({
+                width: 600,
+                height: 850,
+                autoSize: false,
+                href: 'out.pdf',
+                type: 'iframe',
+                fitToView: true,
+
+            });
         });
-        
-        
-        
-        
-        
-        
+        //alternative https://mozilla.github.io/pdf.js/examples/
 
         $('#sortable').sortable({
             update: function() {
@@ -559,14 +561,7 @@ $(document).ready(function() {
             }
         });
 
-        /*
-        $('#testBtn').click(function () {
-            //updateOrderDatabase();
-            //var testText = $(this).val();
-            //alert(testText);
-            //console.log(orderID);
-        })
-        */
+
 
         $('#head08, #head20, #head06').on('keyup', function () {
             updateOrderDatabase();
