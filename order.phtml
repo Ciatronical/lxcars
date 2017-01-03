@@ -560,7 +560,8 @@ $(document).ready(function() {
             update: function() {
                 zaehler();
                 updatePositionDatabase();
-            }
+            },
+            items: "li:not( .newOrderPos )"
         });
 
         $('#head08, #head20, #head06').on('keyup', function () {
@@ -613,7 +614,7 @@ $(document).ready(function() {
             data: { action: "newEntry", data: posObject },
             type: "POST",
             success: function(result){
-                    $('.newOrderPos').children('.posID').text(result);
+                $('.newOrderPos').children('.posID').text(result);
                     //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
             },
             error:   function(){
