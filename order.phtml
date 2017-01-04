@@ -701,6 +701,9 @@ $(document).ready(function() {
         clearTimeout( timer );
         timer = setTimeout( function(){   //calls click event after a certain time
             var updateDataJSON = new Array;
+            if ($('#head06').val() == '') {
+                $('#head06').val( $('#head16').text() );
+            };
             updateDataJSON.push({
                 //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
                 "ordnumber": orderID,

@@ -6,7 +6,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
     //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, oe.finish_time, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.finish_time, 'DD.MM.YYYY / HH:MM') AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
     //writeLog($rs);
     echo $rs;
 }
@@ -106,6 +106,7 @@ function increaseArticleNr( $updArtNr) {
 function updateOrder( $data) {
     //writeLog($data[0]);
     $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['ordnumber'] );
+    //$GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'] ), 'id = '.$data[0]['ordnumber'] );
     echo 1;
 
 }

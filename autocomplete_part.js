@@ -114,6 +114,11 @@ namespace('kivi', function(k){
 
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
+
+            if ( $('.newOrderPos').children().children('.description:contains("Haupt")') ) {
+                alert('this has Haupt');
+            };
+
             $('.newOrderPos').children('.unity').val(rsp.unit);
             $('.newOrderPos').children('.price').val((sellprice).replace('.', ','));
             $('.newOrderPos').children('.discount').val(rsp.not_discountable);
@@ -303,13 +308,13 @@ namespace('kivi', function(k){
                             "netamount": netamount,
                             "amount": amount,
                             "status": $('#head18').val(),
-                            "fertigstellung": $('#head06').val(),
+                            "finish_time": $('#head06').val(),
                             "car_status": $('#head14').val()
                         });
                         //console.log(updateDataJSON);
-            
+
                         //updateDataJSON.pop();
-            
+
                         $.ajax({
                             url: 'ajax/order.php',
                             //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
