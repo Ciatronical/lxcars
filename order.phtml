@@ -244,12 +244,11 @@ $(document).ready(function() {
                                     //var posToDel = {};
                                     var posToDel = $(this).parent().children('.posID').text();
                                     //console.log(posToDel);
-                                    //console.log('remove');
-
                                         $.ajax({
                                             url: 'ajax/order.php',
                                             data: { action: "delPosition", data: posToDel },
                                             type: "POST",
+                                            dataType: 'text',//important, when before set as JSON
                                             success: function(){
                                                 //alert('Gesendet');
                                             },
@@ -505,6 +504,7 @@ $(document).ready(function() {
                 '<button id="backToCar"></button>' +
                 '<button id="printOrder"></button>' +
                 '<button id="pdfOrder"></button>' +
+                '<button id="tst"></button>' +
 
 
         '</div>').appendTo('body');
@@ -540,7 +540,6 @@ $(document).ready(function() {
             return false;
         });
 
-
         $( "#printOrder" ).button({
             label: "Print"
         }).css({
@@ -569,6 +568,25 @@ $(document).ready(function() {
         })
         //alternative https://mozilla.github.io/pdf.js/examples/
 
+        $( "#tst" ).button({
+            label: "HuAu"
+        }).css({
+            'margin':'5px'
+        }).click( function(){
+            $.ajax({
+                url: 'ajax/order.php',
+                data: { action: "setHuAuDate", data: car },
+                type: "POST",
+                dataType: 'text',
+                error:   function( err, exception ){
+                    alert('Error: ' + err.responseText );
+                    //console.log(  err );
+                    console.log( exception );
+                }
+            });
+
+
+        });
         $('#sortable').sortable({
             update: function() {
                 zaehler();
@@ -594,7 +612,7 @@ $(document).ready(function() {
                 $(this).removeClass('descrNewPos');
                 //alert('will insert')
             } else {
-                    //updatePositionDatabase();
+                    //updatePositionDatabase();//ToDo!!!!
             }
         });
 

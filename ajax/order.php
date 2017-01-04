@@ -41,8 +41,6 @@ function updatePositions( $data) {
 }
 
 function delPosition( $data ){
-    //writeLog($data);
-    //writeLog('hello');
     echo $GLOBALS['dbh']->query( "DELETE FROM orderitems WHERE id = ".$data );
 }
 
@@ -184,6 +182,7 @@ function getOrderList( $data ) {
     echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
 
 }
+
 function printOrder( $data ){
     //writeLog( $data );
 
@@ -262,29 +261,21 @@ function printOrder( $data ){
     $pdf->Text('148','94',utf8_decode($carData["c_flx"]));
     $pdf->Text('157','100',utf8_decode($carData["c_bf"]));
     $pdf->Text('151','106',utf8_decode($carData["c_wd"]));
-
     $pdf->SetFont('Helvetica','B','16');
     $pdf->SetTextColor(255, 0, 0);
     $pdf->Text('20','115','Fertigstellung:');
     $pdf->SetFont('Helvetica','','16');
     $pdf->Text('75','115',utf8_decode($data[0]['finish_time']));
     $pdf->SetTextColor(0, 0, 0);
-
-
-
-
-
-
-
     $pdf->SetFont('Helvetica','','10');
     $pos_todo[x] = 20;$pos_todo[y] = 110;
     //"Merk"-Variable ob es Positionen mit Absätzen gab
     $merke = 0;
-    foreach($data as $index => $element){
+    foreach( $data as $index => $element ){
         $b = 10;
         $count = strlen($data[$index-1]['pos_description']) - strlen(str_replace("\n", "", $data[$index-1]['pos_description']));
         // Wenn die vorhergehende Position mehr als 3 Absätze hat, muss die nächste Position weiter nach unten verrückt werden
-        if($count >= 3) {
+        if( $count >= 3 ) {
             $y = $pos_todo[y]+$b*($index+$merke+1);
             $merke++;
         }
@@ -299,14 +290,6 @@ function printOrder( $data ){
         }
     }
 
-
-
-
-
-
-
-
-
     $pdf->SetFont('Helvetica','','14');
     $pdf->Text('22','270','Datum:');
     $pdf->Text('45','270',date('d.m.Y'));
@@ -317,21 +300,18 @@ function printOrder( $data ){
     $pdf->SetFont('Helvetica','','08');
     $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
 
-
-
-
-
-
-
-
     //writeLog(  $data['0']['printDoc']);
     $pdf->OutPut( __DIR__.'/../out.pdf' );
 
-    if( $data['0']['printDoc'] )  system("$lpr out.pdf");
+    if( $data['0']['printDoc'] )  system( "$lpr out.pdf" );
 
-   echo 1;
+    echo 1;
+}
 
-
-
+function setHuAuDate( $c_id ){
+    //$today   = date( 'Y-m-d' );
+    //$newdate = date( 'Y-m-d', strtotime( $today.' + 2 year ' ) );
+    //$GLOBALS['dbh']->query( "update lxc_cars SET c_hu = '".$newdate."' WHERE c_id = '".$c_id."'" );
+    return 1;
 }
 ?>
