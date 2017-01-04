@@ -115,8 +115,8 @@ namespace('kivi', function(k){
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
 
-            if ( $('.newOrderPos').children().children('.description:contains("Haupt")') ) {
-                alert('this has Haupt');
+            if ( $('.newOrderPos').children().children('.description:contains("KÜS")') || $('.newOrderPos').children().children('.description:contains("DEKRA")') ) {
+                $( "#tst" ).click();
             };
 
             $('.newOrderPos').children('.unity').val(rsp.unit);
