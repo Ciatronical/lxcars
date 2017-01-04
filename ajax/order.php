@@ -315,7 +315,6 @@ function setHuAuDate( $c_id ){
     $newdate = date( 'Y-m-01', strtotime( $today.' + 2 year ' ) );
     //writeLog($newdate);
     //$GLOBALS['dbh']->query( "update lxc_cars SET c_hu = '".$newdate."' WHERE c_id = '".$c_id."'" );
-    $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_hu' ), array( $newdate ), 'c_id = '.$c_id );
-    return 1;
+    return $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_hu' ), array( $newdate ), 'c_id = '.$c_id );
 }
 ?>

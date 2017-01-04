@@ -115,9 +115,20 @@ namespace('kivi', function(k){
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
 
-            if ( $('.newOrderPos').children().children('.description:contains("KÜS")') || $('.newOrderPos').children().children('.description:contains("DEKRA")') ) {
-                $( "#tst" ).click();
-            };
+            if( rsp.description.match(/Hauptuntersuchung/g) ) {
+                //alert(rsp.description);
+                $.ajax({
+                    url: 'ajax/order.php',
+                    data: { action: "setHuAuDate", data: window.car },
+                    type: "POST",
+                    dataType: 'text',
+                    error:   function( err, exception ){
+                        alert('Error: ' + err.responseText );
+                        //console.log(  err );
+                        console.log( exception );
+                    }
+                });
+            }
 
             $('.newOrderPos').children('.unity').val(rsp.unit);
             $('.newOrderPos').children('.price').val((sellprice).replace('.', ','));

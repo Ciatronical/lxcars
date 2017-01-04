@@ -504,9 +504,6 @@ $(document).ready(function() {
                 '<button id="backToCar"></button>' +
                 '<button id="printOrder"></button>' +
                 '<button id="pdfOrder"></button>' +
-                '<button id="tst"></button>' +
-
-
         '</div>').appendTo('body');
 
         $( '#add_item_parts_id_name' ).focus();
@@ -568,23 +565,6 @@ $(document).ready(function() {
         })
         //alternative https://mozilla.github.io/pdf.js/examples/
 
-        $( "#tst" ).button({
-            label: "HuAu"
-        }).css({
-            'margin':'5px'
-        }).click( function(){
-            $.ajax({
-                url: 'ajax/order.php',
-                data: { action: "setHuAuDate", data: car },
-                type: "POST",
-                dataType: 'text',
-                error:   function( err, exception ){
-                    alert('Error: ' + err.responseText );
-                    //console.log(  err );
-                    console.log( exception );
-                }
-            });
-        }).hide();
         $('#sortable').sortable({
             update: function() {
                 zaehler();
