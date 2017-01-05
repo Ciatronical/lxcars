@@ -72,13 +72,15 @@ $(document).ready(function() {
 
     $('#btnNewOrder').button().click(function () {
         $.ajax({
+            //hier MUSS ein neuer Auftrag erstellt werden  insert!!!!
+            //newOrder() ausführen
             url: 'ajax/order.php?action=getOrderNumber',
             type: 'GET',
             success: function (data) {
                 var newOrderNr;
                 newOrderNr = parseInt( data[0]['sonumber'] );
                 newOrderNr =  newOrderNr + 1;
-                window.location = 'order.phtml?task=' + task + '&id=' + newOrderNr + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename;
+                window.location = 'order.phtml?task=' + task + '&id=' + newOrderNr + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename;//WICHTIG: id hat nichts mit ordnumber zu tun
             },
             error:  function(){ alert("Holen der Auftrags-Nr fehlgeschlagen!"); }
         })
