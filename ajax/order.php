@@ -120,17 +120,24 @@ function getCar( $c_id ){
 }
 
 function getOrderNumber() {
+    // Diese Funktion wird nicht mehr benötigt! kommt in newOrder()
     echo $rs = $GLOBALS['dbh']->getOne( "SELECT sonumber FROM defaults", true );
 }
 
 function getDataForNewOrder( $data ) {
+     // Diese Funktion wird nicht mehr benötigt! kommt in newOrder()
     //writeLog( $data );
     $employee = $data[0]['employee'];
     echo $rs = $GLOBALS['dbh']->getOne( "SELECT customer.name AS customer_name, customer.taxzone_id, customer.currency_id, lxc_cars.c_ln, employee.id AS employee_id, employee.name AS employee_name FROM customer, lxc_cars, employee WHERE customer.id = '".$data[0]['customer']."' AND lxc_cars.c_id = '".$data[0]['c_id']."' AND lxc_cars.c_ow = '".$data[0]['customer']."' AND employee.name = '".$employee."'", true );
 }
 
-
-function newOrder( $data ) {
+/***************************************
+*** IN:  Array( CustomerID, CarID)   ***
+*** OUT: ID new Order                ***
+****************************************/
+function newOrder( $data ){
+    //HIER ordnumber aus aus defaults holen, 1 addieren und danach in oe inserten + defaults updaten
+    //Der Rückgabewert ist id des neuen Orders (diese wird von der Methode insert() zurückgegeben)
     //writeLog( $data );
     echo $GLOBALS['dbh']->insert( 'oe', array( 'ordnumber', 'customer_id', 'c_id', 'taxzone_id', 'currency_id', 'employee_id'), array( $data[0]['ordnumber'], $data[0]['customer_id'], $data[0]['c_id'], $data[0]['taxzone_id'], $data[0]['currency_id'], $data[0]['employee_id']), FALSE);
 
@@ -144,11 +151,13 @@ function newOrder( $data ) {
 }
 
 function getOrderID( $newOrdNr ) {
+    //Diese verwirrende Funktion wird nicht mehr benötigt! Sie heißt getOrderID und gibt dir Auftragsnummer zurück?? Erledigt zukünftig newOrder().
     //writeLog( $newOrdNr );
     echo $rs = $GLOBALS['dbh']->getOne( "SELECT id AS auftrags_id FROM oe WHERE ordnumber = '".$newOrdNr."'", true );
 }
 
 function getOrderList( $data ) {
+    //Hier muss natürlich noch die oe.id geholt werden, da sämtliche Aufträge via id gehändelt werden
     $statusSearchString = $data['statusSearch'] == 'alle' ? '' : " oe.status = '".$data['statusSearch']."' AND ";//tenärer Operator
     $dateStringFrom = varExist( $data['datum_von'] ) ? " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND " : '';
     $dateStringTo   = varExist( $data['datum_bis'] ) ?  " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND " : '';
