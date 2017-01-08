@@ -121,7 +121,7 @@ namespace('kivi', function(k){
                 type: "POST",
                 dataType: 'text',
                 success: function( qty ){
-                    $( '.oP' ).children( '.number' ).val( qty );
+                    $( '.oP' ).children( '.number' ).val( qty.replace( '.', ',' ) );
                     var price = $( '.oP' ).children( '.price' ).val().replace( ',', '.' );
                     $( '.oP' ).children( '.total' ).val( ( ( qty * price ) ).toFixed(2).replace( '.', ',' ) );
                 },
@@ -316,7 +316,7 @@ namespace('kivi', function(k){
             $('#orderTotalBrutto').val((nOTPBr).toFixed(2).replace('.', ','));
             //console.log(nOTPBr);
     }
-    
+
     function updateOrderDatabase() {
         $.ajax({
             url: 'ajax/order.php?action=getOrderID&data='+newOrdNr,
@@ -398,7 +398,7 @@ namespace('kivi', function(k){
                     "item_nr": $( this ).children( '.itemNr' ).val(),
                     "pos_description": $( this ).children( '.description' ).val(),
                     "pos_unit": $( this ).children( '.unity' ).val(),
-                    "pos_qty": $( this ).children( '.number' ).val(),
+                    "pos_qty": $( this ).children( '.number' ).val().replace(',', '.'),
                     "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
                     "pos_discount": $( this ).children( '.discount' ).val(),
                     "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),

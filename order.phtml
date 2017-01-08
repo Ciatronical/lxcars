@@ -159,7 +159,7 @@ $(document).ready(function() {
                                     '<input value="'+item.partnumber+'" name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                                     '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
                                     '<input value="'+item.unit+'" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity unity2 elem" autocomplete="off">' +
-                                    '<input value="'+item.qty+'" type="text" class="ui-widget-content ui-corner-all number number2 elem">' +
+                                    '<input value="' + item.qty.toFixed(2).replace('.', ',') + '" type="text" class="ui-widget-content ui-corner-all number number2 elem">' +
                                     '<input value="'+item.sellprice.toFixed(2).replace('.', ',')+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem">' +
                                     '<input value="'+item.discount+'" type="text" id="input_05" class="ui-widget-content ui-corner-all discount discount2 elem">' +
                                     '<input value="'+item.marge_total.toFixed(2).replace('.', ',')+'" name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total total2 elem" autocomplete="off">' +
@@ -591,7 +591,7 @@ $(document).ready(function() {
                     "item_nr": $( this ).children( '.itemNr' ).val(),
                     "pos_description": $( this ).children( '.description' ).val(),
                     "pos_unit": $( this ).children( '.unity' ).val(),
-                    "pos_qty": $( this ).children( '.number' ).val(),
+                    "pos_qty": $( this ).children( '.number' ).val().replace(',', '.'),
                     "pos_price": $( this ).children( '.price' ).val().replace(',', '.'),
                     "pos_discount": $( this ).children( '.discount' ).val(),
                     "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
