@@ -41,7 +41,7 @@ namespace('kivi', function(k){
     var artNrZaehler = 0;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
-    
+
     function open_dialog () {
       k.popup_dialog({
         url: '../../controller.pl?action=Part/part_picker_search',
@@ -115,6 +115,23 @@ namespace('kivi', function(k){
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
 
+            $.ajax({
+                url: 'ajax/order.php',
+                data: { action: "getQty", data: rsp.description },
+                type: "POST",
+                dataType: 'text',
+                success: function( qty ){
+                    $( '.oP' ).children( '.number' ).val( qty );
+                    var price = $( '.oP' ).children( '.price' ).val().replace( ',', '.' );
+                    $( '.oP' ).children( '.total' ).val( ( ( qty * price ) ).toFixed(2).replace( '.', ',' ) );
+                },
+                error:   function( err, exception ){
+                    alert('Error: ' + err.responseText );
+                    //console.log(  err );
+                    console.log( exception );
+                }
+            });
+
             if( rsp.description.match(/Hauptuntersuchung/g) ) {
                 //alert(rsp.description);
                 $.ajax({
@@ -145,8 +162,8 @@ namespace('kivi', function(k){
 
             $('.oP').children('.oPdescription').val(rsp.description);
             $('.oP').children('.oPunity').val(rsp.unit);
-
             //$('.op').children('.posID').text($('.newOrderPos').children('.posID').text());
+
 
             newPosition();
 
@@ -286,7 +303,7 @@ namespace('kivi', function(k){
 
         newOrderTotalPrice();
     }
-                                
+
     function newOrderTotalPrice() {
         var nOTP = parseFloat(0);
         var nOTPBr = parseFloat(0);
@@ -338,7 +355,7 @@ namespace('kivi', function(k){
                                     alert( 'Update des Auftrages fehlgeschlagen' );
                                 }
                         });
-            
+
                     }, 800 );
                 },
                 error: function () {
@@ -346,7 +363,7 @@ namespace('kivi', function(k){
                 }
         });
     }
-    
+
     /***************************************************
     *count all positions and set the value of
     *position-nr to his count

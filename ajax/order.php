@@ -295,7 +295,14 @@ function setHuAuDate( $c_id ){
     //writeLog($today);
     $newdate = date( 'Y-m-01', strtotime( $today.' + 2 year ' ) );
     //writeLog($newdate);
-    //$GLOBALS['dbh']->query( "update lxc_cars SET c_hu = '".$newdate."' WHERE c_id = '".$c_id."'" );
     return $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_hu' ), array( $newdate ), 'c_id = '.$c_id );
 }
+
+function getQty( $description ){
+    //Method 1: most popular
+    echo $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'];
+    //Method 2: last modification
+    //echo $GLOBALS['dbh']->getOne( "SELECT qty FROM orderitems WHERE description = '$description'  ORDER BY mtime DESC LIMIT 1" )['qty'];
+}
+
 ?>

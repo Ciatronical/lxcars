@@ -116,7 +116,8 @@ $(document).ready(function() {
                     </tr>
                 </thead>
                 <tbody>');
-
+                //Für folgende Abfrage bitte einen Join ev. mit disinct verwenden
+                //Problem: was passiert wenn ein Auftrag keine Positionen hat????????????????
                 $rs = $GLOBALS['dbh']->getAll('
                     SELECT
                         oe.id,
