@@ -17,18 +17,13 @@
     echo $head['TRANSLATION'];
 
 
-    include_once( 'inc/lxcLib.php' );
-    include_once( '../inc/UserLib.php' );
-    include_once ( '../inc/crmLib.php' );
 
 ob_start();
 
-$task = $_GET["task"] ? $_GET["task"] : $_POST["task"];
 $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
 $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
-$a_id = $_GET["a_id"] ? $_GET["a_id"] : $_POST["a_id"];
-//$b = $_GET["b"] ? $_GET["b"] : $_POST["b"]; if( !$b ) $b = 2 ;//ZurückButton 1==Suche, 2==Fahrzeug
-$cd = ShowCar( $c_id );//Fahrzeugdaten holen
+
+
 ?>
 
 
@@ -67,23 +62,23 @@ $(document).ready(function() {
 
     $('.showtableRow').click(function () {
         //console.log($(this).attr('id'));
-        window.location = 'order.phtml?task=' + task + '&id='+$(this).attr('id')+'&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename;
+        window.location = 'order.phtml?id=' + $(this).attr('id') + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=0';
     })
 
     $('#btnNewOrder').button().click(function () {
         $.ajax({
             url: 'ajax/order.php?action=newOrder',
-            type: 'GET',
-            success: function ( data ){
-                alert( data );
-                window.location = 'order.phtml?id=' + data + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename;
+            data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id }},
+            type: 'POST',
+            success: function ( newOrderID ){
+                window.location = 'order.phtml?id=' + newOrderID + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=1  ';
             },
             error:  function(){ alert("Holen der Auftrags-Nr fehlgeschlagen!"); }
         })
     });
 
     $('#btnBack').button().click(function () {
-        window.location = 'lxcmain.php?task=' + task + '&owner=' + owner + '&c_id=' + c_id;
+        window.location = 'lxcmain.php?task=3&owner=' + owner + '&c_id=' + c_id;
     });
 
 });
@@ -109,17 +104,7 @@ $(document).ready(function() {
  <p class="ui-state-highlight ui-corner-all tools lang" style="margin-top: 20px; padding: 0.6em;" data-lang="TESTFILE">Testfile</p>
 
 <?php
-//echo $url;
-//echo $task;
-//echo $c_id;
-//echo $owner;
-//echo $a_id;
-//echo $b;
-//printArray($cd);
-//+++++++++++++$rs = $GLOBALS['dbh']->getAll('SELECT oe.ordnumber, oe.transdate, oe.amount, oe.status, oe.employee_id, employee.id, employee.name FROM oe, employee WHERE oe.c_id = '.$c_id.' AND employee.id = oe.employee_id ORDER BY ordnumber');
-//printArray($rs);
-//$rs = $GLOBALS['dbh']->getAll('SELECT oe.ordnumber, oe.transdate, oe.amount, oe.status, oe.employee_id, employee.id, employee.name FROM oe, employee WHERE oe.customer_id = '.$owner.' AND oe.c_id = '.$c_id.' AND employee.id = oe.employee_id ORDER BY ordnumber');
-//printArray($rs);
+
 
     echo (' <table id="showtable" class="tablesorter">
                 <thead>
@@ -134,12 +119,10 @@ $(document).ready(function() {
 
                 $rs = $GLOBALS['dbh']->getAll('
                     SELECT
+                        oe.id,
                         oe.ordnumber,
                         oe.transdate,
                         oe.amount,
-                        oe.status,
-                        oe.employee_id,
-                        orderitems.trans_id,
                         orderitems.description
                     FROM
                         oe,
@@ -156,11 +139,8 @@ $(document).ready(function() {
                         oe.ordnumber');
 
                     foreach ($rs as $value){
-                        //$var = sprintf(round($value['amount'], 2) == intval($value['amount']) ? "%d" : "%.2f", $value['amount']);
-                        //$var = number_format($value['amount'], 2, ',', '.');
-                        //echo $var;
                         echo ('
-                            <tr id="'.$value['ordnumber'].'" class="showtableRow">
+                            <tr id="'.$value['id'].'" class="showtableRow">
                                 <td>'.$value['transdate'].'</td>
                                 <td>'.$value['ordnumber'].'</td>
                                 <td>'.$value['description'].'</td>
@@ -170,8 +150,8 @@ $(document).ready(function() {
                     }
                     echo (  '</tbody></table>'
                             .$head["JQTABLE-PAGER"].
-                            '<input type="button" id="btnNewOrder" value="Neuer Auftrag">
-                             <input type="button" id="btnBack" value="Zur&uuml;ck">');
+                            '<input type="button" id="btnNewOrder" value="new Order">
+                             <input type="button" id="btnBack" value="back">');
 
 ?>
 

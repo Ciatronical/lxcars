@@ -47,13 +47,14 @@ $(document).ready(function() {
     var numberFormat = kivi.myconfig.numberformat;
     var dateFormat = kivi.myconfig.dateformat;
 
-    var task = $.urlParam( 'task' );
-    var newOrdNr = $.urlParam( 'id' );
+    var task = 3;//$.urlParam( 'task' );
+    var OrderID = $.urlParam( 'id' );
     var ow = $.urlParam( 'owner' );
     var car = $.urlParam( 'c_id' );
     var previous = $.urlParam( 'previous' );
+    var newOrder = $.urlParam( 'newOrder' )
 
-    //var nbr = new Number;
+
 
     //console.log( baseUrl );
     //console.log(kivi_global);
@@ -70,20 +71,13 @@ $(document).ready(function() {
                 //console.log(data);
                 //console.log(data.length);
 
-                $.each( data, function (index, item) {
+                $.each( data, function( index, item ){
                     //console.log(item);
                     getMembers.push(
                         item.name
                     )
                     //console.log(getMembers)
-                } )
-
-                                //$.each( getMembers, function ( index, item ) {
-                                //    if (item != '') {
-                                //        //console.log('item: ' + item + ' != NULL');
-                                //        $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
-                                //    }
-                                //} )
+                })
 
             },
             error:  function(){ alert("holen der Gruppenzugehörigkeit fehlgeschlagen!"); }
@@ -105,8 +99,8 @@ $(document).ready(function() {
             error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
         })
 
-    var orderID;
-    if( $.urlParam( 'id' ) > '0' ){
+        //var orderID;
+
         //Head-Area
         var id = $.urlParam( 'id' );
         $.ajax({
@@ -127,7 +121,7 @@ $(document).ready(function() {
                     data[0].car_status = 'Auto hier';
                 }
 
-                $('#head02').text(data[0].order_id);
+                $('#head02').text(data[0].ordnumber);
                 $('#head04').text(data[0].customer_name);
                 $('#head10').text(kivi.myconfig.name);
                 $('#head16').text(data[0].transdate);
@@ -144,6 +138,10 @@ $(document).ready(function() {
                 //clearTimeout( timer );
                 //timer = setTimeout( function(){
                     //Data-Area
+
+
+
+
                     $.ajax({
                         url: 'ajax/order.php?action=getPositions&data=' + orderID,
                         type: 'GET',
@@ -319,10 +317,9 @@ $(document).ready(function() {
                                     }
                                 } )
 
-                        },
-                        error:  function(){ alert("Holen der zugehörigen Artikel fehlgeschlagen!"); }
+                        }
                     })
-                //}, 1000 );
+
             },
             error:  function(){
                 //alert("Holen des Auftrages fehlgeschlagen!");
@@ -347,52 +344,6 @@ $(document).ready(function() {
                     'employee': kivi.myconfig.name
                 });
 
-                $.ajax({
-                    url: 'ajax/order.php',
-                    data: { action: "getDataForNewOrder", data: selDataForNewOrder },
-                    type: 'POST',
-                    success: function ( data ) {
-                        //console.log(data);
-                        $('#head02').text(newOrdNr);
-                        $('#head04').text(data[0].customer_name);
-                        $('#head10').text(kivi.myconfig.name);
-                        $('#head20').val(data[0].c_ln);
-                        $('#head08').val('0');
-                        // Vorbereitung des Insert
-                        var dataForNewOrder = new Array;
-                        dataForNewOrder.push({
-                            'ordnumber': newOrdNr,
-                            'customer_id': ow,
-                            'c_id': car,
-                            'taxzone_id': data[0].taxzone_id,
-                            'currency_id': data[0].currency_id,
-                            'employee_id': data[0].employee_id
-                        });
-                        // Insert des neuen Auftrages
-                        $.ajax({
-                            url: 'ajax/order.php',
-                            data: { action: "newOrder", data: dataForNewOrder },
-                            type: 'POST',
-                            success: function () {
-                                $.ajax({
-                                    url: 'ajax/order.php',
-                                    data: { action: "getOrderID", data: newOrdNr },
-                                    type: 'POST',
-                                    success: function ( data ) {
-                                        //console.log(data[0].auftrags_id);
-                                        orderID = data[0].auftrags_id;
-                                        //console.log(orderID);
-                                    },
-                                    error:  function(){ alert("holen der Auftrags-ID fehlgeschlagen!"); }
-                                })
-                            },
-                            error:  function(){ alert("Insert des neuen Auftrag fehlgeschlagen!"); }
-                        })
-                    },
-                    error:  function(){ alert("holen der Daten für den neuen Auftrag fehlgeschlagen!"); }
-                })
-
-
                 /**********************************************/
                 /**********************************************/
                 /**********************************************/
@@ -404,7 +355,7 @@ $(document).ready(function() {
 
             }
         })
-    }
+
 
         //function newPositionContainer() {
         $('<div class="ui-widget-content">' +
@@ -684,7 +635,8 @@ $(document).ready(function() {
             };
             updateDataJSON.push({
                 //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-                "ordnumber": orderID,
+                "id": id,
+                //"ordnumber": orderID,
                 "km_stnd": $('#head08').val(),
                 "netamount": netamount,
                 "amount": amount,
@@ -698,7 +650,7 @@ $(document).ready(function() {
 
             $.ajax({
                 url: 'ajax/order.php',
-                //data: { action: "updatePositions", data: JSON.stringify(updateDataJSON)},
+
                 data: { action: "updateOrder", data: updateDataJSON },
                 type: "POST",
                     success: function(){

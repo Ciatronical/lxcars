@@ -5,9 +5,10 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 function getOrder( $id ){
-    //writeLog( $id );
-    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.finish_time, 'DD.MM.YYYY / HH:MM') AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
-    //writeLog($rs);
+    writeLog( $id );
+    writeLog("SELECT oe.ordnumber AS order_id, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.finish_time, 'DD.MM.YYYY / HH:MM') AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id");
+    $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    writeLog($rs);
     echo $rs;
 }
 
@@ -32,12 +33,9 @@ function updatePositions( $data) {
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
         //writeLog($data);
-        //$GLOBALS['dbh']->update( 'orderitems', array('position', 'trans_id', 'description'), array($value['order_nr'], $value['item_nr'], $value['pos_description']), 'id = '.$value['pos_id'] );
         $GLOBALS['dbh']->update( 'orderitems', array('position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
-        //$GLOBALS['dbh']->update( 'lxc_a_pos', array('lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status'), array($value['lxc_a_pos_order_nr'], $value['lxc_a_pos_todo'], $value['lxc_a_pos_emp'], $value['lxc_a_pos_status']), 'lxc_a_pos_id = '.$value['lxc_a_pos_id'] );
     }
-    $GLOBALS['dbh']->commit();
-    echo 1;
+    echo $GLOBALS['dbh']->commit();
 }
 
 function delPosition( $data ){
@@ -62,8 +60,8 @@ function getBuchungsgruppen(){
 
 function newPart( $data ){
     //writeLog($data);
-    $rs = $GLOBALS['dbh']->getAll( "select substring(partnumber from '[0-9]+'),articlenumber from parts, defaults where parts.partnumber = '".$data['part']."'" );
-
+    $rs = $GLOBALS['dbh']->getAll( "select substring(partnumber from '[0-9]+'),articlenumber from parts, defaults where parts.partnumber = '".$data['part']."'" );//Warum??????????????????
+    //Wofür soll denn der folgende if-Block gut sein?????????????????????????????
         if($rs[0][substring] != null ) {
             //writeLog($rs[0][substring]);
             $val = (intval($rs[0][substring])+1);
@@ -73,9 +71,8 @@ function newPart( $data ){
         }
 
     $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
-    $rs = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
-    echo $rs;
-    //echo 1;
+    echo $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
+
 }
 
 function getArticleNumber( $unit ){
@@ -105,56 +102,30 @@ function increaseArticleNr( $updArtNr) {
 
 function updateOrder( $data) {
     //writeLog($data[0]);
-    $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['ordnumber'] );
-    //$GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'] ), 'id = '.$data[0]['ordnumber'] );
-    echo 1;
-
+    echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['id'] );
 }
 
 function getCar( $c_id ){
-    //writeLog( $c_id );
-    //$rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS order_id, oe.id AS oe_id,oe.transdate, oe.reqdate, oe.km_stnd, oe.c_id, oe.status AS order_status , customer.name AS customer_name FROM oe, customer WHERE oe.ordnumber = '".$id."' AND customer.id = oe.customer_id", true);
-    $rs = $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
-    //writeLog($rs);
-    echo $rs;
+   //writeLog( $c_id );
+   echo $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
 }
 
-function getOrderNumber() {
-    // Diese Funktion wird nicht mehr benötigt! kommt in newOrder()
-    echo $rs = $GLOBALS['dbh']->getOne( "SELECT sonumber FROM defaults", true );
-}
 
-function getDataForNewOrder( $data ) {
-     // Diese Funktion wird nicht mehr benötigt! kommt in newOrder()
-    //writeLog( $data );
-    $employee = $data[0]['employee'];
-    echo $rs = $GLOBALS['dbh']->getOne( "SELECT customer.name AS customer_name, customer.taxzone_id, customer.currency_id, lxc_cars.c_ln, employee.id AS employee_id, employee.name AS employee_name FROM customer, lxc_cars, employee WHERE customer.id = '".$data[0]['customer']."' AND lxc_cars.c_id = '".$data[0]['c_id']."' AND lxc_cars.c_ow = '".$data[0]['customer']."' AND employee.name = '".$employee."'", true );
-}
+
 
 /***************************************
 *** IN:  Array( CustomerID, CarID)   ***
-*** OUT: ID new Order                ***
+*** OUT: ID from new Order           ***
 ****************************************/
 function newOrder( $data ){
-    //HIER ordnumber aus aus defaults holen, 1 addieren und danach in oe inserten + defaults updaten
-    //Der Rückgabewert ist id des neuen Orders (diese wird von der Methode insert() zurückgegeben)
+    //increase last ordernumber, insert data, returning order-id
     //writeLog( $data );
-    echo $GLOBALS['dbh']->insert( 'oe', array( 'ordnumber', 'customer_id', 'c_id', 'taxzone_id', 'currency_id', 'employee_id'), array( $data[0]['ordnumber'], $data[0]['customer_id'], $data[0]['c_id'], $data[0]['taxzone_id'], $data[0]['currency_id'], $data[0]['employee_id']), FALSE);
-
-    $GLOBALS['dbh']->begin();
-    foreach( $data as $key => $value ){
-        $GLOBALS['dbh']->update( 'defaults', array('sonumber'), array($value['ordnumber']), 'id = 1');
-    }
-    $GLOBALS['dbh']->commit();
-
-    echo 1;
+    //UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber //increase last ordernumber and return them
+    echo $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id )  SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
+    //ToDo
 }
 
-function getOrderID( $newOrdNr ) {
-    //Diese verwirrende Funktion wird nicht mehr benötigt! Sie heißt getOrderID und gibt dir Auftragsnummer zurück?? Erledigt zukünftig newOrder().
-    //writeLog( $newOrdNr );
-    echo $rs = $GLOBALS['dbh']->getOne( "SELECT id AS auftrags_id FROM oe WHERE ordnumber = '".$newOrdNr."'", true );
-}
+
 
 function getOrderList( $data ) {
     //Hier muss natürlich noch die oe.id geholt werden, da sämtliche Aufträge via id gehändelt werden
@@ -165,6 +136,7 @@ function getOrderList( $data ) {
     //writeLog($data);
     $sql = "
         SELECT
+            oe.id AS id,
             oe.status AS auftragsstatus,
             oe.transdate AS auftragsdatum,
             oe.ordnumber AS auftragsnummer,
