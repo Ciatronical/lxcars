@@ -12,7 +12,8 @@ geladen und mit dpkg -i Paketname installiert werden.
 </DEL>
 cd /root/kivitendo-crm
 git https://github.com/Ciatronical/lxcars.git oder wget lxcars.tgz, tar xzvf lxcars.tgz
-lxcars/scrips/install.sh ausführen
+cd lxcars/
+./scrips/install.sh
 Besitzer in www-data: ändern (chown -R www-data: *)
 git pull  zum aktualisieren
 Ein Drucker kann in lxcars/inc/config.php angegeben werden.
