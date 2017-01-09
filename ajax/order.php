@@ -300,9 +300,10 @@ function setHuAuDate( $c_id ){
 
 function getQty( $description ){
     //Method 1: most popular
-    echo $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'];
+    $rs = $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'];
     //Method 2: last modification
     //echo $GLOBALS['dbh']->getOne( "SELECT qty FROM orderitems WHERE description = '$description'  ORDER BY mtime DESC LIMIT 1" )['qty'];
+    echo !$rs ? '1' : $rs;
 }
 
 ?>
