@@ -159,9 +159,9 @@ $(document).ready(function() {
                                     '<input value="'+item.partnumber+'" name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                                     '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
                                     '<input value="'+item.unit+'" name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity unity2 elem" autocomplete="off">' +
-                                    '<input value="' + item.qty.toFixed(2).replace('.', ',') + '" type="text" class="ui-widget-content ui-corner-all number number2 elem">' +
-                                    '<input value="'+item.sellprice.toFixed(2).replace('.', ',')+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem">' +
-                                    '<input value="'+item.discount+'" type="text" id="input_05" class="ui-widget-content ui-corner-all discount discount2 elem">' +
+                                    '<input value="' + item.qty.toFixed(2).replace('.', ',') + '" type="text"  class="ui-widget-content ui-corner-all number number2 elem numeric" >' +
+                                    '<input value="'+item.sellprice.toFixed(2).replace('.', ',')+'" type="text" id="input_04" class="ui-widget-content ui-corner-all price price2 elem numeric">' +
+                                    '<input value="'+item.discount+'" type="text" id="input_05" class="ui-widget-content ui-corner-all discount discount2 elem numeric">' +
                                     '<input value="'+item.marge_total.toFixed(2).replace('.', ',')+'" name="pos_total" value="0" type="text" class="ui-widget-content ui-corner-all total total2 elem" autocomplete="off">' +
                                     '<select name="pos_emp" type="text" class="ui-widget-content ui-corner-all mechanics mechanics2 elem" autocomplete="off">' +
                                         '<option class="opt mech__0" value="0"></option>' +
@@ -312,6 +312,10 @@ $(document).ready(function() {
                                         updatePositionDatabase();
                                     }
                                 } )
+
+                                $('.numeric').on('input', function (event) {
+                                    this.value = this.value.replace(/[^0-9.,]/g, '');
+                                });
 
                         }
                     })
