@@ -637,7 +637,7 @@ $(document).ready(function() {
                 //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
                 "id": id,
                 //"ordnumber": orderID,
-                "km_stnd": $('#head08').val(),
+                "km_stnd": $('#head08').val() ? $('#head08').val() : 0,
                 "netamount": netamount,
                 "amount": amount,
                 "status": $('#head18').val(),
