@@ -449,12 +449,12 @@ $(document).ready(function() {
                             '<input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="ui-widget-content ui-corner-all" autocomplete="off">' +
                         '</li>' +
                 '</form>' +
-                //'<input type="button" id="testBtn" value="TEST">' +
                 '<button id="backToCRM"></button>' +
                 '<button id="backToOrderList"></button>' +
                 '<button id="backToCar"></button>' +
                 '<button id="printOrder"></button>' +
                 '<button id="pdfOrder"></button>' +
+                '<button id="testBtn"></button>' +
         '</div>').appendTo('body');
 
         $( '#add_item_parts_id_name' ).focus();
@@ -513,16 +513,29 @@ $(document).ready(function() {
                     fitToView: true,
                 });
             }, 100);
-        })
-        //alternative https://mozilla.github.io/pdf.js/examples/
+        })//alternative https://mozilla.github.io/pdf.js/examples/
+
+        $( "#testBtn" ).button({ //don't delete this test-button!...
+            label: "Test"
+        }).css({
+            'margin':'5px'
+        }).click( function(){
+            //alert( 'test' );
+            //$( '.newOrderPos' ).children( 'img' ).css({ 'visibility' : 'hidden' });
+            return false;
+        }).hide();
+
 
         $('#sortable').sortable({
             update: function() {
                 zaehler();
                 updatePositionDatabase();
             },
-            items: "li:not( .newOrderPos )"
+            items: "li:not( .newOrderPos )"//dont move last line
         });
+
+        //hide last li images, dont remove last li
+        $( '.newOrderPos' ).children( 'img' ).css({ 'visibility' : 'hidden' })
 
         $( '#head08, #head20, #head06' ).on( 'keyup', function(){
             updateOrderDatabase();
