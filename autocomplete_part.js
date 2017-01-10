@@ -228,10 +228,10 @@ namespace('kivi', function(k){
             $(this).attr('value', y);
             updateDatabase();
         } )
-
-        $( '.number' ).on( 'keyup', function () {
+                                
+        $( '.number, .price, .discount' ).on( 'keyup', function () {
             if ($(this).parent('.positions').hasClass('orderPos')) {
-                var number = $( this ).val().replace(',', '.');
+                var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
                 var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
                 var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
                 //console.log('NUMBERCHANGE = ' + price + ', ' + number + ', ' + discount);
@@ -240,36 +240,7 @@ namespace('kivi', function(k){
                 //console.log( (number * price) * discount );
                 newOrderTotalPrice();
                 updateOrderDatabase();
-                updateDatabase();
-            }
-        } )
-
-        $( '.price' ).on( 'keyup', function () {
-            if ($(this).parent('.positions').hasClass('orderPos')) {
-                var price = $( this ).val().replace(',', '.');
-                var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
-                var discount = ( 1 - ($( this ).parent( '.orderPos' ).children( '.discount' ).val() / 100) );
-                //console.log('PRICECHANGE = ' + price + ', ' + number + ', ' + discount);
-                //var z = ( x * y );
-                $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
-                //console.log( z );
-                newOrderTotalPrice();
-                updateOrderDatabase();
-                updateDatabase();
-            }
-        } )
-
-        $( '.discount' ).on( 'keyup', function () {
-            if ($(this).parent('.positions').hasClass('orderPos')) {
-                var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
-                var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
-                var discount = ( 1 - ($( this ).val() / 100) );
-                //var z = ( (number * price) * (1 - discount) )
-                $( this ).parent( '.orderPos' ).children( '.total' ).val( ((number * price) * discount).toFixed(2).replace('.', ',') );
-                //console.log( z );
-                newOrderTotalPrice();
-                updateOrderDatabase();
-                updateDatabase();
+                updatePositionDatabase();
             }
         } )
 
