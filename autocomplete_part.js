@@ -124,6 +124,7 @@ namespace('kivi', function(k){
                     $( '.oP' ).children( '.number' ).val( qty.replace( '.', ',' ) );
                     var price = $( '.oP' ).children( '.price' ).val().replace( ',', '.' );
                     $( '.oP' ).children( '.total' ).val( ( ( qty * price ) ).toFixed(2).replace( '.', ',' ) );
+		              newOrderTotalPrice();
                 },
                 error:   function( err, exception ){
                     alert('Error: ' + err.responseText );
