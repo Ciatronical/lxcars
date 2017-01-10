@@ -303,7 +303,7 @@ function getQty( $description ){
     $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
     //Method 2: last modification
     //echo $GLOBALS['dbh']->getOne( "SELECT qty FROM orderitems WHERE description = '$description'  ORDER BY mtime DESC LIMIT 1" )['qty'];
-    writeLog( $rs );
+    //writeLog( $rs );
     //writeLog( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" );
     echo $rs? $rs : 1;
 }
