@@ -163,7 +163,7 @@ namespace('kivi', function(k){
             $('.oP').children('.oPdescription').val(rsp.description);
             $('.oP').children('.oPunity').val(rsp.unit);
             //$('.op').children('.posID').text($('.newOrderPos').children('.posID').text());
-
+            $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
 
             newPosition();
 
