@@ -466,6 +466,7 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
+            updateOrderDatabase();
             location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + ow;
             return false;
         });
@@ -475,6 +476,7 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
+            updateOrderDatabase();
             window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
             return false;
         });
@@ -484,6 +486,7 @@ $(document).ready(function() {
         }).css({
             'margin':'5px'
         }).click( function(){
+            updateOrderDatabase();
             window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + ow + '&c_id=' + car + '&task=3';
             return false;
         });
