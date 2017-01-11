@@ -13,6 +13,7 @@ CREATE  TABLE instructions(
     trans_id integer,
     parts_id integer,
     description text,
+    response text,
     longdescription text,
     sellprice numeric(15,5),
     itime timestamp without time zone DEFAULT now(),
