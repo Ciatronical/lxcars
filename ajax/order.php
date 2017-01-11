@@ -16,8 +16,9 @@ function getPositions( $orderID ){
     //writeLog( $orderID );
     $rs = $GLOBALS['dbh']->getAll( "SELECT orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."'AND parts.id = orderitems.parts_id ORDER BY item_position", true );
     //$rs = $GLOBALS['dbh']->getAll( "SELECT id AS position_id, parts_id, description, position AS item_position, unit, sellprice, marge_total, discount FROM orderitems WHERE trans_id = '".$orderID."' ORDER BY item_position", true );
-    //writeLog( $rs );
-    echo $rs;
+    //writeLog( "SELECT orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."'AND parts.id = orderitems.parts_id ORDER BY item_position" );
+    //$GLOBALS['dbh']->getAll("SELECT  trans_id FROM orderitems UNION ALL SELECT  trans_id FROM instructions" );
+    echo $rs; //$rs is unneccessary
 }
 
 function newEntry( $data ){
@@ -174,7 +175,7 @@ function printOrder( $data ){
 
     $carData = ShowCar( $data['0']['c_id'] );
 
-    writeLog($carData);
+    //writeLog($carData);
 
     define( 'FPDF_FONTPATH', '../font/');
     define( 'x', 0 );
