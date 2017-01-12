@@ -175,7 +175,8 @@ $(document).ready(function() {
                                     '</select>' +
                                     '<label value="'+item.position_id+'" name="pos_id" class="posID posID2 elem">'+item.position_id+'</label>' +
                                     '<label value="'+item.parts_id+'" name="partID" class="partID partID2 elem">'+item.parts_id+'</label>' +
-                                    '<input value="'+item.item_kind+'" name="kind" type="text" class="ui-widget-content ui-corner-all pos-instruction pos-instruction2 elem">' +
+                                    //'<label value="'+item.item_kind+'" name="kind" class="ui-widget-content ui-corner-all pos-instruction pos-instruction2 elem">'+item.item_kind+'0</label>' +
+                                    '<label value="'+item.item_kind+'" name="kind" class="pos-instruction pos-instruction2 elem">'+item.item_kind+'***delThisString***</label>' +
                                 '</li>').insertBefore('.newOrderPos');
                                 //alert(item.status);
 
@@ -381,7 +382,7 @@ $(document).ready(function() {
                             '</select>' +
                             '<label name="pos_id" class="posID elem"></label>' +
                             '<label name="part_id" class="partID elem"></label>' +
-                            '<input name="kind" type="text" class="ui-widget-content ui-corner-all pos-instruction elem">' +
+                            '<label value="0" name="kind" class="pos-instruction elem">0</label>' +
                         '</li>' +
                     '</ul>' +
                         '<li>' +
