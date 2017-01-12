@@ -210,6 +210,7 @@ namespace('kivi', function(k){
         $('.orderPos').children('.status').addClass('status2');
         $('.orderPos').children('.posID').addClass('posID2');
         $('.orderPos').children('.partID').addClass('partID2');
+        $('.orderPos').children('.pos-instruction').addClass('pos-instruction2');
 
         updateDatabase();
 
