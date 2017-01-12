@@ -155,7 +155,7 @@ $(document).ready(function() {
                                 $('<li class="orderPos positions new">' +
                                     '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
                                     '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
-                                    '<input value="'+item.item_kind+'" name="kind" type="text" class="ui-widget-content ui-corner-all pos elem">' +
+                                    //'<input value="'+item.item_kind+'" name="kind" type="text" class="ui-widget-content ui-corner-all pos elem">' +
                                     '<input value="'+item.item_position+'" name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
                                     '<input value="'+item.partnumber+'" name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                                     '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
@@ -175,14 +175,15 @@ $(document).ready(function() {
                                     '</select>' +
                                     '<label value="'+item.position_id+'" name="pos_id" class="posID posID2 elem">'+item.position_id+'</label>' +
                                     '<label value="'+item.parts_id+'" name="partID" class="partID partID2 elem">'+item.parts_id+'</label>' +
+                                    '<input value="'+item.item_kind+'" name="kind" type="text" class="ui-widget-content ui-corner-all pos-instruction pos-instruction2 elem">' +
                                 '</li>').insertBefore('.newOrderPos');
                                 //alert(item.status);
 
                                 $('.new').children('.status2').val(item.status);
                                 $('.new').children('.mechanics2').val(item.u_id);
                                 $('.new').removeClass('new');
-                                //$( '.posID' ).hide();
-                                //$( '.partID' ).hide();
+                                $( '.posID' ).hide();
+                                $( '.partID' ).hide();
 
                                     if( $.inArray( item.u_id, getMembers ) != -1 ){
                                         //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
@@ -380,6 +381,7 @@ $(document).ready(function() {
                             '</select>' +
                             '<label name="pos_id" class="posID elem"></label>' +
                             '<label name="part_id" class="partID elem"></label>' +
+                            '<input name="kind" type="text" class="ui-widget-content ui-corner-all pos-instruction elem">' +
                         '</li>' +
                     '</ul>' +
                         '<li>' +
@@ -400,8 +402,8 @@ $(document).ready(function() {
         '</div>').appendTo('body');
 
         $( '#add_item_parts_id_name' ).focus();
-        $( '.posID' ).hide();
-        $( '.partID' ).hide();
+        //$( '.posID' ).hide();
+        //$( '.partID' ).hide();
 
         $( "#backToCRM" ).button({
             label: "CRM"
@@ -781,6 +783,8 @@ table.tablesorter { width:auto; cursor:pointer; }
     .posID2 { position: relative; left: 67px; font-size: 12px; }
     .partID { position: relative; left: 702px; }
     .partID2 { position: relative; left: 70px; }
+    .pos-instruction { position: relative; left: 640px; }
+    .pos-instruction2 { position: relative; left: 1500px; top: -24px; }
 
 </style>
 </head>
