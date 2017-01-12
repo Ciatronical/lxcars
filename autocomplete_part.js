@@ -124,7 +124,7 @@ namespace('kivi', function(k){
                     $( '.oP' ).children( '.number' ).val( qty.replace( '.', ',' ) );
                     var price = $( '.oP' ).children( '.price' ).val().replace( ',', '.' );
                     $( '.oP' ).children( '.total' ).val( ( ( qty * price ) ).toFixed(2).replace( '.', ',' ) );
-		              newOrderTotalPrice();
+                      newOrderTotalPrice();
                 },
                 error:   function( err, exception ){
                     alert('Error: ' + err.responseText );
@@ -229,7 +229,7 @@ namespace('kivi', function(k){
             $(this).attr('value', y);
             updateDatabase();
         } )
-                                
+
         $( '.number, .price, .discount' ).on( 'keyup', function () {
             if ($(this).parent('.positions').hasClass('orderPos')) {
                 var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
@@ -538,6 +538,11 @@ namespace('kivi', function(k){
                                                         '</td>' +
                                                         '<td>' +
                                                             '<input type="text" id="txtArtAnlBeschreibung" value="' + $('#add_item_parts_id_name').val() + '">' +
+                                                            '<fieldset>' +
+
+                                                                '<label for="checkbox-1">2 Star</label>' +
+                                                                '<input type="checkbox" name="checkbox-1" id="checkbox-1">' +
+
                                                         '</td>' +
                                                     '</tr>' +
                                                     '<tr>' +
@@ -660,6 +665,7 @@ namespace('kivi', function(k){
                                /************************/
                                  /*******************/
 
+                        $( '#checkbox-1' ).checkboxradio();
                         $('#txtArtAnlEinkaufspreis').focus().on('keyup', function () {
                             //console.log($('#selectArtAnlBuchungsgruppen').find('option:selected').attr('id'));
                         });
