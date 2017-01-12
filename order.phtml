@@ -155,6 +155,7 @@ $(document).ready(function() {
                                 $('<li class="orderPos positions new">' +
                                     '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
                                     '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
+                                    '<input value="'+item.item_kind+'" name="kind" type="text" class="ui-widget-content ui-corner-all pos elem">' +
                                     '<input value="'+item.item_position+'" name="order_nr" type="text" class="ui-widget-content ui-corner-all pos elem">' +
                                     '<input value="'+item.partnumber+'" name="itemNr" type="text" id="input_01" class="ui-widget-content ui-corner-all itemNr elem">' +
                                     '<input value="'+item.description+'" name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription description2 elem">' +
@@ -180,8 +181,8 @@ $(document).ready(function() {
                                 $('.new').children('.status2').val(item.status);
                                 $('.new').children('.mechanics2').val(item.u_id);
                                 $('.new').removeClass('new');
-                                $( '.posID' ).hide();
-                                $( '.partID' ).hide();
+                                //$( '.posID' ).hide();
+                                //$( '.partID' ).hide();
 
                                     if( $.inArray( item.u_id, getMembers ) != -1 ){
                                         //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
@@ -268,7 +269,7 @@ $(document).ready(function() {
                                     //console.log(y);
                                     updatePositionDatabase();
                                 } )
-                                
+
                                 $( '.number, .price, .discount' ).on( 'keyup', function () {
                                     if ($(this).parent('.positions').hasClass('orderPos')) {
                                         var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
@@ -283,7 +284,7 @@ $(document).ready(function() {
                                         updatePositionDatabase();
                                     }
                                 } )
-                                
+
                                 $('.numeric').on('input', function (event) {
                                     this.value = this.value.replace(/[^0-9.,]/g, '');
                                 });
@@ -293,36 +294,7 @@ $(document).ready(function() {
 
             },
             error:  function(){
-                //alert("Holen des Auftrages fehlgeschlagen!");
-                //console.log(newOrdNr + '; ' + ow + '; ' + car);
-
-
-                /**********************************************/
-                /**********************************************/
-                /**********************************************/
-                /* Hier beginnt das weitere Vorgehen,         */
-                /* falls zu der id noch kein Auftrag vorliegt */
-                /**********************************************/
-                /**********************************************/
-                /**********************************************/
-
-                // Sammeln der daten zum Abrufen der fuer den
-                // Insert des neuen Auftrags benoetigten Daten
-                var selDataForNewOrder = new Array;
-                selDataForNewOrder.push({
-                    'customer': ow,
-                    'c_id': car,
-                    'employee': kivi.myconfig.name
-                });
-
-                /**********************************************/
-                /**********************************************/
-                /**********************************************/
-                /* Hier endet das weitere Vorgehen,           */
-                /* falls zu der id noch kein Auftrag vorliegt */
-                /**********************************************/
-                /**********************************************/
-                /**********************************************/
+                alert( "Holen des Auftrages fehlgeschlagen!" );
 
             }
         })
@@ -344,7 +316,6 @@ $(document).ready(function() {
                     '<label id="head09">bearbeitet von:</label>' +
                     '<label id="head19">Amtl.-Kennz.:</label>' +
                     '<input id="head20" type="text"></br>' +
-                    //'<label id="head20">sssssssssssssss</label>' +
                     '<label id="head10"></label>' +
                     '<label id="head11">bearbeitet am:</label>' +
                     '<label id="head12"></label></br>' +
