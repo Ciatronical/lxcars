@@ -3,7 +3,7 @@
 <head>
 <meta charset='utf-8' />
 
- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="/resources/demos/style.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -13,8 +13,8 @@
     $menu = $_SESSION['menu'];
     echo $menu['stylesheets'];
     echo $menu['javascripts'];
-   // echo $head['JQUERY'];
-   // echo $head['JQUERYUI'];
+    //echo $head['JQUERY'];
+    //echo $head['JQUERYUI'];
     echo $head['FANCYBOX'];
     echo $head['THEME'];
 ?>
@@ -716,6 +716,10 @@ $(document).ready(function() {
         closeText: 'Fertig',
         currentText: 'Jetzt'
     });
+
+    $( '#checkbox-1' ).checkboxradio();
+
+
 }); //Ende $(document).ready()
 
 </script>
@@ -806,7 +810,10 @@ table.tablesorter { width:auto; cursor:pointer; }
 ?>
 <p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Order</p>
 
+
 <?php echo $menu['end_content']; ?>
+
+
 
 </body>
 </html>

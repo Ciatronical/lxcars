@@ -6,12 +6,12 @@ require_once __DIR__.'/../inc/stdLib.php';
 require_once __DIR__.'/../inc/crmLib.php';
 $menu = $_SESSION['menu'];
 
-$head = mkHeader();
+//$head = mkHeader();
 ?>
 <html>
 <head><title>Fahrzeuge, Kunden, Lieferante und Personen suchen </title>
     <script language="JavaScript">
-    function showD (src,id) {
+    function showD( src, id ){
         if      (src=="C") { uri="../firma1.php?Q=C&id=" + id }
         else if (src=="V") { uri="../firma1.php?Q=V&id=" + id; }
         else if (src=="E") { uri="../user1.php?id=" + id; }
@@ -19,13 +19,14 @@ $head = mkHeader();
         else if (src=="A") { uri="lxcmain.php?task=3&c_id=" + id; }
         window.location.href=uri;
     }
+
        </script>
 <?php
     echo $menu['stylesheets'];
     echo $menu['javascripts'];
     echo $head['THEME'];
     echo $head['JQTABLE'];
-    echo $head['JUI-DROPDOWN'];
+
     echo '
     <style>
         .ui-autocomplete-category {
@@ -74,29 +75,40 @@ $head = mkHeader();
 
     ?>
     <script>
-    $(function() {
+
+    $(document).ready( function(){
+
         $('#ac0').button().addClass('ui-textfield');
         $( "input[type=submit]" )
             .button();
         $("#dialog").dialog();
-        $.ajax({
-            url: "../jqhelp/getHistory.php",
-            context: $('#menu'),
-            success: function(data) {
-                $(this).html(data);
-                $("#drop").jui_dropdown({
-                    launcher_id: 'launcher',
-                    launcher_container_id: 'launcher_container',
-                    menu_id: 'menu',
-                    containerClass: 'drop_container',
-                    menuClass: 'menu',
-                    launchOnMouseEnter:true,
-                    onSelect: function(event, data) {
-                        showD(data.id.substring(0,1), data.id.substring(1));
-                    }
-                });
+
+        $("#drop").selectmenu({
+            //style: 'dropdown',
+            select: function( event, data ){
+                showD( data.item.value.substr( 0, 1 ), data.item.value.substr( 1 ) );
             }
-        });
+        })
+
+        $.ajax({
+            url: "../ajax/getData.php",
+            type: "POST",
+            data: { action: "getHistory" },
+            success: function( data){
+                $.each( data, function( index, itemData ){
+                    var selected = !index ? "selected='selected'" : "";
+                    $("<option value='" + itemData[2] + itemData[0] + "'" + selected + " >" + itemData[1] + "</option>").appendTo("#drop");
+                 });
+                 //$("#drop").selectmenu("refresh");
+                 //$("#drop").selectmenu("destroy").selectmenu({ style: "dropdown" });
+                 $( "#drop" ).selectmenu( "open" );
+
+            },
+            error: function(){
+                alert( 'Error: getHistory() in ajax/getData.php' );
+            }
+
+        })
     });
     </script>
     <style>
@@ -104,27 +116,7 @@ $head = mkHeader();
     table.tablesorter {
        width: 1000;
     }
-    #jui_dropdown {
-        height: 400px;
-    }
-    #jui_dropdown button {
-        padding: 3px !important;
-    }
-    #jui_dropdown ul li {
-        background: none;
-        display: inline-block;
-        list-style: none;
-    }
 
-    .drop_container {
-        margin: 10px 10px 10px 10px ;
-        display: inline-block;
-    }
-    .menu {
-        position: absolute;
-        width: 240px !important;
-        margin-top: 3px !important;
-    }
     </style>
 </head>
 <body onload=$("#ac0").focus().val('<?php echo preg_replace("#[ ].*#",'',$_GET['swort']);?>');>
@@ -140,11 +132,7 @@ echo $menu['start_content'];
     $formular .= '<input type="submit" name="kontakt" value="Kontaktverlauf"> <br>';
     $formular .= '<span class="liste">Suchbegriff</span></form>';
     echo $formular;
-    $history = '<div id="drop">
-  <div id="launcher_container">
-    <button id="launcher">'.translate('.:history tracking:.','firma').'</button>
-  </div>
-  <ul id="menu"> </ul>';
+    $history = '<select name="drop" id="drop"></select>';
   echo $history;
 ?>
 

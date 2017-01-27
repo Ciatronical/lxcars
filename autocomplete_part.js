@@ -538,10 +538,10 @@ namespace('kivi', function(k){
                                                         '</td>' +
                                                         '<td>' +
                                                             '<input type="text" id="txtArtAnlBeschreibung" value="' + $('#add_item_parts_id_name').val() + '">' +
-                                                            '<fieldset>' +
 
-                                                                '<label for="checkbox-1">2 Star</label>' +
-                                                                '<input type="checkbox" name="checkbox-1" id="checkbox-1">' +
+
+                                                                '<label for="instructionCheckbox">Instruction</label>' +
+                                                                '<input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">' +
 
                                                         '</td>' +
                                                     '</tr>' +
@@ -585,6 +585,11 @@ namespace('kivi', function(k){
                                           ).dialog({
                                               modal: true, title: 'Artikel anlegen', zIndex: 10000, autoOpen: true,
                                               width: 'auto', resizable: false,
+                                              create: function( event, ui ){
+                                                  $( '#instructionCheckbox' ).prop( "checked", true );//.checkboxradio();; toDo
+                                                  //alert( $('#txtArtAnlBeschreibung').val().length );
+                                                  //alert( 'dialog ready' );
+                                              },
                                               buttons: [{
 
                                                   /***************************************************
@@ -605,9 +610,14 @@ namespace('kivi', function(k){
                                                         }
                                                         artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
                                                         artObject['buchungsgruppen_id'] = buchungsgruppen_id;
+
+                                                        //alert( artObject['description'].length );
+
+                                                        //alert( 'InstructionCheckbox: ' + $( '#instructionCheckbox' ).is( ":checked" ) );
+
                                                         $.ajax({
                                                             url: 'ajax/order.php',
-                                                            data: { action: "newPart", data: artObject },
+                                                            data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
                                                             type: "POST",
                                                                 success: function(data){
                                                                     $('.newOrderPos').children('.itemNr').val(artObject['part']);
@@ -665,7 +675,7 @@ namespace('kivi', function(k){
                                /************************/
                                  /*******************/
 
-                        $( '#checkbox-1' ).checkboxradio();
+                        $( '#instructionCheckbox' ).checkboxradio();
                         $('#txtArtAnlEinkaufspreis').focus().on('keyup', function () {
                             //console.log($('#selectArtAnlBuchungsgruppen').find('option:selected').attr('id'));
                         });
