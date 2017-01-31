@@ -575,7 +575,7 @@ namespace('kivi', function(k){
                                 error:  function(){ alert( 'Error: getUnits()' ); }
                             }); //end getUnits
 
-                            $('#add_item_parts_id_name').val('');
+                            //$('#add_item_parts_id_name').val('');
 
                             $('#selectArtAnlBuchungsgruppen').change(function () {
                                 buchungsgruppen_id = $(this).children(':selected').attr('id');
@@ -643,7 +643,14 @@ namespace('kivi', function(k){
                         {
                             text: 'Correction',
                             id: 'correctArticle',
-                        }]
+                            click: function(){
+                                //$( '#add_item_parts_id_name
+                                $( this ).dialog( 'close' );
+                            }
+                        }],
+                        close: function(){
+                            $( this ).remove();
+                        }
 
                     }) //end Dialog
                 } //end If
