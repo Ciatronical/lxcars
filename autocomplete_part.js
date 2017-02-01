@@ -178,6 +178,7 @@ namespace('kivi', function(k){
 
     function newPosition() {
         //console.log( orderID );
+        //alert( 'newPosition');
 
         $('.orderPos').children('.part_picker').remove();
         $('.orderPos').children('.nPunity').remove();
@@ -361,8 +362,8 @@ namespace('kivi', function(k){
     ***************************************************/
 
     function updateDatabase() {
-        clearTimeout( timer );
-        timer = setTimeout( function(){   //calls click event after a certain time
+        //clearTimeout( timer );
+        //timer = setTimeout( function(){   //calls click event after a certain time
             var updateDataJSON = new Array;
             $( 'ul#sortable > li' ).each( function(){
                 updateDataJSON.push({
@@ -395,7 +396,7 @@ namespace('kivi', function(k){
                         alert( 'error sending posdata' );
                     }
             });
-        }, 800 );
+       //    }, 800 );
     }
 
             /***************************/
@@ -503,6 +504,9 @@ namespace('kivi', function(k){
                             '</td>' +
                           '</tr>' +
                           '<tr>' +
+                            '<td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>' +
+                          '</tr>' +
+                          '<tr>' +
                             '<td>Einheit:</td>' +
                             '<td>' +
                               '<select id="selectArtAnlUnits" name="units" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
@@ -512,11 +516,11 @@ namespace('kivi', function(k){
                           '</tr>' +
                           '<tr>' +
                             '<td>Einkaufspreis:</td>' +
-                            '<td><input type="text" id="txtArtAnlEinkaufspreis"></td>' +
+                            '<td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>' +
                           '</tr>' +
                           '<tr>' +
                             '<td>Verkaufspreis:</td>' +
-                            '<td><input type="text" id="txtArtAnlPreis"></td>' +
+                            '<td><input type="text" id="txtArtAnlPreis" value="0"></td>' +
                           '</tr>' +
                           '<tr>' +
                             '<td>Buchungsgruppe:</td>' +
@@ -536,7 +540,7 @@ namespace('kivi', function(k){
                         create: function( event, ui ){
                             $( '#instructionCheckbox' ).checkboxradio();
                             if( $('#txtArtAnlBeschreibung').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
-
+                            //Sollte nur einmal beim laden der Seite erledigt werden! Ändert sich nicht mehr
                             $.ajax({
                                 url: 'ajax/order.php?action=getBuchungsgruppen',
                                 type: 'GET',
@@ -611,15 +615,17 @@ namespace('kivi', function(k){
                                 artObject['buchungsgruppen_id'] = buchungsgruppen_id;
                                 $.ajax({
                                     url: 'ajax/order.php',
-                                    data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
+                                    //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
+                                    data: { action: "newPart", data: artObject },
                                     type: "POST",
                                     success: function( data ){
                                         $( '.newOrderPos' ).children( '.itemNr').val( artObject['part'] );
                                         $( '#add_item_parts_id_name' ).val( artObject['description'] );
+                                        $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' }); //show del-image and move-image
                                         $( '.newOrderPos' ).children( '.unity' ).val( artObject['unit'] );
                                         $( '.newOrderPos' ).children( '.price' ).val( ( artObject['sellprice'] ).replace( '.', ',') );
                                         $( '.newOrderPos' ).children( '.discount' ).val( '0' );
-                                        $( '.newOrderPos' ).children( '.partID' ).text( data[0].id );
+                                        $( '.newOrderPos' ).children( '.partID' ).text( data );
                                         $( '.newOrderPos' ).children().children( '.description' ).addClass( 'descrNewPos' );
                                         $( '.orderPos' ).removeClass( 'oP' );
                                         $( '.newOrderPos' ).clone().insertBefore( '.newOrderPos' ).removeClass( 'newOrderPos' ).addClass( 'orderPos oP' );
@@ -631,10 +637,11 @@ namespace('kivi', function(k){
                                         newPosition();
                                         increaseArticleNumber();
                                         updateDatabase();
-                                        alert( 'Artikel erfolgreich angelegt' );
+                                        //alert( 'Artikel erfolgreich angelegt' );
+                                        $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
                                     },
                                     error:  function(){
-                                        alert( 'Error: ' + $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction()" : "newPart()"  +'!' );
+                                        alert( 'Error: ' + $( '#instructionCheckbox' ).is( ":checked" ) ? "Error: newInstuction()" : "Error: newPart()"  +'!' );
                                     }
                                 }); //ajax
                                 $( this ).dialog( 'close' );
@@ -677,11 +684,10 @@ namespace('kivi', function(k){
         $.ajax({
             url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
             type: 'GET',
-            success: function (data) {
+            success: function( data ) {
                 defaults_id = data[0].defaults_id;
-                artNrZaehler = parseInt( data[0].art_nr );
-                artNrZaehler = (artNrZaehler + 1);
-                $('#txtArtAnlArtikelNr').val(artNrZaehler);
+                artNrZaehler = data[0].newnumber;
+                $( '#txtArtAnlArtikelNr' ).val( data[0].newnumber );
             },
             error:  function(){ alert("Holen der Artikel-Nr. fehlgeschlagen!"); }
         })
@@ -700,7 +706,7 @@ namespace('kivi', function(k){
         });
         $.ajax({
             url: 'ajax/order.php',
-            data: { action: "increaseArticleNr", data: updArtNr },
+            data: { action: "increaseArticleNumber", data: updArtNr },
             type: "POST",
                 success: function(data){
                     //alert( 'Artikel-Nr erfolgreich erhöht' );

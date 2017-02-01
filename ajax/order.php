@@ -59,19 +59,9 @@ function getBuchungsgruppen(){
 }
 
 function newPart( $data ){
-    //writeLog($data);
-    $rs = $GLOBALS['dbh']->getAll( "select substring(partnumber from '[0-9]+'),articlenumber from parts, defaults where parts.partnumber = '".$data['part']."'" );//Warum??????????????????
-    //Wofür soll denn der folgende if-Block gut sein?????????????????????????????
-        if($rs[0][substring] != null ) {
-            //writeLog($rs[0][substring]);
-            $val = (intval($rs[0][substring])+1);
-            //writeLog($val);
-        } else {
-            //writeLog('substring existiert nicht ...');
-        }
-
-    $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id']), FALSE);
-    echo $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true );
+    writeLog( __FUNCTION__ );
+    echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id'), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id']), TRUE, 'id' );
+    //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
 
 }
 
@@ -83,15 +73,17 @@ function newInstuction( $data ){
 function getArticleNumber( $unit ){
     //writeLog( $unit );
     if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml') {
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber AS art_nr FROM defaults", true);
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newNumber FROM defaults", true);
     }elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min') {
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber AS art_nr FROM defaults", true);
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1  AS newNumber FROM defaults", true);
     }
-    echo $rs;
+    writeLog( $rs );
+    echo $rs;// + 1;
 }
 
-function increaseArticleNr( $updArtNr) {
-    //writeLog( $updArtNr );
+function increaseArticleNumber( $updArtNr) {
+    writeLog( __FUNCTION__ );
+    writeLog( $updArtNr );
     $GLOBALS['dbh']->begin();
     foreach( $updArtNr as $key => $value ){
         if($value['unit'] == 'Stck' || $value['unit'] == 't' || $value['unit'] == 'kg' || $value['unit'] == 'g' || $value['unit'] == 'mg' || $value['unit'] == 'L' || $value['unit'] == 'ml') {
