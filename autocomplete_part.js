@@ -231,7 +231,8 @@ namespace('kivi', function(k){
             updateDatabase();
         } )
 
-        $( '.number, .price, .discount' ).on( 'keyup', function () {
+        $( '.number, .price, .discount' ).on( 'keyup', function (){
+            //Calculate
             if ($(this).parent('.positions').hasClass('orderPos')) {
                 var number = $( this ).parent( '.orderPos' ).children( '.number' ).val().replace(',', '.');
                 var price = $( this ).parent( '.orderPos' ).children( '.price' ).val().replace(',', '.');
@@ -244,7 +245,7 @@ namespace('kivi', function(k){
                 updateOrderDatabase();
                 updatePositionDatabase();
             }
-        } )
+        })
 
         $( '.rmv' ).click( function (){
             var posToDel = $(this).parent().children('.posID').text();
@@ -278,7 +279,8 @@ namespace('kivi', function(k){
         newOrderTotalPrice();
     }
 
-    function newOrderTotalPrice() {
+    function newOrderTotalPrice(){
+        //Calculate
         var nOTP = parseFloat(0);
         var nOTPBr = parseFloat(0);
         $( 'ul#sortable > li' ).each( function(){
@@ -613,6 +615,7 @@ namespace('kivi', function(k){
                                 artObject['listprice'] = $('#txtArtAnlEinkaufspreis').val() == '' ? '0' : $('#txtArtAnlEinkaufspreis').val().replace(',', '.');
                                 artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
                                 artObject['buchungsgruppen_id'] = buchungsgruppen_id;
+                                artObject['quantity'] = $( "#quantity" ).val();
                                 $.ajax({
                                     url: 'ajax/order.php',
                                     //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
@@ -621,6 +624,7 @@ namespace('kivi', function(k){
                                     success: function( data ){
                                         $( '.newOrderPos' ).children( '.itemNr').val( artObject['part'] );
                                         $( '#add_item_parts_id_name' ).val( artObject['description'] );
+                                        $( '[id$=elem__4]:last' ).val( artObject['quantity'] );
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' }); //show del-image and move-image
                                         $( '.newOrderPos' ).children( '.unity' ).val( artObject['unit'] );
                                         $( '.newOrderPos' ).children( '.price' ).val( ( artObject['sellprice'] ).replace( '.', ',') );
@@ -629,6 +633,7 @@ namespace('kivi', function(k){
                                         $( '.newOrderPos' ).children().children( '.description' ).addClass( 'descrNewPos' );
                                         $( '.orderPos' ).removeClass( 'oP' );
                                         $( '.newOrderPos' ).clone().insertBefore( '.newOrderPos' ).removeClass( 'newOrderPos' ).addClass( 'orderPos oP' );
+                                        $( '[id$=elem__4]:last' ).val( '' ); //cloned quantity
                                         $( '<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">' ).insertAfter( $( '.oP' ).children( '.itemNr' ) );
                                         $( '<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">' ).insertAfter( $( '.oP' ).children( '.description' ) );
                                         //oPunity
@@ -636,7 +641,10 @@ namespace('kivi', function(k){
                                         $( '.oP' ).children( '.oPunity' ).val( artObject['unit'] );
                                         newPosition();
                                         increaseArticleNumber();
+                                        newOrderTotalPrice();
+                                        //calculateRow();
                                         updateDatabase();
+
                                         //alert( 'Artikel erfolgreich angelegt' );
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
                                     },
