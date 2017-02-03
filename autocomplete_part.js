@@ -39,6 +39,7 @@ namespace('kivi', function(k){
     var defaults_id;
     var unit;
     var artNrZaehler = 0;
+    var customer_hourly_rate = 200.00;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
 
@@ -695,6 +696,7 @@ namespace('kivi', function(k){
             success: function( data ) {
                 defaults_id = data[0].defaults_id;
                 artNrZaehler = data[0].newnumber;
+                customer_hourly_rate = data[0].customer_hourly_rate;
                 $( '#txtArtAnlArtikelNr' ).val( data[0].newnumber );
             },
             error:  function(){ alert("Holen der Artikel-Nr. fehlgeschlagen!"); }

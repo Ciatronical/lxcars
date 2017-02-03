@@ -72,10 +72,11 @@ function newInstuction( $data ){
 
 function getArticleNumber( $unit ){
     //writeLog( $unit );
+    //ToDo: Unit nicht FEST, sondern aus DB holen
     if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml') {
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newNumber FROM defaults", true);
     }elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min') {
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1  AS newNumber FROM defaults", true);
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1, customer_hourly_rate  AS newNumber FROM defaults", true);
     }
     writeLog( $rs );
     echo $rs;// + 1;
