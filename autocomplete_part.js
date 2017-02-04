@@ -39,7 +39,6 @@ namespace('kivi', function(k){
     var defaults_id;
     var unit;
     var artNrZaehler = 0;
-    var customer_hourly_rate = 200.00;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
 
@@ -619,8 +618,8 @@ namespace('kivi', function(k){
                                 artObject['quantity'] = $( "#quantity" ).val();
                                 $.ajax({
                                     url: 'ajax/order.php',
-                                    //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
-                                    data: { action: "newPart", data: artObject },
+                                    data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
+                                    //data: { action: "newPart", data: artObject },
                                     type: "POST",
                                     success: function( data ){
                                         $( '.newOrderPos' ).children( '.itemNr').val( artObject['part'] );
@@ -696,8 +695,9 @@ namespace('kivi', function(k){
             success: function( data ) {
                 defaults_id = data[0].defaults_id;
                 artNrZaehler = data[0].newnumber;
-                customer_hourly_rate = data[0].customer_hourly_rate;
+                //customer_hourly_rate = data[0].customer_hourly_rate;
                 $( '#txtArtAnlArtikelNr' ).val( data[0].newnumber );
+                if( $( '#selectArtAnlUnits').val() == 'Std' ) $( '#txtArtAnlPreis' ).val( data[0].customer_hourly_rate )
             },
             error:  function(){ alert("Holen der Artikel-Nr. fehlgeschlagen!"); }
         })
