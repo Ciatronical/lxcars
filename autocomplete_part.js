@@ -618,8 +618,8 @@ namespace('kivi', function(k){
                                 artObject['quantity'] = $( "#quantity" ).val();
                                 $.ajax({
                                     url: 'ajax/order.php',
-                                    data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
-                                    //data: { action: "newPart", data: artObject },
+                                    //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
+                                    data: { action: "newPart", data: artObject },
                                     type: "POST",
                                     success: function( data ){
                                         $( '.newOrderPos' ).children( '.itemNr').val( artObject['part'] );
@@ -649,7 +649,7 @@ namespace('kivi', function(k){
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
                                     },
                                     error:  function(){
-                                        alert( 'Error: ' + $( '#instructionCheckbox' ).is( ":checked" ) ? "Error: newInstuction()" : "Error: newPart()"  +'!' );
+                                        alert( 'Error: newPart() !' );
                                     }
                                 }); //ajax
                                 $( this ).dialog( 'close' );

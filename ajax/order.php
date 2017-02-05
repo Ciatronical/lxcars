@@ -22,10 +22,7 @@ function getPositions( $orderID ){
 
 function newEntry( $data ){
     //writeLog($data);
-       echo $GLOBALS['dbh']->insert( 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
-    //$rs = $GLOBALS[ 'dbh' ]->insert( 'orderitems', array( 'position', 'trans_id', 'description', 'unit', 'sellprice', 'marge_total', 'discount' ), array( $data['order_id'], $data['pos_description'], $data['order_nr'], $data['pos_unit'], $data['pos_price'], $data['pos_total'], $data['pos_discount']), 'id', 'orderitemsid' );
-    //$rs = $GLOBALS[ 'dbh' ]->insert( 'lxc_a_pos', array( 'lxc_a_pos_aid', 'lxc_a_pos_order_nr', 'lxc_a_pos_todo', 'lxc_a_pos_emp', 'lxc_a_pos_status' ), array( $data['lxc_a_pos_aid'], $data['lxc_a_pos_order_nr'], $data['lxc_a_pos_todo'],$data['lxc_a_pos_emp'], $data['lxc_a_pos_status']), 'lxc_a_pos_id' );
-    //echo 1;
+    echo $GLOBALS['dbh']->insert( 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
 }
 
 function updatePositions( $data) {
@@ -73,13 +70,14 @@ function newInstuction( $data ){
 function getArticleNumber( $unit ){
     //writeLog( $unit );
     //ToDo: Unit nicht FEST, sondern aus DB holen
-    if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml') {
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newNumber FROM defaults", true);
-    }elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min') {
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newNumber, customer_hourly_rate FROM defaults", true);
-    }
-    writeLog( $rs );
-    echo $rs;// + 1;
+    if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml')
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newnumber FROM defaults");
+    elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min')
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newnumber, customer_hourly_rate FROM defaults");
+
+    //increase partnumber if partnumber exists
+    while( $GLOBALS['dbh']->getOne( "SELECT partnumber FROM parts WHERE partnumber = '".$rs['newnumber']."'" )['partnumber'] ) $rs['newnumber']++;
+    echo  '['.json_encode( $rs ).']';//JS-friendly JSON
 }
 
 function increaseArticleNumber( $updArtNr) {
