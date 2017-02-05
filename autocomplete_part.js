@@ -39,6 +39,7 @@ namespace('kivi', function(k){
     var defaults_id;
     var unit;
     var artNrZaehler = 0;
+    var service = true;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
 
@@ -278,6 +279,11 @@ namespace('kivi', function(k){
 
         newOrderTotalPrice();
     }
+
+    function calculateRow(){
+
+    }
+
 
     function newOrderTotalPrice(){
         //Calculate
@@ -573,7 +579,7 @@ namespace('kivi', function(k){
                                         if( item.name == 'Std' ){ //ToDo: whats up when englisch is selected
                                             $( '#selectArtAnlUnits' ).children( '#unit__' + item.name ).attr( 'selected', 'selected' );
                                             unit = item.name;
-                                            getArtikelNr();
+                                            getArticleNumber();
                                         }
                                     })
 
@@ -598,7 +604,7 @@ namespace('kivi', function(k){
                             $('#selectArtAnlUnits').change(function () {
                                 unit = $(this).val();
                                 //console.log(unit);
-                                getArtikelNr();
+                                getArticleNumber();
                             });
 
 
@@ -615,7 +621,7 @@ namespace('kivi', function(k){
                                 artObject['listprice'] = $('#txtArtAnlEinkaufspreis').val() == '' ? '0' : $('#txtArtAnlEinkaufspreis').val().replace(',', '.');
                                 artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
                                 artObject['buchungsgruppen_id'] = buchungsgruppen_id;
-                                artObject['quantity'] = $( "#quantity" ).val();
+                                artObject['quantity'] = $( "#quantity" ).val().replace(',', '.');
                                 $.ajax({
                                     url: 'ajax/order.php',
                                     //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
@@ -624,23 +630,25 @@ namespace('kivi', function(k){
                                     success: function( data ){
                                         $( '.newOrderPos' ).children( '.itemNr').val( artObject['part'] );
                                         $( '#add_item_parts_id_name' ).val( artObject['description'] );
-                                        $( '[id$=elem__4]:last' ).val( artObject['quantity'] );
+                                        $( '[id$=elem__4]:last' ).val( artObject['quantity'].replace( '.', ',' ) );
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' }); //show del-image and move-image
                                         $( '.newOrderPos' ).children( '.unity' ).val( artObject['unit'] );
                                         $( '.newOrderPos' ).children( '.price' ).val( ( artObject['sellprice'] ).replace( '.', ',') );
                                         $( '.newOrderPos' ).children( '.discount' ).val( '0' );
                                         $( '.newOrderPos' ).children( '.partID' ).text( data );
+                                        $( '.newOrderPos' ).children( '.total' ).val( ( artObject['quantity'] * artObject['sellprice'] ).toFixed( 2 ).replace( '.', ',' ) );
                                         $( '.newOrderPos' ).children().children( '.description' ).addClass( 'descrNewPos' );
                                         $( '.orderPos' ).removeClass( 'oP' );
                                         $( '.newOrderPos' ).clone().insertBefore( '.newOrderPos' ).removeClass( 'newOrderPos' ).addClass( 'orderPos oP' );
                                         $( '[id$=elem__4]:last' ).val( '' ); //cloned quantity
+                                        $( '[id$=elem__7]:last' ).val( '0'  );
                                         $( '<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">' ).insertAfter( $( '.oP' ).children( '.itemNr' ) );
                                         $( '<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">' ).insertAfter( $( '.oP' ).children( '.description' ) );
                                         //oPunity
                                         $( '.oP' ).children( '.oPdescription' ).val( artObject['description'] );
                                         $( '.oP' ).children( '.oPunity' ).val( artObject['unit'] );
                                         newPosition();
-                                        increaseArticleNumber();
+                                        saveLastArticleNumber();
                                         newOrderTotalPrice();
                                         //calculateRow();
                                         updateDatabase();
@@ -688,18 +696,21 @@ namespace('kivi', function(k){
     *get Article-Number
     ***************************************************/
 
-    function getArtikelNr() {
+    function getArticleNumber() {
         $.ajax({
             url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
             type: 'GET',
             success: function( data ) {
                 defaults_id = data[0].defaults_id;
                 artNrZaehler = data[0].newnumber;
+                service = data[0].service;
                 //customer_hourly_rate = data[0].customer_hourly_rate;
                 $( '#txtArtAnlArtikelNr' ).val( data[0].newnumber );
-                if( $( '#selectArtAnlUnits').val() == 'Std' ) $( '#txtArtAnlPreis' ).val( data[0].customer_hourly_rate )
+                if( $( '#selectArtAnlUnits').val() == 'Std' ) $( '#txtArtAnlPreis' ).val( data[0].customer_hourly_rate.replace( '.', ',' ) );
             },
-            error:  function(){ alert("Holen der Artikel-Nr. fehlgeschlagen!"); }
+            error:  function(){
+                alert( "Error: getArticleNumber() !" );
+            }
         })
     }
 
@@ -707,22 +718,16 @@ namespace('kivi', function(k){
     *increase article-number in DB defaults
     ***************************************************/
 
-    function increaseArticleNumber() {
-        var updArtNr = new Array;
-        updArtNr.push({
-            'id': defaults_id,
-            'unit': unit,
-            'artNr': artNrZaehler
-        });
+    function saveLastArticleNumber(){
         $.ajax({
             url: 'ajax/order.php',
-            data: { action: "increaseArticleNumber", data: updArtNr },
+            data: { action: "saveLastArticleNumber", data: {'id': defaults_id, 'unit': unit, 'artNr': artNrZaehler, 'service': service } },
             type: "POST",
-                success: function(data){
-                    //alert( 'Artikel-Nr erfolgreich erhöht' );
+                success: function(){
+                    //alert( 'saveLastArticleNumber()' );
                 },
                 error:  function(){
-                    alert( 'Artikel-Nr konnte nicht erhöht werden' );
+                    alert( 'Error: saveLastArticleNumber() !' );
                 }
         });
     }

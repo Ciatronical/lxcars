@@ -70,30 +70,22 @@ function newInstuction( $data ){
 function getArticleNumber( $unit ){
     //writeLog( $unit );
     //ToDo: Unit nicht FEST, sondern aus DB holen
-    if($unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml')
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newnumber FROM defaults");
+    if( $unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml')
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newnumber, 0 AS service FROM defaults");
     elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min')
-        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newnumber, customer_hourly_rate FROM defaults");
+        $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newnumber, customer_hourly_rate, 1 AS service FROM defaults");
 
     //increase partnumber if partnumber exists
     while( $GLOBALS['dbh']->getOne( "SELECT partnumber FROM parts WHERE partnumber = '".$rs['newnumber']."'" )['partnumber'] ) $rs['newnumber']++;
+   //writeLog( $rs );
     echo  '['.json_encode( $rs ).']';//JS-friendly JSON
 }
 
-function increaseArticleNumber( $updArtNr) {
-    writeLog( __FUNCTION__ );
-    writeLog( $updArtNr );
-    $GLOBALS['dbh']->begin();
-    foreach( $updArtNr as $key => $value ){
-        if($value['unit'] == 'Stck' || $value['unit'] == 't' || $value['unit'] == 'kg' || $value['unit'] == 'g' || $value['unit'] == 'mg' || $value['unit'] == 'L' || $value['unit'] == 'ml') {
-            $GLOBALS['dbh']->update( 'defaults', array('articlenumber'), array($value['artNr']), 'id = '.$value['id']);
-            //writeLog($value['id']);
-        }elseif($value['unit'] == 'psch' || $value['unit'] == 'Tag' || $value['unit'] == 'Std' || $value['unit'] == 'min') {
-            $GLOBALS['dbh']->update( 'defaults', array('servicenumber'), array($value['artNr']), 'id = '.$value['id']);
-        }
-    }
-    $GLOBALS['dbh']->commit();
-    echo 1;
+function saveLastArticleNumber( $data ){
+    //writeLog( __FUNCTION__ );
+    //writeLog( $data );
+    if( $data['service'] ) echo $GLOBALS['dbh']->update( 'defaults', array( 'servicenumber' ), array( $data['artNr'] ), 'id = '.$data['id'] );
+    else echo $GLOBALS['dbh']->update( 'defaults', array( 'articlenumber' ), array( $data['artNr'] ), 'id = '.$data['id'] );
 }
 
 function updateOrder( $data) {
