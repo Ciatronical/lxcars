@@ -40,6 +40,7 @@ namespace('kivi', function(k){
     var unit;
     var artNrZaehler = 0;
     var service = true;
+    var instruction = false;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
 
@@ -109,6 +110,7 @@ namespace('kivi', function(k){
             /***************************************************
             *if part exist
             ***************************************************/
+            alert( 'If Instruction: ' + rsp.instruction );
 
             var sellprice = parseFloat(rsp.sellprice).toFixed(2);
             //console.log(sellprice);
@@ -116,6 +118,7 @@ namespace('kivi', function(k){
             $('.newOrderPos').children('.itemNr').val(rsp.partnumber);
             $('.newOrderPos').children().children('.description').val(rsp.description);
 
+            //get Quantity
             $.ajax({
                 url: 'ajax/order.php',
                 data: { action: "getQty", data: rsp.description },
@@ -125,7 +128,7 @@ namespace('kivi', function(k){
                     $( '.oP' ).children( '.number' ).val( qty.replace( '.', ',' ) );
                     var price = $( '.oP' ).children( '.price' ).val().replace( ',', '.' );
                     $( '.oP' ).children( '.total' ).val( ( ( qty * price ) ).toFixed(2).replace( '.', ',' ) );
-                      newOrderTotalPrice();
+                    newOrderTotalPrice();
                 },
                 error:   function( err, exception ){
                     alert('Error: ' + err.responseText );
@@ -212,7 +215,7 @@ namespace('kivi', function(k){
         $('.orderPos').children('.status').addClass('status2');
         $('.orderPos').children('.posID').addClass('posID2');
         $('.orderPos').children('.partID').addClass('partID2');
-        $('.orderPos').children('.pos-instruction').addClass('pos-instruction2');
+        //$('.orderPos').children('.pos-instruction').addClass('pos-instruction2');
 
         updateDatabase();
 
@@ -622,6 +625,7 @@ namespace('kivi', function(k){
                                 artObject['sellprice'] = $('#txtArtAnlPreis').val().replace(',', '.');
                                 artObject['buchungsgruppen_id'] = buchungsgruppen_id;
                                 artObject['quantity'] = $( "#quantity" ).val().replace(',', '.');
+                                artObject['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
                                 $.ajax({
                                     url: 'ajax/order.php',
                                     //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },

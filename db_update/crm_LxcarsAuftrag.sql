@@ -8,6 +8,8 @@ ALTER TABLE oe ADD status TEXT;
 ALTER TABLE oe ADD car_status TEXT;
 ALTER TABLE oe ADD finish_time TEXT;
 
+ALTER TABLE parts ADD COLUMN instruction BOOL DEFAULT FALSE;
+
 CREATE  TABLE instructions(
     id serial,
     trans_id integer,
@@ -23,8 +25,8 @@ CREATE  TABLE instructions(
     status text,
     u_id text,
     employee text,
-    dictated_during tsrange,
-    needed_during tsrange
+    dictated_during numeric(2,2),
+    needed_during numeric(2,2)
 );
 
 --ALTER TABLE orderitems ADD status TEXT;
