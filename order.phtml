@@ -53,7 +53,7 @@ $(document).ready(function() {
     var previous = $.urlParam( 'previous' );
     var newOrder = $.urlParam( 'newOrder' )
 
-
+    //alert( kivi.myconfig.dateformat == 'dd.mm.yy'  );
 
     //console.log( baseUrl );
     //console.log(kivi_global);
@@ -108,30 +108,30 @@ $(document).ready(function() {
             success: function (data) {
                 //console.log(JSON.stringify(data));
                 //console.log(data);
-                car = data[0].c_id;
+                car = data.c_id;
                 //alert(car);
 
-                if (data[0].km_stnd == null) {
+                if (data.km_stnd == null) {
                     //alert('km_stnd is empty');
-                    data[0].km_stnd = '0';
+                    data.km_stnd = '0';
                 }
-                if (data[0].car_status == null) {
+                if (data.car_status == null) {
                     //alert('car_status is empty');
-                    data[0].car_status = 'Auto hier';
+                    data.car_status = 'Auto hier';
                 }
 
-                $('#head02').text(data[0].ordnumber);
-                $('#head04').text(data[0].customer_name);
+                $('#head02').text(data.ordnumber);
+                $('#head04').text(data.customer_name);
                 $('#head10').text(kivi.myconfig.name);
-                $('#head16').text(data[0].transdate);
-                $('#head06').val(data[0].finish_time);
-                $('#head08').val(data[0].km_stnd);
-                $('#head20').val(data[0].c_ln);
-                $('#head18').val(data[0].order_status);
-                $('#head14').val(data[0].car_status);
-                ow = data[0].customer_id;
+                $('#head16').text(data.transdate);
+                $('#head06').val(data.finish_time);
+                $('#head08').val(data.km_stnd);
+                $('#head20').val(data.c_ln);
+                $('#head18').val(data.order_status);
+                $('#head14').val(data.car_status);
+                ow = data.customer_id;
 
-                orderID = data[0].oe_id;
+                orderID = data.oe_id;
                 //console.log(orderID);
 
                 //clearTimeout( timer );
@@ -497,7 +497,7 @@ $(document).ready(function() {
             var y = $(this).val();
             $(this).attr('value', y);
             if( y.length >= 1 && $(this).hasClass( 'descrNewPos' ) ){
-                insertIntoDatabase();
+                //insertIntoDatabase();
                 $(this).removeClass('descrNewPos');
                 //alert('will insert')
             } else {
@@ -520,6 +520,7 @@ $(document).ready(function() {
     }
 
     function insertIntoDatabase() {
+        alert( 'insertIntoDatabase() ' + $( '#instructionCheckbox' ).is( ":checked" ) );
         var posObject = {};
         var posArray = $( '.newOrderPos' ).children( '.elem' );
         $.each( posArray, function( index, item ){
@@ -534,7 +535,7 @@ $(document).ready(function() {
             data: { action: "newEntry", data: posObject },
             type: "POST",
             success: function(result){
-                $('.newOrderPos').children('.posID').text(result);
+                $('.newOrderPos').children('.posID').text( result );
                     //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
             },
             error:   function(){
