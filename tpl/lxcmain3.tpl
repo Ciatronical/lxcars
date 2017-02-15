@@ -82,7 +82,14 @@
         });
         $("#c_bf, #c_wd, #c_zrd").datepicker($.datepicker.regional["de"]);
         //$.datepicker.setDefaults($.datepicker.regional{"de"});
-        $( 'form input:text' ).button().addClass( 'ui-textfield' );
+        $( 'form input:text' ).css({
+            'font' : 'inherit',
+            'color' : 'inherit',
+            'text-align' : 'left',
+            'outline' : 'none',
+            'cursor' : 'text'
+        }).addClass( 'ui-corner-all' );
+
         $( 'button' ).button();
         $( '#mkbwahl' ).selectmenu({ width: 110 });
         $( '#g_art_drop' ).selectmenu({ width: 140 });
@@ -95,20 +102,12 @@
 
 </script>
 <style type="text/css">
-    #mann { position:absolute; top:10em; left:78em; border:1px solid #000;  }
-    #bmw { position:absolute; top:15em; left:78em; border:1px solid #000;  }
+    #mann { position:absolute; top:10em; left:98em; border:1px solid #000;  }
+    #bmw { position:absolute; top:15em; left:98em; border:1px solid #000;  }
     .ui-textfield {
-            font: inherit;
-            color: inherit;
-            background: #FFFFEF !important;
             text-align: inherit;
-            outline: none;
         }
-    .ui-selectmenu-button {
-            vertical-align : middle;
-            margin-left: 1em;
-        }
-    td:nth-child(odd) {font-size: 0.9em; }
+
 </style>
 
 </head>
@@ -158,7 +157,7 @@
 </table>
 <h4>Interne Bemerkungen</h4>
 <table summary="Interne Bemerkungen">
-<tr><td><textarea tabindex="20" name="c_text" cols="92" rows="5" class="ui-corner-all  ui-textfield">{c_text}</textarea></td></tr>
+<tr><td><textarea tabindex="20" name="c_text" cols="92" rows="5"    class="ui-corner-all">{c_text}</textarea></td></tr>
 </table>
 
 <button tabindex="21" type="submit" name="update" id="speichern" value="speichern">speichern</button>&nbsp;&nbsp;&nbsp;
