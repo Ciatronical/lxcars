@@ -544,7 +544,7 @@ $(document).ready(function() {
         });
     }
 
-    function updatePositionDatabase() {
+    function updatePositionDatabase() { //ToDo unbedingt mit updatePositions zusammenlegen
         clearTimeout( timer );
         timer = setTimeout( function(){   //calls click event after a certain time
             var updateDataJSON = new Array;
@@ -563,7 +563,8 @@ $(document).ready(function() {
                     "pos_emp": $( this ).children( '.mechanics' ).val(),
                     "pos_status": $( this ).children( '.status' ).val(),
                     "pos_id": $( this ).children( '.posID' ).text(),
-                    "partID": $( this ).children( '.partID' ).text()
+                    "partID": $( this ).children( '.partID' ).text(),
+                    "pos_instruction": $( this ).hasClass( 'instruction' )
                 });
             })
 

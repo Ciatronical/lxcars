@@ -27,11 +27,17 @@ function insertRow( $data ){
 }
 
 function updatePositions( $data) {
-    //writeLog($data);
+    writeLog($data);
+
+    //writeLog( 'pArt1: '.!$value['pos_instruction'] );
+    //  writeLog( 'Part2: '.$value['pos_instruction'] == 'false' );
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
         //writeLog( 'key: '.$key.' Value: '.$value['pos_instruction'] );
-        $GLOBALS['dbh']->update( !$value['pos_instruction'] || $value['pos_instruction'] == 'false' ?  'orderitems' :   'instructions', array('position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
+        writeLog( $value['pos_instruction'] );
+        writeLog( $value['pos_instruction'] == 'true' );
+        writeLog( $value['pos_instruction'] == '1' ? 'instructions' : 'orderitems'  );
+        $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
     }
     echo $GLOBALS['dbh']->commit();
 }

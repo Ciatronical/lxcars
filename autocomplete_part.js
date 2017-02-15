@@ -265,7 +265,9 @@ namespace('kivi', function(k){
             var y = $(this).val();
             $(this).attr('value', y);
             updatePosions();
-        } )
+        });
+        //    add_item_input
+
 
         $( '.number, .price, .discount' ).on( 'keyup', function (){
             //Calculate
@@ -404,9 +406,11 @@ namespace('kivi', function(k){
     *updated database if changes in each position
     ***************************************************/
 
+
     function updatePosions() {
         //clearTimeout( timer );
         //timer = setTimeout( function(){   //calls click event after a certain time
+            //alert( 'updatePosions(()' );
             var updateDataJSON = new Array;
             $( 'ul#sortable > li' ).each( function(){
                 updateDataJSON.push({
