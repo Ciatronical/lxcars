@@ -56,20 +56,12 @@
             title: "Hauptuntersuchung fällig"
         });
         $( "#c_ln" ).change(UniqueKz);
-        if( false ){
-            $( 'form input:text' ).on( "click", function() {
-                var pos = this.selectionStart;
-                $( this ).select();
-                document.execCommand("copy");
-                this.selectionStart = this.selectionEnd = pos;;
-            });
-        }
-        else{
-            $( 'form input:text' ).mousedown(function() {
-                $( this ).select();
-                document.execCommand( "copy" );
-            });
-        }
+
+        $( 'form input:text' ).mousedown(function() {
+            $( this ).select();
+            document.execCommand( "copy" );
+        });
+
 
         $("#c_bf, #c_wd, #c_zrd").datepicker({
              changeMonth: true,

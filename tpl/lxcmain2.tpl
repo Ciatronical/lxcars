@@ -48,8 +48,14 @@
 
         $("#c_ln").change(UniqueKz);
 
-        $( 'form input:text' ).button().addClass( 'ui-textfield' );
-        $( 'form textarea' ).button().addClass( 'ui-textfield' ).html( '{c_text}' );
+        $( 'form input:text' ).css({
+            'font' : 'inherit',
+            'color' : 'inherit',
+            'text-align' : 'left',
+            'outline' : 'none',
+            'cursor' : 'text'
+        }).addClass( 'ui-corner-all' );
+        $( 'form textarea' ).addClass( 'ui-corner-all' ).html( '{c_text}' );
         $( 'button' ).button();
         $( '#g_art_drop' ).selectmenu({ width: 140 });
         $( '#mkbdrop' ).selectmenu({ width: 110 });
@@ -57,18 +63,7 @@
 
     </script>
     <style type="text/css">
-        .ui-textfield {
-            font: inherit;
-            color: inherit;
-            background: #FFFFEF !important;
-            text-align: inherit;
-            outline: none;
-        }
-        td:nth-child(odd) {font-size: 0.9em; }
-        .ui-selectmenu-button {
-            vertical-align : middle;
-            margin-left: 1em;
-        }
+
     </style>
 </head>
 <body onload="document.car.c_ln.focus()">
