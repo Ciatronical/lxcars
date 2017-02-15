@@ -20,17 +20,24 @@ function getPositions( $orderID ){
     echo $rs; //$rs is unneccessary
 }
 
-function newEntry( $data ){
-    //writeLog($data);
-    echo $GLOBALS['dbh']->insert( 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
+function insertRow( $data ){
+    writeLog( __FUNCTION__ );
+    writeLog( $data['instruction'] );
+    echo $GLOBALS['dbh']->insert( $data['instructions'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
 }
 
 function updatePositions( $data) {
-    //writeLog($data);
+    writeLog($data);
+
+    //writeLog( 'pArt1: '.!$value['pos_instruction'] );
+    //  writeLog( 'Part2: '.$value['pos_instruction'] == 'false' );
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
-        //writeLog($data);
-        $GLOBALS['dbh']->update( 'orderitems', array('position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
+        //writeLog( 'key: '.$key.' Value: '.$value['pos_instruction'] );
+        writeLog( $value['pos_instruction'] );
+        writeLog( $value['pos_instruction'] == 'true' );
+        writeLog( $value['pos_instruction'] == '1' ? 'instructions' : 'orderitems'  );
+        $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
     }
     echo $GLOBALS['dbh']->commit();
 }
@@ -62,6 +69,10 @@ function newPart( $data ){
 
 }
 
+function getPartJSON( $id ){
+    echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE id = $id AND obsolete = false", TRUE );
+}
+
 function newInstuction( $data ){
     writelog( $data );
     echo 1;
@@ -78,7 +89,8 @@ function getArticleNumber( $unit ){
     //increase partnumber if partnumber exists
     while( $GLOBALS['dbh']->getOne( "SELECT partnumber FROM parts WHERE partnumber = '".$rs['newnumber']."'" )['partnumber'] ) $rs['newnumber']++;
    //writeLog( $rs );
-    echo  '['.json_encode( $rs ).']';//JS-friendly JSON
+   echo  json_encode( $rs );//JS-friendly JSON
+    //echo  '['.json_encode( $rs ).']';//JS-friendly JSON
 }
 
 function saveLastArticleNumber( $data ){

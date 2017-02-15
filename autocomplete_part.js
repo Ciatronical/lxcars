@@ -96,8 +96,9 @@ namespace('kivi', function(k){
 
       if (o.fat_set_item && item.id) {
         $.ajax({
-          url: '../../controller.pl?action=Part/show.json',
-          data: { id: item.id },
+          url: 'ajax/order.php?action=getPartJson',
+          //url: '../../controller.pl?action=Part/show.json',
+          data: { data: item.id },
           success: function(rsp) {
             $real.trigger('set_item:PartPicker', rsp);
             //console.log(rsp);
@@ -110,6 +111,7 @@ namespace('kivi', function(k){
             /***************************************************
             *if part exist
             ***************************************************/
+            insertRow( rsp.instruction );
             alert( 'If Instruction: ' + rsp.instruction );
 
             var sellprice = parseFloat(rsp.sellprice).toFixed(2);
@@ -151,15 +153,16 @@ namespace('kivi', function(k){
                     }
                 });
             }
-
+            if( rsp.instruction ) $('.newOrderPos').css({ 'background-color': 'blue'  }).addClass( 'instruction' );;
             $('.newOrderPos').children('.unity').val(rsp.unit);
             $('.newOrderPos').children('.price').val((sellprice).replace('.', ','));
-            $('.newOrderPos').children('.discount').val(rsp.not_discountable);
+            //$('.newOrderPos').children('.discount').val(rsp.not_discountable);
+            $('.newOrderPos').children('.discount').val( 0 );
             $('.newOrderPos').children('.partID').text(rsp.id);
             $('.newOrderPos').children().children('.description').addClass('descrNewPos');
 
             $('.orderPos').removeClass('oP');
-            $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass('newOrderPos').addClass('orderPos oP');
+            $('.newOrderPos').clone().insertBefore('.newOrderPos').removeClass( 'newOrderPos' ).addClass('orderPos oP');
 
             $('<input name="pos_description" type="text" class="ui-widget-content ui-corner-all description oPdescription elem">').insertAfter($('.oP').children('.itemNr'));
             $('<input name="pos_unit" type="text" class="ui-widget-content ui-corner-all unity oPunity elem" autocomplete="off">').insertAfter($('.oP').children('.description'));
@@ -169,6 +172,9 @@ namespace('kivi', function(k){
             $('.oP').children('.oPunity').val(rsp.unit);
             //$('.op').children('.posID').text($('.newOrderPos').children('.posID').text());
             $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
+            $('.newOrderPos').css({ 'background-color': '' }).removeClass( 'instruction' );
+            //$('.newOrderPos').removeAttr( 'background-color' )
+
 
             newPosition();
 
@@ -179,6 +185,32 @@ namespace('kivi', function(k){
       }
       annotate_state();
     }
+
+    function insertRow( instruction ) {
+        alert( 'insertRow() ' + instruction );
+        var posObject = {};
+        var posArray = $( '.newOrderPos' ).children( '.elem' );
+        $.each( posArray, function( index, item ){
+            posObject[item.name] = item.value;
+        });
+        posObject['order_id'] = orderID;
+        posObject['description'] = $( '.newOrderPos' ).children().children( '.elem' ).val();
+        posObject['instruction'] = instruction;
+        // Insert
+        $.ajax({
+            url: 'ajax/order.php',
+            data: { action: "insertRow", data: posObject },
+            type: "POST",
+            success: function(result){
+                $('.newOrderPos').children('.posID').text( result );
+                    //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
+            },
+            error:   function(){
+                alert( 'Insert der Daten fehlgeschlagen!');
+            }
+        });
+    }
+
 
     function newPosition() {
         //console.log( orderID );
@@ -217,7 +249,7 @@ namespace('kivi', function(k){
         $('.orderPos').children('.partID').addClass('partID2');
         //$('.orderPos').children('.pos-instruction').addClass('pos-instruction2');
 
-        updateDatabase();
+        updatePosions();
 
         /***************************************************
         *add function and
@@ -225,15 +257,17 @@ namespace('kivi', function(k){
         ***************************************************/
 
         $('.elem').change(function (e) {
-            updateDatabase();
+            updatePosions();
         }).on( 'keyup', function(){
             /***************************************************
             *Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
             ***************************************************/
             var y = $(this).val();
             $(this).attr('value', y);
-            updateDatabase();
-        } )
+            updatePosions();
+        });
+        //    add_item_input
+
 
         $( '.number, .price, .discount' ).on( 'keyup', function (){
             //Calculate
@@ -266,7 +300,7 @@ namespace('kivi', function(k){
                 });
             $( this ).parent().remove();
             zaehler();
-            updateDatabase();
+            updatePosions();
             newOrderTotalPrice();
             updateOrderDatabase();
         });
@@ -274,7 +308,7 @@ namespace('kivi', function(k){
         $('#sortable').sortable({
             update: function() {
                 zaehler();
-                updateDatabase();
+                updatePosions();
             }
         });
 
@@ -372,9 +406,11 @@ namespace('kivi', function(k){
     *updated database if changes in each position
     ***************************************************/
 
-    function updateDatabase() {
+
+    function updatePosions() {
         //clearTimeout( timer );
         //timer = setTimeout( function(){   //calls click event after a certain time
+            //alert( 'updatePosions(()' );
             var updateDataJSON = new Array;
             $( 'ul#sortable > li' ).each( function(){
                 updateDataJSON.push({
@@ -390,7 +426,8 @@ namespace('kivi', function(k){
                     "pos_emp": $( this ).children( '.mechanics' ).val(),
                     "pos_status": $( this ).children( '.status' ).val(),
                     "pos_id": $( this ).children( '.posID' ).text(),
-                    "partID": $( this ).children( '.partID' ).text()
+                    "partID": $( this ).children( '.partID' ).text(),
+                    "pos_instruction": $( this ).hasClass( 'instruction' )
                 });
             })
             updateDataJSON.pop();
@@ -400,11 +437,11 @@ namespace('kivi', function(k){
                 data: { action: "updatePositions", data: updateDataJSON },
                 type: "POST",
                     success: function(){
-                        //alert( 'send all posdata' );
+                        //alert( 'updatePositions()' );
                         updateOrderDatabase();
                     },
                     error:  function(){
-                        alert( 'error sending posdata' );
+                        alert( 'Error: updatePositions() !' );
                     }
             });
        //    }, 800 );
@@ -617,6 +654,7 @@ namespace('kivi', function(k){
                             text: 'Artikel anlegen',
                             id: 'insertArtikel',
                             click: function (){
+                                insertRow( $( '#instructionCheckbox' ).is( ":checked" ) );
                                 var artObject = {};
                                 artObject['part'] = $('#txtArtAnlArtikelNr').val();
                                 artObject['description'] = $('#txtArtAnlBeschreibung').val();
@@ -655,7 +693,7 @@ namespace('kivi', function(k){
                                         saveLastArticleNumber();
                                         newOrderTotalPrice();
                                         //calculateRow();
-                                        updateDatabase();
+                                        updatePosions();
 
                                         //alert( 'Artikel erfolgreich angelegt' );
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
@@ -705,12 +743,12 @@ namespace('kivi', function(k){
             url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
             type: 'GET',
             success: function( data ) {
-                defaults_id = data[0].defaults_id;
-                artNrZaehler = data[0].newnumber;
-                service = data[0].service;
+                defaults_id = data.defaults_id;
+                artNrZaehler = data.newnumber;
+                service = data.service;
                 //customer_hourly_rate = data[0].customer_hourly_rate;
-                $( '#txtArtAnlArtikelNr' ).val( data[0].newnumber );
-                if( $( '#selectArtAnlUnits').val() == 'Std' ) $( '#txtArtAnlPreis' ).val( data[0].customer_hourly_rate.replace( '.', ',' ) );
+                $( '#txtArtAnlArtikelNr' ).val( data.newnumber );
+                if( $( '#selectArtAnlUnits').val() == 'Std' ) $( '#txtArtAnlPreis' ).val( data.customer_hourly_rate.replace( '.', ',' ) );
             },
             error:  function(){
                 alert( "Error: getArticleNumber() !" );

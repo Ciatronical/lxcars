@@ -10,23 +10,12 @@ ALTER TABLE oe ADD finish_time TEXT;
 
 ALTER TABLE parts ADD COLUMN instruction BOOL DEFAULT FALSE;
 
-CREATE  TABLE instructions(
-    id serial,
-    trans_id integer,
-    parts_id integer,
-    description text,
-    response text,
-    longdescription text,
-    sellprice numeric(15,5),
-    itime timestamp without time zone DEFAULT now(),
-    mtime timestamp without time zone,
-    ordnumber text,
-    "position" integer NOT NULL,
-    status text,
-    u_id text,
-    employee text,
-    dictated_during numeric(2,2),
-    needed_during numeric(2,2)
+
+create table instructions (
+    like orderitems
+    including defaults
+    including constraints
+    including indexes
 );
 
 --ALTER TABLE orderitems ADD status TEXT;
