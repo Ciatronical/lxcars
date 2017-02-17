@@ -116,6 +116,9 @@ $menu = $_SESSION['menu'];
     table.tablesorter {
        width: 1000;
     }
+    .ui-autocomplete {
+        z-index: 9999 !important;
+    }
 
     </style>
 </head>
