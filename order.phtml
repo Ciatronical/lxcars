@@ -240,7 +240,11 @@ $(document).ready(function() {
                                     //var posToDel = {};
                                     //var posToDel = $(this).parent().children('.posID').text();
                                     //console.log(posToDel);
+<<<<<<< HEAD
                                     //alert( $( this ).parent().hasClass( 'instruction' ) );
+=======
+                                    alert( $( this ).parent().hasClass( 'instruction' ) );
+>>>>>>> 2a6a54df2cfb99ebb319bab0257877658adc8135
                                         $.ajax({
                                             url: 'ajax/order.php',
                                             data: { action: "delPosition",  data: { 'posToDel': $(this).parent().children( '.posID' ).text(), 'instruction':  $( this ).parent().hasClass( 'instruction' ) } },
