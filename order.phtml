@@ -151,7 +151,7 @@ $(document).ready(function() {
 
                             $.each(data, function (index, item) {
                                 //console.log(item);
-                                $('<li class="orderPos positions new">' +
+                                $('<li class="orderPos positions new ' + ( item.instruction ? 'instruction' : '' ) + '">' +
                                     '<img src="' + baseUrl + '/image/updown.png" class="mv">' +
                                     '<img src="' + baseUrl + '/image/close.png" class="rmv">' +
                                     //'<input value="'+item.item_kind+'" name="kind" type="text" class="ui-widget-content ui-corner-all pos elem">' +
@@ -182,9 +182,9 @@ $(document).ready(function() {
                                 $('.new').children('.status2').val(item.status);
                                 $('.new').children('.mechanics2').val(item.u_id);
                                 $('.new').removeClass('new');
-                                $( '.posID' ).hide();
+                                //$( '.posID' ).hide();
                                 $( '.partID' ).hide();
-
+                                $( '.instruction' ).css({ 'background-color': 'blue'  });
                                     if( $.inArray( item.u_id, getMembers ) != -1 ){
                                         //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
                                     } else {
@@ -238,11 +238,12 @@ $(document).ready(function() {
 
                                 $( '.rmv' ).click( function (){
                                     //var posToDel = {};
-                                    var posToDel = $(this).parent().children('.posID').text();
+                                    //var posToDel = $(this).parent().children('.posID').text();
                                     //console.log(posToDel);
+                                    //alert( $( this ).parent().hasClass( 'instruction' ) );
                                         $.ajax({
                                             url: 'ajax/order.php',
-                                            data: { action: "delPosition", data: posToDel },
+                                            data: { action: "delPosition",  data: { 'posToDel': $(this).parent().children( '.posID' ).text(), 'instruction':  $( this ).parent().hasClass( 'instruction' ) } },
                                             type: "POST",
                                             dataType: 'text',//important, when before set as JSON
                                             success: function(){
@@ -264,7 +265,7 @@ $(document).ready(function() {
                                     updatePositionDatabase();
                                 })
 
-                                $( '.elem' ).on( 'keyup', function () {
+                                $( '.elema' ).on( 'keyup', function () {
                                     var y = $( this ).val();
                                     $( this ).attr( 'value', y );
                                     //console.log(y);
@@ -520,7 +521,7 @@ $(document).ready(function() {
     }
 
     function insertIntoDatabase() {
-        alert( 'insertIntoDatabase() ' + $( '#instructionCheckbox' ).is( ":checked" ) );
+        alert('delete_me' );
         var posObject = {};
         var posArray = $( '.newOrderPos' ).children( '.elem' );
         $.each( posArray, function( index, item ){

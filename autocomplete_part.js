@@ -40,7 +40,8 @@ namespace('kivi', function(k){
     var unit;
     var artNrZaehler = 0;
     var service = true;
-    var instruction = false;
+    //var instruction = false;
+    var isInstruction = false;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
 
@@ -112,8 +113,9 @@ namespace('kivi', function(k){
             *if part exist
             ***************************************************/
             insertRow( rsp.instruction );
+            //*****************
             alert( 'If Instruction: ' + rsp.instruction );
-
+            //*******
             var sellprice = parseFloat(rsp.sellprice).toFixed(2);
             //console.log(sellprice);
 
@@ -179,6 +181,8 @@ namespace('kivi', function(k){
             newPosition();
 
           },
+        }).done( function( n ) {
+            newPosition();
         });
       } else {
         $real.trigger('set_item:PartPicker', item);
@@ -187,7 +191,7 @@ namespace('kivi', function(k){
     }
 
     function insertRow( instruction ) {
-        alert( 'insertRow() ' + instruction );
+        //alert( 'insertRow() ' + instruction );
         var posObject = {};
         var posArray = $( '.newOrderPos' ).children( '.elem' );
         $.each( posArray, function( index, item ){
@@ -249,7 +253,7 @@ namespace('kivi', function(k){
         $('.orderPos').children('.partID').addClass('partID2');
         //$('.orderPos').children('.pos-instruction').addClass('pos-instruction2');
 
-        updatePosions();
+        //updatePosions();
 
         /***************************************************
         *add function and
@@ -412,6 +416,7 @@ namespace('kivi', function(k){
         //timer = setTimeout( function(){   //calls click event after a certain time
             //alert( 'updatePosions(()' );
             var updateDataJSON = new Array;
+            //alert( 'updatePositions()' + $( this ).hasClass( 'instruction' ) );
             $( 'ul#sortable > li' ).each( function(){
                 updateDataJSON.push({
                     //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
@@ -654,6 +659,7 @@ namespace('kivi', function(k){
                             text: 'Artikel anlegen',
                             id: 'insertArtikel',
                             click: function (){
+                                //alert( 'insertRow()' + $( '#instructionCheckbox' ).is( ":checked" ) );
                                 insertRow( $( '#instructionCheckbox' ).is( ":checked" ) );
                                 var artObject = {};
                                 artObject['part'] = $('#txtArtAnlArtikelNr').val();
@@ -664,16 +670,24 @@ namespace('kivi', function(k){
                                 artObject['buchungsgruppen_id'] = buchungsgruppen_id;
                                 artObject['quantity'] = $( "#quantity" ).val().replace(',', '.');
                                 artObject['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
+                                isInstruction = $( '#instructionCheckbox' ).is( ":checked" );
+                                //alert( 'button' + $( '#instructionCheckbox' ).is( ":checked" ));
+
+                                //alert( 'anlegen()' +  $( '#instructionCheckbox' ).is( ":checked" ))
+
                                 $.ajax({
                                     url: 'ajax/order.php',
                                     //data: { action: $( '#instructionCheckbox' ).is( ":checked" ) ? "newInstuction" : "newPart", data: artObject },
                                     data: { action: "newPart", data: artObject },
                                     type: "POST",
                                     success: function( data ){
+                                        $( '.newOrderPos' ).add
                                         $( '.newOrderPos' ).children( '.itemNr').val( artObject['part'] );
                                         $( '#add_item_parts_id_name' ).val( artObject['description'] );
                                         $( '[id$=elem__4]:last' ).val( artObject['quantity'].replace( '.', ',' ) );
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' }); //show del-image and move-image
+                                        if( isInstruction ) $( '.newOrderPos' ).addClass( 'instruction' );
+                                        if( isInstruction ) $( '.newOrderPos' ).css({ 'background-color': 'blue'  }).addClass( 'instruction' );
                                         $( '.newOrderPos' ).children( '.unity' ).val( artObject['unit'] );
                                         $( '.newOrderPos' ).children( '.price' ).val( ( artObject['sellprice'] ).replace( '.', ',') );
                                         $( '.newOrderPos' ).children( '.discount' ).val( '0' );
@@ -689,6 +703,7 @@ namespace('kivi', function(k){
                                         //oPunity
                                         $( '.oP' ).children( '.oPdescription' ).val( artObject['description'] );
                                         $( '.oP' ).children( '.oPunity' ).val( artObject['unit'] );
+                                         $( '.newOrderPos' ).css({'background-color': '' });
                                         newPosition();
                                         saveLastArticleNumber();
                                         newOrderTotalPrice();
