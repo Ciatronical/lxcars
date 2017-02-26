@@ -32,9 +32,9 @@ function updatePositions( $data) {
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
         //writeLog( 'key: '.$key.' Value: '.$value['pos_instruction'] );
-        //writeLog( $value['pos_instruction'] );
+        writeLog( $value['pos_instruction'] );
         //writeLog( $value['pos_instruction'] == 'true' );
-        writeLog( $value['pos_instruction'] == '1' ? 'instructions' : 'orderitems'  );
+        writeLog( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems'  );
         $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
     }
     echo $GLOBALS['dbh']->commit();
@@ -65,7 +65,8 @@ function getBuchungsgruppen(){
 }
 
 function newPart( $data ){
-    //writeLog( __FUNCTION__ );
+    writeLog( __FUNCTION__ );
+    writeLog( $data );
     echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction' ), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction']), TRUE, 'id' );
     //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
 
