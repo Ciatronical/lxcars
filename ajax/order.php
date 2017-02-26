@@ -32,19 +32,19 @@ function updatePositions( $data) {
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
         //writeLog( 'key: '.$key.' Value: '.$value['pos_instruction'] );
-        writeLog( $value['pos_instruction'] );
+       // writeLog( $value['pos_instruction'] );
         //writeLog( $value['pos_instruction'] == 'true' );
-        writeLog( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems'  );
+        //writeLog( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems'  );
         $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
     }
     echo $GLOBALS['dbh']->commit();
 }
 
 function delPosition( $data ){
-    //writeLog( __FUNCTION__ );
-    //writeLog( $data['posToDel']);
-    //writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['posToDel'] );
-    //writeLog( $data['instruction'] );
+    writeLog( __FUNCTION__ );
+    writeLog( $data);
+    writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['posToDel'] );
+    writeLog( $data['instruction'] );
     echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['posToDel'] );
 }
 

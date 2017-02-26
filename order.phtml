@@ -175,7 +175,7 @@ $(document).ready(function() {
                                     '<label value="'+item.position_id+'" name="pos_id" class="posID posID2 elem">'+item.position_id+'</label>' +
                                     '<label value="'+item.parts_id+'" name="partID" class="partID partID2 elem">'+item.parts_id+'</label>' +
                                     //'<label value="'+item.item_kind+'" name="kind" class="ui-widget-content ui-corner-all pos-instruction pos-instruction2 elem">'+item.item_kind+'0</label>' +
-                                    '<label value="'+item.item_kind+'" name="kind" class="pos-instruction pos-instruction2 elem">'+item.item_kind+'***delThisString***</label>' +
+                                    '<label value="'+item.item_kind+'" name="kind" class="pos-instruction pos-instruction2 elem"></label>' +
                                 '</li>').insertBefore('.newOrderPos');
                                 //alert(item.status);
 
@@ -243,7 +243,7 @@ $(document).ready(function() {
 
                                     //alert( $( this ).parent().hasClass( 'instruction' ) );
 
-                                    alert( $( this ).parent().hasClass( 'instruction' ) );
+                                    //alert( $( this ).parent().hasClass( 'instruction' ) );
 
                                         $.ajax({
                                             url: 'ajax/order.php',
@@ -386,7 +386,7 @@ $(document).ready(function() {
                             '</select>' +
                             '<label name="pos_id" class="posID elem"></label>' +
                             '<label name="part_id" class="partID elem"></label>' +
-                            '<label value="0" name="kind" class="pos-instruction elem">Intruction</label>' +
+                            '<label value="0" name="kind" class="pos-instruction elem"></label>' +
                         '</li>' +
                     '</ul>' +
                         '<li>' +

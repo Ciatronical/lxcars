@@ -43,6 +43,7 @@ namespace('kivi', function(k){
     var instruction = false;
     var steuerSatz;
     var newOrdNr = $.urlParam( 'id' );
+    var last_pos_id = 0;
 
     function open_dialog () {
       k.popup_dialog({
@@ -111,8 +112,8 @@ namespace('kivi', function(k){
             /***************************************************
             *if part exist
             ***************************************************/
-            insertRow( rsp.instruction );
-            alert( 'If Instruction: ' + rsp.instruction );
+            insertRow( rsp.instruction );//++++++++++++++
+            //alert( 'If Instruction: ' + rsp.instruction );
 
             var sellprice = parseFloat(rsp.sellprice).toFixed(2);
             //console.log(sellprice);
@@ -201,8 +202,10 @@ namespace('kivi', function(k){
             url: 'ajax/order.php',
             data: { action: "insertRow", data: posObject },
             type: "POST",
-            success: function(result){
+            success: function( result ){
+                last_pos_id = result;
                 $('.newOrderPos').children('.posID').text( result );
+                updatePositions();
                     //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
             },
             error:   function(){
@@ -249,7 +252,7 @@ namespace('kivi', function(k){
         $('.orderPos').children('.partID').addClass('partID2');
         //$('.orderPos').children('.pos-instruction').addClass('pos-instruction2');
 
-        updatePosions();
+        updatePositions();
 
         /***************************************************
         *add function and
@@ -257,14 +260,14 @@ namespace('kivi', function(k){
         ***************************************************/
 
         $('.elem').change(function (e) {
-            updatePosions();
+            updatePositions();
         }).on( 'keyup', function(){
             /***************************************************
             *Wird benötigt um der ".elem" für das INSERT das Value zu zuweisen
             ***************************************************/
             var y = $(this).val();
             $(this).attr('value', y);
-            updatePosions();
+            updatePositions();
         });
         //    add_item_input
 
@@ -286,7 +289,8 @@ namespace('kivi', function(k){
         })
 
         $( '.rmv' ).click( function (){
-            var posToDel = $(this).parent().children('.posID').text();
+            var posToDel = $(this).parent().children('.posID').val();
+            alert(posToDel);
                 $.ajax({
                     url: 'ajax/order.php',
                     data: { action: "delPosition", data: posToDel },
@@ -300,7 +304,7 @@ namespace('kivi', function(k){
                 });
             $( this ).parent().remove();
             zaehler();
-            updatePosions();
+            updatePositions();
             newOrderTotalPrice();
             updateOrderDatabase();
         });
@@ -407,7 +411,7 @@ namespace('kivi', function(k){
     ***************************************************/
 
 
-    function updatePosions() {
+    function updatePositions() {
         //clearTimeout( timer );
         //timer = setTimeout( function(){   //calls click event after a certain time
             //alert( 'updatePosions(()' );
@@ -426,7 +430,7 @@ namespace('kivi', function(k){
                     "pos_total": $( this ).children( '.total' ).val().replace(',', '.'),
                     "pos_emp": $( this ).children( '.mechanics' ).val(),
                     "pos_status": $( this ).children( '.status' ).val(),
-                    "pos_id": $( this ).children( '.posID' ).text(),
+                    "pos_id": last_pos_id,
                     "partID": $( this ).children( '.partID' ).text(),
                     "pos_instruction": $( this ).hasClass( 'instruction' )
                 });
@@ -698,7 +702,7 @@ namespace('kivi', function(k){
                                         saveLastArticleNumber();
                                         newOrderTotalPrice();
                                         //calculateRow();
-                                        updatePosions();
+                                        updatePositions();
 
                                         //alert( 'Artikel erfolgreich angelegt' );
                                         $( '.orderPos' ).children( 'img' ).css({ 'visibility' : 'visible' });
