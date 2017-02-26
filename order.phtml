@@ -75,7 +75,7 @@ $(document).ready(function() {
                     getMembers.push(
                         item.name
                     )
-                    //console.log(getMembers)
+                    alert(getMembers);
                 })
 
             },
@@ -167,7 +167,6 @@ $(document).ready(function() {
                                         '<option class="opt mech__0" value="0"></option>' +
                                     '</select>' +
                                     '<select name="pos_status" type="text" class="ui-widget-content ui-corner-all status status2 elem" autocomplete="off">' +
-                                        '<option value="0" selected="true"></option>' +
                                         '<option value="gelesen">gelesen</option>' +
                                         '<option value="Bearbeitung">Bearbeitung</option>' +
                                         '<option value="erledigt">erledigt</option>' +
@@ -185,14 +184,14 @@ $(document).ready(function() {
                                 //$( '.posID' ).hide();
                                 $( '.partID' ).hide();
                                 $( '.instruction' ).css({ 'background-color': 'blue'  });
-                                    if( $.inArray( item.u_id, getMembers ) != -1 ){
+                                if( $.inArray( item.u_id, getMembers ) != -1 ){
                                         //console.log( 'item: ' + item.u_id + ' ist vorhanden!' )
-                                    } else {
+                                } else {
                                         //console.log( 'item: ' + item.u_id + ' nicht vorhanden!' )
-                                        getMembers.push(
-                                            item.u_id
-                                        )
-                                    }
+                                    getMembers.push(
+                                        item.u_id
+                                    )
+                                }
 
                                 grpMbr.push( {
                                     "position": item.item_position,
@@ -205,7 +204,7 @@ $(document).ready(function() {
 
                                 $.each( getMembers, function ( index, item ) {
                                     if (item != '') {
-                                        //console.log('item: ' + item + ' != NULL');
+                                      alert('item: ' + item + ' != NULL');
                                         $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
                                     }
                                 } )

@@ -49,6 +49,8 @@ function delPosition( $data ){
 }
 
 function getUsersFromGroup( $data ){
+    writeLog( __FUNCTION__);
+    writeLog(ERPUsersfromGroup( $data ) );
     echo json_encode( ERPUsersfromGroup( $data ) );
 }
 
