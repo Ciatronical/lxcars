@@ -75,7 +75,7 @@ $(document).ready(function() {
                     getMembers.push(
                         item.name
                     )
-                    alert(getMembers);
+                    //alert(getMembers);
                 })
 
             },
@@ -203,8 +203,8 @@ $(document).ready(function() {
                                 newOrderTotalPrice()
 
                                 $.each( getMembers, function ( index, item ) {
-                                    if (item != '') {
-                                      alert('item: ' + item + ' != NULL');
+                                    if (item != '') {//ToDo:
+                                      //alert('item: ' + item + ' != NULL');
                                         $('.mechanics').append($('<option class="opt mech__'+item+'" value="'+item+'">'+item+'</option>'));
                                     }
                                 } )
