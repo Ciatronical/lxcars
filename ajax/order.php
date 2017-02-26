@@ -287,7 +287,7 @@ function printOrder( $data ){
     //writeLog(  $data['0']['printDoc']);
     $pdf->OutPut( __DIR__.'/../out.pdf' );
 
-    if( $data['0']['printDoc'] )  system( "$lpr out.pdf" );
+    if( $data['0']['printDoc'] )  system( __DIR__.'/../out.pdf' );
 
     echo 1;
 }
