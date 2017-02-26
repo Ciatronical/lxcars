@@ -274,12 +274,10 @@ function printOrder( $data ){
              $pdf->SetTextColor( 255, 0, 0 );
              $pdf->SetFont( 'Arial', 'BI', 11 );
         }
-        else{
-            $pdf->SetTextColor( 0, 0, 0 );
-            $pdf->SetFont('');
-        }
         $pdf->Multicell(0,5,utf8_decode($data[$index]['pos_qty'].'  '.$data[$index]['pos_unit'].'  '.$data[$index]['pos_description']));
         $pdf->Multicell(0,5,"\r\n");
+        $pdf->SetTextColor( 0, 0, 0 );
+        $pdf->SetFont('');
         }
     }
 
