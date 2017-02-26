@@ -168,7 +168,7 @@ function getOrderList( $data ) {
 }
 
 function printOrder( $data ){
-    //writeLog( $data );
+    writeLog( $data );
 
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
@@ -269,6 +269,15 @@ function printOrder( $data ){
         if($index >= 1) {
         $pdf->SetXY($pos_todo[x], $y);
         $pdf->Rect($pos_todo[x], $y-2, '185', '10');
+        //writeLog( $data[$index]['pos_instruction'] );
+        if( $data[$index]['pos_instruction'] == 'true'  ){
+             $pdf->SetTextColor( 255, 0, 0 );
+             $pdf->SetFont( 'Arial', 'BI', 11 );
+        }
+        else{
+            $pdf->SetTextColor( 0, 0, 0 );
+            $pdf->SetFont('');
+        }
         $pdf->Multicell(0,5,utf8_decode($data[$index]['pos_qty'].'  '.$data[$index]['pos_unit'].'  '.$data[$index]['pos_description']));
         $pdf->Multicell(0,5,"\r\n");
         }

@@ -12,6 +12,7 @@
     echo $menu['stylesheets'];
     echo $menu['javascripts'];
     echo $head['THEME'];
+    echo $head['FANCYBOX'];
 ?>
 
 
@@ -664,7 +665,8 @@ $(document).ready(function() {
                 "pos_emp": $( this ).children( '.mechanics' ).val(),
                 "pos_status": $( this ).children( '.status' ).val(),
                 "pos_id": $( this ).children( '.posID' ).text(),
-                "partID": $( this ).children( '.partID' ).text()
+                "partID": $( this ).children( '.partID' ).text(),
+                "pos_instruction":  $( this ).hasClass( 'instruction' )
             });
         })
 
