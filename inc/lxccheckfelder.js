@@ -51,7 +51,7 @@ function lxc_auf( c_id, owner, task ){
     location.href=uri;
 }
 function special( c_id, owner, task ){
-    uri1="mytmp/lxcars/special.phtml?c_id=" +  c_id;
+    uri1="special/special.phtml?c_id=" +  c_id;
     uri2="&owner=" + owner;
     uri3="&task=" + task;
     uri=uri1+uri2+uri3;
