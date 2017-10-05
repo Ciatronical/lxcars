@@ -1,8 +1,8 @@
 verschlüsseln:
-gpg -c DATEINAME
+gpg -c lxc2db.cc
 
 entschlüsseln:
-gpg -d DATEINAME.gpg > DATEINAME
+gpg -d lxc2db.cc.gpg > lxc2db.cc
 
 übersetzen:
 apt-get install libpqxx-dev
