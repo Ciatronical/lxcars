@@ -399,6 +399,7 @@ function GetCars ( $owner, $owner_name ) {
     echo "<table id=\"liste\" class=\"tablesorter\" style=\"margin:0px; cursor:pointer;\">\n";
     echo "<thead><tr><th>Kennzeichen</th><th>Hersteller</th><th>Fahrzeugtyp</th><th>Fhz Art</th></tr>\n</thead>\n<tbody>\n";
     $i=0;
+    //print_r($rs);
     if ( $rs ) {
         //ToDo Lesbarkeit verbessern!!
         foreach ( $rs as $row ) {
@@ -409,6 +410,7 @@ function GetCars ( $owner, $owner_name ) {
             $z3=substr ( $z3, 0, 3 );
             $art="Pkw";
             if ( $rs[$i]['c_t']=="" ) {
+            	//echo $rs[$i];
                 $rskba=lxc2db ( "-C ".$z2." ".$z3 );
                 $herst= ( $rskba!=-1 )? ( $rskba[0][1] ): ( "Keine Daten gefunden" );
                 $typ= ( $rskba!=-1 )? ( $rskba[0][2] ): ( "Keine Daten gefunden" );
@@ -472,7 +474,7 @@ function ShowCar ( $c_id ) {
     $km=$GLOBALS['dbh']->getall ( $sql );
     $sql="select c_ow, c_ln, c_2, c_3, c_em, c_mkb, c_t, c_d, c_hu, c_fin, c_st, c_wt, c_st_l, c_wt_l, c_mt, c_e_id, c_text,c_st_z, c_wt_z, c_color, c_gart, c_m, chk_c_ln, chk_c_2, chk_c_3, chk_c_em, chk_c_hu, chk_fin, c_zrd, c_zrk, c_bf, c_wd from $tbname where c_id = $c_id ";
     $rs=$GLOBALS['dbh']->getall ( $sql );
-    //print_r($rs);
+    //print_r($rs);//
     $z2=$rs[0]['c_2'];
     //ToDo wird noch gebraucht
     $z3=$rs[0]['c_3'];
@@ -494,6 +496,8 @@ function ShowCar ( $c_id ) {
         // wenn beispielsweise das Bj nicht passt
         $lxcrs=lxc2db ( " -C ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) );
     }
+    
+        
     // ALso Schleife durch lxcrs prüfen ob Typnr o.k.
     //echo "</br> !!!!!!lxcrs[][]!!!!  </br>";
     //print_r($lxcrs);
@@ -602,7 +606,7 @@ function ShowCar ( $c_id ) {
     $radstand=$rskba[0][2];
     $masse=$rskba[0][1];
     if ( $rskba==-1 ) {
-        $kba=false;
+        //$kba=false;
         //für den MyKBA Button
         $mykba=GetFhzTyp ( $rs[0]['c_2'], substr ( $rs[0]['c_3'], 0, 3 ) );
         $lxc_data[0][4]=$mykba['hersteller'];
@@ -617,6 +621,12 @@ function ShowCar ( $c_id ) {
         $radstand=$mykba['radstand'];
         $masse=$mykba['masse_leer'];
     };
+    
+    
+    
+    
+	//print_r($lxc_data);    
+    
     $c_fin=substr ( $rs[0]['c_fin'], 0, 17 );
     $c_d=db2date ( $rs[0]['c_d'] );
     $c_hu=db2date ( $rs[0]['c_hu'] );
@@ -629,6 +639,37 @@ function ShowCar ( $c_id ) {
     //print_r($rs);
     $c_mt=date ( "d.m.Y H:i:s", $rs[0]['c_mt'] );
     $ownerarray=getFirmenStamm ( $rs[0]['c_ow'] );
+    
+    
+    
+    
+   if($lxc_data[0][7]=="" || $lxc_data[0][8]=="" || $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
+    
+     
+     $lxcrs=lxc2db ( " -c ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) );
+  
+  	 $lxc_data[0][4]=$lxcrs[0][1];
+  	 $lxc_data[0][5]=$lxcrs[0][10];
+  	 $lxc_data[0][6]=$lxcrs[0][2];
+     $lxc_data[0][7]=$lxcrs[0][7];
+     $lxc_data[0][8]=$lxcrs[0][8];
+     
+     $lxc_data[0][9]=$lxcrs[0][4];
+     $lxc_data[0][12]=$lxcrs[0][12];
+     $ks=$lxcrs[0][6];
+    
+    }
+    
+    
+    if($lxc_data[0][7]=="" && $lxc_data[0][8]=="" || $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
+    
+    
+    $kba=false;
+    
+    
+    }
+    
+    
     $retarray=array(
         'ownerstring' => $ownerarray['name'],
         'street'      => $ownerarray['street'],
@@ -690,6 +731,7 @@ function ShowCar ( $c_id ) {
         'c_bf'       => $rs[0]['c_bf'],
         'c_wd'       => $rs[0]['c_wd'],
     );
+   // print_r($retarray);
     return $retarray;
 }
 function GetOwner ( $c_ln ) {
