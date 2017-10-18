@@ -4,6 +4,16 @@
 require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
+
+function getMechanics() {
+	
+	$rs = $GLOBALS['dbh']->getALL( "SELECT name from employee", true);
+    
+    echo $rs;
+	
+	
+	
+}
 function getOrder( $id ){
     //writeLog( $id );
     $rs = $GLOBALS['dbh']->getOne( "SELECT oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
@@ -75,7 +85,14 @@ function newPart( $data ){
 }
 
 function getPartJSON( $id ){
+	print_r($id);
     echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE id = $id AND obsolete = false", TRUE );
+}
+
+
+function getPartJSONbyPartnumber( $partnumber ){
+	writeLog($partnumber);
+    echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE partnumber = '".$partnumber."'",TRUE );
 }
 
 
