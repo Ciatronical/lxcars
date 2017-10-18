@@ -655,7 +655,7 @@ function ShowCar ( $c_id ) {
      $lxc_data[0][8]=$lxcrs[0][8];
      
      $lxc_data[0][9]=$lxcrs[0][4];
-     $lxc_data[0][12]=$lxcrs[0][12];
+     $lxc_data[0][12]=$lxcrs[0][11];
      $ks=$lxcrs[0][6];
     
     }
