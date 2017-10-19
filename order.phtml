@@ -419,7 +419,10 @@ $('<div class="ui-widget-content">' +
 newPositionContainer()
 
 
-        
+ kivi.setup_formats({
+    numbers: kivi.myconfig.numberformat,
+    dates:   kivi.myconfig.dateformat
+  });        
       
 
 function newPositionContainer() {
