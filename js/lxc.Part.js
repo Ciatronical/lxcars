@@ -343,15 +343,16 @@ namespace('kivi.Part', function(ns) {
           data: { 'part.id': item.id },
           success: function(rsp) {
             self.$real.trigger('set_item:PartPicker', rsp);
-            console.log(rsp);
+           // console.log(rsp);
             
-            ns.newPositionRow(rsp);
+            autokompleteRow(rsp)//Füllt die aktuell fokussierte Position
+            ns.newPositionRow();//erzeugt neue Position
             
-            
-             $('.ui-sortable').sortable({
-            update: function() {
-               ns.renumber_positions();
-            }
+            //sortable update
+            $('.ui-sortable').sortable({
+            	update: function() {
+            	ns.renumber_positions();
+             }
         });
             
             
@@ -752,22 +753,26 @@ namespace('kivi.Part', function(ns) {
     ns.init();
   });
   
-  var posID=0;
+  
+  
+var posID=1;// new row ID
  
-ns.newPositionRow=function (part) {
-  	console.log("newRow")
+//erzeugt neue Position 
+ns.newPositionRow=function () {
+  	
+  	//html elemente der Position
   	$(
  
  '<tbody class="row_entry listrow listrow'+posID+'">'+	
  
-  	'<tr style="width: 1533px;">'+
+  	'<tr style="width: 733px;">'+
 	
 	'<td>'+ 
 	'<div class="numeric" name="position">'+posID+'</div>'+
 	'</td>'+
 	
-	'<td align="center">'+ 
-	'<img src="image/updown.png" alt="Eintrag umsortieren" class="dragdrop">'+
+	'<td style="width: 50px" align="center">'+ 
+	'<img src="../../image/updown.png" alt="Eintrag umsortieren" class="dragdrop">'+
 	'</td>'+
 	
 	'<td align="center"> '+
@@ -775,7 +780,7 @@ ns.newPositionRow=function (part) {
 	'</td>'+
 	
 	'<td>'+
-	'<div name="partnumber">'+part.partnumber+'</div>'+
+	'<input name="partnumber" value="" id="partnumber"></input>'+
 	'</td>'+
 	
 	'<td>'+
@@ -785,41 +790,41 @@ ns.newPositionRow=function (part) {
 	'<td>'+
 	'<span>'+
 	
-	'<input id="id_5238460" size="40" name="order.orderitems[].description" style="width: 300px" value="'+part.description+'" type="text">'+
-	'<img src="image/edit-entry.png" onclick="kivi.switch_areainput_to_textarea(id_5238460)" style="margin-left: 2px;">'+
+	'<span class="part_picker"><input id="add_item_parts_id" type="hidden" class="add_item_input part_autocomplete" name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 300px&quot;}"><input type="text" id="add_item_parts_id_name" fat_set_item="1" style="width: 300px" class="add_item_input" name="" value=""></span>'+
+	'<img src="../../image/edit-entry.png" onclick="kivi.switch_areainput_to_textarea(id_5238460)" style="margin-left: 2px;">'+
 	'</span>'+
 	'<input value="T" onclick="kivi.Order.show_longdescription_dialog(this)" type="button">'+
 	'</td>'+
 	
 	'<td>'+
-	'<input size="5" id="order_orderitems4283994_qty_as_number" name="order.orderitems[].qty_as_number" class="recalc reformat_number numeric" value="1,00" type="text">'+
+	'<input size="5" id="order_orderitems_qty_as_number" name="order.orderitems[].qty_as_number" class="recalc reformat_number numeric" value="1,00" type="text">'+
 	'</td>'+
 	
 	'<td nowrap="">'+
-	'<select class="unitselect" name="order.orderitems[].unit" id="order_orderitems4283996_unit"><option value="Stck" selected="">Stck</option></select>'+
+	'<select class="unitselect" name="order.orderitems[].unit" id="order_orderitems4283996_unit"><option value="" selected="">Stck</option></select>'+
 	'</td>'+
 	
 	'<td>'+
-	'<div name="editable_price" class="numeric"><input class="recalc reformat_number numeric" value="'+part.sellprice+'" id="order_orderitems4283998_sellprice_as_number" size="10" name="order.orderitems[].sellprice_as_number" type="text">'+
-     ' </div>'+	
+	'<input class="recalc reformat_number numeric" value="" id="order_orderitems_sellprice_as_number" size="10" name="order.orderitems[].sellprice_as_number" type="text">'+
+     	
 	'</td>'+
 	
 	'<td>'+
-	'<div name="editable_discount" class="numeric"><input value="0,00" class="recalc reformat_number numeric" name="order.orderitems[].discount_as_percent" size="5" id="order_orderitems4284001_discount_as_percent" type="text">'+
+	'<div name="editable_discount" class="numeric"><input value="0" class="recalc reformat_number numeric" name="order.orderitems[].discount_as_percent" size="5" id="order_orderitems4284001_discount_as_percent" type="text">'+
      ' </div>'+	
 	'</td>'+
 	
 	'<td align="center">'+
-	'<div name="linetotal">'+part.number+part.sellprice+'</div>'+
+	'<input name="linetotal" id="sellpriceTotal"></input>'+
 	'</td>'+
 	
 	'<td nowrap="">'+
-	'<select class="unitselect" name="order.orderitems[].unit" id="order_orderitems4283996_unit"><option value="Stck" selected="">Stck</option></select>'+
+	'<select class="unitselect" name="order.orderitems[].unit" id="mechanics">'+
 	'</td>'+
 
 	'<td nowrap="">'+
 	
-	'<select name="pos_status" class="ui-widget-content ui-corner-all status elem">'+
+	'<select name="pos_status" class="unitselect">'+
                                 '<option value="0" selected="true"></option>'+
                                 '<option value="gelesen">gelesen</option>'+
                                 '<option value="Bearbeitung">Bearbeitung</option>'+
@@ -834,8 +839,50 @@ ns.newPositionRow=function (part) {
   	
   	).appendTo('#row_table_id');
   	
+  	
+  	
   	posID++;
+  	
+  	ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
+    getMechanics();//holt die Mechaniker aus der Datenbank
+
   }
+ 
   
+  
+function getMechanics(){
+
+$.ajax({
+            url: 'ajax/order.php?action=getMechanics',
+            type: 'GET',
+            success: function (data) {
+				
+                $.each(data, function (index, item) {
+                   //console.log(item);
+                    $('#mechanics').append($('<option class="opt mech__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
+               
+                })
+
+            },
+            error:  function(){ alert("Holen der Mechaniker fehlgeschlagen!"); }
+        })
+
+
+}  
+   
+
+function autokompleteRow(rsp){
+	console.log(rsp.partnumber);
+	console.log($(':focus').parent().parent().children().children('#partnumber').val(rsp.partnumber));
+	
+	
+	$(':focus').parent().parent().children().children('#order_orderitems_sellprice_as_number').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
+	var number=parseFloat($(':focus').parent().parent().children().children('#order_orderitems_qty_as_number').val());
+	console.log(number*rsp.sellprice);
+	$(':focus').parent().parent().children().children('#sellpriceTotal').val(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
+	
+	
+	
+}
   
 });
