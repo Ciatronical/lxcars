@@ -1,0 +1,74 @@
+table.tablesorter { width:auto; cursor:pointer; }
+
+    .input_02{width: 248px;}
+
+    #head01 {position: absolute; top: 135px; left: 5px; font-size: 12px;}
+    #head02 {position: absolute; top: 135px; left: 125px; font-size: 12px;}
+    #head03 {position: absolute; top: 135px; left: 500px; font-size: 12px;}
+    #head04 {position: absolute; top: 135px; left: 650px; font-size: 12px;}
+    #head05 {position: absolute; top: 150px; left: 5px; font-size: 12px;}
+    #head06 {position: absolute; top: 150px; left: 125px; font-size: 12px;}
+    #head07 {position: absolute; top: 150px; left: 500px; font-size: 12px;}
+    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px;}
+    #head09 {position: absolute; top: 165px; left: 5px; font-size: 12px;}
+    #head10 {position: absolute; top: 165px; left: 125px; font-size: 12px;}
+    #head11 {position: absolute; top: 165px; left: 500px; font-size: 12px;}
+    #head12 {position: absolute; top: 165px; left: 650px; font-size: 12px;}
+    #head13 {position: absolute; top: 180px; left: 500px; font-size: 12px;}
+    #head14 {position: absolute; top: 180px; left: 650px; font-size: 12px;}
+    #head15 {position: absolute; top: 200px; left: 5px; font-size: 12px;}
+    #head16 {position: absolute; top: 200px; left: 125px; font-size: 12px;}
+    #head17 {position: absolute; top: 200px; left: 500px; font-size: 12px;}
+    #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
+    #head19 {position: absolute; top: 150px; left: 850px; font-size: 12px;}
+    #head20 {position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
+    #netto { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalNetto { position: absolute; left: 1133px; width: 100px; text-align: right; }
+    #brutto { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalBrutto { position: absolute; left: 1133px; width: 100px; text-align: right; }
+
+    #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
+    #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
+    #sortable li span { position: absolute; margin-left: -1.3em; }
+    #buttons { padding-left: 2.5em; padding-top: 1em;    }
+    .btn { position: relative; left: 15px; }
+    .lblPos1 {  position:relative; left: 43px;}
+    .lblPos2 {  position:relative; left: 48px;}
+    .lblPos3 {  position:relative; left: 53px;}
+    .lblPos4 {  position:relative; left: 60px;}
+    .lblPos5 {  position:relative; left: 65px;}
+    .lblPos6 {  position:relative; left: 555px;}
+    .lblPos12 {  position:relative; left: 570px;}
+    .lblPos7 {  position:relative; left: 585px;}
+    .lblPos8 {  position:relative; left: 660px;}
+    .lblPos9 {  position:relative; left: 725px;}
+    .lblPos10 {  position:relative; left: 785px;}
+    .lblPos11 { position: relative; left: 855px;}
+    .mv {  position:relative; left: 5px; top: 3px;}
+    .rmv {  position:relative; left: 10px; top: 3px;}
+    /*.pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}*/
+    .pos {  position:relative; left: 20px; width: 50px; text-align: right; background: none; border-style: none; pointer-events: none;}
+    .itemNr {  position:relative; left: 23px; width: 65px; text-align: right;}
+    /*.description {  position:relative; left: 48px; width: 570px;}*/
+    .description {  position:relative; left: 48px; width: 577px;}
+    .description2 {  position:relative; left: 25px; width: 577px;}
+    .unity {  position:relative; left: 608px; width: 55px}
+    .unity2 {  position:relative; left: 28px; width: 50px}
+    .number {  position:relative; left: 614px; width: 50px; text-align: right;}
+    .number2 {  position:relative; left: 35px; width: 50px; text-align: right;}
+    .price {  position:relative; left: 617px; width: 100px; text-align: right;}
+    .price2 {  position:relative; left: 37px; width: 100px; text-align: right;}
+    .discount {  position:relative; left: 622px; width: 100px;text-align: right;}
+    .discount2 {  position:relative; left: 42px; width: 100px;text-align: right;}
+    .total {  position:relative; left: 627px; width: 100px; text-align: right;}
+    .total2 {  position:relative; left: 47px; width: 100px; text-align: right;}
+    .mechanics {  position:relative; left: 632px; width: 140px;}
+    .mechanics2 {  position:relative; left: 53px; width: 140px;}
+    .status { position: relative; left: 637px; width: 140px;}
+    .status2 { position: relative; left: 60px; width: 140px;}
+    .posID { position: relative; left: 642px; font-size: 12px; }
+    .posID2 { position: relative; left: 67px; font-size: 12px; }
+    .partID { position: relative; left: 702px; }
+    .partID2 { position: relative; left: 70px; }
+    .pos-instruction { position: relative; left: 640px; }
+    .pos-instruction2 { position: relative; left: 1500px; top: -24px; }
