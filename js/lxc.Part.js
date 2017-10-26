@@ -117,6 +117,7 @@ namespace('kivi.Part', function(ns) {
   };
 
   ns.renumber_positions = function() {
+  	
     var part_type = $("#part_part_type").val();
     var rows;
     if (part_type === 'assortment') {
@@ -297,6 +298,7 @@ namespace('kivi.Part', function(ns) {
   };
 
   ns.Picker.prototype = {
+  	
     CLASSES: {
       PICKED:       'partpicker-picked',
       UNDEFINED:    'partpicker-undefined',
@@ -307,7 +309,7 @@ namespace('kivi.Part', function(ns) {
         'filter.obsolete': 0,
         current:  this.$real.val(),
       };
-
+	
       if (this.o.part_type)
         data['filter.part_type'] = this.o.part_type.split(',');
 
@@ -336,7 +338,7 @@ namespace('kivi.Part', function(ns) {
       this.last_real  = this.$real.val();
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
-
+	
       if (this.o.fat_set_item && item.id) {
         $.ajax({
           url: '../../controller.pl?action=Part/show.json',
@@ -345,16 +347,19 @@ namespace('kivi.Part', function(ns) {
             self.$real.trigger('set_item:PartPicker', rsp);
            // console.log(rsp);
             
+                    
+            
             autokompleteRow(rsp)//Füllt die aktuell fokussierte Position
             ns.newPositionRow();//erzeugt neue Position
+        	          
+            // sortable update
             
-            //sortable update
-            $('.ui-sortable').sortable({
+            $('.ui-sortable').sortable({        	
             	update: function() {
-            	ns.renumber_positions();
-             }
-        });
+            	}
+       		});
             
+            $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
             
      
             
@@ -363,6 +368,7 @@ namespace('kivi.Part', function(ns) {
         });
       } else {
         this.$real.trigger('set_item:PartPicker', item);
+        
       }
       this.annotate_state();
     },
@@ -753,136 +759,47 @@ namespace('kivi.Part', function(ns) {
     ns.init();
   });
   
-  
-  
-var posID=1;// new row ID
+//zählt und beschriftet die Positionsnummer und löscht den Inhalt der letzten Position
+ns.countPos=(function () {
+
+var posID=0;
+
+console.log($('.listrow').filter(':last'));
+
+$('.listrow').each(function () {
+	posID++;
+	$(this).children().children().children('[name=position]').text(posID);
+	$(this).removeClass('pin');
+});	
+
+	$('.listrow').filter(':last').children().children().children().children().children('#add_item_parts_id_name').val('');
+	$('.listrow').filter(':last').children().children().children('[name=partnumber]').text('');
+	$('.listrow').filter(':last').children().children().children('[name=sellprice_as_number]').val('0.00');
+	$('.listrow').filter(':last').children().children().children('[name=linetotal]').text('');
+	$('.listrow').filter(':last').addClass('pin');
+	
+});
  
 //erzeugt neue Position 
 ns.newPositionRow=function () {
   	
-  	//html elemente der Position
-  	$(
- 
- '<tbody class="row_entry listrow listrow'+posID+'">'+	
- 
-  	'<tr style="width: 733px;">'+
-	
-	'<td>'+ 
-	'<div class="numeric" name="position">'+posID+'</div>'+
-	'</td>'+
-	
-	'<td style="width: 50px" align="center">'+ 
-	'<img src="../../image/updown.png" alt="Eintrag umsortieren" class="dragdrop">'+
-	'</td>'+
-	
-	'<td align="center"> '+
-	'<input value="X" onclick="if (!confirm(&quot;Sind Sie sicher?&quot;)) return false; kivi.Order.delete_order_item_row(this)" type="button">'+
-	'</td>'+
-	
-	'<td>'+
-	'<input name="partnumber" value="" id="partnumber"></input>'+
-	'</td>'+
-	
-	'<td>'+
-	'<div name="partclassification">-W</div>'+	
-	'</td>'+
-	
-	'<td>'+
-	'<span>'+
-	
-	'<span class="part_picker"><input id="add_item_parts_id" type="hidden" class="add_item_input part_autocomplete" name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 300px&quot;}"><input type="text" id="add_item_parts_id_name" fat_set_item="1" style="width: 300px" class="add_item_input" name="" value=""></span>'+
-	'<img src="../../image/edit-entry.png" onclick="kivi.switch_areainput_to_textarea(id_5238460)" style="margin-left: 2px;">'+
-	'</span>'+
-	'<input value="T" onclick="kivi.Order.show_longdescription_dialog(this)" type="button">'+
-	'</td>'+
-	
-	'<td>'+
-	'<input size="5" id="order_orderitems_qty_as_number" name="order.orderitems[].qty_as_number" class="recalc reformat_number numeric" value="1,00" type="text">'+
-	'</td>'+
-	
-	'<td nowrap="">'+
-	'<select class="unitselect" name="order.orderitems[].unit" id="order_orderitems4283996_unit"><option value="" selected="">Stck</option></select>'+
-	'</td>'+
-	
-	'<td>'+
-	'<input class="recalc reformat_number numeric" value="" id="order_orderitems_sellprice_as_number" size="10" name="order.orderitems[].sellprice_as_number" type="text">'+
-     	
-	'</td>'+
-	
-	'<td>'+
-	'<div name="editable_discount" class="numeric"><input value="0" class="recalc reformat_number numeric" name="order.orderitems[].discount_as_percent" size="5" id="order_orderitems4284001_discount_as_percent" type="text">'+
-     ' </div>'+	
-	'</td>'+
-	
-	'<td align="center">'+
-	'<input name="linetotal" id="sellpriceTotal"></input>'+
-	'</td>'+
-	
-	'<td nowrap="">'+
-	'<select class="unitselect" name="order.orderitems[].unit" id="mechanics">'+
-	'</td>'+
-
-	'<td nowrap="">'+
-	
-	'<select name="pos_status" class="unitselect">'+
-                                '<option value="0" selected="true"></option>'+
-                                '<option value="gelesen">gelesen</option>'+
-                                '<option value="Bearbeitung">Bearbeitung</option>'+
-                                '<option value="erledigt">erledigt</option>'+
-   '</select>'+
-	
-	'</td>'+
-
-'</tr>'+
-  	
-  	'</tbody>'
-  	
-  	).appendTo('#row_table_id');
-  	
-  	
-  	
-  	posID++;
-  	
+  	$(':focus').parent().parent().parent().children().children().children('[name=position]').text();
+  	$(':focus').parent().parent().parent().clone().appendTo('#row_table_id');
+  	ns.countPos();
   	ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
-    getMechanics();//holt die Mechaniker aus der Datenbank
+  	$('.listrow').filter(':last').children().children().children().children().children('#add_item_parts_id_name').focus(); 
 
-  }
- 
-  
-  
-function getMechanics(){
-
-$.ajax({
-            url: 'ajax/order.php?action=getMechanics',
-            type: 'GET',
-            success: function (data) {
-				
-                $.each(data, function (index, item) {
-                   //console.log(item);
-                    $('#mechanics').append($('<option class="opt mech__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
-               
-                })
-
-            },
-            error:  function(){ alert("Holen der Mechaniker fehlgeschlagen!"); }
-        })
-
-
-}  
-   
+}
 
 function autokompleteRow(rsp){
-	console.log(rsp.partnumber);
-	console.log($(':focus').parent().parent().children().children('#partnumber').val(rsp.partnumber));
+	console.log(rsp);
+	$(':focus').parent().parent().parent().children().children().children('[name=partnumber]').text(rsp.partnumber);
+	$(':focus').parent().parent().parent().children().children().children('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
+	var number=parseFloat($(':focus').parent().parent().parent().children().children().children('[name=qty_as_number]').val());
+	$(':focus').parent().parent().parent().children().children().children('[name=unit]').val(rsp.unit);
 	
-	
-	$(':focus').parent().parent().children().children('#order_orderitems_sellprice_as_number').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
-	var number=parseFloat($(':focus').parent().parent().children().children('#order_orderitems_qty_as_number').val());
-	console.log(number*rsp.sellprice);
-	$(':focus').parent().parent().children().children('#sellpriceTotal').val(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
-	
-	
-	
+	$(':focus').parent().parent().parent().children().children().children('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));	
 }
-  
+
+
 });

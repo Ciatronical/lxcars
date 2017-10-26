@@ -320,7 +320,7 @@ namespace('kivi.Order', function(ns) {
     var row = $(clicked).parents("tbody").first();
     var position = $(row).find('[name="position"]').html();
     var partnumber = $(row).find('[name="partnumber"]').html();
-    var description_elt = $(row).find('[name="order.orderitems[].description"]');
+    var description_elt = $(row).find('[name="description"]');
     var description = description_elt.val();
     var longdescription_elt = $(row).find('[name="order.orderitems[].longdescription"]');
     var longdescription;
@@ -354,8 +354,9 @@ namespace('kivi.Order', function(ns) {
                      $('<input type="hidden" name="order.orderitems[].longdescription">').insertAfter(description_elt).val(val);
                    }
                  };
-
-    kivi.SalesPurchase.edit_longdescription_with_params(params);
+	console.log(params);
+	
+    ns.edit_longdescription_with_params(params);
   };
 
   ns.price_chooser_item_row = function(clicked) {
@@ -403,7 +404,39 @@ namespace('kivi.Order', function(ns) {
 
     kivi.io.close_dialog();
   };
+	ns.edit_longdescription_with_params = function(params) {
+    var $container = $('#popup_edit_longdescription_input_container');
+    var $edit      = $('<textarea id="popup_edit_longdescription_input" class="texteditor-in-dialog" wrap="soft" style="width: 750px; height: 220px;"></textarea>');
 
+    $container.children().remove();
+    $container.append($edit);
+
+    if (params.element) {
+      $container.data('element', params.element);
+    }
+    if (params.set_function) {
+      $container.data('setFunction', params.set_function);
+    }
+
+    $edit.val(params.default_longdescription);
+
+    $('#popup_edit_longdescription_runningnumber').html(params.runningnumber);
+    $('#popup_edit_longdescription_partnumber').html(params.partnumber);
+
+    var description = params.description.replace(/[\n\r]+/, '');
+    if (description.length >= 50)
+      description = description.substring(0, 50) + "…";
+    $('#popup_edit_longdescription_description').html(description);
+
+    kivi.popup_dialog({
+      id:    'edit_longdescription_dialog',
+      dialog: {
+        title: kivi.t8('Enter longdescription'),
+        open:  function() { kivi.focus_ckeditor_when_ready('#popup_edit_longdescription_input'); },
+        close: function() { $('#popup_edit_longdescription_input_container').children().remove(); }
+      }
+    });
+  };
   ns.update_discount_source = function(item_id, source, descr, discount_str, price_editable) {
     var row = $('#item_' + item_id).parents("tbody").first();
     var source_elt = $(row).find('[name="order.orderitems[].active_discount_source"]');
@@ -471,3 +504,5 @@ $(function(){
     kivi.Order.renumber_positions();
   });
 });
+
+  
