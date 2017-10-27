@@ -117,7 +117,7 @@ namespace('kivi.Part', function(ns) {
   };
 
   ns.renumber_positions = function() {
-  	
+
     var part_type = $("#part_part_type").val();
     var rows;
     if (part_type === 'assortment') {
@@ -298,7 +298,7 @@ namespace('kivi.Part', function(ns) {
   };
 
   ns.Picker.prototype = {
-  	
+
     CLASSES: {
       PICKED:       'partpicker-picked',
       UNDEFINED:    'partpicker-undefined',
@@ -309,7 +309,7 @@ namespace('kivi.Part', function(ns) {
         'filter.obsolete': 0,
         current:  this.$real.val(),
       };
-	
+
       if (this.o.part_type)
         data['filter.part_type'] = this.o.part_type.split(',');
 
@@ -338,7 +338,7 @@ namespace('kivi.Part', function(ns) {
       this.last_real  = this.$real.val();
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
-	
+
       if (this.o.fat_set_item && item.id) {
         $.ajax({
           url: '../../controller.pl?action=Part/show.json',
@@ -346,29 +346,29 @@ namespace('kivi.Part', function(ns) {
           success: function(rsp) {
             self.$real.trigger('set_item:PartPicker', rsp);
            // console.log(rsp);
-            
-                    
-            
+
+
+
             autokompleteRow(rsp)//Füllt die aktuell fokussierte Position
             ns.newPositionRow();//erzeugt neue Position
-        	          
+
             // sortable update
-            
-            $('.ui-sortable').sortable({        	
-            	update: function() {
-            	}
-       		});
-            
+
+            $('.ui-sortable').sortable({
+                update: function() {
+                }
+               });
+
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
-            
-     
-            
+
+
+
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
           },
         });
       } else {
         this.$real.trigger('set_item:PartPicker', item);
-        
+
       }
       this.annotate_state();
     },
@@ -758,48 +758,46 @@ namespace('kivi.Part', function(ns) {
 
     ns.init();
   });
-  
-//zählt und beschriftet die Positionsnummer und löscht den Inhalt der letzten Position
-ns.countPos=(function () {
 
-var posID=0;
+  //zählt und beschriftet die Positionsnummer und löscht den Inhalt der letzten Position
+  ns.countPos=(function () {
 
-console.log($('.listrow').filter(':last'));
+    var posID=0;
 
-$('.listrow').each(function () {
-	posID++;
-	$(this).children().children().children('[name=position]').text(posID);
-	$(this).removeClass('pin');
-});	
+    $('.listrow').each(function () {
+    posID++;
+    $(this).children().children().children('[name=position]').text(posID);
+    $(this).removeClass('pin');
+    });
 
-	$('.listrow').filter(':last').children().children().children().children().children('#add_item_parts_id_name').val('');
-	$('.listrow').filter(':last').children().children().children('[name=partnumber]').text('');
-	$('.listrow').filter(':last').children().children().children('[name=sellprice_as_number]').val('0.00');
-	$('.listrow').filter(':last').children().children().children('[name=linetotal]').text('');
-	$('.listrow').filter(':last').addClass('pin');
-	
+    $('.listrow').filter(':last').children().children().children().children().children('[name=item_partpicker_name]').val('');
+    $('.listrow').filter(':last').children().children().children('[name=partnumber]').text('');
+    $('.listrow').filter(':last').children().children().children('[name=sellprice_as_number]').val('0.00');
+    $('.listrow').filter(':last').children().children().children('[name=linetotal]').text('');
+    $('.listrow').filter(':last').addClass('pin');
+
 });
- 
-//erzeugt neue Position 
-ns.newPositionRow=function () {
-  	
-  	$(':focus').parent().parent().parent().children().children().children('[name=position]').text();
-  	$(':focus').parent().parent().parent().clone().appendTo('#row_table_id');
-  	ns.countPos();
-  	ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
-  	$('.listrow').filter(':last').children().children().children().children().children('#add_item_parts_id_name').focus(); 
 
-}
+//erzeugt neue Position
+  ns.newPositionRow=function () {
 
-function autokompleteRow(rsp){
-	console.log(rsp);
-	$(':focus').parent().parent().parent().children().children().children('[name=partnumber]').text(rsp.partnumber);
-	$(':focus').parent().parent().parent().children().children().children('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
-	var number=parseFloat($(':focus').parent().parent().parent().children().children().children('[name=qty_as_number]').val());
-	$(':focus').parent().parent().parent().children().children().children('[name=unit]').val(rsp.unit);
-	
-	$(':focus').parent().parent().parent().children().children().children('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));	
-}
+      $(':focus').parent().parent().parent().children().children().children('[name=position]').text();
+      $(':focus').parent().parent().parent().clone().appendTo('#row_table_id');
+      ns.countPos();
+      ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
+      $('.listrow').filter(':last').children().children().children().children().children('[name=item_partpicker_name]').focus();
+
+  }
+
+  function autokompleteRow(rsp){
+      //console.log(rsp);
+      $(':focus').parent().parent().parent().children().children().children('[name=partnumber]').text(rsp.partnumber);
+      $(':focus').parent().parent().parent().children().children().children('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
+      var number=parseFloat($(':focus').parent().parent().parent().children().children().children('[name=qty_as_number]').val());
+      $(':focus').parent().parent().parent().children().children().children('[name=unit]').val(rsp.unit);
+
+      $(':focus').parent().parent().parent().children().children().children('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
+  }
 
 
 });

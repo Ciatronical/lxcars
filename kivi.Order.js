@@ -354,8 +354,8 @@ namespace('kivi.Order', function(ns) {
                      $('<input type="hidden" name="order.orderitems[].longdescription">').insertAfter(description_elt).val(val);
                    }
                  };
-	console.log(params);
-	
+    //console.log(params);
+
     ns.edit_longdescription_with_params(params);
   };
 
@@ -404,7 +404,7 @@ namespace('kivi.Order', function(ns) {
 
     kivi.io.close_dialog();
   };
-	ns.edit_longdescription_with_params = function(params) {
+    ns.edit_longdescription_with_params = function(params) {
     var $container = $('#popup_edit_longdescription_input_container');
     var $edit      = $('<textarea id="popup_edit_longdescription_input" class="texteditor-in-dialog" wrap="soft" style="width: 750px; height: 220px;"></textarea>');
 
@@ -504,5 +504,3 @@ $(function(){
     kivi.Order.renumber_positions();
   });
 });
-
-  
