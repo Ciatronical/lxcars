@@ -118,10 +118,10 @@
                       <select class="unitselect" name="unit" ></select>
                     </td>
                     <td>
-                      <input class="recalc reformat_number numeric" value="89.00"  size="10" name="sellprice_as_number" type="text">
+                      <input class="recalc reformat_number numeric pos1" value="89.00"  size="10" name="sellprice_as_number" type="text">
                     </td>
                     <td>
-                      <input value="0.00" class="recalc reformat_number numeric" name="discount_as_percent" size="5" type="text">
+                      <input value="0.00" class="recalc reformat_number numeric pos1" name="discount_as_percent" size="5" type="text">
                     </td>
                     <td align="center">
                       <div name="linetotal">0.00</div>
@@ -164,15 +164,12 @@
         getMechanics();
         getUnits();
 
-        $("*").keyup(function() {
-            /*
-            console.log($(':focus').parent().parent().children().children('[name=sellprice_as_number]').val());
-            var price=parseFloat($(':focus').parent().parent().children().children('[name=sellprice_as_number]').val());
-            var number=parseFloat($(':focus').parent().parent()children().children('[name=qty_as_number]').val());
-            var discount=parseFloat($(':focus').parent().parent().children().children('[name=discount_as_percent]').val());
+        $(document).on('keyup','.recalc',function() {
+            var price=parseFloat($(':focus').parents().eq(1).find('[name=sellprice_as_number]').val());
+            var number=parseFloat($(':focus').parents().eq(1).find('[name=qty_as_number]').val());
+            var discount=parseFloat($(':focus').parents().eq(1).find('[name=discount_as_percent]').val());
             discount=discount/100;
-            $(':focus').parent().parent().children().children('[name=linetotal]').text(parseFloat(price*number-(price*number*discount)).toFixed(2).replace(".",","));
-            */
+            $(':focus').parents().eq(1).find('[name=linetotal]').text(parseFloat(price*number-(price*number*discount)).toFixed(2));
         });
     });
 
