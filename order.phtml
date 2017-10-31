@@ -46,19 +46,19 @@
           <label id="head12"></label></br>
           <label id="head13">KfZ:</label>
           <select id="head14" type="text">
-              <option>Auto nicht hier</option>
-              <option selected="selected">Auto hier</option>
-              <option>Sonstiges zur Reparatur gebracht</option>
-              <option>Bestellung</option>
+            <option>Auto nicht hier</option>
+            <option selected="selected">Auto hier</option>
+            <option>Sonstiges zur Reparatur gebracht</option>
+            <option>Bestellung</option>
           </select></br>
           <label id="head15">erstellt am:</label>
           <label id="head16"></label>
           <label id="head17">Status:</label>
           <select id="head18" type="text">
-              <option></option>
-              <option>angenommen</option>
-              <option>bearbeitet</option>
-              <option selected="selected">abgerechnet</option>
+            <option></option>
+            <option>angenommen</option>
+            <option>bearbeitet</option>
+            <option selected="selected">abgerechnet</option>
           </select>
         </p>
 
@@ -131,10 +131,10 @@
                     </td>
                     <td nowrap="">
                       <select name="pos_status" class="unitselect">
-                          <option value="0" selected="true"></option>
-                          <option value="gelesen">gelesen</option>
-                          <option value="Bearbeitung">Bearbeitung</option>
-                          <option value="erledigt">erledigt</option>
+                        <option value="0" selected="true"></option>
+                        <option value="gelesen">gelesen</option>
+                        <option value="Bearbeitung">Bearbeitung</option>
+                        <option value="erledigt">erledigt</option>
                       </select>
                     </td>
                   </tr>
@@ -151,57 +151,58 @@
 
     <script type="text/javascript">
 
-    $(document).ready(function(){
+      $( document ).ready( function(){
         var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
         var baseUrl = kivi_global.baseurl;
 
         kivi.Part.newPositionRow();
-        kivi.setup_formats({
-              numbers: kivi.myconfig.numberformat,
-              dates:   kivi.myconfig.dateformat
+        /*kivi.setup_formats({
+          numbers: kivi.myconfig.numberformat,
+          dates:   kivi.myconfig.dateformat
         });
-
+        */
         getMechanics();
         getUnits();
 
-        $(document).on('keyup','.recalc',function() {
-            var price=parseFloat($(':focus').parents().eq(1).find('[name=sellprice_as_number]').val());
-            var number=parseFloat($(':focus').parents().eq(1).find('[name=qty_as_number]').val());
-            var discount=parseFloat($(':focus').parents().eq(1).find('[name=discount_as_percent]').val());
-            discount=discount/100;
-            $(':focus').parents().eq(1).find('[name=linetotal]').text(parseFloat(price*number-(price*number*discount)).toFixed(2));
+        $( document ).on( 'keyup', '.recalc', function(){
+          var price = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=sellprice_as_number]' ).val() );
+          var number = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=qty_as_number]' ).val() );
+          var discount = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=discount_as_percent]' ).val() );
+          discount = discount / 100;
+          $( ':focus' ).parents().eq( 1 ).find( '[name=linetotal]' ).text( parseFloat( price * number - ( price * number * discount ) ).toFixed( 2 ) );//Nachhilfe Mathematik 0175-7880999 (mit Happy End)
         });
-    });
+      });
 
-    function getMechanics(){
+      function getMechanics(){
         $.ajax({
-            url: 'ajax/order.php?action=getMechanics',
-            type: 'GET',
-            success: function (data) {
-                $.each(data, function (index, item) {
-                    //console.log(item);
-                    $('[name=mechanics]').append($('<option class="opt mech__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
-                    })
-                },
-                error:  function(){ alert("Holen der Mechaniker fehlgeschlagen!"); }
+          url: 'ajax/order.php?action=getMechanics',
+          type: 'GET',
+          success: function( data ){
+            $.each( data, function( index, item ){
+            //console.log(item);
+              $( '[name = mechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
             })
-    }
+          },
+          error:  function(){
+            alert( "Ajaxerror getMechnics()!");
+          }
+        })
+      }
 
-    function getUnits(){
+      function getUnits(){
         $.ajax({
-            url: 'ajax/order.php?action=getUnits',
-            type: 'GET',
-            success: function (data) {
-                $.each(data, function (index, item) {
-                    $('[name=unit]').append($('<option class="opt unit__'+item.name+'" value="'+item.name+'">'+item.name+'</option>'));
-
-                    })
-                },
-                error:  function(){ alert("Holen der Einheiten fehlgeschlagen!"); }
+          url: 'ajax/order.php?action=getUnits',
+          type: 'GET',
+          success: function( data ){
+            $.each( data, function( index, item ){
+              $( '[name = unit]' ).append($( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' ) );
             })
-    }
-
-
+          },
+          error:  function(){
+            alert( "Error getUnits()!" );
+          }
+        })
+      }
     </script>
 
     <?php echo $menu['end_content']; ?>
