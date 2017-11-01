@@ -352,6 +352,7 @@ namespace('kivi.Part', function(ns) {
             var number=parseFloat($(':focus').parents().eq(2).find('[name=qty_as_number]').val());
             $(':focus').parents().eq(3).find('[name=unit]').val(rsp.unit);
             $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
+            $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
 
             //erzeugt neue Position
             $(':focus').parents().eq(3).find('[name=position]').text();
