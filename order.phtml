@@ -155,28 +155,9 @@
         var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
         var baseUrl = kivi_global.baseurl;
 
-        kivi.Part.newPositionRow();
-        /*kivi.setup_formats({
-          numbers: kivi.myconfig.numberformat,
-          dates:   kivi.myconfig.dateformat
-        });
-        */
+        //kivi.Part.newPositionRow(); //Warum?? Die erste Position ist doch schon da!!
+        //Achtung die ID "add_item_parts_id_name* darf nicht mehrfach im DOM vorhanden sein!!!
 
-         //Achtung die ID "add_item_parts_id_name* darf nicht mehrfach im DOM vorhanden sein!!!
-
-        getMechanics(); //Warum packst du Code in Funktionen die du dann nur ein einziges mal aufrufst?
-        getUnits();
-
-        $( document ).on( 'keyup', '.recalc', function(){
-          var price = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=sellprice_as_number]' ).val() );
-          var number = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=qty_as_number]' ).val() );
-          var discount = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=discount_as_percent]' ).val() );
-          discount = discount / 100;
-          $( ':focus' ).parents().eq( 1 ).find( '[name=linetotal]' ).text( parseFloat( price * number - ( price * number * discount ) ).toFixed( 2 ) );//Nachhilfe Mathematik 0175-7880999 (mit Happy End)
-        });
-      });
-
-      function getMechanics(){
         $.ajax({
           url: 'ajax/order.php?action=getMechanics',
           type: 'GET',
@@ -190,9 +171,7 @@
             alert( "Ajaxerror getMechnics()!");
           }
         })
-      }
 
-      function getUnits(){
         $.ajax({
           url: 'ajax/order.php?action=getUnits',
           type: 'GET',
@@ -205,7 +184,17 @@
             alert( "Error getUnits()!" );
           }
         })
-      }
+
+        //Calculate rowprice
+        $( '.recalc' ).on( 'keyup', function(){
+          var price = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=sellprice_as_number]' ).val() );
+          var number = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=qty_as_number]' ).val() );
+          var discount = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=discount_as_percent]' ).val() );
+          discount = discount / 100;
+          $( ':focus' ).parents().eq( 1 ).find( '[name=linetotal]' ).text( parseFloat( price * number - ( price * number * discount ) ).toFixed( 2 ) );//Nachhilfe Mathematik 0175-7880999 (mit Happy End)
+        });
+      });
+
     </script>
 
     <?php echo $menu['end_content']; ?>
