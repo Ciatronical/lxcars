@@ -173,7 +173,11 @@
           else return decodeURIComponent( results[1] || 0 );
         }
 
-
+        var id = $.urlParam( 'id' );
+        var owner = $.urlParam( 'owner' );
+        var c_id = $.urlParam( 'c_id' );
+        var previous = $.urlParam( 'previous' );
+        var newOrder = $.urlParam( 'newOrder' );
 
         var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
         var baseUrl = kivi_global.baseurl;
@@ -243,7 +247,6 @@
             btn.appendTo( buttonPane );
             btn.bind( "click", function(){
                 $( "#head06" ).val("Kunde wartet! SOFORT anfangen!");
-                updateOrderDatabase();
             });
           }, 1 );
         }
@@ -274,8 +277,7 @@
         }).css({
             'margin':'5px'
         }).click( function(){
-            updateOrderDatabase();
-            location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + ow;
+            location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + owner;
             return false;
         });
 
@@ -284,8 +286,7 @@
         }).css({
             'margin':'5px'
         }).click( function(){
-            updateOrderDatabase();
-            window.location = baseUrl + '/crm/lxcars/' + previous + '?task=' + task + '&owner=' + ow + '&c_id=' + car;
+            window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + car;
             return false;
         });
 
@@ -294,13 +295,12 @@
         }).css({
             'margin':'5px'
         }).click( function(){
-            updateOrderDatabase();
-            window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + ow + '&c_id=' + car + '&task=3';
+            window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + owner + '&c_id=' + c_id + '&task=3';
             return false;
         });
 
 
-        var id = $.urlParam( 'id' );
+
         $.ajax({
             url: 'ajax/order.php?action=getOrder&data=' + id,
             type: 'GET',
