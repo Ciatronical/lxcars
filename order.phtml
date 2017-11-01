@@ -93,10 +93,10 @@
                       <div class="numeric" name="position">1</div>
                     </td>
                     <td align="center">
-                      <img src="../../image/updown.png" alt="Eintrag umsortieren" class="dragdrop">
+                      <img src="../../image/updown.png" alt="Eintrag umsortieren" class="dragdrop" style="display: none;">
                     </td>
                     <td align="center"> <!--onclick entfernt die selektierte Position außer Position 1-->
-                      <input value="X" onclick="if($(this).parent().parent().children().children('[name=position]').text()=='1')return false; if (!confirm(&quot;Sind Sie sicher?&quot;)) return false;  kivi.Order.delete_order_item_row(this)" type="button">
+                      <input value="x" onclick="if($(this).parent().parent().children().children('[name=position]').text()=='1')return false; if (!confirm(&quot;Sind Sie sicher?&quot;)) return false;  kivi.Order.delete_order_item_row(this)" type="button" style="display: none;" class="x">
                     </td>
                     <td>
                       <div name="partnumber"></div>

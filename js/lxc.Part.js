@@ -356,11 +356,15 @@ namespace('kivi.Part', function(ns) {
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
 
             //erzeugt neue Position
+            //console.log( $(':focus').parents().eq(3).is( :first)) );
             $(':focus').parents().eq(3).find('[name=position]').text();
             $(':focus').parents().eq(3).clone().appendTo('#row_table_id');
+            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show(); //dont show sortable < 3 rows
+            $(':focus').parents().eq(3).find( '[class=x]' ).show();
             ns.countPos();//nummeriert die positionen
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
+
 
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
@@ -855,11 +859,15 @@ namespace('kivi.Part', function(ns) {
       $(this).removeClass('pin');
     });
 
-    $('.listrow').filter(':last').find('[name=item_partpicker_name]').val('');
-    $('.listrow').filter(':last').find('[name=partnumber]').text('');
-    $('.listrow').filter(':last').find('[name=sellprice_as_number]').val('0.00');
-    $('.listrow').filter(':last').find('[name=linetotal]').text('0.00');
-    $('.listrow').filter(':last').addClass('pin');
+    var lastRow = $('.listrow').filter(':last');
+    lastRow.find('[name=item_partpicker_name]').val('');
+    lastRow.find('[name=partnumber]').text('');
+    lastRow.find('[name=sellprice_as_number]').val('0.00');
+    lastRow.find('[name=linetotal]').text('0.00');
+    lastRow.find( '[name=partclassification]' ).text( '' );
+    lastRow.find( 'img' ).hide();
+    lastRow.addClass('pin');
+
 
   });
 
@@ -888,9 +896,6 @@ namespace('kivi.Part', function(ns) {
         error:   function(){
             alert( 'Insert der Daten fehlgeschlagen!');
         }
-  });
-
- }
-
-
+    });
+  }
 });
