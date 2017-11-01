@@ -161,7 +161,10 @@
           dates:   kivi.myconfig.dateformat
         });
         */
-        getMechanics();
+
+         //Achtung die ID "add_item_parts_id_name* darf nicht mehrfach im DOM vorhanden sein!!!
+
+        getMechanics(); //Warum packst du Code in Funktionen die du dann nur ein einziges mal aufrufst?
         getUnits();
 
         $( document ).on( 'keyup', '.recalc', function(){
