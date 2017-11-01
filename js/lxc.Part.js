@@ -345,23 +345,23 @@ namespace('kivi.Part', function(ns) {
           data: { 'part.id': item.id },
           success: function(rsp) {
             self.$real.trigger('set_item:PartPicker', rsp);
-           // console.log(rsp);
 
+            //Füllt die aktuell fokussierte Position
+            $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
+            $(':focus').parents().eq(3).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
+            var number=parseFloat($(':focus').parents().eq(2).find('[name=qty_as_number]').val());
+            $(':focus').parents().eq(3).find('[name=unit]').val(rsp.unit);
+            $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
 
-
-            autokompleteRow(rsp)//Füllt die aktuell fokussierte Position
-            ns.newPositionRow();//erzeugt neue Position
+            //erzeugt neue Position
+            $(':focus').parents().eq(3).find('[name=position]').text();
+            $(':focus').parents().eq(3).clone().appendTo('#row_table_id');
+            ns.countPos();//nummeriert die positionen
+            ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
+            $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
 
             // sortable update
-
-            $('.ui-sortable').sortable({
-                update: function() {
-                }
-               });
-
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
-
-
 
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
           },
@@ -446,11 +446,13 @@ namespace('kivi.Part', function(ns) {
           self.handle_changed_text();
         }
         if (event.which == KEY.ENTER) {
+
           self.handle_changed_text({
             match_none: self.o.action.commit_none,
             match_one:  self.o.action.commit_one,
             match_many: self.o.action.commit_many
           });
+
           return false;
         }
       } else if (event.which == KEY.DOWN && !self.autocomplete_open) {
@@ -777,28 +779,5 @@ namespace('kivi.Part', function(ns) {
     $('.listrow').filter(':last').addClass('pin');
 
 });
-
-  //erzeugt neue Position
-  ns.newPositionRow=function () {
-
-    $(':focus').parents().eq(2).find('[name=position]').text();
-    $(':focus').parents().eq(2).clone().appendTo('#row_table_id');
-    ns.countPos();
-    ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
-    $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
-
-  }
-
-  function autokompleteRow(rsp){
-
-    $(':focus').parents().eq(2).find('[name=partnumber]').text(rsp.partnumber);
-    $(':focus').parents().eq(2).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
-    var number=parseFloat($(':focus').parents().eq(2).find('[name=qty_as_number]').val());
-    $(':focus').parents().eq(2).find('[name=unit]').val(rsp.unit);
-
-    $(':focus').parents().eq(2).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
-    console.log($(':focus').parents().eq(2).find('[name=partnumber]').text());
-  }
-
 
 });

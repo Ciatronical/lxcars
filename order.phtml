@@ -105,26 +105,31 @@
                       <div name="partclassification">-W</div>
                     </td>
                     <td>
-                      <span>
-                        <span class="part_picker"><input id="add_item_parts_id_1" type="hidden" class="add_item_input part_autocomplete" name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 300px&quot;}"><input type="text" id="add_item_parts_id_name" fat_set_item="1" style="width: 300px" class="add_item_input" name="item_partpicker_name" value=""></span>
-                        <img src="../../image/edit-entry.png" onclick="kivi.switch_areainput_to_textarea('add_item_parts_id_name')" style="margin-left: 2px;">
-                      </span>
-                      <input value="T" onclick="kivi.Order.show_longdescription_dialog(this)" type="button">
+                      <span class="part_picker"><input type="hidden" class="add_item_input part_autocomplete" name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 300px&quot;}"><input type="text" fat_set_item="1" style="width: 300px" class="add_item_input" name="item_partpicker_name" value=""></span>
+                      <img src="../../image/edit-entry.png" onclick="kivi.switch_areainput_to_textarea('add_item_parts_id_name')" style="margin-left: 2px;">
                     </td>
                     <td>
-                      <input size="5" name="qty_as_number" class="recalc reformat_number numeric" value="1.00" type="text">
+                      <span>
+                        <input size="5" name="qty_as_number" class="recalc reformat_number numeric" value="1.00" type="text">
+                      </span>
                     </td>
                     <td nowrap="">
                       <select class="unitselect" name="unit" ></select>
                     </td>
                     <td>
-                      <input class="recalc reformat_number numeric pos1" value="89.00"  size="10" name="sellprice_as_number" type="text">
+                      <span>
+                        <input class="recalc reformat_number numeric pos1" value="89.00"  size="10" name="sellprice_as_number" type="text">
+                      </span>
                     </td>
                     <td>
-                      <input value="0.00" class="recalc reformat_number numeric pos1" name="discount_as_percent" size="5" type="text">
+                      <span>
+                        <input value="0.00" class="recalc reformat_number numeric pos1" name="discount_as_percent" size="5" type="text">
+                      </span>
                     </td>
                     <td align="center">
-                      <div name="linetotal">0.00</div>
+                      <span>
+                        <div name="linetotal">0.00</div>
+                      </span>
                     </td>
                     <td nowrap="">
                       <select class="unitselect" name="mechanics" ></select>
@@ -186,12 +191,12 @@
         })
 
         //Calculate rowprice
-        $( '.recalc' ).on( 'keyup', function(){
-          var price = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=sellprice_as_number]' ).val() );
-          var number = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=qty_as_number]' ).val() );
-          var discount = parseFloat( $( ':focus' ).parents().eq( 1 ).find( '[name=discount_as_percent]' ).val() );
+        $( document ).on( 'keyup','.recalc', function(){
+          var price = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=sellprice_as_number]' ).val() );
+          var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
+          var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val() );
           discount = discount / 100;
-          $( ':focus' ).parents().eq( 1 ).find( '[name=linetotal]' ).text( parseFloat( price * number - ( price * number * discount ) ).toFixed( 2 ) );//Nachhilfe Mathematik 0175-7880999 (mit Happy End)
+          $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number - ( price * number * discount ) ).toFixed( 2 ) );//Nachhilfe Mathematik 0175-7880999 (mit Happy End)
         });
       });
 
