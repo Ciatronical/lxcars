@@ -348,10 +348,11 @@ namespace('kivi.Part', function(ns) {
 
             //Füllt die aktuell fokussierte Position
             $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
-            $(':focus').parents().eq(3).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2).replace(".",","));
+            $(':focus').parents().eq(3).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2));
             var number=parseFloat($(':focus').parents().eq(2).find('[name=qty_as_number]').val());
+            $(':focus').parents().eq(3).find('[name=partclassification]').text(rsp.part_type);
             $(':focus').parents().eq(3).find('[name=unit]').val(rsp.unit);
-            $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2).replace(".",","));
+            $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2));
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
 
             //erzeugt neue Position
@@ -361,9 +362,10 @@ namespace('kivi.Part', function(ns) {
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
 
-            // sortable update
+            //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
 
+            //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
           },
         });
@@ -410,6 +412,84 @@ namespace('kivi.Part', function(ns) {
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_many) self.run_action(callbacks.match_many, [ data ]);
           } else {
+
+              var buchungsgruppen_id;
+              $('<div></div>').appendTo('body').html(
+                  '<table>' +
+                    '<tr>' +
+                      '<td> Artikel-Nr.:</td>' +
+                      '<td><input type="text" id="txtArtAnlArtikelNr"></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                      '<td>Beschreibung:</td>' +
+                      '<td><input type="text" id="txtArtAnlBeschreibung" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">' +
+                        '<label for="instructionCheckbox">Instruction</label>' +
+                        '<input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">' +
+                      '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                      '<td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                      '<td>Einheit:</td>' +
+                      '<td>' +
+                        '<select id="selectArtAnlUnits" name="units" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
+                          '<option selected="selected"></option>' +
+                        '</select>' +
+                      '</td>' +
+                    '</tr>' +
+                    '<tr>' +
+                      '<td>Einkaufspreis:</td>' +
+                      '<td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                      '<td>Verkaufspreis:</td>' +
+                      '<td><input type="text" id="txtArtAnlPreis" value="0"></td>' +
+                    '</tr>' +
+                    '<tr>' +
+                      '<td>Buchungsgruppe:</td>' +
+                      '<td><select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
+                            '<option selected="selected"></option>' +
+                          '</select>' +
+                      '</td>' +
+                    '</tr>' +
+                  '</table>'
+                  ).dialog({
+                  modal: true,
+                  title: 'Artikel anlegen',
+                  zIndex: 10000,
+                  autoOpen: true,
+                  width: 'auto',
+                  resizable: false,
+                  create: function( event, ui ){
+                      $( '#instructionCheckbox' ).checkboxradio();
+                      if( $('#txtArtAnlBeschreibung').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
+                      //Sollte nur einmal beim laden der Seite erledigt werden! Ändert sich nicht mehr
+                      $.ajax({
+                          url: 'ajax/order.php?action=getBuchungsgruppen',
+                          type: 'GET',
+                          success: function( data ){
+                              $.each( data, function( index, item ){
+                                  //console.log(item);
+                                  $( '#selectArtAnlBuchungsgruppen' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
+                                  if( item.id == 859 ){ //ToDo: 859????
+                                      $( '#selectArtAnlBuchungsgruppen' ).children( '#'+item.id ).attr( 'selected', 'selected' );
+                                      buchungsgruppen_id = item.id;
+
+                                  }
+                              })
+
+                          },
+                          error:  function(){ alert( "Error: getBuchungsgruppen()!" ); }
+                      }); //end ajax getBuchungsgruppen
+
+
+              }
+
+            });
+
+
+
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_none) self.run_action(callbacks.match_none, [ self, self.$dummy.val() ]);
           }
@@ -430,8 +510,10 @@ namespace('kivi.Part', function(ns) {
      *  chrome does not fire keypressed at all on tab or escape
      */
     handle_keydown: function(event) {
+
       var self = this;
       if (event.which == KEY.ENTER || event.which == KEY.TAB) {
+
         // if string is empty assume they want to delete
         if (self.$dummy.val() === '') {
           self.set_item({});
@@ -776,9 +858,39 @@ namespace('kivi.Part', function(ns) {
     $('.listrow').filter(':last').find('[name=item_partpicker_name]').val('');
     $('.listrow').filter(':last').find('[name=partnumber]').text('');
     $('.listrow').filter(':last').find('[name=sellprice_as_number]').val('0.00');
-    $('.listrow').filter(':last').find('[name=linetotal]').text('');
+    $('.listrow').filter(':last').find('[name=linetotal]').text('0.00');
     $('.listrow').filter(':last').addClass('pin');
 
-});
+  });
+
+  function insertRow( pos ) {
+
+    var posObject = {};
+    var posArray = $( '.row_entry listrow listrow' ).children().children( 'td' );
+    console.log(posArray.length);
+    $.each( posArray, function( index, item ){
+        posObject[item.name] = item.value;
+    });
+    posObject['order_id'] = orderID;
+    posObject['description'] = $( '.newOrderPos' ).children().children( '.elem' ).val();
+    posObject['instruction'] = pos;
+    // Insert
+    $.ajax({
+        url: 'ajax/order.php',
+        data: { action: "insertRow", data: posObject },
+        type: "POST",
+        success: function( result ){
+            last_pos_id = result;
+            $('.newOrderPos').children('.posID').text( result );
+            updatePositions();
+                //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
+        },
+        error:   function(){
+            alert( 'Insert der Daten fehlgeschlagen!');
+        }
+  });
+
+ }
+
 
 });
