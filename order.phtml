@@ -15,7 +15,7 @@
     <script type="text/javascript" src="jQueryAddOns/german-date-time-picker.js"></script>
     <link rel="stylesheet" href="css/lxc.Order.css" type="text/css" title="Stylesheet">
     <script type="text/javascript" src="js/lxc.Part.js"></script>
-    <script type="text/javascript" src="kivi.Order.js"></script>
+    <script type="text/javascript" src="js/locale/de.js"></script>
 
   </head>
   <body>
@@ -182,8 +182,8 @@
         var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
         var baseUrl = kivi_global.baseurl;
         $('[name=item_partpicker_name]').focus();
-        //kivi.Part.newPositionRow(); //Warum?? Die erste Position ist doch schon da!!
-        //Achtung die ID "add_item_parts_id_name* darf nicht mehrfach im DOM vorhanden sein!!!
+
+        alert( kivi.t8( '_part' ) );
 
         $.ajax({
           url: 'ajax/order.php?action=getMechanics',
