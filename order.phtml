@@ -163,9 +163,68 @@
       </div>
     </div>
 
+
+
+<!--Dialog-->
+
+<dialog id="newPart_dialog">
+<table>
+  <tr>
+    <td> Artikel-Nr.:</td>
+    <td><input type="text" id="txtArtAnlArtikelNr"></td>
+  </tr>
+  <tr>
+    <td>Beschreibung:</td>
+    <td><input type="text" id="txtArtAnlBeschreibung" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">
+      <label for="instructionCheckbox">Instruction</label>
+      <input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">
+    </td>
+  </tr>
+  <tr>
+   <td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>
+  </tr>
+  <tr>
+    <td>Einheit:</td>
+    <td>
+      <select id="selectArtAnlUnits" name="unit" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
+        <option selected="selected"></option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td>Einkaufspreis:</td>
+    <td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>
+  </tr>
+  <tr>
+    <td>Verkaufspreis:</td>
+    <td><input type="text" id="txtArtAnlPreis" value="0"></td>
+  </tr>
+  <tr>
+    <td>Buchungsgruppe:</td>
+    <td><select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="
+    width: 100%">
+          <option selected="selected"></option>
+        </select>
+    </td>
+  </tr>
+</table>
+</dialog>
+
+
+
+
     <script type="text/javascript">
 
       $( document ).ready( function(){
+
+
+        $('*').keydown(function () {
+
+
+
+
+
+        });
 
         $.urlParam = function( name ){
           var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
@@ -183,7 +242,7 @@
         var baseUrl = kivi_global.baseurl;
         $('[name=item_partpicker_name]').focus();
 
-        alert( kivi.t8( '_part' ) );
+        //alert( kivi.t8( '_part' ) );
 
         $.ajax({
           url: 'ajax/order.php?action=getMechanics',

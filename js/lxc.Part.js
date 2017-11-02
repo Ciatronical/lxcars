@@ -347,6 +347,9 @@ namespace('kivi.Part', function(ns) {
             self.$real.trigger('set_item:PartPicker', rsp);
 
             //Füllt die aktuell fokussierte Position
+
+
+
             $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
             $(':focus').parents().eq(3).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2));
             var number=parseFloat($(':focus').parents().eq(2).find('[name=qty_as_number]').val());
@@ -354,7 +357,7 @@ namespace('kivi.Part', function(ns) {
             $(':focus').parents().eq(3).find('[name=unit]').val(rsp.unit);
             $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2));
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
-
+            console.log($(':focus').parent());
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $(':focus').parents().eq(3).find('[name=position]').text();
@@ -365,7 +368,7 @@ namespace('kivi.Part', function(ns) {
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
 
-
+           // console.log($('.partpicker').l);
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
 
@@ -416,83 +419,42 @@ namespace('kivi.Part', function(ns) {
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_many) self.run_action(callbacks.match_many, [ data ]);
           } else {
+            var buchungsgruppen_id;
+            var description_name=$(":focus").parents().eq(3).find("[name=item_partpicker_name]").val();
+          $('#newPart_dialog').dialog({
+                modal: true,
+                title: 'Artikel anlegen',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                create: function( event, ui ){
+                    $( '#instructionCheckbox' ).checkboxradio();
+                    if( $('#txtArtAnlBeschreibung').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
 
-              var buchungsgruppen_id;
-              $('<div></div>').appendTo('body').html(
-                  '<table>' +
-                    '<tr>' +
-                      '<td> Artikel-Nr.:</td>' +
-                      '<td><input type="text" id="txtArtAnlArtikelNr"></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                      '<td>Beschreibung:</td>' +
-                      '<td><input type="text" id="txtArtAnlBeschreibung" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">' +
-                        '<label for="instructionCheckbox">Instruction</label>' +
-                        '<input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">' +
-                      '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                      '<td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                      '<td>Einheit:</td>' +
-                      '<td>' +
-                        '<select id="selectArtAnlUnits" name="units" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
-                          '<option selected="selected"></option>' +
-                        '</select>' +
-                      '</td>' +
-                    '</tr>' +
-                    '<tr>' +
-                      '<td>Einkaufspreis:</td>' +
-                      '<td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                      '<td>Verkaufspreis:</td>' +
-                      '<td><input type="text" id="txtArtAnlPreis" value="0"></td>' +
-                    '</tr>' +
-                    '<tr>' +
-                      '<td>Buchungsgruppe:</td>' +
-                      '<td><select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">' +
-                            '<option selected="selected"></option>' +
-                          '</select>' +
-                      '</td>' +
-                    '</tr>' +
-                  '</table>'
-                  ).dialog({
-                  modal: true,
-                  title: 'Artikel anlegen',
-                  zIndex: 10000,
-                  autoOpen: true,
-                  width: 'auto',
-                  resizable: false,
-                  create: function( event, ui ){
-                      $( '#instructionCheckbox' ).checkboxradio();
-                      if( $('#txtArtAnlBeschreibung').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
-                      //Sollte nur einmal beim laden der Seite erledigt werden! Ändert sich nicht mehr
-                      $.ajax({
-                          url: 'ajax/order.php?action=getBuchungsgruppen',
-                          type: 'GET',
-                          success: function( data ){
-                              $.each( data, function( index, item ){
-                                  //console.log(item);
-                                  $( '#selectArtAnlBuchungsgruppen' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
-                                  if( item.id == 859 ){ //ToDo: 859????
-                                      $( '#selectArtAnlBuchungsgruppen' ).children( '#'+item.id ).attr( 'selected', 'selected' );
-                                      buchungsgruppen_id = item.id;
+                    $.ajax({
+                        url: 'ajax/order.php?action=getBuchungsgruppen',
+                        type: 'GET',
+                        success: function( data ){
+                            $.each( data, function( index, item ){
+                                //console.log(item);
+                                $( '#selectArtAnlBuchungsgruppen' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
+                                if( item.id == 859 ){ //ToDo: 859????
+                                    $( '#selectArtAnlBuchungsgruppen' ).children( '#'+item.id ).attr( 'selected', 'selected' );
+                                    buchungsgruppen_id = item.id;
 
-                                  }
-                              })
+                                }
+                            })
 
-                          },
-                          error:  function(){ alert( "Error: getBuchungsgruppen()!" ); }
-                      }); //end ajax getBuchungsgruppen
-
+                        },
+                        error:  function(){ alert( "Error: getBuchungsgruppen()!" ); }
+                    }); //end ajax getBuchungsgruppen
 
               }
 
             });
 
-
+            $('#txtArtAnlBeschreibung').val(description_name);
 
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_none) self.run_action(callbacks.match_none, [ self, self.$dummy.val() ]);
