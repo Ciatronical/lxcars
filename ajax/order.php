@@ -6,13 +6,13 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 
 function getMechanics() {
-	
-	$rs = $GLOBALS['dbh']->getALL( "SELECT name from employee", true);
-    
+
+    $rs = $GLOBALS['dbh']->getALL( "SELECT name from employee", true);
+
     echo $rs;
-	
-	
-	
+
+
+
 }
 function getOrder( $id ){
     //writeLog( $id );
@@ -85,13 +85,13 @@ function newPart( $data ){
 }
 
 function getPartJSON( $id ){
-	print_r($id);
+    print_r($id);
     echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE id = $id AND obsolete = false", TRUE );
 }
 
 
 function getPartJSONbyPartnumber( $partnumber ){
-	writeLog($partnumber);
+    writeLog($partnumber);
     echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE partnumber = '".$partnumber."'",TRUE );
 }
 
@@ -100,9 +100,12 @@ function getPartJSONbyPartnumber( $partnumber ){
 function getArticleNumber( $unit ){
     //writeLog( $unit );
     //ToDo: Unit nicht FEST, sondern aus DB holen
+
+    $type = $GLOBALS['dbh']->getOne( "SELECT type FROM units WHERE name='".$unit."'" );
+
     if( $unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml')
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newnumber, 0 AS service FROM defaults");
-    elseif($unit == 'psch' || $unit == 'Tag' || $unit == 'Std' || $unit == 'min')
+    elseif($unit == 'psch' || $unit == 'Tag(e)' || $unit == 'Std' || $unit == 'min')
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newnumber, customer_hourly_rate, 1 AS service FROM defaults");
 
     //increase partnumber if partnumber exists

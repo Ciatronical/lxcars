@@ -186,8 +186,7 @@
   <tr>
     <td>Einheit:</td>
     <td>
-      <select id="selectArtAnlUnits" name="unit" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
-        <option selected="selected"></option>
+      <select id="selectArtAnlUnits" value="Stck" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
       </select>
     </td>
   </tr>
@@ -212,19 +211,9 @@
 
 
 
-
     <script type="text/javascript">
 
       $( document ).ready( function(){
-
-
-        $('*').keydown(function () {
-
-
-
-
-
-        });
 
         $.urlParam = function( name ){
           var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
@@ -389,7 +378,27 @@
            }
        });
 
-     });
+$('#selectArtAnlUnits').change(function () {
+
+          var unit=$('#selectArtAnlUnits').val();
+        //console.log(unit);
+         $.ajax({
+            url: 'ajax/order.php?action=getArticleNumber&data='+unit,
+            type: 'GET',
+            success: function (data) {
+              //console.log(data);
+              $('#txtArtAnlArtikelNr').val(data.newnumber);
+            },
+            error: function () {alert('Error: getArticleNumber')}
+
+          });
+
+        });
+
+});
+
+
+
 
     </script>
 
