@@ -2,29 +2,29 @@ table.tablesorter { width:auto; cursor:pointer; }
 
     .input_02{width: 248px;}
 
-    #head01 {position: absolute; top: 135px; left: 5px; font-size: 12px;}
-    #head02 {position: absolute; top: 135px; left: 125px; font-size: 12px;}
-    #head03 {position: absolute; top: 135px; left: 500px; font-size: 12px;}
-    #head04 {position: absolute; top: 135px; left: 650px; font-size: 12px;}
-    #head05 {position: absolute; top: 150px; left: 5px; font-size: 12px;}
-    #head06 {position: absolute; top: 150px; left: 125px; font-size: 12px;}
-    #head07 {position: absolute; top: 150px; left: 500px; font-size: 12px;}
-    #head08 {position: absolute; top: 150px; left: 650px; font-size: 12px;}
-    #head09 {position: absolute; top: 165px; left: 5px; font-size: 12px;}
-    #head10 {position: absolute; top: 165px; left: 125px; font-size: 12px;}
-    #head11 {position: absolute; top: 165px; left: 500px; font-size: 12px;}
-    #head12 {position: absolute; top: 165px; left: 650px; font-size: 12px;}
-    #head13 {position: absolute; top: 180px; left: 500px; font-size: 12px;}
-    #head14 {position: absolute; top: 180px; left: 650px; font-size: 12px;}
-    #head15 {position: absolute; top: 200px; left: 5px; font-size: 12px;}
-    #head16 {position: absolute; top: 200px; left: 125px; font-size: 12px;}
-    #head17 {position: absolute; top: 200px; left: 500px; font-size: 12px;}
-    #head18 {position: absolute; top: 200px; left: 650px; font-size: 12px;}
-    #head19 {position: absolute; top: 150px; left: 850px; font-size: 12px;}
-    #head20 {position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
-    #netto { position: absolute; left: 1030px; text-align: right; }
-    #orderTotalNetto { position: absolute; left: 1133px; width: 100px; text-align: right; }
-    #brutto { position: absolute; left: 1030px; text-align: right; }
+    #head01           { position: absolute; top: 135px; left: 5px; font-size: 12px;}
+    #ordernumber      { position: absolute; top: 135px; left: 125px; font-size: 12px;}
+    #head03           { position: absolute; top: 135px; left: 500px; font-size: 12px;}
+    #name             { position: absolute; top: 135px; left: 650px; font-size: 12px;}
+    #head05           { position: absolute; top: 150px; left: 5px; font-size: 12px;}
+    #finish_time      { position: absolute; top: 150px; left: 125px; font-size: 12px;}
+    #head07           { position: absolute; top: 150px; left: 500px; font-size: 12px;}
+    #milage           { position: absolute; top: 150px; left: 650px; font-size: 12px;}
+    #head09           { position: absolute; top: 165px; left: 5px; font-size: 12px;}
+    #employee         { position: absolute; top: 165px; left: 125px; font-size: 12px;}
+    #head11           { position: absolute; top: 165px; left: 500px; font-size: 12px;}
+    #head12           { position: absolute; top: 165px; left: 650px; font-size: 12px;}
+    #head13           { position: absolute; top: 180px; left: 500px; font-size: 12px;}
+    #head14           { position: absolute; top: 180px; left: 650px; font-size: 12px;}
+    #head15           { position: absolute; top: 200px; left: 5px; font-size: 12px;}
+    #date             { position: absolute; top: 200px; left: 125px; font-size: 12px;}
+    #head17           { position: absolute; top: 200px; left: 500px; font-size: 12px;}
+    #orderstatus      { position: absolute; top: 200px; left: 650px; font-size: 12px;}
+    #labellicenseplate{ position: absolute; top: 150px; left: 850px; font-size: 12px;}
+    #licenseplate     { position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
+    #netto            { position: absolute; left: 1030px; text-align: right; }
+    #orderTotalNetto  { position: absolute; left: 1133px; width: 100px; text-align: right; }
+    #brutto           { position: absolute; left: 1030px; text-align: right; }
     #orderTotalBrutto { position: absolute; left: 1133px; width: 100px; text-align: right; }
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
