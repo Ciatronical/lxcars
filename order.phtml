@@ -167,7 +167,7 @@
       <table>
         <tr>
           <td>Artikel-Nr.:</td>
-          <td><input type="text" id="txtArtAnlArtikelNr"></td>
+          <td><input type="text" id="dialogNewArticleNumber"></td>
         </tr>
         <tr>
           <td>Beschreibung:</td>
@@ -182,7 +182,7 @@
         <tr>
           <td>Einheit:</td>
           <td>
-            <select id="selectArtAnlUnits" value="Stck" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
+            <select id="dialogSelectUnits" value="Stck" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
             </select>
           </td>
         </tr>
@@ -263,23 +263,21 @@
           var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val() );
           discount = discount / 100;
           $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) );
-          var totalprice=0.00;
-          var totalnetto=0.00;
-          $('[name=linetotal]').each(function () {
-
+          var totalpric = 0.00;
+          var totalnetto = 0.00;
+          $( '[name=linetotal]' ).each( function(){
             //console.log(parseFloat(this.textContent).toFixed(2));
-            var linetotal=parseFloat(this.textContent);
+            var linetotal = parseFloat( this.textContent );
 
-            console.log(linetotal);
-            totalprice = totalprice+linetotal;
-            var netto = linetotal-(linetotal*0.19);
-            totalnetto=totalnetto+netto;
+            console.log( linetotal );
+            totalprice = totalprice + linetotal;
+            var netto = linetotal - linetotal * 0.19; //punktrechnung vor strichrechnung
+            totalnetto = totalnetto + netto;
 
           });
-          console.log(totalprice);
-          $('#orderTotalBrutto').val(totalprice.toFixed(2));
-          $('#orderTotalNetto').val(totalnetto.toFixed(2));
-
+          console.log( totalprice );
+          $( '#orderTotalBrutto' ).val( totalprice.toFixed( 2 ) );
+          $( '#orderTotalNetto' ).val( totalnetto.toFixed( 2 ) );
         });
 
 
@@ -297,11 +295,10 @@
 
         $( "#finish_time" ).datetimepicker({
           beforeShow: function( input ){
-            AddButton(input);
+            AddButton( input );
           },
           onChangeMonthYear: function( year, month, inst ){
             AddButton( inst.input );
-
           },
           stepMinute: 5,
           hour: 1,
@@ -355,41 +352,36 @@
               data.car_status = 'Auto hier';
             }
             $( '#ordernumber' ).text( data.ordnumber );
-              $('#name').text(data.customer_name);
-              $('#employee').text(kivi.myconfig.name);
-              $('#date').text(data.transdate);
-              $('#finish_time').val(data.finish_time);
-              $('#milage').val(data.km_stnd);
-              $('#licenseplate').val(data.c_ln);
-              $('#orderstatus').val(data.order_status);
-              $('#head14').val(data.car_status);
-              ow = data.customer_id;
-              orderID = data.oe_id;
-
-           }
-       });
-
-$('#selectArtAnlUnits').change(function () {
-
-          var unit=$('#selectArtAnlUnits').val();
-        //console.log(unit);
-         $.ajax({
-            url: 'ajax/order.php?action=getArticleNumber&data='+unit,
-            type: 'GET',
-            success: function (data) {
-              //console.log(data);
-              $('#txtArtAnlArtikelNr').val(data.newnumber);
-            },
-            error: function () {alert('Error: getArticleNumber')}
-
-          });
-
+            $( '#name' ).text( data.customer_name );
+            $( '#employee' ).text( kivi.myconfig.name );
+            $( '#date' ).text( data.transdate );
+            $( '#finish_time' ).val( data.finish_time );
+            $( '#milage' ).val( data.km_stnd );
+            $( '#licenseplate' ).val( data.c_ln );
+            $( '#orderstatus' ).val( data.order_status );
+            $( '#carstatus' ).val( data.car_status );
+            //ow = data.customer_id;
+            orderID = data.oe_id;
+          }
         });
 
-});
+        $( '#dialogSelectUnits' ).change( function(){
+          var unit = $( '#dialogSelectUnits' ).val();
+          //console.log(unit);
+          $.ajax({
+            url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
+            type: 'GET',
+            success: function (data) {
+            //console.log(data);
+              $( '#dialogNewArticleNumber' ).val( data.newnumber );
+            },
+            error: function(){
+              alert( 'Error: getArticleNumber' )
+            }
+          });
+        });
 
-
-
+      });//end document ready
 
     </script>
 
