@@ -31,17 +31,17 @@
       <div>
         <p class="tools ui-state-highlight ui-corner-all lang " style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">
           <label id="head01">Auftragsnummer:</label>
-          <label id="head02">0000</label>
+          <label id="ordernumber">0000</label>
           <label id="head03">Auftraggeber:</label>
-          <label id="head04"></label></br>
+          <label id="name">Name:</label></br>
           <label id="head05">Fertigstellung:</label>
-          <input id="head06" type="text">
+          <input id="finish_time" type="text">
           <label id="head07">KM-Stand:</label>
-          <input id="head08" type="text"></br>
+          <input id="milage" type="text"></br>
           <label id="head09">bearbeitet von:</label>
           <label id="head19">Amtl.-Kennz.:</label>
-          <input id="head20" type="text"></br>
-          <label id="head10"></label>
+          <input id="licenseplate" type="text"></br>
+          <label id="employee">employee</label>
           <label id="head11">bearbeitet am:</label>
           <label id="head12"></label></br>
           <label id="head13">KfZ:</label>
@@ -52,9 +52,9 @@
             <option>Bestellung</option>
           </select></br>
           <label id="head15">erstellt am:</label>
-          <label id="head16"></label>
+          <label id="date"></label>
           <label id="head17">Status:</label>
-          <select id="head18" type="text">
+          <select id="orderstatus" type="text">
             <option></option>
             <option>angenommen</option>
             <option>bearbeitet</option>
@@ -163,51 +163,47 @@
       </div>
     </div>
 
-
-
-<!--Dialog-->
-
-<dialog id="newPart_dialog">
-<table>
-  <tr>
-    <td> Artikel-Nr.:</td>
-    <td><input type="text" id="txtArtAnlArtikelNr"></td>
-  </tr>
-  <tr>
-    <td>Beschreibung:</td>
-    <td><input type="text" id="txtArtAnlBeschreibung" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">
-      <label for="instructionCheckbox">Instruction</label>
-      <input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">
-    </td>
-  </tr>
-  <tr>
-   <td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>
-  </tr>
-  <tr>
-    <td>Einheit:</td>
-    <td>
-      <select id="selectArtAnlUnits" value="Stck" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
-      </select>
-    </td>
-  </tr>
-  <tr>
-    <td>Einkaufspreis:</td>
-    <td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>
-  </tr>
-  <tr>
-    <td>Verkaufspreis:</td>
-    <td><input type="text" id="txtArtAnlPreis" value="0"></td>
-  </tr>
-  <tr>
-    <td>Buchungsgruppe:</td>
-    <td><select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="
-    width: 100%">
-          <option selected="selected"></option>
-        </select>
-    </td>
-  </tr>
-</table>
-</dialog>
+    <dialog id="newPart_dialog">
+      <table>
+        <tr>
+          <td>Artikel-Nr.:</td>
+          <td><input type="text" id="txtArtAnlArtikelNr"></td>
+        </tr>
+        <tr>
+          <td>Beschreibung:</td>
+          <td><input type="text" id="txtArtAnlBeschreibung" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">
+            <label for="instructionCheckbox">Instruction</label>
+            <input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">
+          </td>
+        </tr>
+        <tr>
+         <td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>
+        </tr>
+        <tr>
+          <td>Einheit:</td>
+          <td>
+            <select id="selectArtAnlUnits" value="Stck" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Einkaufspreis:</td>
+          <td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>
+        </tr>
+        <tr>
+          <td>Verkaufspreis:</td>
+          <td><input type="text" id="txtArtAnlPreis" value="0"></td>
+        </tr>
+        <tr>
+          <td>Buchungsgruppe:</td>
+          <td>
+            <select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
+              <option selected="selected"></option>
+            </select>
+          </td>
+        </tr>
+      </table>
+    </dialog>
 
 
 
@@ -266,7 +262,7 @@
           var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
           var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val() );
           discount = discount / 100;
-          $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number - ( price * number * discount ) ).toFixed( 2 ) );//Nachhilfe Mathematik 0175-7880999 (mit Happy End)
+          $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) );
           var totalprice=0.00;
           var totalnetto=0.00;
           $('[name=linetotal]').each(function () {
@@ -294,12 +290,12 @@
             var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
             btn.appendTo( buttonPane );
             btn.bind( "click", function(){
-                $( "#head06" ).val("Kunde wartet! SOFORT anfangen!");
+                $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!");
             });
           }, 1 );
         }
 
-        $( "#head06" ).datetimepicker({
+        $( "#finish_time" ).datetimepicker({
           beforeShow: function( input ){
             AddButton(input);
           },
@@ -320,57 +316,52 @@
 
 
 
-       $( "#backToCRM" ).button({
-            label: "CRM"
+        $( "#backToCRM" ).button({
+          label: "CRM"
         }).css({
-            'margin':'5px'
+          'margin':'5px'
         }).click( function(){
-            location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + owner;
-            return false;
+          location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + owner;
+          return false;
         });
 
         $( "#backToOrderList" ).button({
-            label: "Back to Orderlist"
+          label: "Back to Orderlist"
         }).css({
-            'margin':'5px'
+          'margin':'5px'
         }).click( function(){
-            window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + car;
-            return false;
+          window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + car;
+          return false;
         });
 
         $( "#backToCar" ).button({
-            label: "Back to Car"
+          label: "Back to Car"
         }).css({
-            'margin':'5px'
+          'margin':'5px'
         }).click( function(){
-            window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + owner + '&c_id=' + c_id + '&task=3';
-            return false;
+          window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + owner + '&c_id=' + c_id + '&task=3';
+          return false;
         });
 
-
-
         $.ajax({
-            url: 'ajax/order.php?action=getOrder&data=' + id,
-            type: 'GET',
-            success: function (data) {
-
-              car = data.c_id;
-
-              if (data.km_stnd == null) {
-                  data.km_stnd = '0';
-              }
-              if (data.car_status == null) {
-                  data.car_status = 'Auto hier';
-              }
-
-              $('#head02').text(data.ordnumber);
-              $('#head04').text(data.customer_name);
-              $('#head10').text(kivi.myconfig.name);
-              $('#head16').text(data.transdate);
-              $('#head06').val(data.finish_time);
-              $('#head08').val(data.km_stnd);
-              $('#head20').val(data.c_ln);
-              $('#head18').val(data.order_status);
+          url: 'ajax/order.php?action=getOrder&data=' + id,
+          type: 'GET',
+          success: function( data ){
+            car = data.c_id;
+            if( data.km_stnd == null ){
+              data.km_stnd = '0';
+            }
+            if (data.car_status == null) {
+              data.car_status = 'Auto hier';
+            }
+            $( '#ordernumber' ).text( data.ordnumber );
+              $('#name').text(data.customer_name);
+              $('#employee').text(kivi.myconfig.name);
+              $('#date').text(data.transdate);
+              $('#finish_time').val(data.finish_time);
+              $('#milage').val(data.km_stnd);
+              $('#licenseplate').val(data.c_ln);
+              $('#orderstatus').val(data.order_status);
               $('#head14').val(data.car_status);
               ow = data.customer_id;
               orderID = data.oe_id;
