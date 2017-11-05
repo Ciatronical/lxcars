@@ -197,7 +197,7 @@
         <tr>
           <td>Buchungsgruppe:</td>
           <td>
-            <select id="selectArtAnlBuchungsgruppen" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
+            <select id="accountingGroups" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
               <option selected="selected"></option>
             </select>
           </td>
@@ -242,6 +242,24 @@
             alert( "Ajaxerror getMechnics()!");
           }
         })
+
+        $.ajax({
+          url: 'ajax/order.php?action=getAccountingGroups',
+          type: 'GET',
+          success: function( data ){
+            $.each( data, function( index, item ){
+              //console.log(item);accountingGroups
+              $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
+              if( item.id == 859 ){ //ToDo: 859????
+                $( '#accountingGroups' ).children( '#'+item.id ).attr( 'selected', 'selected' );
+
+              }
+            })
+          },
+          error: function(){
+            alert( "Error: getBuchungsgruppen()!" );
+          }
+        }); //end ajax accountingGroups
 
         $.ajax({
           url: 'ajax/order.php?action=getUnits',

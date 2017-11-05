@@ -419,8 +419,6 @@ namespace('kivi.Part', function(ns) {
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_many) self.run_action(callbacks.match_many, [ data ]);
           } else {
-
-              var buchungsgruppen_id;
               var description_name=$(":focus").parents().eq(3).find("[name=item_partpicker_name]").val();
               $('#newPart_dialog').dialog({
                     modal: true,
@@ -433,24 +431,7 @@ namespace('kivi.Part', function(ns) {
                         $( '#instructionCheckbox' ).checkboxradio();
                         if( $('#txtArtAnlBeschreibung').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
 
-                        $.ajax({
-                            url: 'ajax/order.php?action=getBuchungsgruppen',
-                            type: 'GET',
-                            success: function( data ){
 
-                                $.each( data, function( index, item ){
-                                    //console.log(item);
-                                    $( '#selectArtAnlBuchungsgruppen' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
-                                    if( item.id == 859 ){ //ToDo: 859????
-                                        $( '#selectArtAnlBuchungsgruppen' ).children( '#'+item.id ).attr( 'selected', 'selected' );
-                                        buchungsgruppen_id = item.id;
-
-                                    }
-                                })
-
-                            },
-                            error:  function(){ alert( "Error: getBuchungsgruppen()!" ); }
-                        }); //end ajax getBuchungsgruppen
 
                 }
 

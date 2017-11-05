@@ -70,7 +70,7 @@ function getUnits(){
     echo $rs;
 }
 
-function getBuchungsgruppen(){
+function getAccountingGroups(){
     //writeLog( $orderID );
     $rs = $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen", true );
     echo $rs;
