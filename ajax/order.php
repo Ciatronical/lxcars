@@ -77,9 +77,20 @@ function getAccountingGroups(){
 }
 
 function newPart( $data ){
-    writeLog( __FUNCTION__ );
-    writeLog( $data );
-    echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction' ), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction']), TRUE, 'id' );
+    //writeLog( __FUNCTION__ );
+
+
+   writeLog( $data );
+
+   //echo $GLOBALS['dbh']->insert('testTable',array('testname','testnumber'),array($data['description'],$data['partnumber']),TRUE,'id');
+   //echo $GLOBALS['dbh']->insert('parts',array('partnumber','description'),array($data['description'],$data['partnumber']));
+
+   //echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction' ), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction']), TRUE, 'id' );
+
+   $part_type= $GLOBALS['dbh']->getAll( "SELECT type FROM units where name='".$data['unit']."'", true );
+   writeLog($part_type);
+   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type' ), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$part_type), TRUE, 'id' );
+
     //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
 
 }
@@ -96,16 +107,15 @@ function getPartJSONbyPartnumber( $partnumber ){
 }
 
 
-
 function getArticleNumber( $unit ){
-    //writeLog( $unit );
-    //ToDo: Unit nicht FEST, sondern aus DB holen
+
 
     $type = $GLOBALS['dbh']->getOne( "SELECT type FROM units WHERE name='".$unit."'" );
-
-    if( $unit == 'Stck' || $unit == 't' || $unit == 'kg' || $unit == 'g' || $unit == 'mg' || $unit == 'L' || $unit == 'ml')
+     //writeLog( $type );
+     //print_r($type);
+    if( $type[type] == "dimension" )
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newnumber, 0 AS service FROM defaults");
-    elseif($unit == 'psch' || $unit == 'Tag(e)' || $unit == 'Std' || $unit == 'min')
+    elseif( $type[type] == "service")
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newnumber, customer_hourly_rate, 1 AS service FROM defaults");
 
     //increase partnumber if partnumber exists

@@ -14,7 +14,7 @@
     <script type="text/javascript" src="jQueryAddOns/date-time-picker.js"></script>
     <script type="text/javascript" src="jQueryAddOns/german-date-time-picker.js"></script>
     <link rel="stylesheet" href="css/lxc.Order.css" type="text/css" title="Stylesheet">
-    <script type="text/javascript" src="js/lxc.Part.js"></script>
+    <script type="text/javascript" src="js/lxc.Order.js"></script>
     <script type="text/javascript" src="js/locale/de.js"></script>
 
   </head>
@@ -171,7 +171,7 @@
         </tr>
         <tr>
           <td>Beschreibung:</td>
-          <td><input type="text" id="txtArtAnlBeschreibung" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">
+          <td><input type="text" id="dialogDescription" value="' + $(":focus").parents().eq(3).find("[name=item_partpicker_name]").val() + '">
             <label for="instructionCheckbox">Instruction</label>
             <input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">
           </td>
@@ -188,220 +188,27 @@
         </tr>
         <tr>
           <td>Einkaufspreis:</td>
-          <td><input type="text" id="txtArtAnlEinkaufspreis" value="0"></td>
+          <td><input type="text" id="dialogBuyPrice" value="0"></td>
         </tr>
         <tr>
           <td>Verkaufspreis:</td>
-          <td><input type="text" id="txtArtAnlPreis" value="0"></td>
+          <td><input type="text" id="dialogSellPrice" value="0"></td>
         </tr>
         <tr>
           <td>Buchungsgruppe:</td>
           <td>
-            <select id="accountingGroups" name="buchungsgruppen" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
+            <select id="accountingGroups" name="accountingGroups" type="text" class="ui-widget-content ui-corner-all" autocomplete="off" style="width: 100%">
               <option selected="selected"></option>
             </select>
           </td>
+        </tr>
+        <tr>
+          <td><input type="button" id="btnSaveNewPart" value="Speichern"></td>
         </tr>
       </table>
     </dialog>
 
 
-
-    <script type="text/javascript">
-
-      $( document ).ready( function(){
-
-        $.urlParam = function( name ){
-          var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-          if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-          else return decodeURIComponent( results[1] || 0 );
-        }
-
-        var id = $.urlParam( 'id' );
-        var owner = $.urlParam( 'owner' );
-        var c_id = $.urlParam( 'c_id' );
-        var previous = $.urlParam( 'previous' );
-        var newOrder = $.urlParam( 'newOrder' );
-
-        var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
-        var baseUrl = kivi_global.baseurl;
-        $('[name=item_partpicker_name]').focus();
-
-        //alert( kivi.t8( '_part' ) );
-
-        $.ajax({
-          url: 'ajax/order.php?action=getMechanics',
-          type: 'GET',
-          success: function( data ){
-            $.each( data, function( index, item ){
-            //console.log(item);
-              $( '[name = mechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
-            })
-          },
-          error:  function(){
-            alert( "Ajaxerror getMechnics()!");
-          }
-        })
-
-        $.ajax({
-          url: 'ajax/order.php?action=getAccountingGroups',
-          type: 'GET',
-          success: function( data ){
-            $.each( data, function( index, item ){
-              //console.log(item);accountingGroups
-              $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
-              if( item.id == 859 ){ //ToDo: 859????
-                $( '#accountingGroups' ).children( '#'+item.id ).attr( 'selected', 'selected' );
-
-              }
-            })
-          },
-          error: function(){
-            alert( "Error: getBuchungsgruppen()!" );
-          }
-        }); //end ajax accountingGroups
-
-        $.ajax({
-          url: 'ajax/order.php?action=getUnits',
-          type: 'GET',
-          success: function( data ){
-            $.each( data, function( index, item ){
-              $( '[name = unit]' ).append($( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' ) );
-            })
-          },
-          error:  function(){
-            alert( "Error getUnits()!" );
-          }
-        })
-
-        //Calculate rowprice
-        $( document ).on( 'keyup','.recalc', function(){
-          var price = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=sellprice_as_number]' ).val() );
-          var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
-          var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val() );
-          discount = discount / 100;
-          $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) );
-          var totalpric = 0.00;
-          var totalnetto = 0.00;
-          $( '[name=linetotal]' ).each( function(){
-            //console.log(parseFloat(this.textContent).toFixed(2));
-            var linetotal = parseFloat( this.textContent );
-
-            console.log( linetotal );
-            totalprice = totalprice + linetotal;
-            var netto = linetotal - linetotal * 0.19; //punktrechnung vor strichrechnung
-            totalnetto = totalnetto + netto;
-
-          });
-          console.log( totalprice );
-          $( '#orderTotalBrutto' ).val( totalprice.toFixed( 2 ) );
-          $( '#orderTotalNetto' ).val( totalnetto.toFixed( 2 ) );
-        });
-
-
-        //DateTimePicker
-        function AddButton( input ){
-          setTimeout( function(){
-            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
-            var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
-            btn.appendTo( buttonPane );
-            btn.bind( "click", function(){
-                $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!");
-            });
-          }, 1 );
-        }
-
-        $( "#finish_time" ).datetimepicker({
-          beforeShow: function( input ){
-            AddButton( input );
-          },
-          onChangeMonthYear: function( year, month, inst ){
-            AddButton( inst.input );
-          },
-          stepMinute: 5,
-          hour: 1,
-          hourMin: 6,
-          hourMax: 19,
-          timeSuffix: ' Uhr',
-          timeText: 'Zeit',
-          hourText: 'Stunde',
-          closeText: 'Fertig',
-          currentText: 'Jetzt'
-        });
-
-
-
-        $( "#backToCRM" ).button({
-          label: "CRM"
-        }).css({
-          'margin':'5px'
-        }).click( function(){
-          location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + owner;
-          return false;
-        });
-
-        $( "#backToOrderList" ).button({
-          label: "Back to Orderlist"
-        }).css({
-          'margin':'5px'
-        }).click( function(){
-          window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + car;
-          return false;
-        });
-
-        $( "#backToCar" ).button({
-          label: "Back to Car"
-        }).css({
-          'margin':'5px'
-        }).click( function(){
-          window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + owner + '&c_id=' + c_id + '&task=3';
-          return false;
-        });
-
-        $.ajax({
-          url: 'ajax/order.php?action=getOrder&data=' + id,
-          type: 'GET',
-          success: function( data ){
-            car = data.c_id;
-            if( data.km_stnd == null ){
-              data.km_stnd = '0';
-            }
-            if (data.car_status == null) {
-              data.car_status = 'Auto hier';
-            }
-            $( '#ordernumber' ).text( data.ordnumber );
-            $( '#name' ).text( data.customer_name );
-            $( '#employee' ).text( kivi.myconfig.name );
-            $( '#date' ).text( data.transdate );
-            $( '#finish_time' ).val( data.finish_time );
-            $( '#milage' ).val( data.km_stnd );
-            $( '#licenseplate' ).val( data.c_ln );
-            $( '#orderstatus' ).val( data.order_status );
-            $( '#carstatus' ).val( data.car_status );
-            //ow = data.customer_id;
-            orderID = data.oe_id;
-          }
-        });
-
-        $( '#dialogSelectUnits' ).change( function(){
-          var unit = $( '#dialogSelectUnits' ).val();
-          //console.log(unit);
-          $.ajax({
-            url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
-            type: 'GET',
-            success: function (data) {
-            //console.log(data);
-              $( '#dialogNewArticleNumber' ).val( data.newnumber );
-            },
-            error: function(){
-              alert( 'Error: getArticleNumber' )
-            }
-          });
-        });
-
-      });//end document ready
-
-    </script>
 
     <?php echo $menu['end_content']; ?>
   </body>
