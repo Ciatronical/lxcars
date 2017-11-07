@@ -103,11 +103,13 @@ namespace('kivi.Part', function(ns) {
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
             console.log($(':focus').parent());
 
-
             newPosArray['position'] = $(':focus').parents().eq(3).find('[name=position]').text();
             newPosArray['order_id'] = orderID;
             newPosArray['description'] = rsp.description;
             newPosArray['sellprice'] = rsp.sellprice;
+            newPosArray['partnumber'] = $(':focus').parents().eq(3).find('[name=partnumber]').text();
+            newPosArray['qty'] = number;
+            newPosArray['unit'] = $(':focus').parents().eq(3).find('[name=unit]').val();
 
             var discount;
             if($(':focus').parents().eq(3).find('[name=discount_as_percent]').text()=="")
@@ -128,7 +130,7 @@ namespace('kivi.Part', function(ns) {
 
                  },
                  error: function () {
-                  alert( 'Error: new Pos not saved' )
+                    alert( 'Error: new Pos not saved' )
                  }
 
             });
@@ -491,9 +493,12 @@ namespace('kivi.Part', function(ns) {
     });
   });
 
+
+
+
   $( document ).ready( function(){
 
-        $.urlParam = function( name ){
+     $.urlParam = function( name ){
           var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
           if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
           else return decodeURIComponent( results[1] || 0 );
@@ -665,8 +670,33 @@ namespace('kivi.Part', function(ns) {
             $( '#carstatus' ).val( data.car_status );
             //ow = data.customer_id;
             orderID = data.oe_id;
+
+            $.ajax({
+
+              url: 'ajax/order.php?action=getPositions&data='+orderID,
+              type: 'GET',
+              success: function (data) {
+
+                $.each( data, function( index, item ){
+                  console.log(item);
+                  $('.row_entry').last().find('[name=position]').text(item.position);
+                  $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
+                  $('.row_entry').last().find('[name=sellprice_as_number]').val(item.sellprice);
+                  $('.row_entry').last().clone().appendTo("#row_table_id");
+
+                });
+
+                console.log(data);
+              },
+              error: function () {
+                  alert("error: getPositions fehlgeschlagen");
+             }
+
+            });
+
           }
         });
+
 
         $('#btnSaveNewPart').click(function () {
 
@@ -685,19 +715,19 @@ namespace('kivi.Part', function(ns) {
 
             console.log(dataArray);
 
-              $.ajax({
-                 url: 'ajax/order.php',
-                 type: 'POST',
-                 data: { action: "newPart", data: dataArray },
-                 success: function () {
+            $.ajax({
+               url: 'ajax/order.php',
+               type: 'POST',
+               data: { action: "newPart", data: dataArray },
+               success: function () {
 
                   alert('new Part saved')
-                 },
-                 error: function () {
+               },
+               error: function () {
                   alert( 'Error: new Part not saved' )
-                 }
+               }
 
-              });
+            });
 
           }
 
@@ -711,10 +741,10 @@ namespace('kivi.Part', function(ns) {
               type: 'GET',
               success: function (data) {
 
-                $( '#dialogNewArticleNumber' ).val( data.newnumber );
+                 $( '#dialogNewArticleNumber' ).val( data.newnumber );
               },
               error: function(){
-                alert( 'Error: getArticleNumber' )
+                 alert( 'Error: getArticleNumber' )
               }
           });
         });
