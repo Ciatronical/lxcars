@@ -47,7 +47,7 @@ $(document).ready(function() {
     var url = window.location.pathname;
     var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
 
-
+    console.log('test');
     var language = kivi.myconfig.countrycode;
     $( ".lang" ).each( function(){
         var key = $( this ).attr( "data-lang" );
@@ -118,6 +118,27 @@ $(document).ready(function() {
                 <tbody>');
                 //Für folgende Abfrage bitte einen Join ev. mit disinct verwenden
                 //Problem: was passiert wenn ein Auftrag keine Positionen hat????????????????
+
+
+                $rs = $GLOBALS['dbh']->getAll("SELECT id, ordnumber, transdate, amount from oe where customer_id = '".$owner."'");
+                writeLog($rs);
+
+                foreach ($rs as $value){
+                    echo ('
+                        <tr id="'.$value['id'].'" class="showtableRow">
+                            <td>'.$value['transdate'].'</td>
+                            <td>'.$value['ordnumber'].'</td>
+                            <td>'.$value['description'].'</td>
+                            <td align="right">'.number_format($value['amount'], 2, ',', '.').'</td>
+                        </tr>');
+                }
+                echo (  '</tbody></table>'
+                            .$head["JQTABLE-PAGER"].
+                            '<input type="button" id="btnNewOrder" value="new Order">
+                             <input type="button" id="btnBack" value="back">');
+
+                //alter code
+                /*
                 $rs = $GLOBALS['dbh']->getAll('
                     SELECT
                         oe.id,
@@ -153,6 +174,8 @@ $(document).ready(function() {
                             .$head["JQTABLE-PAGER"].
                             '<input type="button" id="btnNewOrder" value="new Order">
                              <input type="button" id="btnBack" value="back">');
+
+                    */
 
 ?>
 
