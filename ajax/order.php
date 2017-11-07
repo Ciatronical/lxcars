@@ -66,7 +66,8 @@ function getUsersFromGroup( $data ){
 
 function getUnits(){
     //writeLog( $orderID );
-    $rs = $GLOBALS['dbh']->getAll( "SELECT name FROM units", true );
+    $rs = $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
+
     echo $rs;
 }
 
@@ -77,21 +78,14 @@ function getAccountingGroups(){
 }
 
 function newPart( $data ){
-    //writeLog( __FUNCTION__ );
+   //writeLog( __FUNCTION__ );
 
 
-   writeLog( $data );
+   //writeLog( $data );
 
-   //echo $GLOBALS['dbh']->insert('testTable',array('testname','testnumber'),array($data['description'],$data['partnumber']),TRUE,'id');
-   //echo $GLOBALS['dbh']->insert('parts',array('partnumber','description'),array($data['description'],$data['partnumber']));
+   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type' ), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), TRUE, 'id' );
 
-   //echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction' ), array( $data['part'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction']), TRUE, 'id' );
-
-   $part_type= $GLOBALS['dbh']->getAll( "SELECT type FROM units where name='".$data['unit']."'", true );
-   writeLog($part_type);
-   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type' ), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$part_type), TRUE, 'id' );
-
-    //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
+   //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
 
 }
 

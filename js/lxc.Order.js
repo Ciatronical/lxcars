@@ -510,11 +510,15 @@ namespace('kivi.Part', function(ns) {
           }
         }); //end ajax accountingGroups
 
+        var unitsType=new Array;
+
         $.ajax({
           url: 'ajax/order.php?action=getUnits',
           type: 'GET',
           success: function( data ){
             $.each( data, function( index, item ){
+
+              unitsType[item.name]=item.type;
               $( '[name = unit]' ).append($( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' ) );
             })
           },
@@ -634,7 +638,7 @@ namespace('kivi.Part', function(ns) {
 
           if ($( '#dialogNewArticleNumber' ).val()!="") {
 
-              var dataArray = {};
+            var dataArray = {};
             dataArray['partnumber'] = $('#dialogNewArticleNumber').val();
             dataArray['description'] = $('#dialogDescription').val();
             dataArray['unit'] = $('#dialogSelectUnits').val();
@@ -643,7 +647,7 @@ namespace('kivi.Part', function(ns) {
             dataArray['buchungsgruppen_id'] = accountingGroupsID;
             dataArray['quantity'] = $( "#quantity" ).val();
             dataArray['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
-
+            dataArray['part_type'] = unitsType[$('#dialogSelectUnits').val()];
 
             console.log(dataArray);
 
