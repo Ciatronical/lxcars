@@ -116,12 +116,11 @@ $(document).ready(function() {
                     </tr>
                 </thead>
                 <tbody>');
-                //Für folgende Abfrage bitte einen Join ev. mit disinct verwenden
-                //Problem: was passiert wenn ein Auftrag keine Positionen hat????????????????
 
 
-                $rs = $GLOBALS['dbh']->getAll("SELECT id, ordnumber, transdate, amount from oe where customer_id = '".$owner."'");
-                writeLog($rs);
+                //holt die order Infos und die Beschreibung der ersten Position aus der Datenbank
+                $rs = $GLOBALS['dbh']->getAll("SELECT oe.id, oe.ordnumber, oe.transdate, oe.amount, orderitems.description from oe join orderitems on orderitems.trans_id = oe.id where customer_id = '".$owner."'");
+                //writeLog($rs);
 
                 foreach ($rs as $value){
                     echo ('

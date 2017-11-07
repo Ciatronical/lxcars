@@ -1,6 +1,7 @@
 namespace('kivi.Part', function(ns) {
   'use strict';
 
+  var orderID;
 
   var KEY = {
     TAB:       9,
@@ -91,6 +92,7 @@ namespace('kivi.Part', function(ns) {
             self.$real.trigger('set_item:PartPicker', rsp);
 
             //Füllt die aktuell fokussierte Position
+            var newPosArray={};
 
             $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
             $(':focus').parents().eq(3).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2));
@@ -100,6 +102,37 @@ namespace('kivi.Part', function(ns) {
             $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2));
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
             console.log($(':focus').parent());
+
+
+            newPosArray['position'] = $(':focus').parents().eq(3).find('[name=position]').text();
+            newPosArray['order_id'] = orderID;
+            newPosArray['description'] = rsp.description;
+            newPosArray['sellprice'] = rsp.sellprice;
+
+            var discount;
+            if($(':focus').parents().eq(3).find('[name=discount_as_percent]').text()=="")
+            discount='0';
+            else
+            discount=$(':focus').parents().eq(3).find('[name=discount_as_percent]').text();
+
+            newPosArray['discount'] = discount;
+            newPosArray['linetotal'] = rsp.sellprice*number;
+
+            console.log(newPosArray);
+
+            $.ajax({
+                 url: 'ajax/order.php',
+                 type: 'POST',
+                 data: { action: "insertRow", data: newPosArray },
+                 success: function () {
+
+                 },
+                 error: function () {
+                  alert( 'Error: new Pos not saved' )
+                 }
+
+            });
+
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $(':focus').parents().eq(3).find('[name=position]').text();
@@ -109,6 +142,7 @@ namespace('kivi.Part', function(ns) {
             ns.countPos();//nummeriert die positionen
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
+
 
            // console.log($('.partpicker').l);
             //sortable update
@@ -506,7 +540,7 @@ namespace('kivi.Part', function(ns) {
             })
           },
           error: function(){
-            alert( "Error: getBuchungsgruppen()!" );
+            alert( "Error: getAccountingGroups()!" );
           }
         }); //end ajax accountingGroups
 
@@ -630,7 +664,7 @@ namespace('kivi.Part', function(ns) {
             $( '#orderstatus' ).val( data.order_status );
             $( '#carstatus' ).val( data.car_status );
             //ow = data.customer_id;
-            var orderID = data.oe_id;
+            orderID = data.oe_id;
           }
         });
 
