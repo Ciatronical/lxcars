@@ -589,8 +589,39 @@ namespace('kivi.Part', function(ns) {
           console.log( totalprice );
           $( '#orderTotalBrutto' ).val( totalprice.toFixed( 2 ) );
           $( '#orderTotalNetto' ).val( totalnetto.toFixed( 2 ) );
+
+
+
         });
 
+        //updateOrder
+        $( document ).on( 'keyup','.orderupdate', function(){
+          var updateDataJSON = new Array;
+          updateDataJSON.push({
+            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+            "id": orderID,
+            "km_stnd": $('#milage').val(),
+            "netamount": $('#orderTotalNetto').val(),
+            "amount": $('#orderTotalBrutto').val(),
+            "status": $('#orderstatus').val(),
+            "finish_time": $('#finish_time').val(),
+            "car_status": $('#car_status').val()
+          });
+
+          $.ajax({
+             url: 'ajax/order.php',
+             async: false,
+             data: { action: "updateOrder", data: updateDataJSON },
+             type: "POST",
+             success: function(){
+                console.log()
+             },
+             error:  function(){
+                alert( 'Update des Auftrages fehlgeschlagen' );
+             }
+
+          });
+        });
 
         //DateTimePicker
         function AddButton( input ){
@@ -681,12 +712,12 @@ namespace('kivi.Part', function(ns) {
                 $.each( data.reverse(), function( index, item ){
                   console.log(item);
 
-
                   $('.row_entry').last().find('[name=position]').text(item.position);
                   $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
                   $('.row_entry').last().find('[name=partnumber]').text(item.ordnumber);
                   $('.row_entry').last().find('[name=sellprice_as_number]').val(item.sellprice);
                   $('.row_entry').last().find('[name=unit]').val(item.unit).change();
+                  $('.row_entry').last().find('[name=pos_status]').val(item.status).change();
                   $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
                   $('.row_entry').last().clone().appendTo("#row_table_id");
 
@@ -718,7 +749,6 @@ namespace('kivi.Part', function(ns) {
             dataArray['quantity'] = $( "#quantity" ).val();
             dataArray['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
             dataArray['part_type'] = unitsType[$('#dialogSelectUnits').val()];
-
             console.log(dataArray);
 
             $.ajax({

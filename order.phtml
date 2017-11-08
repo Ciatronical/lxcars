@@ -29,23 +29,23 @@
 
     <div class="ui-widget-content">
       <div>
-        <p class="tools ui-state-highlight ui-corner-all lang " style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">
+        <p class="tools ui-state-highlight ui-corner-all lang" style="margin-top: 20px; padding: 0.6em;" data-lang="HEADLINE">
           <label id="head01">Auftragsnummer:</label>
           <label id="ordernumber">0000</label>
           <label id="head03">Auftraggeber:</label>
           <label id="name">Name:</label></br>
           <label id="head05">Fertigstellung:</label>
-          <input id="finish_time" type="text">
+          <input id="finish_time" type="text" class="orderupdate">
           <label id="head07">KM-Stand:</label>
-          <input id="milage" type="text"></br>
+          <input id="milage" type="text" class="orderupdate"></br>
           <label id="head09">bearbeitet von:</label>
-          <label id="head19">Amtl.-Kennz.:</label>
-          <input id="licenseplate" type="text"></br>
+          <label id="labellicenseplate">Amtl.-Kennz.:</label>
+          <input id="licenseplate" type="text" class="orderupdate"></br>
           <label id="employee">employee</label>
           <label id="head11">bearbeitet am:</label>
           <label id="head12"></label></br>
           <label id="head13">KfZ:</label>
-          <select id="head14" type="text">
+          <select id="car_status" type="text" class="orderupdate">
             <option>Auto nicht hier</option>
             <option selected="selected">Auto hier</option>
             <option>Sonstiges zur Reparatur gebracht</option>
@@ -54,7 +54,7 @@
           <label id="head15">erstellt am:</label>
           <label id="date"></label>
           <label id="head17">Status:</label>
-          <select id="orderstatus" type="text">
+          <select id="orderstatus" type="text" class="orderupdate">
             <option></option>
             <option>angenommen</option>
             <option>bearbeitet</option>
@@ -148,11 +148,11 @@
               <br>
                 <li>
                   <label id="netto">Netto:</label>
-                  <input name="pos_orderTotalNetto" value="0" type="text" id="orderTotalNetto" class="recalc reformat_number numeric">
+                  <input name="pos_orderTotalNetto" value="0" type="text" id="orderTotalNetto" class="recalc reformat_number numeric orderupdate">
                 </li><br>
                 <li>
                   <label id="brutto">Brutto:</label>
-                  <input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="recalc reformat_number numeric">
+                  <input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="recalc reformat_number numeric orderupdate">
                 </li>
             </div>
           </td>

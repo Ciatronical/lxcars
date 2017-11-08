@@ -15,7 +15,7 @@ table.tablesorter { width:auto; cursor:pointer; }
     #head11           { position: absolute; top: 165px; left: 500px; font-size: 12px;}
     #head12           { position: absolute; top: 165px; left: 650px; font-size: 12px;}
     #head13           { position: absolute; top: 180px; left: 500px; font-size: 12px;}
-    #head14           { position: absolute; top: 180px; left: 650px; font-size: 12px;}
+    #car_status           { position: absolute; top: 180px; left: 650px; font-size: 12px;}
     #head15           { position: absolute; top: 200px; left: 5px; font-size: 12px;}
     #date             { position: absolute; top: 200px; left: 125px; font-size: 12px;}
     #head17           { position: absolute; top: 200px; left: 500px; font-size: 12px;}

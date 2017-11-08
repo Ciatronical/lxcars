@@ -132,7 +132,7 @@ function saveLastArticleNumber( $data ){
 }
 
 function updateOrder( $data) {
-    //writeLog($data[0]);
+    writeLog($data[0]);
     echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['id'] );
 }
 

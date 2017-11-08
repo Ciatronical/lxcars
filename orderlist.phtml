@@ -119,7 +119,7 @@ $(document).ready(function() {
 
 
                 //holt die order Infos und die Beschreibung der ersten Position aus der Datenbank
-                $rs = $GLOBALS['dbh']->getAll("SELECT oe.id, oe.ordnumber, oe.transdate, oe.amount, orderitems.description from oe join orderitems on orderitems.trans_id = oe.id where customer_id = '".$owner."'");
+                $rs = $GLOBALS['dbh']->getAll("SELECT oe.id, oe.ordnumber, oe.transdate, oe.amount, orderitems.description from oe join orderitems on orderitems.trans_id = oe.id where customer_id = '".$owner."' AND orderitems.position='1'");
                 //writeLog($rs);
 
                 foreach ($rs as $value){
