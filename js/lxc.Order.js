@@ -517,6 +517,7 @@ namespace('kivi.Part', function(ns) {
 
         //alert( kivi.t8( '_part' ) );
 
+
         $.ajax({
           url: 'ajax/order.php?action=getMechanics',
           type: 'GET',
@@ -530,6 +531,8 @@ namespace('kivi.Part', function(ns) {
             alert( "Ajaxerror getMechnics()!");
           }
         })
+
+
         var accountingGroupsID;
         $.ajax({
           url: 'ajax/order.php?action=getAccountingGroups',
@@ -594,34 +597,7 @@ namespace('kivi.Part', function(ns) {
 
         });
 
-        //updateOrder
-        $( document ).on( 'keyup','.orderupdate', function(){
-          var updateDataJSON = new Array;
-          updateDataJSON.push({
-            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-            "id": orderID,
-            "km_stnd": $('#milage').val(),
-            "netamount": $('#orderTotalNetto').val(),
-            "amount": $('#orderTotalBrutto').val(),
-            "status": $('#orderstatus').val(),
-            "finish_time": $('#finish_time').val(),
-            "car_status": $('#car_status').val()
-          });
 
-          $.ajax({
-             url: 'ajax/order.php',
-             async: false,
-             data: { action: "updateOrder", data: updateDataJSON },
-             type: "POST",
-             success: function(){
-                console.log()
-             },
-             error:  function(){
-                alert( 'Update des Auftrages fehlgeschlagen' );
-             }
-
-          });
-        });
 
         //DateTimePicker
         function AddButton( input ){
@@ -683,6 +659,7 @@ namespace('kivi.Part', function(ns) {
         $.ajax({
           url: 'ajax/order.php?action=getOrder&data=' + id,
           type: 'GET',
+          async: false,
           success: function( data ){
             var car = data.c_id;
             if( data.km_stnd == null ){
@@ -691,6 +668,8 @@ namespace('kivi.Part', function(ns) {
             if (data.car_status == null) {
               data.car_status = 'Auto hier';
             }
+            $( '#orderTotalNetto' ).val(data.netamount);
+            $( '#orderTotalBrutto' ).val(data.amount);
             $( '#ordernumber' ).text( data.ordnumber );
             $( '#name' ).text( data.customer_name );
             $( '#employee' ).text( kivi.myconfig.name );
@@ -698,8 +677,8 @@ namespace('kivi.Part', function(ns) {
             $( '#finish_time' ).val( data.finish_time );
             $( '#milage' ).val( data.km_stnd );
             $( '#licenseplate' ).val( data.c_ln );
-            $( '#orderstatus' ).val( data.order_status );
-            $( '#carstatus' ).val( data.car_status );
+            $( '#orderstatus' ).val( data.order_status ).change();
+            $( '#car_status' ).val( data.car_status ).change();
             //ow = data.customer_id;
             orderID = data.oe_id;
 
@@ -708,9 +687,9 @@ namespace('kivi.Part', function(ns) {
               url: 'ajax/order.php?action=getPositions&data='+orderID,
               type: 'GET',
               success: function (data) {
+                //console.log(data.length);
 
                 $.each( data.reverse(), function( index, item ){
-                  console.log(item);
 
                   $('.row_entry').last().find('[name=position]').text(item.position);
                   $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
@@ -719,9 +698,23 @@ namespace('kivi.Part', function(ns) {
                   $('.row_entry').last().find('[name=unit]').val(item.unit).change();
                   $('.row_entry').last().find('[name=pos_status]').val(item.status).change();
                   $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
+                  $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
                   $('.row_entry').last().clone().appendTo("#row_table_id");
+                  $('.row_entry').last().find('[class=x]').show();
 
                 });
+
+
+                $('.row_entry').last().find('[name=item_partpicker_name]').val("");
+                $('.row_entry').last().find('[name=partnumber]').text("");
+                $('.row_entry').last().find('[name=sellprice_as_number]').val("0.00");
+                $('.row_entry').last().find('[name=pos_status]').val("0").change();
+                $('.row_entry').last().find('[name=qty_as_number]').val("1.0");
+                $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
+                if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
+                $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
+                ns.init();
+                ns.countPos();
 
                 //console.log(data);
               },
@@ -769,19 +762,82 @@ namespace('kivi.Part', function(ns) {
 
         })
 
+        //updateOrder
+        $( document ).on( 'change','.orderupdate', function(){
+          var updateDataJSON = new Array;
+          updateDataJSON.push({
+            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+            "id": orderID,
+            "km_stnd": $('#milage').val(),
+            "netamount": $('#orderTotalNetto').val(),
+            "amount": $('#orderTotalBrutto').val(),
+            "status": $('#orderstatus').val(),
+            "finish_time": $('#finish_time').val(),
+            "car_status": $('#car_status').val()
+          });
+
+          $.ajax({
+             url: 'ajax/order.php',
+             async: false,
+             data: { action: "updateOrder", data: updateDataJSON },
+             type: "POST",
+             success: function(){
+                console.log()
+             },
+             error:  function(){
+                alert( 'Update des Auftrages fehlgeschlagen' );
+             }
+
+          });
+        });
+
+
+
+        $( '#dialogPart_typ' ).change( function(){
+          var unit;
+          var part_type = $( '#dialogPart_typ' ).val();
+              if(part_type=='dimension')
+                  unit='Stck';
+              else
+                  unit='Std'
+
+          $.ajax({
+              url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
+              type: 'GET',
+              success: function (data) {
+
+              var partnumber= $( '#dialogNewArticleNumber' ).val( data.newnumber );
+
+              },
+              error: function(){
+                 alert( 'Error: getArticleNumber' )
+              }
+
+           });
+        });
+
+
         $( '#dialogSelectUnits' ).change( function(){
-          var unit = $( '#dialogSelectUnits' ).val();
+            var unit = $( '#dialogSelectUnits' ).val();
 
             $.ajax({
               url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
               type: 'GET',
               success: function (data) {
+                $( '#dialogNewArticleNumber' ).val( data.newnumber );
+                var partnumber= data.newnumber;
 
-                 $( '#dialogNewArticleNumber' ).val( data.newnumber );
+                if(partnumber<1000)
+                  $( '#dialogPart_typ' ).val('dimension').change();
+                else if(partnumber>1000)
+                  $( '#dialogPart_typ' ).val('service').change();
+
+
               },
               error: function(){
                  alert( 'Error: getArticleNumber' )
               }
+
           });
         });
 
