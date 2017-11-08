@@ -27,14 +27,14 @@ function getPositions( $orderID ){
     //$sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY item_position";
     //writeLog( $sql );
 
-    $sql="SELECT id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit FROM orderitems WHERE orderitems.trans_id='".$orderID."'";
+    $sql="SELECT id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit, status FROM orderitems WHERE orderitems.trans_id='".$orderID."'";
     echo $GLOBALS['dbh']->getAll( $sql , true );
 }
 
 function insertRow( $data ){
     writeLog( __FUNCTION__ );
     writeLog( $data );
-    echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordnumber'],$data['unit']), 'id', 'orderitemsid');
+    echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['partnumber'],$data['unit'], $data['status']), 'id', 'orderitemsid');
 
     //echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
 }

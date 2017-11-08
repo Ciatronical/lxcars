@@ -110,6 +110,7 @@ namespace('kivi.Part', function(ns) {
             newPosArray['partnumber'] = $(':focus').parents().eq(3).find('[name=partnumber]').text();
             newPosArray['qty'] = number;
             newPosArray['unit'] = $(':focus').parents().eq(3).find('[name=unit]').val();
+            newPosArray['status'] = $(':focus').parents().eq(3).find('[name=pos_status]').val();
 
             var discount;
             if($(':focus').parents().eq(3).find('[name=discount_as_percent]').text()=="")
@@ -635,7 +636,7 @@ namespace('kivi.Part', function(ns) {
         }).css({
           'margin':'5px'
         }).click( function(){
-          window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + car;
+          window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id;
           return false;
         });
 
@@ -677,16 +678,21 @@ namespace('kivi.Part', function(ns) {
               type: 'GET',
               success: function (data) {
 
-                $.each( data, function( index, item ){
+                $.each( data.reverse(), function( index, item ){
                   console.log(item);
+
+
                   $('.row_entry').last().find('[name=position]').text(item.position);
                   $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
+                  $('.row_entry').last().find('[name=partnumber]').text(item.ordnumber);
                   $('.row_entry').last().find('[name=sellprice_as_number]').val(item.sellprice);
+                  $('.row_entry').last().find('[name=unit]').val(item.unit).change();
+                  $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
                   $('.row_entry').last().clone().appendTo("#row_table_id");
 
                 });
 
-                console.log(data);
+                //console.log(data);
               },
               error: function () {
                   alert("error: getPositions fehlgeschlagen");
