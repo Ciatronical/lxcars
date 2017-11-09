@@ -22,19 +22,19 @@ function getOrder( $id ){
 }
 
 function getPositions( $orderID ){
-    writeLog($orderID);
+    //writeLog($orderID);
     //$sql = "SELECT 'true'::BOOL AS instruction, instructions.id AS position_id, instructions.parts_id, instructions.qty, instructions.description, instructions.position AS item_position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.id AS partid, parts.partnumber FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
     //$sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY item_position";
     //writeLog( $sql );
 
-    $sql="SELECT id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit, status FROM orderitems WHERE orderitems.trans_id='".$orderID."'";
+    $sql="SELECT id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit, status ,u_id FROM orderitems WHERE orderitems.trans_id='".$orderID."'";
     echo $GLOBALS['dbh']->getAll( $sql , true );
 }
 
 function insertRow( $data ){
     writeLog( __FUNCTION__ );
     writeLog( $data );
-    echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['partnumber'],$data['unit'], $data['status']), 'id', 'orderitemsid');
+    echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status', 'parts_id'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordernumber'],$data['unit'], $data['status'], $data['parts_id']), 'id', 'orderitemsid');
 
     //echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
 }
@@ -50,14 +50,14 @@ function updatePositions( $data) {
        // writeLog( $value['pos_instruction'] );
         //writeLog( $value['pos_instruction'] == 'true' );
         //writeLog( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems'  );
-        $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['partID'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
+        $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['parts_id'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
     }
     echo $GLOBALS['dbh']->commit();
 }
 
 function delPosition( $data ){
     //writeLog( __FUNCTION__ );
-    writeLog( $data);
+    //writeLog( $data);
    // writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
     //writeLog( $data['instruction'] );
     echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data );
@@ -84,24 +84,22 @@ function getAccountingGroups(){
 
 function newPart( $data ){
    //writeLog( __FUNCTION__ );
-
-
    //writeLog( $data );
 
-   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type' ), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), TRUE, 'id' );
+   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type' , 'parts_id'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type'],$data['parts_id']), TRUE, 'id' );
 
    //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
 
 }
 
-function getPartJSON( $id ){
-    print_r($id);
-    echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE id = $id AND obsolete = false", TRUE );
+function getPartJSON( $parts_id ){
+    writeLog($parts_id);
+    echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
 }
 
 
 function getPartJSONbyPartnumber( $partnumber ){
-    writeLog($partnumber);
+    //writeLog($partnumber);
     echo $GLOBALS['dbh']->getOne( "SELECT * FROM parts WHERE partnumber = '".$partnumber."'",TRUE );
 }
 
@@ -132,7 +130,7 @@ function saveLastArticleNumber( $data ){
 }
 
 function updateOrder( $data) {
-    writeLog($data[0]);
+    //writeLog($data[0]);
     echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['id'] );
 }
 
@@ -197,7 +195,7 @@ function getOrderList( $data ) {
 }
 
 function printOrder( $data ){
-    writeLog( $data );
+    //writeLog( $data );
 
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
