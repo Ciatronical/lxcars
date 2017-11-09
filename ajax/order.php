@@ -56,11 +56,11 @@ function updatePositions( $data) {
 }
 
 function delPosition( $data ){
-    writeLog( __FUNCTION__ );
+    //writeLog( __FUNCTION__ );
     writeLog( $data);
-    writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['posToDel'] );
-    writeLog( $data['instruction'] );
-    echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['posToDel'] );
+   // writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
+    //writeLog( $data['instruction'] );
+    echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data );
 }
 
 function getUsersFromGroup( $data ){

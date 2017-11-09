@@ -494,7 +494,24 @@ namespace('kivi.Part', function(ns) {
     });
   });
 
+  ns.delete_order_item_row = function(clicked) {
+    var row = $(clicked).parents("tbody").first();
+    var id =$(row).attr('id');
+    console.log(id);
+    $.ajax({
+      url: 'ajax/order.php?action=delPosition&data='+id,
+      type: 'GET',
+      success: function () {
+        $(row).remove();
 
+      },
+      error: function () {
+        alert('ERROR: Could not delete Position');
+      }
+
+    });
+
+  };
 
 
   $( document ).ready( function(){
@@ -687,9 +704,11 @@ namespace('kivi.Part', function(ns) {
               url: 'ajax/order.php?action=getPositions&data='+orderID,
               type: 'GET',
               success: function (data) {
-                //console.log(data.length);
+                //console.log(data);
 
                 $.each( data.reverse(), function( index, item ){
+
+                  $('.row_entry').last().attr('id', item.id);
 
                   $('.row_entry').last().find('[name=position]').text(item.position);
                   $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
@@ -698,18 +717,20 @@ namespace('kivi.Part', function(ns) {
                   $('.row_entry').last().find('[name=unit]').val(item.unit).change();
                   $('.row_entry').last().find('[name=pos_status]').val(item.status).change();
                   $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
-                  $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
+                  $('.row_entry').last().find('[name=discount_as_percent]').val(item.discount);
+                  $('.row_entry').last().find('[name=linetotal]').text(item.qty*item.sellprice-item.qty*item.sellprice*item.discount);
+
                   $('.row_entry').last().clone().appendTo("#row_table_id");
                   $('.row_entry').last().find('[class=x]').show();
 
                 });
-
 
                 $('.row_entry').last().find('[name=item_partpicker_name]').val("");
                 $('.row_entry').last().find('[name=partnumber]').text("");
                 $('.row_entry').last().find('[name=sellprice_as_number]').val("0.00");
                 $('.row_entry').last().find('[name=pos_status]').val("0").change();
                 $('.row_entry').last().find('[name=qty_as_number]').val("1.0");
+                $('.row_entry').last().removeAttr('id');
                 $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
                 if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
                 $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
@@ -840,6 +861,9 @@ namespace('kivi.Part', function(ns) {
 
           });
         });
+
+
+
 
   });
 
