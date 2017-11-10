@@ -2,7 +2,7 @@ namespace('kivi.Part', function(ns) {
   'use strict';
 
   var orderID;
-
+  var ready=false;
   var KEY = {
     TAB:       9,
     ENTER:     13,
@@ -131,8 +131,11 @@ namespace('kivi.Part', function(ns) {
             $.ajax({
                  url: 'ajax/order.php',
                  type: 'POST',
+                 async:false,
                  data: { action: "insertRow", data: newPosArray },
-                 success: function () {
+                 success: function (data) {
+                    //console.log(data);
+                    $(':focus').parents().eq(3).attr('id',data);
 
                  },
                  error: function () {
@@ -140,7 +143,7 @@ namespace('kivi.Part', function(ns) {
                  }
 
             });
-
+            ns.recalc();
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $(':focus').parents().eq(3).find('[name=position]').text();
@@ -465,11 +468,11 @@ namespace('kivi.Part', function(ns) {
     lastRow.find('[name=sellprice_as_number]').val('0.00');
     lastRow.find('[name=linetotal]').text('0.00');
     lastRow.find( '[name=partclassification]' ).text( '' );
+    lastRow.find( '[name=qty_as_number]' ).val( '0' );
+    lastRow.removeAttr('id');
     lastRow.find( 'img' ).hide();
     $('.row_entry').last().find('[class=x]').hide();
     lastRow.addClass('pin');
-
-
 
   });
 
@@ -510,6 +513,7 @@ namespace('kivi.Part', function(ns) {
       type: 'GET',
       success: function () {
         $(row).remove();
+        ns.recalc();
 
       },
       error: function () {
@@ -523,104 +527,76 @@ namespace('kivi.Part', function(ns) {
 
   $( document ).ready( function(){
 
-     $.urlParam = function( name ){
-          var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-          if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-          else return decodeURIComponent( results[1] || 0 );
-        }
+    $.urlParam = function( name ){
+      var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+      if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+      else return decodeURIComponent( results[1] || 0 );
+    }
 
-        var id = $.urlParam( 'id' );
-        var owner = $.urlParam( 'owner' );
-        var c_id = $.urlParam( 'c_id' );
-        var previous = $.urlParam( 'previous' );
-        var newOrder = $.urlParam( 'newOrder' );
+    var id = $.urlParam( 'id' );
+    var owner = $.urlParam( 'owner' );
+    var c_id = $.urlParam( 'c_id' );
+    var previous = $.urlParam( 'previous' );
+    var newOrder = $.urlParam( 'newOrder' );
 
-        var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
-        var baseUrl = kivi_global.baseurl;
-        $('[name=item_partpicker_name]').focus();
+    var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
+    var baseUrl = kivi_global.baseurl;
+    $('[name=item_partpicker_name]').focus();
 
-        //alert( kivi.t8( '_part' ) );
+    //alert( kivi.t8( '_part' ) );
 
 
-        $.ajax({
-          url: 'ajax/order.php?action=getMechanics',
-          type: 'GET',
-          success: function( data ){
-            $.each( data, function( index, item ){
-            //console.log(item);
-              $( '[name = mechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
-            })
-          },
-          error:  function(){
-            alert( "Ajaxerror getMechnics()!");
+    $.ajax({
+      url: 'ajax/order.php?action=getMechanics',
+      type: 'GET',
+      success: function( data ){
+        $.each( data, function( index, item ){
+        //console.log(item);
+          $( '[name = mechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
+        })
+      },
+      error:  function(){
+        alert( "Ajaxerror getMechnics()!");
+      }
+    })
+
+
+    var accountingGroupsID;
+    $.ajax({
+      url: 'ajax/order.php?action=getAccountingGroups',
+      type: 'GET',
+      success: function( data ){
+        $.each( data, function( index, item ){
+          //console.log(item);accountingGroups
+          $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
+          accountingGroupsID=item.id;
+          if( item.id == 859 ){ //ToDo: 859????
+            $( '#accountingGroups' ).children( '#'+item.id ).attr( 'selected', 'selected' );
+
           }
         })
+      },
+      error: function(){
+        alert( "Error: getAccountingGroups()!" );
+      }
+    }); //end ajax accountingGroups
 
+    var unitsType=new Array;
 
-        var accountingGroupsID;
-        $.ajax({
-          url: 'ajax/order.php?action=getAccountingGroups',
-          type: 'GET',
-          success: function( data ){
-            $.each( data, function( index, item ){
-              //console.log(item);accountingGroups
-              $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
-              accountingGroupsID=item.id;
-              if( item.id == 859 ){ //ToDo: 859????
-                $( '#accountingGroups' ).children( '#'+item.id ).attr( 'selected', 'selected' );
+    $.ajax({
+      url: 'ajax/order.php?action=getUnits',
+      type: 'GET',
+      success: function( data ){
+        $.each( data, function( index, item ){
 
-              }
-            })
-          },
-          error: function(){
-            alert( "Error: getAccountingGroups()!" );
-          }
-        }); //end ajax accountingGroups
-
-        var unitsType=new Array;
-
-        $.ajax({
-          url: 'ajax/order.php?action=getUnits',
-          type: 'GET',
-          success: function( data ){
-            $.each( data, function( index, item ){
-
-              unitsType[item.name]=item.type;
-              $( '[name = unit]' ).append($( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' ) );
-            })
-          },
-          error:  function(){
-            alert( "Error getUnits()!" );
-          }
+          unitsType[item.name]=item.type;
+          $( '[name = unit]' ).append($( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' ) );
         })
-
-        //Calculate rowprice
-        $( document ).on( 'keyup','.recalc', function(){
-          var price = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=sellprice_as_number]' ).val() );
-          var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
-          var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val() );
-          discount = discount / 100;
-          $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) );
-          var totalprice = 0.00;
-          var totalnetto = 0.00;
-          $( '[name=linetotal]' ).each( function(){
-            //console.log(parseFloat(this.textContent).toFixed(2));
-            var linetotal = parseFloat( this.textContent );
-
-            //console.log( linetotal );
-            totalprice = totalprice + linetotal;
-            var netto = linetotal - linetotal * 0.19;
-            totalnetto = totalnetto + netto;
-
-          });
-          console.log( totalprice );
-          $( '#orderTotalBrutto' ).val( totalprice.toFixed( 2 ) );
-          $( '#orderTotalNetto' ).val( totalnetto.toFixed( 2 ) );
-
-
-
-        });
-
+      },
+      error:  function(){
+        alert( "Error getUnits()!" );
+      }
+    })
 
 
   //DateTimePicker
@@ -708,7 +684,7 @@ namespace('kivi.Part', function(ns) {
 
       //Get Position
       console.log(data.amount);
-      if(data.amount!=null){
+      if(true){//data.amount!=null
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data='+orderID,
           type: 'GET',
@@ -725,13 +701,13 @@ namespace('kivi.Part', function(ns) {
                    console.log(data[0]);
                     $('.row_entry').last().find('[name=partnumber]').text(data[0].partnumber);
                     $('.row_entry').last().find('[name=partclassification]').text(data[0].part_type);
+
                  },
                  error:  function(){
                     //alert( 'getParts fehlgeschlagen' );
                  }
 
               });
-
 
               $('.row_entry').last().attr('id', item.id);
               $('.row_entry').last().find('[name=partnumber]').attr('part_id', item.parts_id);
@@ -750,15 +726,12 @@ namespace('kivi.Part', function(ns) {
 
             });
 
-
-            //leert die letzte Position
-            ns.countPos();
-
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
             if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
-            ns.init();
             ns.countPos();
+            ns.init();
+            ready=true;
 
             //console.log(data);
           },
@@ -770,6 +743,7 @@ namespace('kivi.Part', function(ns) {
       }
     }
   });
+
 
 
   $('#btnSaveNewPart').click(function () {
@@ -806,7 +780,7 @@ namespace('kivi.Part', function(ns) {
 
   })
 
-        //updateOrder
+  //updateOrder
 
   function updateOrder() {
 
@@ -839,8 +813,6 @@ namespace('kivi.Part', function(ns) {
   }
 
   //Ändert die Artikelnummer bei Artikeltypauswahl
-
-
   $( '#dialogPart_typ' ).change( function(){
     var unit;
     var part_type = $( '#dialogPart_typ' ).val();
@@ -890,24 +862,58 @@ namespace('kivi.Part', function(ns) {
   });
 
 
-  $( document ).on( 'change','.recalc, .unitselect, .orderupdate, .add_item_input not:last', function(){
-
+  $( document ).on( 'change','.unitselect, .orderupdate, .add_item_input not:last', function(){
+    if(ready){
+    console.log('change');
+    ns.recalc();
     updatePosition();
     updateOrder();
+  }
+
+  });
+
+  $( document ).on( 'keyup','.recalc', function(){
+    ns.recalc();
 
   });
 
 
+
+  ns.recalc=function() {
+
+    var price = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=sellprice_as_number]' ).val() );
+    var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
+    var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val() );
+    discount = discount / 100;
+    $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) );
+    var totalprice = 0.00;
+    var totalnetto = 0.00;
+    $( '[name=linetotal]' ).each( function(){
+      //console.log(parseFloat(this.textContent).toFixed(2));
+      var linetotal = parseFloat( this.textContent );
+
+      //console.log( linetotal );
+      totalprice = totalprice + linetotal;
+      var netto = linetotal - linetotal * 0.19;
+      totalnetto = totalnetto + netto;
+
+    });
+    console.log( totalprice );
+    $( '#orderTotalBrutto' ).val( totalprice.toFixed( 2 ) );
+    $( '#orderTotalNetto' ).val( totalnetto.toFixed( 2 ) );
+
+
+
+  }
+
   $('#row_table_id').on('sortstop', function(event, ui) {
     //$('#row_table_id thead a img').remove();
-     ns.countPos();
-
+    ns.countPos();
+    updatePosition();
   });
 
 
   function updatePosition() {
-
-     //$( document ).on( 'change','.recalc, .unitselect, .add_item_input not:last', function(){
 
      var updatePosData=new Array;
 
