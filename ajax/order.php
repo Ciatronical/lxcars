@@ -32,7 +32,7 @@ function getPositions( $orderID ){
 }
 
 function insertRow( $data ){
-    writeLog( __FUNCTION__ );
+    //writeLog( __FUNCTION__ );
     writeLog( $data );
     echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status', 'parts_id'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordernumber'],$data['unit'], $data['status'], $data['parts_id']), 'id', 'orderitemsid');
 

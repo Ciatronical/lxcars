@@ -94,20 +94,21 @@ namespace('kivi.Part', function(ns) {
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
 
             var newPosArray={};
-            console.log(rsp.id);
+            console.log(rsp);
 
             $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
-            $(':focus').parents().eq(3).attr('part_id',rsp.id);
+
+            $(':focus').parents().eq(3).find('[name=partnumber]').attr('part_id',rsp.id);
             $(':focus').parents().eq(3).find('[name=sellprice_as_number]').val(parseFloat(rsp.sellprice).toFixed(2));
             var number=parseFloat($(':focus').parents().eq(2).find('[name=qty_as_number]').val());
             $(':focus').parents().eq(3).find('[name=partclassification]').text(rsp.part_type);
             $(':focus').parents().eq(3).find('[name=unit]').val(rsp.unit);
             $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2));
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
-            console.log($(':focus').parent());
+            //console.log($(':focus').parent());
 
             newPosArray['position'] = $(':focus').parents().eq(3).find('[name=position]').text();
-            newPosArray['parts_id'] =  $(':focus').parents().eq(3).attr('part_id');
+            newPosArray['parts_id'] =  $(':focus').parents().eq(3).find('[name=partnumber]').attr('part_id');
             newPosArray['order_id'] = orderID;
             newPosArray['description'] = rsp.description;
             newPosArray['sellprice'] = rsp.sellprice;
@@ -125,7 +126,7 @@ namespace('kivi.Part', function(ns) {
             newPosArray['discount'] = discount;
             newPosArray['linetotal'] = rsp.sellprice*number;
 
-            console.log(newPosArray);
+            //console.log(newPosArray);
 
             $.ajax({
                  url: 'ajax/order.php',
@@ -465,7 +466,9 @@ namespace('kivi.Part', function(ns) {
     lastRow.find('[name=linetotal]').text('0.00');
     lastRow.find( '[name=partclassification]' ).text( '' );
     lastRow.find( 'img' ).hide();
+    $('.row_entry').last().find('[class=x]').hide();
     lastRow.addClass('pin');
+
 
 
   });
@@ -620,308 +623,330 @@ namespace('kivi.Part', function(ns) {
 
 
 
-        //DateTimePicker
-        function AddButton( input ){
-          setTimeout( function(){
-            var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
-            var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
-            btn.appendTo( buttonPane );
-            btn.bind( "click", function(){
-                $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!");
-            });
-          }, 1 );
-        }
+  //DateTimePicker
+  function AddButton( input ){
+    setTimeout( function(){
+      var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
+      var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
+      btn.appendTo( buttonPane );
+      btn.bind( "click", function(){
+          $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!");
+      });
+    }, 1 );
+  }
 
-        $( "#finish_time" ).datetimepicker({
-          beforeShow: function( input ){
-            AddButton( input );
-          },
-          onChangeMonthYear: function( year, month, inst ){
-            AddButton( inst.input );
-          },
-          stepMinute: 5,
-          hour: 1,
-          hourMin: 6,
-          hourMax: 19,
-          timeSuffix: ' Uhr',
-          timeText: 'Zeit',
-          hourText: 'Stunde',
-          closeText: 'Fertig',
-          currentText: 'Jetzt'
-        });
+  $( "#finish_time" ).datetimepicker({
+    beforeShow: function( input ){
+      AddButton( input );
+    },
+    onChangeMonthYear: function( year, month, inst ){
+      AddButton( inst.input );
+    },
+    stepMinute: 5,
+    hour: 1,
+    hourMin: 6,
+    hourMax: 19,
+    timeSuffix: ' Uhr',
+    timeText: 'Zeit',
+    hourText: 'Stunde',
+    closeText: 'Fertig',
+    currentText: 'Jetzt'
+  });
 
-        $( "#backToCRM" ).button({
-          label: "CRM"
-        }).css({
-          'margin':'5px'
-        }).click( function(){
-          location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + owner;
-          return false;
-        });
+  $( "#backToCRM" ).button({
+    label: "CRM"
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    location.href = baseUrl + '/crm/firma1.php?Q=C&id=' + owner;
+    return false;
+  });
 
-        $( "#backToOrderList" ).button({
-          label: "Back to Orderlist"
-        }).css({
-          'margin':'5px'
-        }).click( function(){
-          window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id;
-          return false;
-        });
+  $( "#backToOrderList" ).button({
+    label: "Back to Orderlist"
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id;
+    return false;
+  });
 
-        $( "#backToCar" ).button({
-          label: "Back to Car"
-        }).css({
-          'margin':'5px'
-        }).click( function(){
-          window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + owner + '&c_id=' + c_id + '&task=3';
-          return false;
-        });
-        //Get Order
+  $( "#backToCar" ).button({
+    label: "Back to Car"
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    window.location = baseUrl + '/crm/lxcars/lxcmain.php?owner=' + owner + '&c_id=' + c_id + '&task=3';
+    return false;
+  });
+  //Get Order
+  $.ajax({
+    url: 'ajax/order.php?action=getOrder&data=' + id,
+    type: 'GET',
+    async: false,
+    success: function( data ){
+      var car = data.c_id;
+      if( data.km_stnd == null ){
+        data.km_stnd = '0';
+      }
+      if (data.car_status == null) {
+        data.car_status = 'Auto hier';
+      }
+      $( '#orderTotalNetto' ).val(data.netamount);
+      $( '#orderTotalBrutto' ).val(data.amount);
+      $( '#ordernumber' ).text( data.ordnumber );
+      $( '#name' ).text( data.customer_name );
+      $( '#employee' ).text( kivi.myconfig.name );
+      $( '#date' ).text( data.transdate );
+      $( '#finish_time' ).val( data.finish_time );
+      $( '#milage' ).val( data.km_stnd );
+      $( '#licenseplate' ).val( data.c_ln );
+      $( '#orderstatus' ).val( data.order_status ).change();
+      $( '#car_status' ).val( data.car_status ).change();
+      //ow = data.customer_id;
+      orderID = data.oe_id;
+
+      //Get Position
+      console.log(data.amount);
+      if(data.amount!=null){
         $.ajax({
-          url: 'ajax/order.php?action=getOrder&data=' + id,
+          url: 'ajax/order.php?action=getPositions&data='+orderID,
           type: 'GET',
-          async: false,
-          success: function( data ){
-            var car = data.c_id;
-            if( data.km_stnd == null ){
-              data.km_stnd = '0';
-            }
-            if (data.car_status == null) {
-              data.car_status = 'Auto hier';
-            }
-            $( '#orderTotalNetto' ).val(data.netamount);
-            $( '#orderTotalBrutto' ).val(data.amount);
-            $( '#ordernumber' ).text( data.ordnumber );
-            $( '#name' ).text( data.customer_name );
-            $( '#employee' ).text( kivi.myconfig.name );
-            $( '#date' ).text( data.transdate );
-            $( '#finish_time' ).val( data.finish_time );
-            $( '#milage' ).val( data.km_stnd );
-            $( '#licenseplate' ).val( data.c_ln );
-            $( '#orderstatus' ).val( data.order_status ).change();
-            $( '#car_status' ).val( data.car_status ).change();
-            //ow = data.customer_id;
-            orderID = data.oe_id;
+          success: function (data) {
+            //console.log(data);
 
-            //Get Position
-            $.ajax({
-              url: 'ajax/order.php?action=getPositions&data='+orderID,
-              type: 'GET',
-              success: function (data) {
-                //console.log(data);
+            $.each( data.reverse(), function( index, item ){
 
-                $.each( data.reverse(), function( index, item ){
+              $.ajax({
+                 url: 'ajax/order.php?action=getPartJSON&data='+item.parts_id,
+                 type: "GET",
+                 async:false,
+                 success: function(data){
+                   console.log(data[0]);
+                    $('.row_entry').last().find('[name=partnumber]').text(data[0].partnumber);
+                    $('.row_entry').last().find('[name=partclassification]').text(data[0].part_type);
+                 },
+                 error:  function(){
+                    //alert( 'getParts fehlgeschlagen' );
+                 }
 
-                  $.ajax({
-                     url: 'ajax/order.php?action=getPartJSON&data='+item.parts_id,
-                     type: "GET",
-                     async:false,
-                     success: function(data){
-                       console.log(data[0]);
-                        $('.row_entry').last().find('[name=partnumber]').text(data[0].partnumber);
-                        $('.row_entry').last().find('[name=partclassification]').text(data[0].part_type);
-                     },
-                     error:  function(){
-                        alert( 'getParts fehlgeschlagen' );
-                     }
-
-                  });
+              });
 
 
-                  $('.row_entry').last().attr('id', item.id);
-                  $('.row_entry').last().find('[name=partnumber]').attr('part_id', item.parts_id);
-                  $('.row_entry').last().find('[name=position]').text(item.position);
-                  $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
-                  $('.row_entry').last().find('[name=mechanics]').val(item.u_id);
-                  $('.row_entry').last().find('[name=sellprice_as_number]').val(item.sellprice);
-                  $('.row_entry').last().find('[name=unit]').val(item.unit).change();
-                  $('.row_entry').last().find('[name=pos_status]').val(item.status).change();
-                  $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
-                  $('.row_entry').last().find('[name=discount_as_percent]').val(item.discount);
-                  $('.row_entry').last().find('[name=linetotal]').text(item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100);
+              $('.row_entry').last().attr('id', item.id);
+              $('.row_entry').last().find('[name=partnumber]').attr('part_id', item.parts_id);
+              $('.row_entry').last().find('[name=position]').text(item.position);
+              $('.row_entry').last().find('[name=item_partpicker_name]').val(item.description);
+              $('.row_entry').last().find('[name=mechanics]').val(item.u_id);
+              $('.row_entry').last().find('[name=sellprice_as_number]').val(item.sellprice.toFixed(2));
+              $('.row_entry').last().find('[name=unit]').val(item.unit).change();
+              $('.row_entry').last().find('[name=pos_status]').val(item.status).change();
+              $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
+              $('.row_entry').last().find('[name=discount_as_percent]').val(item.discount);
+              $('.row_entry').last().find('[name=linetotal]').text((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed(2));
 
-                  $('.row_entry').last().clone().appendTo("#row_table_id");
-                  $('.row_entry').last().find('[class=x]').show();
-
-                });
-
-                $('.row_entry').last().find('[name=item_partpicker_name]').val("");
-                $('.row_entry').last().find('[name=partnumber]').text("");
-                $('.row_entry').last().find('[name=sellprice_as_number]').val("0.00");
-                $('.row_entry').last().find('[name=pos_status]').val("0").change();
-                $('.row_entry').last().find('[name=qty_as_number]').val("1.0");
-                $('.row_entry').last().removeAttr('id');
-                $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
-                if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
-                $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
-                ns.init();
-                ns.countPos();
-
-                //console.log(data);
-              },
-              error: function () {
-                  alert("error: getPositions fehlgeschlagen");
-             }
+              $('.row_entry').last().clone().appendTo("#row_table_id");
+              $('.row_entry').last().find('[class=x]').show();
 
             });
 
-          }
+
+            //leert die letzte Position
+            ns.countPos();
+
+            $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
+            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
+            $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
+            ns.init();
+            ns.countPos();
+
+            //console.log(data);
+          },
+          error: function () {
+              alert("error: getPositions fehlgeschlagen");
+         }
+
         });
+      }
+    }
+  });
 
 
-        $('#btnSaveNewPart').click(function () {
+  $('#btnSaveNewPart').click(function () {
 
-          if ($( '#dialogNewArticleNumber' ).val()!="") {
+    if ($( '#dialogNewArticleNumber' ).val()!="") {
 
-            var dataArray = {};
-            dataArray['partnumber'] = $('#dialogNewArticleNumber').val();
-            dataArray['description'] = $('#dialogDescription').val();
-            dataArray['unit'] = $('#dialogSelectUnits').val();
-            dataArray['listprice'] = $('#dialogBuyPrice').val();
-            dataArray['sellprice'] = $('#dialogSellPrice').val();
-            dataArray['buchungsgruppen_id'] = accountingGroupsID;
-            dataArray['quantity'] = $( "#quantity" ).val();
-            dataArray['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
-            dataArray['part_type'] = unitsType[$('#dialogSelectUnits').val()];
-            console.log(dataArray);
+      var dataArray = {};
+      dataArray['partnumber'] = $('#dialogNewArticleNumber').val();
+      dataArray['description'] = $('#dialogDescription').val();
+      dataArray['unit'] = $('#dialogSelectUnits').val();
+      dataArray['listprice'] = $('#dialogBuyPrice').val();
+      dataArray['sellprice'] = $('#dialogSellPrice').val();
+      dataArray['buchungsgruppen_id'] = accountingGroupsID;
+      dataArray['quantity'] = $( "#quantity" ).val();
+      dataArray['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
+      dataArray['part_type'] = unitsType[$('#dialogSelectUnits').val()];
+      //console.log(dataArray);
 
-            $.ajax({
-               url: 'ajax/order.php',
-               type: 'POST',
-               data: { action: "newPart", data: dataArray },
-               success: function () {
+      $.ajax({
+         url: 'ajax/order.php',
+         type: 'POST',
+         data: { action: "newPart", data: dataArray },
+         success: function () {
 
-                  alert('new Part saved')
-               },
-               error: function () {
-                  alert( 'Error: new Part not saved' )
-               }
+            alert('new Part saved')
+         },
+         error: function () {
+            alert( 'Error: new Part not saved' )
+         }
 
-            });
+      });
 
-          }
+    }
 
-        })
+  })
 
         //updateOrder
-        $( document ).on( 'change','.orderupdate', function(){
-          var updateDataJSON = new Array;
-          updateDataJSON.push({
-            //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
-            "id": orderID,
-            "km_stnd": $('#milage').val(),
-            "netamount": $('#orderTotalNetto').val(),
-            "amount": $('#orderTotalBrutto').val(),
-            "status": $('#orderstatus').val(),
-            "finish_time": $('#finish_time').val(),
-            "car_status": $('#car_status').val()
+
+  function updateOrder() {
+
+      var updateDataJSON = new Array;
+      updateDataJSON.push({
+        //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+        "id": orderID,
+        "km_stnd": $('#milage').val(),
+        "netamount": $('#orderTotalNetto').val(),
+        "amount": $('#orderTotalBrutto').val(),
+        "status": $('#orderstatus').val(),
+        "finish_time": $('#finish_time').val(),
+        "car_status": $('#car_status').val()
+      });
+
+      $.ajax({
+         url: 'ajax/order.php',
+         async: false,
+         data: { action: "updateOrder", data: updateDataJSON },
+         type: "POST",
+         success: function(){
+
+         },
+         error:  function(){
+            alert( 'Update des Auftrages fehlgeschlagen' );
+         }
+
+      });
+
+  }
+
+  //Ändert die Artikelnummer bei Artikeltypauswahl
+
+
+  $( '#dialogPart_typ' ).change( function(){
+    var unit;
+    var part_type = $( '#dialogPart_typ' ).val();
+        if(part_type=='dimension')
+            unit='Stck';
+        else
+            unit='Std'
+
+    $.ajax({
+        url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
+        type: 'GET',
+        success: function (data) {
+
+        var partnumber= $( '#dialogNewArticleNumber' ).val( data.newnumber );
+
+        },
+        error: function(){
+           alert( 'Error: getArticleNumber' )
+        }
+
+     });
+  });
+
+  //Ändert den Artikeltyp bei Einheitenauswahl
+  $( '#dialogSelectUnits' ).change( function(){
+      var unit = $( '#dialogSelectUnits' ).val();
+
+      $.ajax({
+        url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
+        type: 'GET',
+        success: function (data) {
+          $( '#dialogNewArticleNumber' ).val( data.newnumber );
+          var partnumber= data.newnumber;
+
+          if(partnumber<2000)
+            $( '#dialogPart_typ' ).val('dimension').change();
+          else if(partnumber>2000)
+            $( '#dialogPart_typ' ).val('service').change();
+
+
+        },
+        error: function(){
+           alert( 'Error: getArticleNumber' )
+        }
+
+    });
+  });
+
+
+  $( document ).on( 'change','.recalc, .unitselect, .orderupdate, .add_item_input not:last', function(){
+
+    updatePosition();
+    updateOrder();
+
+  });
+
+
+  $('#row_table_id').on('sortstop', function(event, ui) {
+    //$('#row_table_id thead a img').remove();
+     ns.countPos();
+
+  });
+
+
+  function updatePosition() {
+
+     //$( document ).on( 'change','.recalc, .unitselect, .add_item_input not:last', function(){
+
+     var updatePosData=new Array;
+
+     $('.row_entry').each(function (index) {
+
+       if($( this ).find( '[name=item_partpicker_name]' ).val()!=""){
+          updatePosData.push({
+
+            "order_nr": $( this ).find( '[name=position]' ).text(),
+            "pos_description": $( this ).find( '[name=item_partpicker_name]' ).val(),
+            "pos_unit": $( this ).find( '[name=unit]' ).val(),
+            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val(),
+            "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val(),
+            "pos_discount": $( this ).find( '[name=discount_as_percent]' ).val(),
+            "pos_total": $( this ).find( '[name=linetotal]' ).text(),
+            "pos_emp": $( this ).find( '[name=mechanics]' ).val(),
+            "pos_status": $( this ).find( '[name=pos_status]' ).val(),
+            "pos_id": $( this ).attr( 'id' ),
+            "parts_id": $( this ).find( '[name=partnumber]' ).attr('part_id'),
+            "pos_instruction": $( this ).hasClass( 'instruction' )
           });
+       }
 
-          $.ajax({
-             url: 'ajax/order.php',
-             async: false,
-             data: { action: "updateOrder", data: updateDataJSON },
-             type: "POST",
-             success: function(){
+     });
+     //console.log(updatePosData);
+     $.ajax({
+       url: 'ajax/order.php',
+       data: { action: "updatePositions", data: updatePosData },
+       type: "POST",
+       success: function(){
 
-             },
-             error:  function(){
-                alert( 'Update des Auftrages fehlgeschlagen' );
-             }
+       },
+       error:  function(){
+          alert( 'Update der Positionen fehlgeschlagen' );
+       }
 
-          });
-        });
+     });
 
-
-        //Ändert die Artikelnummer bei Artikeltypauswahl
-        $( '#dialogPart_typ' ).change( function(){
-          var unit;
-          var part_type = $( '#dialogPart_typ' ).val();
-              if(part_type=='dimension')
-                  unit='Stck';
-              else
-                  unit='Std'
-
-          $.ajax({
-              url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
-              type: 'GET',
-              success: function (data) {
-
-              var partnumber= $( '#dialogNewArticleNumber' ).val( data.newnumber );
-
-              },
-              error: function(){
-                 alert( 'Error: getArticleNumber' )
-              }
-
-           });
-        });
-
-        //Ändert den Artikeltyp bei Einheitenauswahl
-        $( '#dialogSelectUnits' ).change( function(){
-            var unit = $( '#dialogSelectUnits' ).val();
-
-            $.ajax({
-              url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
-              type: 'GET',
-              success: function (data) {
-                $( '#dialogNewArticleNumber' ).val( data.newnumber );
-                var partnumber= data.newnumber;
-
-                if(partnumber<2000)
-                  $( '#dialogPart_typ' ).val('dimension').change();
-                else if(partnumber>2000)
-                  $( '#dialogPart_typ' ).val('service').change();
-
-
-              },
-              error: function(){
-                 alert( 'Error: getArticleNumber' )
-              }
-
-          });
-        });
-
-        $( document ).on( 'change','.recalc, .unitselect, .add_item_input not:last', function(){
-
-           var updatePosData=new Array;
-
-           $('.row_entry').each(function (index) {
-
-             if($( this ).find( '[name=item_partpicker_name]' ).val()!=""){
-                updatePosData.push({
-
-                  "order_nr": $( this ).find( '[name=position]' ).text(),
-                  "pos_description": $( this ).find( '[name=item_partpicker_name]' ).val(),
-                  "pos_unit": $( this ).find( '[name=unit]' ).val(),
-                  "pos_qty": $( this ).find( '[name=qty_as_number]' ).val(),
-                  "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val(),
-                  "pos_discount": $( this ).find( '[name=discount_as_percent]' ).val(),
-                  "pos_total": $( this ).find( '[name=linetotal]' ).text(),
-                  "pos_emp": $( this ).find( '[name=mechanics]' ).val(),
-                  "pos_status": $( this ).find( '[name=pos_status]' ).val(),
-                  "pos_id": $( this ).attr( 'id' ),
-                  "parts_id": $( this ).find( '[name=partnumber]' ).attr('part_id'),
-                  "pos_instruction": $( this ).hasClass( 'instruction' )
-                });
-             }
-
-           });
-           console.log(updatePosData);
-           $.ajax({
-             url: 'ajax/order.php',
-             data: { action: "updatePositions", data: updatePosData },
-             type: "POST",
-             success: function(){
-
-             },
-             error:  function(){
-                alert( 'Update der Positionen fehlgeschlagen' );
-             }
-
-          });
-
-        });
+  }
 
 
   });
