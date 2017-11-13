@@ -105,6 +105,7 @@ namespace('kivi.Part', function(ns) {
             $(':focus').parents().eq(3).find('[name=unit]').val(rsp.unit);
             $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2));
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
+            $(':focus').parents().eq(3).find( '[class=x]' ).show();
             //console.log($(':focus').parent());
 
             newPosArray['position'] = $(':focus').parents().eq(3).find('[name=position]').text();
@@ -144,12 +145,13 @@ namespace('kivi.Part', function(ns) {
 
             });
             ns.recalc();
+            ns.updateOrder();
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $(':focus').parents().eq(3).find('[name=position]').text();
             $(':focus').parents().eq(3).clone().appendTo('#row_table_id');
             if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show(); //dont show sortable < 3 rows
-            $(':focus').parents().eq(3).find( '[class=x]' ).show();
+
             ns.countPos();//nummeriert die positionen
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
@@ -468,7 +470,7 @@ namespace('kivi.Part', function(ns) {
     lastRow.find('[name=sellprice_as_number]').val('0.00');
     lastRow.find('[name=linetotal]').text('0.00');
     lastRow.find( '[name=partclassification]' ).text( '' );
-    lastRow.find( '[name=qty_as_number]' ).val( '0' );
+    lastRow.find( '[name=qty_as_number]' ).val( '1' );
     lastRow.removeAttr('id');
     lastRow.find( 'img' ).hide();
     $('.row_entry').last().find('[class=x]').hide();
@@ -495,7 +497,7 @@ namespace('kivi.Part', function(ns) {
         success: function( result ){
             last_pos_id = result;
             $('.newOrderPos').children('.posID').text( result );
-            updatePositions();
+            ns.updatePosition();
                 //$('#pos__' + ( i +  1 ) + '__elem__9').text(result);
         },
         error:   function(){
@@ -684,7 +686,7 @@ namespace('kivi.Part', function(ns) {
 
       //Get Position
       console.log(data.amount);
-      if(true){//data.amount!=null
+      if(data.amount!=null){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data='+orderID,
           type: 'GET',
@@ -720,9 +722,9 @@ namespace('kivi.Part', function(ns) {
               $('.row_entry').last().find('[name=qty_as_number]').val(item.qty);
               $('.row_entry').last().find('[name=discount_as_percent]').val(item.discount);
               $('.row_entry').last().find('[name=linetotal]').text((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed(2));
-
-              $('.row_entry').last().clone().appendTo("#row_table_id");
               $('.row_entry').last().find('[class=x]').show();
+              $('.row_entry').last().clone().appendTo("#row_table_id");
+
 
             });
 
@@ -730,6 +732,7 @@ namespace('kivi.Part', function(ns) {
             if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
             ns.countPos();
+            ns.recalc();
             ns.init();
             ready=true;
 
@@ -782,7 +785,7 @@ namespace('kivi.Part', function(ns) {
 
   //updateOrder
 
-  function updateOrder() {
+  ns.updateOrder=function () {
 
       var updateDataJSON = new Array;
       updateDataJSON.push({
@@ -852,7 +855,6 @@ namespace('kivi.Part', function(ns) {
           else if(partnumber>2000)
             $( '#dialogPart_typ' ).val('service').change();
 
-
         },
         error: function(){
            alert( 'Error: getArticleNumber' )
@@ -866,8 +868,8 @@ namespace('kivi.Part', function(ns) {
     if(ready){
     console.log('change');
     ns.recalc();
-    updatePosition();
-    updateOrder();
+    ns.updatePosition();
+    ns.updateOrder();
   }
 
   });
@@ -909,11 +911,11 @@ namespace('kivi.Part', function(ns) {
   $('#row_table_id').on('sortstop', function(event, ui) {
     //$('#row_table_id thead a img').remove();
     ns.countPos();
-    updatePosition();
+    ns.updatePosition();
   });
 
 
-  function updatePosition() {
+  ns.updatePosition=function () {
 
      var updatePosData=new Array;
 
@@ -952,7 +954,7 @@ namespace('kivi.Part', function(ns) {
 
      });
 
-  }
+    }
 
 
   });
