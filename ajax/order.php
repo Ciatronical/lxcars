@@ -140,12 +140,20 @@ function getCar( $c_id ){
 }
 
 
+function removeOrder($orderID){
 
+  echo $Globals['dbh']->getOne("DELETE from oe WHERE oe.id='".$orderID."'");
+
+}
 
 /***************************************
 *** IN:  Array( CustomerID, CarID)   ***
 *** OUT: ID from new Order           ***
 ****************************************/
+
+
+
+
 function newOrder( $data ){
     //increase last ordernumber, insert data, returning order-id
     //writeLog( $data );

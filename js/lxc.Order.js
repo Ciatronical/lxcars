@@ -3,6 +3,8 @@ namespace('kivi.Part', function(ns) {
 
   var orderID;
   var ready=false;
+  var timer;
+
   var KEY = {
     TAB:       9,
     ENTER:     13,
@@ -19,6 +21,7 @@ namespace('kivi.Part', function(ns) {
   };
 
   ns.Picker = function($real, options) {
+    //console.log("picker");
     var self = this;
     this.o = $.extend(true, {
       limit: 20,
@@ -84,6 +87,7 @@ namespace('kivi.Part', function(ns) {
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
 
+
       if (this.o.fat_set_item && item.id) {
         $.ajax({
           url: '../../controller.pl?action=Part/show.json',
@@ -94,7 +98,7 @@ namespace('kivi.Part', function(ns) {
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
 
             var newPosArray={};
-            console.log(rsp);
+            //console.log(rsp);
 
             $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
 
@@ -106,6 +110,8 @@ namespace('kivi.Part', function(ns) {
             $(':focus').parents().eq(3).find('[name=linetotal]').text(parseFloat(rsp.sellprice*number).toFixed(2));
             $(':focus').parents().eq(3).find('[name=item_partpicker_name]').val(rsp.description);
             $(':focus').parents().eq(3).find( '[class=x]' ).show();
+            //$('.autocomplete').removeClass('part_autocomplete');
+
             //console.log($(':focus').parent());
 
             newPosArray['position'] = $(':focus').parents().eq(3).find('[name=position]').text();
@@ -144,25 +150,33 @@ namespace('kivi.Part', function(ns) {
                  }
 
             });
-            ns.recalc();
-            ns.updateOrder();
+
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $(':focus').parents().eq(3).find('[name=position]').text();
+
+            if($(':focus').parents().eq(3).is(':last-child'))
             $(':focus').parents().eq(3).clone().appendTo('#row_table_id');
+
+
+            //console.log($('.listrow').filter(':last'));
+            ns.countPos();//nummeriert die positionen
+            ns.init();
+            ns.recalc();
+            ns.updateOrder();
             if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show(); //dont show sortable < 3 rows
 
-            ns.countPos();//nummeriert die positionen
+
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
 
-
-           // console.log($('.partpicker').l);
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
 
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
+
+
           },
         });
       } else {
@@ -195,19 +209,23 @@ namespace('kivi.Part', function(ns) {
       }
     },
     handle_changed_text: function(callbacks) {
+
       var self = this;
       $.ajax({
         url: '../../controller.pl?action=Part/ajax_autocomplete',
         dataType: "json",
         data: $.extend( self.ajax_data(self.$dummy.val()), { prefer_exact: 1 } ),
         success: function (data) {
+
           if (data.length == 1) {
             self.set_item(data[0]);
             if (callbacks && callbacks.match_one) self.run_action(callbacks.match_one, [ data[0] ]);
+
           } else if (data.length > 1) {
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_many) self.run_action(callbacks.match_many, [ data ]);
           } else {
+
               var description_name=$(":focus").parents().eq(3).find("[name=item_partpicker_name]").val();
               $('#newPart_dialog').dialog({
                     modal: true,
@@ -284,6 +302,7 @@ namespace('kivi.Part', function(ns) {
       }
     },
     open_dialog: function() {
+
       if (this.o.multiple) {
         this.dialog = new ns.PickerMultiPopup(this);
       } else {
@@ -295,6 +314,7 @@ namespace('kivi.Part', function(ns) {
       this.dialog = undefined;
     },
     init: function() {
+      //console.log("init");
       var self = this;
       this.$dummy.autocomplete({
         source: function(req, rsp) {
@@ -309,10 +329,12 @@ namespace('kivi.Part', function(ns) {
           self.set_item(ui.item);
         },
         search: function(event, ui) {
+          //console.log("search");
           if ((event.which == KEY.SHIFT) || (event.which == KEY.CTRL) || (event.which == KEY.ALT))
             event.preventDefault();
         },
         open: function() {
+          //console.log("open");
           self.autocomplete_open = true;
         },
         close: function() {
@@ -356,7 +378,9 @@ namespace('kivi.Part', function(ns) {
   };
 
   ns.PickerPopup.prototype = {
+
     open_dialog: function() {
+
       var self = this;
       kivi.popup_dialog({
         url: '../../controller.pl?action=Part/part_picker_search',
@@ -373,6 +397,7 @@ namespace('kivi.Part', function(ns) {
       return true;
     },
     init_search: function() {
+
       var self = this;
       $('#part_picker_filter').keypress(function(e) { self.result_timer(e) }).focus();
       $('#no_paginate').change(function() { self.update_results() });
@@ -482,7 +507,7 @@ namespace('kivi.Part', function(ns) {
 
     var posObject = {};
     var posArray = $( '.row_entry listrow listrow' ).children().children( 'td' );
-    console.log(posArray.length);
+    //console.log(posArray.length);
     $.each( posArray, function( index, item ){
         posObject[item.name] = item.value;
     });
@@ -509,13 +534,14 @@ namespace('kivi.Part', function(ns) {
   ns.delete_order_item_row = function(clicked) {
     var row = $(clicked).parents("tbody").first();
     var id =$(row).attr('id');
-    console.log(id);
+    //console.log(id);
     $.ajax({
       url: 'ajax/order.php?action=delPosition&data='+id,
       type: 'GET',
       success: function () {
         $(row).remove();
         ns.recalc();
+        ns.updateOrder();
 
       },
       error: function () {
@@ -685,7 +711,7 @@ namespace('kivi.Part', function(ns) {
       orderID = data.oe_id;
 
       //Get Position
-      console.log(data.amount);
+      //console.log(data.amount);
       if(data.amount!=null){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data='+orderID,
@@ -700,7 +726,7 @@ namespace('kivi.Part', function(ns) {
                  type: "GET",
                  async:false,
                  success: function(data){
-                   console.log(data[0]);
+                   //console.log(data[0]);
                     $('.row_entry').last().find('[name=partnumber]').text(data[0].partnumber);
                     $('.row_entry').last().find('[name=partclassification]').text(data[0].part_type);
 
@@ -726,15 +752,16 @@ namespace('kivi.Part', function(ns) {
               $('.row_entry').last().clone().appendTo("#row_table_id");
 
 
-            });
 
-            $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
-            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
-            $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
+            });
             ns.countPos();
             ns.recalc();
             ns.init();
             ready=true;
+            $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
+            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
+            $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
+
 
             //console.log(data);
           },
@@ -798,20 +825,24 @@ namespace('kivi.Part', function(ns) {
         "finish_time": $('#finish_time').val(),
         "car_status": $('#car_status').val()
       });
+      clearTimeout( timer );
+      timer = setTimeout( function(){
+        ns.updatePosition()
+        //console.log('update Order');
+        $.ajax({
+           url: 'ajax/order.php',
+           async: false,
+           data: { action: "updateOrder", data: updateDataJSON },
+           type: "POST",
+           success: function(){
 
-      $.ajax({
-         url: 'ajax/order.php',
-         async: false,
-         data: { action: "updateOrder", data: updateDataJSON },
-         type: "POST",
-         success: function(){
+           },
+           error:  function(){
+              alert( 'Update des Auftrages fehlgeschlagen' );
+           }
 
-         },
-         error:  function(){
-            alert( 'Update des Auftrages fehlgeschlagen' );
-         }
-
-      });
+        });
+      },800);
 
   }
 
@@ -866,17 +897,19 @@ namespace('kivi.Part', function(ns) {
 
   $( document ).on( 'change','.unitselect, .orderupdate, .add_item_input not:last', function(){
     if(ready){
-    console.log('change');
+    //console.log('change');
     ns.recalc();
-    ns.updatePosition();
+    //ns.updatePosition();
     ns.updateOrder();
   }
 
   });
 
+
   $( document ).on( 'keyup','.recalc', function(){
     ns.recalc();
-
+    //ns.updatePosition();
+    ns.updateOrder();
   });
 
 
@@ -900,7 +933,7 @@ namespace('kivi.Part', function(ns) {
       totalnetto = totalnetto + netto;
 
     });
-    console.log( totalprice );
+    //console.log( totalprice );
     $( '#orderTotalBrutto' ).val( totalprice.toFixed( 2 ) );
     $( '#orderTotalNetto' ).val( totalnetto.toFixed( 2 ) );
 
@@ -914,6 +947,16 @@ namespace('kivi.Part', function(ns) {
     ns.updatePosition();
   });
 
+  ns.removeOrder=function () {
+
+    $.ajax({
+      url: 'ajax/order.php?action=removeOrder&data='+orderID,
+      typ: 'GET',
+      success: function () {},
+      error: function () {alert('ERROR: removeOrder')}
+    });
+
+  }
 
   ns.updatePosition=function () {
 
@@ -941,20 +984,23 @@ namespace('kivi.Part', function(ns) {
 
      });
      //console.log(updatePosData);
-     $.ajax({
-       url: 'ajax/order.php',
-       data: { action: "updatePositions", data: updatePosData },
-       type: "POST",
-       success: function(){
+     //clearTimeout( timer );
+     //timer = setTimeout( function(){
+       //console.log('update Pos')
+       $.ajax({
+         url: 'ajax/order.php',
+         data: { action: "updatePositions", data: updatePosData },
+         type: "POST",
+         success: function(){
 
-       },
-       error:  function(){
-          alert( 'Update der Positionen fehlgeschlagen' );
-       }
+         },
+         error:  function(){
+            alert( 'Update der Positionen fehlgeschlagen' );
+         }
 
-     });
-
-    }
+       });
+    //},800);
+   }
 
 
   });
