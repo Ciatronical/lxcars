@@ -98,7 +98,7 @@ namespace('kivi.Part', function(ns) {
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
 
             var newPosArray={};
-            //console.log(rsp);
+
 
             $(':focus').parents().eq(3).find('[name=partnumber]').text(rsp.partnumber);
 
@@ -135,6 +135,22 @@ namespace('kivi.Part', function(ns) {
 
             //console.log(newPosArray);
 
+              $.ajax({
+                 url: 'ajax/order.php?action=getPartJSON&data='+rsp.id,
+                 type: 'GET',
+                 async:false,
+
+                 success: function (data) {
+                    console.log(data[0].instruction);
+                    newPosArray['instruction']=data[0].instruction;
+
+                 },
+                 error: function () {
+                    alert( 'Error: new Pos not saved' )
+                 }
+
+            });
+
             $.ajax({
                  url: 'ajax/order.php',
                  type: 'POST',
@@ -160,11 +176,12 @@ namespace('kivi.Part', function(ns) {
 
 
             //console.log($('.listrow').filter(':last'));
+            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show(); //dont show sortable < 3 rows
             ns.countPos();//nummeriert die positionen
             ns.init();
             ns.recalc();
             ns.updateOrder();
-            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show(); //dont show sortable < 3 rows
+
 
 
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
@@ -754,12 +771,13 @@ namespace('kivi.Part', function(ns) {
 
 
             });
+            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
             ns.countPos();
             ns.recalc();
             ns.init();
             ready=true;
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
-            if( $('#row_table_id tr').length > 3 ) $('.dragdrop').show();
+
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
 
 
@@ -789,8 +807,12 @@ namespace('kivi.Part', function(ns) {
       dataArray['buchungsgruppen_id'] = accountingGroupsID;
       dataArray['quantity'] = $( "#quantity" ).val();
       dataArray['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
+
       dataArray['part_type'] = unitsType[$('#dialogSelectUnits').val()];
-      //console.log(dataArray);
+      if(dataArray['part_type'] == 'dimension')
+      dataArray['part_type'] = 'part';
+
+      console.log(dataArray);
 
       $.ajax({
          url: 'ajax/order.php',

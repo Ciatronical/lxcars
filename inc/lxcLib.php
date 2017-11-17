@@ -410,7 +410,7 @@ function GetCars ( $owner, $owner_name ) {
             $z3=substr ( $z3, 0, 3 );
             $art="Pkw";
             if ( $rs[$i]['c_t']=="" ) {
-            	//echo $rs[$i];
+                //echo $rs[$i];
                 $rskba=lxc2db ( "-C ".$z2." ".$z3 );
                 $herst= ( $rskba!=-1 )? ( $rskba[0][1] ): ( "Keine Daten gefunden" );
                 $typ= ( $rskba!=-1 )? ( $rskba[0][2] ): ( "Keine Daten gefunden" );
@@ -496,8 +496,8 @@ function ShowCar ( $c_id ) {
         // wenn beispielsweise das Bj nicht passt
         $lxcrs=lxc2db ( " -C ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) );
     }
-    
-        
+
+
     // ALso Schleife durch lxcrs prüfen ob Typnr o.k.
     //echo "</br> !!!!!!lxcrs[][]!!!!  </br>";
     //print_r($lxcrs);
@@ -621,12 +621,12 @@ function ShowCar ( $c_id ) {
         $radstand=$mykba['radstand'];
         $masse=$mykba['masse_leer'];
     };
-    
-    
-    
-    
-	//print_r($lxc_data);    
-    
+
+
+
+
+    //print_r($lxc_data);
+
     $c_fin=substr ( $rs[0]['c_fin'], 0, 17 );
     $c_d=db2date ( $rs[0]['c_d'] );
     $c_hu=db2date ( $rs[0]['c_hu'] );
@@ -639,37 +639,37 @@ function ShowCar ( $c_id ) {
     //print_r($rs);
     $c_mt=date ( "d.m.Y H:i:s", $rs[0]['c_mt'] );
     $ownerarray=getFirmenStamm ( $rs[0]['c_ow'] );
-    
-    
-    
-    
-   if($lxc_data[0][7]=="" || $lxc_data[0][8]=="" || $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
-    
-     
+
+
+
+
+   if( $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
+
+
      $lxcrs=lxc2db ( " -c ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) );
-  
-  	 $lxc_data[0][4]=$lxcrs[0][1];
-  	 $lxc_data[0][5]=$lxcrs[0][10];
-  	 $lxc_data[0][6]=$lxcrs[0][2];
+
+       $lxc_data[0][4]=$lxcrs[0][1];
+       $lxc_data[0][5]=$lxcrs[0][10];
+       $lxc_data[0][6]=$lxcrs[0][2];
      $lxc_data[0][7]=$lxcrs[0][7];
      $lxc_data[0][8]=$lxcrs[0][8];
-     
+
      $lxc_data[0][9]=$lxcrs[0][4];
      $lxc_data[0][12]=$lxcrs[0][11];
      $ks=$lxcrs[0][6];
-    
+
     }
-    
-    
+
+
     if($lxc_data[0][7]=="" && $lxc_data[0][8]=="" || $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
-    
-    
+
+
     $kba=false;
-    
-    
+
+
     }
-    
-    
+
+
     $retarray=array(
         'ownerstring' => $ownerarray['name'],
         'street'      => $ownerarray['street'],

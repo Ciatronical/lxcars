@@ -23,19 +23,31 @@ function getOrder( $id ){
 
 function getPositions( $orderID ){
     //writeLog($orderID);
-    //$sql = "SELECT 'true'::BOOL AS instruction, instructions.id AS position_id, instructions.parts_id, instructions.qty, instructions.description, instructions.position AS item_position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.id AS partid, parts.partnumber FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
-    //$sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY item_position";
-    //writeLog( $sql );
 
-    $sql="SELECT id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit, status ,u_id FROM orderitems WHERE orderitems.trans_id='".$orderID."'";
+    $sql = "SELECT 'true'::BOOL AS instruction, instructions.id AS position_id, instructions.parts_id, instructions.qty, instructions.description, instructions.position AS item_position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.id AS partid, parts.partnumber FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
+    $sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY item_position DESC";
+    //writeLog( $sql );
     echo $GLOBALS['dbh']->getAll( $sql , true );
+   // writeLog( $sql );
+
+
+    //$sql=" SELECT 'false'::BOOL AS instruction, id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit, status ,u_id FROM orderitems WHERE orderitems.trans_id='".$orderID."' ORDER BY orderitems.position DESC";
+   // echo $GLOBALS['dbh']->getAll( $sql , true );
 }
 
 function insertRow( $data ){
     //writeLog( __FUNCTION__ );
     writeLog( $data );
-    echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status', 'parts_id'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordernumber'],$data['unit'], $data['status'], $data['parts_id']), 'id', 'orderitemsid');
 
+    if($data['instruction']=='true') {
+
+       echo $GLOBALS['dbh']->insert( 'instructions', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status', 'parts_id'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordernumber'],$data['unit'], $data['status'], $data['parts_id']), 'id', 'orderitemsid');
+
+    }else {
+
+      echo $GLOBALS['dbh']->insert( 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status', 'parts_id'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordernumber'],$data['unit'], $data['status'], $data['parts_id']), 'id', 'orderitemsid');
+
+    }
     //echo $GLOBALS['dbh']->insert( $data['instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total'), array( $data['order_nr'], $data['order_id'], $data['pos_description'], $data['pos_price'], $data['pos_discount'], $data['pos_total']), 'id', 'orderitemsid');
 }
 
@@ -84,17 +96,16 @@ function getAccountingGroups(){
 
 function newPart( $data ){
    //writeLog( __FUNCTION__ );
-   //writeLog( $data );
 
-   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type' , 'parts_id'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type'],$data['parts_id']), TRUE, 'id' );
+      echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), TRUE, 'id' );
 
-   //$rs1 = $GLOBALS['dbh']->getAll( "SELECT id FROM parts WHERE partnumber = '".$data['part']."'", true ); //ToDo: das kann doch mit returning erledigt werden!!
+   //writeLog( $data);
 
 }
 
 function getPartJSON( $parts_id ){
     writeLog($parts_id);
-    echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
+    echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
 }
 
 
