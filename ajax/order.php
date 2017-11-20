@@ -71,7 +71,7 @@ function updatePositions( $data) {
 
 function delPosition( $data ){
     //writeLog( __FUNCTION__ );
-    writeLog( $data);
+    //writeLog( $data);
    // writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
     writeLog( $data['instruction'] );
     echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
@@ -355,9 +355,18 @@ function setHuAuDate( $c_id ){
     return $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_hu' ), array( $newdate ), 'c_id = '.$c_id );
 }
 
+function getQtyNewPart($description){
+  writeLog($description);
+  $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description ILIKE '%$description%' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
+
+  echo $rs? $rs : 1;
+}
+
 function getQty( $description ){
     //Method 1: most popular
     $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
+
+
     //Method 2: last modification
     //echo $GLOBALS['dbh']->getOne( "SELECT qty FROM orderitems WHERE description = '$description'  ORDER BY mtime DESC LIMIT 1" )['qty'];
     //writeLog( $rs );
