@@ -24,8 +24,8 @@ function getOrder( $id ){
 function getPositions( $orderID ){
     //writeLog($orderID);
 
-    $sql = "SELECT 'true'::BOOL AS instruction, instructions.id AS position_id, instructions.parts_id, instructions.qty, instructions.description, instructions.position AS item_position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.id AS partid, parts.partnumber FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
-    $sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id AS position_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position AS item_position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.id AS partid, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY item_position DESC";
+    $sql = "SELECT 'true'::BOOL AS instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
+    $sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY position DESC";
     //writeLog( $sql );
     echo $GLOBALS['dbh']->getAll( $sql , true );
    // writeLog( $sql );
@@ -62,7 +62,9 @@ function updatePositions( $data) {
        // writeLog( $value['pos_instruction'] );
         //writeLog( $value['pos_instruction'] == 'true' );
         //writeLog( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems'  );
+        //if($value['instruction']=='false')
         $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status'), array($value['order_nr'], $value['parts_id'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status']), 'id = '.$value['pos_id'] );
+
     }
     echo $GLOBALS['dbh']->commit();
 }

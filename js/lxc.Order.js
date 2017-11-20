@@ -157,7 +157,7 @@ namespace('kivi.Part', function(ns) {
                  async:false,
                  data: { action: "insertRow", data: newPosArray },
                  success: function (data) {
-                    //console.log(data);
+                    console.log(data);
                     $(':focus').parents().eq(3).attr('id',data);
 
                  },
@@ -749,11 +749,11 @@ namespace('kivi.Part', function(ns) {
 
                  },
                  error:  function(){
-                    //alert( 'getParts fehlgeschlagen' );
+                    alert( 'getParts fehlgeschlagen' );
                  }
 
               });
-
+              console.log(item.qty);
               $('.row_entry').last().attr('id', item.id);
               $('.row_entry').last().find('[name=partnumber]').attr('part_id', item.parts_id);
               $('.row_entry').last().find('[name=position]').text(item.position);
@@ -850,7 +850,7 @@ namespace('kivi.Part', function(ns) {
       clearTimeout( timer );
       timer = setTimeout( function(){
         ns.updatePosition()
-        //console.log('update Order');
+        console.log('update Order');
         $.ajax({
            url: 'ajax/order.php',
            async: false,
@@ -928,7 +928,7 @@ namespace('kivi.Part', function(ns) {
   });
 
 
-  $( document ).on( 'keyup','.recalc', function(){
+  $( document ).on( 'keyup','.recalc, .orderupdate', function(){
     ns.recalc();
     //ns.updatePosition();
     ns.updateOrder();
@@ -1005,10 +1005,10 @@ namespace('kivi.Part', function(ns) {
        }
 
      });
-     //console.log(updatePosData);
+     console.log(updatePosData);
      //clearTimeout( timer );
      //timer = setTimeout( function(){
-       //console.log('update Pos')
+       console.log('update Pos')
        $.ajax({
          url: 'ajax/order.php',
          data: { action: "updatePositions", data: updatePosData },
