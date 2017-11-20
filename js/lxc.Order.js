@@ -141,12 +141,15 @@ namespace('kivi.Part', function(ns) {
                  async:false,
 
                  success: function (data) {
-                    console.log(data[0].instruction);
+                    //console.log(data[0].instruction);
                     newPosArray['instruction']=data[0].instruction;
+                    if (data[0].instruction) {
+                      $(':focus').parents().eq(3).addClass('instruction');
+                    }
 
                  },
                  error: function () {
-                    alert( 'Error: new Pos not saved' )
+                    alert( 'Error: getPart Instruction ?' )
                  }
 
             });
@@ -182,17 +185,15 @@ namespace('kivi.Part', function(ns) {
             ns.recalc();
             ns.updateOrder();
 
-
-
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
-
+            $('.listrow').filter(':last').removeClass('instruction');
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
 
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
-
+            $('.instruction div , .instruction :input ').css("color", "red");
 
           },
         });
@@ -550,11 +551,16 @@ namespace('kivi.Part', function(ns) {
 
   ns.delete_order_item_row = function(clicked) {
     var row = $(clicked).parents("tbody").first();
+    console.log(row);
     var id =$(row).attr('id');
+    var dataArray={};
+    dataArray['id']=id;
+    dataArray['instruction']=$(row).hasClass('instruction');
     //console.log(id);
     $.ajax({
-      url: 'ajax/order.php?action=delPosition&data='+id,
-      type: 'GET',
+      url: 'ajax/order.php',
+      type: 'POST',
+      data: { action: "delPosition", data: dataArray },
       success: function () {
         $(row).remove();
         ns.recalc();
@@ -738,22 +744,12 @@ namespace('kivi.Part', function(ns) {
 
             $.each( data.reverse(), function( index, item ){
 
-              $.ajax({
-                 url: 'ajax/order.php?action=getPartJSON&data='+item.parts_id,
-                 type: "GET",
-                 async:false,
-                 success: function(data){
-                   //console.log(data[0]);
-                    $('.row_entry').last().find('[name=partnumber]').text(data[0].partnumber);
-                    $('.row_entry').last().find('[name=partclassification]').text(data[0].part_type);
 
-                 },
-                 error:  function(){
-                    alert( 'getParts fehlgeschlagen' );
-                 }
+              $('.row_entry').last().find('[name=partnumber]').text(item.partnumber);
+              $('.row_entry').last().find('[name=partclassification]').text(item.part_type);
 
-              });
-              console.log(item.qty);
+              console.log(ns.getQtybyDescription(item.description));
+
               $('.row_entry').last().attr('id', item.id);
               $('.row_entry').last().find('[name=partnumber]').attr('part_id', item.parts_id);
               $('.row_entry').last().find('[name=position]').text(item.position);
@@ -766,8 +762,12 @@ namespace('kivi.Part', function(ns) {
               $('.row_entry').last().find('[name=discount_as_percent]').val(item.discount);
               $('.row_entry').last().find('[name=linetotal]').text((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed(2));
               $('.row_entry').last().find('[class=x]').show();
-              $('.row_entry').last().clone().appendTo("#row_table_id");
 
+              if (item.instruction)
+              $('.row_entry').last().addClass('instruction');
+
+              $('.row_entry').last().clone().appendTo("#row_table_id");
+              $('.row_entry').last().removeClass('instruction');
 
 
             });
@@ -780,7 +780,7 @@ namespace('kivi.Part', function(ns) {
 
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'});
 
-
+            $('.instruction div , .instruction :input ').css("color", "red");
             //console.log(data);
           },
           error: function () {
@@ -831,6 +831,24 @@ namespace('kivi.Part', function(ns) {
     }
 
   })
+
+  ns.getQtybyDescription=function (description) {
+
+   $.ajax({
+         url: 'ajax/order.php?action=getQty&data='+description,
+         type: 'GET',
+         success: function (data) {
+            console.log(data);
+            return data;
+         },
+         error: function () {
+            alert( 'Error: getQty' )
+         }
+
+   });
+
+
+  }
 
   //updateOrder
 

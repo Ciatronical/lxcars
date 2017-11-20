@@ -24,8 +24,8 @@ function getOrder( $id ){
 function getPositions( $orderID ){
     //writeLog($orderID);
 
-    $sql = "SELECT 'true'::BOOL AS instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
-    $sql.= "SELECT 'false'::BOOL AS instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY position DESC";
+    $sql = "SELECT 'true'::BOOL AS instruction,parts.instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
+    $sql.= "SELECT 'false'::BOOL AS instruction,parts.instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY position DESC";
     //writeLog( $sql );
     echo $GLOBALS['dbh']->getAll( $sql , true );
    // writeLog( $sql );
@@ -37,7 +37,7 @@ function getPositions( $orderID ){
 
 function insertRow( $data ){
     //writeLog( __FUNCTION__ );
-    writeLog( $data );
+    //writeLog( $data );
 
     if($data['instruction']=='true') {
 
@@ -52,7 +52,7 @@ function insertRow( $data ){
 }
 
 function updatePositions( $data) {
-    writeLog($data);
+    //writeLog($data);
 
     //writeLog( 'pArt1: '.!$value['pos_instruction'] );
     //writeLog( 'Part2: '.$value['pos_instruction'] == 'true' );
@@ -71,10 +71,10 @@ function updatePositions( $data) {
 
 function delPosition( $data ){
     //writeLog( __FUNCTION__ );
-    //writeLog( $data);
+    writeLog( $data);
    // writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
-    //writeLog( $data['instruction'] );
-    echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data );
+    writeLog( $data['instruction'] );
+    echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
 }
 
 function getUsersFromGroup( $data ){
@@ -106,7 +106,7 @@ function newPart( $data ){
 }
 
 function getPartJSON( $parts_id ){
-    writeLog($parts_id);
+    //writeLog($parts_id);
     echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
 }
 
