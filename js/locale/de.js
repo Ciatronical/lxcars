@@ -1,4 +1,11 @@
 namespace("kivi").setupLocale({
-"test":"Test",
-"_part":"W"
+"service":"D",
+"part":"W",
+"partnumber":"Artikelnummer",
+"clock":"Uhr",
+"Time":"Zeit",
+"hour":"Stunde",
+"minute":"Minute",
+"Now":"Jetzt",
+"finished":"Fertig"
 })

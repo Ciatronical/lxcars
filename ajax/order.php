@@ -5,7 +5,7 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 
-function getMechanics() {
+function getMechanics(){
 
     $rs = $GLOBALS['dbh']->getALL( "SELECT name from employee", true);
 
@@ -78,7 +78,7 @@ function delPosition( $data ){
 }
 
 function getUsersFromGroup( $data ){
-    writeLog( __FUNCTION__);
+    writeLog($data);
     writeLog(ERPUsersfromGroup( $data ) );
     echo json_encode( ERPUsersfromGroup( $data ) );
 }
