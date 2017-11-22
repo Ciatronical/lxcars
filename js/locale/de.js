@@ -2,10 +2,10 @@ namespace("kivi").setupLocale({
 "service":"D",
 "part":"W",
 "partnumber":"Artikelnummer",
-"clock":"Uhr",
-"Time":"Zeit",
-"hour":"Stunde",
-"minute":"Minute",
-"Now":"Jetzt",
-"finished":"Fertig"
+" clock":" Uhr",
+" Time":" Zeit",
+" hour":" Stunde",
+" minute":" Minute",
+" Now":" Jetzt",
+" finished":" Fertig"
 })
