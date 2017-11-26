@@ -111,6 +111,8 @@ namespace('kivi.Part', function(ns) {
             //$('.autocomplete').removeClass('part_autocomplete');
 
             //console.log($(':focus').parent());
+            // ,1
+            //2
             ns.getQtybyDescription(rsp.description);
             newPosArray['position'] = $( ':focus' ).parents().eq(3).find( '[name=position]' ).text();
             newPosArray['parts_id'] =  $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).attr( 'part_id' );

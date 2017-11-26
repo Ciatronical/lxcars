@@ -5,13 +5,8 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 
-function autocomplete($term){
- writeLog($term);
- $rs = $GLOBALS['dbh']->getAll("SELECT partnumber || ' ' || description AS label, id, partnumber, description, part_type, instruction, sellprice, unit FROM parts WHERE description ILIKE '%$term%' ");
-
- //$rs = $GLOBALS['dbh']->getOne("SELECT  partnumber FROM parts WHERE description = 'wasd'",true);
- writeLog($rs);
- echo json_encode($rs);
+function autocomplete( $term ){
+    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction, sellprice FROM parts WHERE description ILIKE '%$term%' OR partnumber ILIKE '$term%' AND obsolete = FALSE", true );
 }
 
 function getOrder( $id ){
