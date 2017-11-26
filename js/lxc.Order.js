@@ -89,10 +89,16 @@ namespace('kivi.Part', function(ns) {
 
 
       if (this.o.fat_set_item && item.id) {
-        var rsp=item;
-        self.$real.trigger('set_item:PartPicker', rsp.description);
-        var newPosArray={};
-            //console.log(rsp.description);
+        $.ajax({
+          url: '../../controller.pl?action=Part/show.json',
+          data: { 'part.id': item.id },
+          success: function(rsp) {
+            self.$real.trigger('set_item:PartPicker', rsp);
+
+            //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
+
+            var newPosArray={};
+
 
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).text( rsp.partnumber );
 
@@ -102,7 +108,6 @@ namespace('kivi.Part', function(ns) {
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text(kivi.t8(rsp.part_type));
             $( ':focus' ).parents().eq(3).find( '[name=unit]').val( rsp.unit );
             $( ':focus' ).parents().eq(3).find( '[name=linetotal]').text(ns.formatNumber( parseFloat( rsp.sellprice*number ).toFixed( 2 )) );
-
             $( ':focus' ).parents().eq(3).find( '[name=item_partpicker_name]' ).val( rsp.description );
 
             //console.log($( ':focus' ).parents().eq(3));
@@ -111,7 +116,7 @@ namespace('kivi.Part', function(ns) {
             //$('.autocomplete').removeClass('part_autocomplete');
 
             //console.log($(':focus').parent());
-            ns.getQtybyDescription(rsp.description);
+            ns.getQtybyDescription(item.description);
             newPosArray['position'] = $( ':focus' ).parents().eq(3).find( '[name=position]' ).text();
             newPosArray['parts_id'] =  $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).attr( 'part_id' );
             newPosArray['order_id'] = orderID;
@@ -133,12 +138,24 @@ namespace('kivi.Part', function(ns) {
 
             //console.log(newPosArray);
 
+            $.ajax({
+               url: 'ajax/order.php?action=getPartJSON&data='+rsp.id,
+               type: 'GET',
+               async:false,
 
+               success: function ( data ) {
+                  //console.log(data[0].instruction);
+                  newPosArray['instruction']=data[0].instruction;
+                  if (data[0].instruction) {
+                    $( ':focus' ).parents().eq(3).addClass( 'instruction' );
+                  }
 
-            newPosArray['instruction']=rsp.instruction;
-            //console.log(rsp.instruction)
-            if (rsp.instruction)
-               $( ':focus' ).parents().eq(3).addClass( 'instruction' );
+               },
+               error: function () {
+                  alert( 'Error: getPart Instruction ?' )
+               }
+
+            });
 
             $.ajax({
                  url: 'ajax/order.php',
@@ -146,9 +163,8 @@ namespace('kivi.Part', function(ns) {
                  async:false,
                  data: { action: "insertRow", data: newPosArray },
                  success: function ( data ) {
-                    //console.log( data );
+                    console.log( data );
                     $( ':focus' ).parents().eq(3).attr( 'id',data );
-                    $( ':focus' ).parents().eq(3).find( '[name=item_partpicker_name]' ).val( rsp.description );
 
                  },
                  error: function () {
@@ -159,7 +175,6 @@ namespace('kivi.Part', function(ns) {
 
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
-
             $( ':focus' ).parents().eq(3).find( '[name=position]' ).text();
 
             if($( ':focus' ).parents().eq(3).is( ':last-child' ) )
@@ -172,7 +187,6 @@ namespace('kivi.Part', function(ns) {
             ns.init();
             ns.recalc();
             ns.updateOrder();
-            console.log($( ':focus' ).parents().eq(3).find( '[name=item_partpicker_name]' ).val());
 
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
@@ -182,19 +196,10 @@ namespace('kivi.Part', function(ns) {
 
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
-            $( '.instruction , .instruction div , .instruction :input ' ).css({
-                 'color' : 'red',
-                 'background-color' : 'lightblue',
-                 'border-style' : 'solid',
-                 'border' : '4px',
-                 'border-color' : 'red'
+            $('.instruction div , .instruction :input ').css("color", "red");
 
-            });
-
-
-
-
-
+          },
+        });
       } else {
         this.$real.trigger('set_item:PartPicker', item);
 
@@ -225,7 +230,7 @@ namespace('kivi.Part', function(ns) {
       }
     },
     handle_changed_text: function(callbacks) {
-      /*
+
       var self = this;
       $.ajax({
         url: '../../controller.pl?action=Part/ajax_autocomplete',
@@ -246,14 +251,14 @@ namespace('kivi.Part', function(ns) {
 
               var descriptionArray=description_name.split(" ");
 
-              //console.log(descriptionArray);
+              console.log(descriptionArray);
               $.each(descriptionArray, function (index) {
                 console.log(descriptionArray[index]);
                 $.ajax({
                   url: 'ajax/order.php?action=getQtyNewPart&data='+descriptionArray[index],
                   type: 'GET',
                   success: function (data) {
-                    //console.log(data);
+                    console.log(data);
                     if (data>1) {
                     $('#quantity').val(data);
                     return false;
@@ -288,7 +293,6 @@ namespace('kivi.Part', function(ns) {
           self.annotate_state();
         }
       });
-      */
     },
     /*  In case users are impatient and want to skip ahead:
      *  Capture <enter> key events and check if it's a unique hit.
@@ -353,26 +357,18 @@ namespace('kivi.Part', function(ns) {
       this.dialog = undefined;
     },
     init: function() {
-
+      //console.log("init");
       var self = this;
       this.$dummy.autocomplete({
         source: function(req, rsp) {
-
-          $.ajax($.extend(self.o,{
-            url: 'ajax/order.php?action=autocomplete&data=' + req.term,
-            type: 'GET',
-            success: function ( data ) {
-              //self.ajax_data(req.term)
-              rsp(data);
-
-            },
-            error: function () {alert("test")}
+          $.ajax($.extend(self.o, {
+            url:      '../../controller.pl?action=Part/ajax_autocomplete',
+            dataType: "json",
+            data:     self.ajax_data(req.term),
+            success:  function (data){ rsp(data) }
           }));
-
         },
         select: function(event, ui) {
-
-
           self.set_item(ui.item);
         },
         search: function(event, ui) {
@@ -721,14 +717,36 @@ namespace('kivi.Part', function(ns) {
 
       var linetotal = parseFloat($( this ).find( '[name=linetotal]' ).text());
 
+      console.log( linetotal );
+      totalprice = totalprice + linetotal;
+      var netto = linetotal - linetotal * 0.19;
+      totalnetto = totalnetto + netto;
+      console.log(totalprice);
+      $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
+      $( '#orderTotalNetto' ).val(  ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+    });
+    /*
+    var price = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ) );
+    var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val().replace( ',','.' ) );
+    var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val().replace( ',','.' ) );
+    discount = discount / 100;
+    $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text(ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ));
+    */
+    //var totalprice = 0;
+    //var totalnetto = 0;
+    /*
+    $( '[name=linetotal]' ).each( function(){
+      //console.log(parseFloat(this.textContent).toFixed(2));
+      var linetotal = parseFloat( this.textContent );
+
       //console.log( linetotal );
       totalprice = totalprice + linetotal;
       var netto = linetotal - linetotal * 0.19;
       totalnetto = totalnetto + netto;
-      //console.log(totalprice);
-      $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
-      $( '#orderTotalNetto' ).val(  ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+
     });
+    //console.log( totalprice );
+    */
 
 
   }
@@ -833,16 +851,7 @@ namespace('kivi.Part', function(ns) {
 
             $( '.ui-sortable' ).sortable( {items: '> tbody:not(.pin)'} );
 
-
-            $( '.instruction , .instruction div , .instruction :input ' ).css({
-                 'color' : 'red',
-                 'background-color' : 'lightblue',
-                 'border-style' : 'solid',
-                 'border' : '4px',
-                 'border-color' : 'red'
-
-            });
-
+            $( '.instruction div , .instruction :input ' ).css( "color", "red" );
             //console.log(data);
           },
           error: function () {
@@ -853,6 +862,7 @@ namespace('kivi.Part', function(ns) {
       }
     }
   });
+
 
 
 

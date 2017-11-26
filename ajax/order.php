@@ -5,15 +5,15 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 
-function autocomplete($term){
- writeLog($term);
- $rs = $GLOBALS['dbh']->getAll("SELECT partnumber || ' ' || description AS label, id, partnumber, description, part_type, instruction, sellprice, unit FROM parts WHERE description ILIKE '%$term%' ");
+function getMechanics(){
 
- //$rs = $GLOBALS['dbh']->getOne("SELECT  partnumber FROM parts WHERE description = 'wasd'",true);
- writeLog($rs);
- echo json_encode($rs);
+    $rs = $GLOBALS['dbh']->getALL( "SELECT name from employee", true);
+
+    echo $rs;
+
+
+
 }
-
 function getOrder( $id ){
     //writeLog( $id );
     $rs = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
