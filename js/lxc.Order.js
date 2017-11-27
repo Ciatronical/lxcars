@@ -196,7 +196,13 @@ namespace('kivi.Part', function(ns) {
 
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
-            $('.instruction div , .instruction :input ').css("color", "red");
+            $( '.instruction , .instruction div , .instruction :input ' ).css({
+              'color' : 'red',
+              'background-color' : 'lightblue',
+              'border-style' : 'solid',
+              'border' : '4px',
+              'border-color' : 'red'
+            });
 
           },
         });
@@ -851,7 +857,13 @@ namespace('kivi.Part', function(ns) {
 
             $( '.ui-sortable' ).sortable( {items: '> tbody:not(.pin)'} );
 
-            $( '.instruction div , .instruction :input ' ).css( "color", "red" );
+            $( '.instruction , .instruction div , .instruction :input ' ).css({
+              'color' : 'red',
+              'background-color' : 'lightblue',
+              'border-style' : 'solid',
+              'border' : '4px',
+              'border-color' : 'red'
+            });
             //console.log(data);
           },
           error: function () {
