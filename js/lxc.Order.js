@@ -199,9 +199,7 @@ namespace('kivi.Part', function(ns) {
             $( '.instruction , .instruction div , .instruction :input ' ).css({
               'color' : 'red',
               'background-color' : 'lightblue',
-              'border-style' : 'solid',
-              'border' : '4px',
-              'border-color' : 'red'
+
             });
 
           },
@@ -238,6 +236,7 @@ namespace('kivi.Part', function(ns) {
     handle_changed_text: function(callbacks) {
 
       var self = this;
+      console.log( self.ajax_data(self.$dummy.val()));
       $.ajax({
         url: '../../controller.pl?action=Part/ajax_autocomplete',
         dataType: "json",
@@ -257,14 +256,14 @@ namespace('kivi.Part', function(ns) {
 
               var descriptionArray=description_name.split(" ");
 
-              console.log(descriptionArray);
+              //console.log(descriptionArray);
               $.each(descriptionArray, function (index) {
-                console.log(descriptionArray[index]);
+                //console.log(descriptionArray[index]);
                 $.ajax({
                   url: 'ajax/order.php?action=getQtyNewPart&data='+descriptionArray[index],
                   type: 'GET',
                   success: function (data) {
-                    console.log(data);
+                    //console.log(data);
                     if (data>1) {
                     $('#quantity').val(data);
                     return false;
@@ -371,7 +370,9 @@ namespace('kivi.Part', function(ns) {
             url:      'ajax/order.php?action=autocompletePart',
             dataType: "json",
             data:     { data: req.term },
-            success:  function (data){ rsp(data) }
+            success:  function ( data ){rsp( data );
+
+            }
           }));
         },
         select: function(event, ui) {
@@ -389,7 +390,24 @@ namespace('kivi.Part', function(ns) {
         close: function() {
           self.autocomplete_open = false;
         }
-      });
+
+
+      }) .data("ui-autocomplete")._renderItem= function( ul, item ) {
+
+        if(item.instruction){
+
+          return $( "<li style='color : blue';>" )
+          .attr( "data-value", item.value )
+          .append( item.label )
+          .appendTo( ul );
+
+        }
+         return $( "<li>" )
+          .attr( "data-value", item.value )
+          .append( item.label )
+          .appendTo( ul );
+      };
+
       this.$dummy.keydown(function(event){ self.handle_keydown(event) });
       this.$dummy.on('paste', function(){
         setTimeout(function() {
@@ -556,7 +574,7 @@ namespace('kivi.Part', function(ns) {
 
   ns.delete_order_item_row = function(clicked) {
     var row = $( clicked ).parents( "tbody" ).first();
-    console.log( row );
+    //console.log( row );
     var id =$( row ).attr( 'id' );
     var dataArray={};
     dataArray['id']=id;
@@ -723,11 +741,11 @@ namespace('kivi.Part', function(ns) {
 
       var linetotal = parseFloat($( this ).find( '[name=linetotal]' ).text());
 
-      console.log( linetotal );
+      //console.log( linetotal );
       totalprice = totalprice + linetotal;
       var netto = linetotal - linetotal * 0.19;
       totalnetto = totalnetto + netto;
-      console.log(totalprice);
+      //console.log(totalprice);
       $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
       $( '#orderTotalNetto' ).val(  ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     });
@@ -857,13 +875,14 @@ namespace('kivi.Part', function(ns) {
 
             $( '.ui-sortable' ).sortable( {items: '> tbody:not(.pin)'} );
 
-            $( '.instruction , .instruction div , .instruction :input ' ).css({
+
+
+            $( 'instrution, .instruction div , .instruction :input ' ).css({
               'color' : 'red',
-              'background-color' : 'lightblue',
-              'border-style' : 'solid',
-              'border' : '4px',
-              'border-color' : 'red'
+              'background-color' : 'lightblue'
+
             });
+
             //console.log(data);
           },
           error: function () {
@@ -1146,6 +1165,8 @@ namespace('kivi.Part', function(ns) {
 
 
   });
+
+
 
 
 });
