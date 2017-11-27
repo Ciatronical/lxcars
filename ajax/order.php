@@ -6,7 +6,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 
 function autocompletePart( $term ){
-    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction, sellprice FROM parts WHERE description ILIKE '%$term%' OR partnumber ILIKE '$term%' AND obsolete = FALSE", true );
+    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE description ILIKE '%$term%' OR partnumber ILIKE '$term%' AND obsolete = FALSE LIMIT 20", true );
 }
 
 function getOrder( $id ){
@@ -148,10 +148,8 @@ function getCar( $c_id ){
 }
 
 
-function removeOrder($orderID){
-
-  echo $Globals['dbh']->getOne("DELETE from oe WHERE oe.id='".$orderID."'");
-
+function removeOrder( $orderID ){
+    echo $Globals['dbh']->getOne( "DELETE from oe WHERE oe.id='".$orderID."'" );
 }
 
 /***************************************
@@ -204,7 +202,7 @@ function getOrderList( $data ) {
              customer.name ILIKE '%".$data['kundenname']."%' AND customer.id = oe.customer_id AND
              lxc_cars.c_ln ILIKE '%".$data['kennzeichen']."%' AND lxc_cars.c_id = oe.c_id
         ORDER BY
-            oe.ordnumber";
+            oe.ordnumber ASC";
     //writeLog( $sql );
     echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
 
