@@ -362,9 +362,9 @@ namespace('kivi.Part', function(ns) {
       this.$dummy.autocomplete({
         source: function(req, rsp) {
           $.ajax($.extend(self.o, {
-            url:      '../../controller.pl?action=Part/ajax_autocomplete',
+            url:      'ajax/order.php?action=autocompletePart',
             dataType: "json",
-            data:     self.ajax_data(req.term),
+            data:     { data: req.term },
             success:  function (data){ rsp(data) }
           }));
         },
