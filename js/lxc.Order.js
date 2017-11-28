@@ -138,6 +138,8 @@ namespace('kivi.Part', function(ns) {
 
             //console.log(newPosArray);
 
+            console.log(rsp.id);
+
             $.ajax({
                url: 'ajax/order.php?action=getPartJSON&data='+rsp.id,
                type: 'GET',
@@ -371,7 +373,7 @@ namespace('kivi.Part', function(ns) {
             dataType: "json",
             data:     { data: req.term },
             success:  function ( data ){rsp( data );
-
+              console.log(data);
             }
           }));
         },

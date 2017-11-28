@@ -6,7 +6,7 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 
 function autocompletePart( $term ){
-    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE description ILIKE '%$term%' OR partnumber ILIKE '$term%' AND obsolete = FALSE LIMIT 20", true );
+    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE ( description ILIKE '%$term%' OR partnumber ILIKE '$term%' ) AND obsolete = FALSE LIMIT 20", true );
 }
 
 function getOrder( $id ){
@@ -101,7 +101,10 @@ function newPart( $data ){
 }
 
 function getPartJSON( $parts_id ){
-    //writeLog($parts_id);
+    writeLog( "partID: ".$parts_id );
+    writeLog( "SQL: SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false");
+    writeLog( 'Antwort: '.$GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE ));
+
     echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
 }
 
