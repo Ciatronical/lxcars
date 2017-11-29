@@ -87,16 +87,16 @@ namespace('kivi.Part', function(ns) {
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
 
-
+      console.log(item.id);
       if (this.o.fat_set_item && item.id) {
         $.ajax({
-          url: '../../controller.pl?action=Part/show.json',
-          data: { 'part.id': item.id },
-          success: function(rsp) {
-            self.$real.trigger('set_item:PartPicker', rsp);
+          url: 'ajax/order.php?action=getPartJSON',
+          data: { 'data': item.id },
+          success: function( rsp ){
+            self.$real.trigger( 'set_item:PartPicker', rsp);
 
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
-
+            rsp=rsp[0];
             var newPosArray={};
 
 
@@ -140,24 +140,12 @@ namespace('kivi.Part', function(ns) {
 
             console.log(rsp.id);
 
-            $.ajax({
-               url: 'ajax/order.php?action=getPartJSON&data='+rsp.id,
-               type: 'GET',
-               async:false,
+            newPosArray['instruction']=rsp.instruction;
+            if (rsp.instruction) {
+              $( ':focus' ).parents().eq(3).addClass( 'instruction' );
+            }
 
-               success: function ( data ) {
-                  //console.log(data[0].instruction);
-                  newPosArray['instruction']=data[0].instruction;
-                  if (data[0].instruction) {
-                    $( ':focus' ).parents().eq(3).addClass( 'instruction' );
-                  }
 
-               },
-               error: function () {
-                  alert( 'Error: getPart Instruction ?' )
-               }
-
-            });
 
             $.ajax({
                  url: 'ajax/order.php',

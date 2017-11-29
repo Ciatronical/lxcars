@@ -102,10 +102,11 @@ function newPart( $data ){
 
 function getPartJSON( $parts_id ){
     writeLog( "partID: ".$parts_id );
-    writeLog( "SQL: SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false");
+    //writeLog( "SQL: SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false");
     writeLog( 'Antwort: '.$GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE ));
 
-    echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
+    //echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
+    echo $GLOBALS['dbh']->getALL( "SELECT * FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE );
 }
 
 
