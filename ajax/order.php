@@ -73,8 +73,8 @@ function delPosition( $data ){
 }
 
 function getUsersFromGroup( $data ){
-    writeLog($data);
-    writeLog(ERPUsersfromGroup( $data ) );
+    //writeLog($data);
+    //writeLog(ERPUsersfromGroup( $data ) );
     echo json_encode( ERPUsersfromGroup( $data ) );
 }
 
@@ -347,6 +347,7 @@ function printOrder( $data ){
 }
 
 function setHuAuDate( $c_id ){
+    //writeLog($c_id);
     $today   = date( 'Y-m-d' );
     //writeLog($today);
     $newdate = date( 'Y-m-01', strtotime( $today.' + 2 year ' ) );
@@ -355,7 +356,7 @@ function setHuAuDate( $c_id ){
 }
 
 function getQtyNewPart($description){
-  writeLog($description);
+  //writeLog($description);
   $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description ILIKE '%$description%' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
 
   echo $rs? $rs : 1;

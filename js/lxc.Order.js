@@ -1,6 +1,19 @@
 namespace('kivi.Part', function(ns) {
   'use strict';
 
+   $.urlParam = function( name ){
+      var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+      if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+      else return decodeURIComponent( results[1] || 0 );
+    }
+
+    var id = $.urlParam( 'id' );
+    var owner = $.urlParam( 'owner' );
+    var c_id = $.urlParam( 'c_id' );
+    var previous = $.urlParam( 'previous' );
+    var newOrder = $.urlParam( 'newOrder' );
+
+
   var orderID;
   var ready=false;
   var timer;
@@ -162,6 +175,16 @@ namespace('kivi.Part', function(ns) {
                  }
 
             });
+
+
+            if( rsp.description.includes( 'Hauptuntersuchung' ) ){
+              $.ajax({
+                url: 'ajax/order.php?action=setHuAuDate&data=' + c_id,
+                type: 'GET'
+
+              });
+
+            }
 
             //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
@@ -592,17 +615,7 @@ namespace('kivi.Part', function(ns) {
 
   $( document ).ready( function(){
 
-    $.urlParam = function( name ){
-      var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-      if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-      else return decodeURIComponent( results[1] || 0 );
-    }
 
-    var id = $.urlParam( 'id' );
-    var owner = $.urlParam( 'owner' );
-    var c_id = $.urlParam( 'c_id' );
-    var previous = $.urlParam( 'previous' );
-    var newOrder = $.urlParam( 'newOrder' );
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
