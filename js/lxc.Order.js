@@ -719,6 +719,30 @@ namespace('kivi.Part', function(ns) {
     return false;
   });
 
+
+  $( "#printOrder" ).button({
+    label: "Print"
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    //alert( 'tefdsfdsst' );
+    $.ajax({
+      url: 'ajax/order.php?action=printOrder&data=' + orderID,
+      type: 'GET',
+      async: false,
+      success: function ( data ) {
+        //console.log(data);
+        alert( 'Order printed' );
+      },
+      error: function () {
+        alert( 'Error printOrder()!' )
+      }
+
+    });
+    return false;
+  });
+
+
   ns.recalc=function() {
     var totalprice = 0;
     var totalnetto = 0;
@@ -1156,7 +1180,6 @@ namespace('kivi.Part', function(ns) {
 
   });
 
-
-
+  //Print Order
 
 });

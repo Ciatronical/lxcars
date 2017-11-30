@@ -213,7 +213,9 @@ function getOrderList( $data ) {
 }
 
 function printOrder( $data ){
-    //writeLog( $data );
+    writeLog( $data );
+
+    writeLog( $GLOBALS['dbh']->getOne( " SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, lxc_cars.c_text FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id WHERE oe.id = ".$data ) );
 
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
