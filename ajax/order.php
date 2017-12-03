@@ -16,18 +16,13 @@ function getOrder( $id ){
     echo $rs;
 }
 
+
 function getPositions( $orderID ){
-    //writeLog($orderID);
 
     $sql = "SELECT 'true'::BOOL AS instruction,parts.instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
     $sql.= "SELECT 'false'::BOOL AS instruction,parts.instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY position DESC";
     //writeLog( $sql );
     echo $GLOBALS['dbh']->getAll( $sql , true );
-   // writeLog( $sql );
-
-
-    //$sql=" SELECT 'false'::BOOL AS instruction, id, parts_id, qty, description, position, sellprice, discount, ordnumber, unit, status ,u_id FROM orderitems WHERE orderitems.trans_id='".$orderID."' ORDER BY orderitems.position DESC";
-   // echo $GLOBALS['dbh']->getAll( $sql , true );
 }
 
 function insertRow( $data ){
@@ -213,21 +208,25 @@ function getOrderList( $data ) {
 }
 
 function printOrder( $data ){
-    writeLog( $data );
-    echo 1;
-    $rs = $GLOBALS['dbh']->getOne( " SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, lxc_cars.c_text FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id WHERE oe.id = ".$data );
-
-    printArray( $rs );
 
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
     include_once( __DIR__.'/../inc/config.php' );
 
-    $carData = lxc2db( '-C '.$rs['c_2'].' '.substr( $rs['c_3'], 0, 3 ) );
+    $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, ";
+    $sql .= "customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, ";
+    $sql .= "lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, ";
+    $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_flx, lxc_cars.c_bf, lxc_cars.c_wd ";
+    $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id WHERE oe.id = ".$data;
 
-    printArray( $carData );
 
-    writeLog($carData);
+    writeLog( $sql );
+    $orderData = $GLOBALS['dbh']->getOne( $sql );
+
+    //Add Cardata from lxc2db
+    $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
+
+    writeLog( $orderData );
 
     define( 'FPDF_FONTPATH', '../font/');
     define( 'x', 0 );
@@ -240,7 +239,7 @@ function printOrder( $data ){
     $pdf->Text('20','26','Autoprofis Reparaturauftrag'); //('pos_left','pos_top','text')
     $pdf->Text('135','26',$data['0']['plate']); //utf8_decode(
     $pdf->SetFont('Helvetica','','14');
-    $pdf->Text('20','35',$carData["cm"]."  ".$carData["ct"]);
+    $pdf->Text('20','35',$orderData["cm"]."  ".$orderData["ct"]);
 
     //Feste Werte
     $pdf->SetFont('Helvetica','','12');
@@ -273,29 +272,29 @@ function printOrder( $data ){
     //Daten aus DB
     $pdf->SetFont('Helvetica','','14');
     // Besitzerstring einkürzen, wenn der dieser zu lang wird
-    if(strlen($carData["ownerstring"])>34){
-        $carData["ownerstring"] = substr($carData["ownerstring"],0,34).".";
+    if(strlen($orderData["ownerstring"])>34){
+        $orderData["ownerstring"] = substr($orderData["ownerstring"],0,34).".";
     }
-    $pdf->Text('43','45',utf8_decode($carData["ownerstring"]));
-    $pdf->Text('43','52',utf8_decode($carData["street"]));
-    $pdf->Text('43','59',utf8_decode($carData["city"]));
-    $pdf->Text('43','66',$carData["phone"]);
-    $pdf->Text('43','73',$carData["mobile"]);
-    $pdf->Text('43','87',$carData["c_color"]);
-    $pdf->Text('43','94',$carData["vh"]);
-    $pdf->Text('43','100',$carData["c_zrk"]);
-    $pdf->Text('68','106',utf8_decode($carData["c_zrd"]));
-    $pdf->Text('148','45',$carData["c_2"]." ".$carData["c_3"]);
-    $pdf->Text('148','51',$carData["c_d"]);
-    $pdf->Text('148','58',$carData["fin"]);
-    $pdf->Text('148','63',$carData["mkb"]);
-    $pdf->Text('148','69',$carData["c_hu"]);
+    $pdf->Text('43','45',utf8_decode($orderData["name"]));
+    $pdf->Text('43','52',utf8_decode($orderData["street"]));
+    $pdf->Text('43','59',utf8_decode($orderData["city"]));
+    $pdf->Text('43','66',$orderData["phone"]);
+    $pdf->Text('43','73',$orderData["fax"]);
+    $pdf->Text('43','87',$orderData["c_color"]);
+    $pdf->Text('43','94',$orderData["4"]);
+    $pdf->Text('43','100',$orderData["c_zrk"]);
+    $pdf->Text('68','106',utf8_decode($orderData["c_zrd"]));
+    $pdf->Text('148','45',$orderData["c_2"]." ".$orderData["c_3"]);
+    $pdf->Text('148','51',$orderData["c_d"]);
+    $pdf->Text('148','58',$orderData["fin"]);
+    $pdf->Text('148','63',$orderData["mkb"]);
+    $pdf->Text('148','69',$orderData["c_hu"]);
     $pdf->Text('148','74',$aufData[0]['lxc_a_km']);
-    $pdf->Text('148','81',$carData["c_em"]);
-    $pdf->Text('148','88',$carData["peff"]);
-    $pdf->Text('148','94',utf8_decode($carData["c_flx"]));
-    $pdf->Text('157','100',utf8_decode($carData["c_bf"]));
-    $pdf->Text('151','106',utf8_decode($carData["c_wd"]));
+    $pdf->Text('148','81',$orderData["c_em"]);
+    $pdf->Text('148','88',$orderData["6"]);
+    $pdf->Text('148','94',utf8_decode($orderData["c_flx"]));
+    $pdf->Text('157','100',utf8_decode($orderData["c_bf"]));
+    $pdf->Text('151','106',utf8_decode($orderData["c_wd"]));
     $pdf->SetFont('Helvetica','B','16');
     $pdf->SetTextColor(255, 0, 0);
     $pdf->Text('20','115','Fertigstellung:');
@@ -346,7 +345,7 @@ function printOrder( $data ){
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
     //$pdf->OutPut('F', '/tmp/out.pdf' );
 
-    //if( $data['0']['printDoc'] )  system( __DIR__.'/../out.pdf' );
+   // system( __DIR__.'/../out.pdf' );
 
     echo 1;
 }

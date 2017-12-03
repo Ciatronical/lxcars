@@ -197,11 +197,12 @@ function UpdatePosition ( $pos_id, $posdata ) {
     $rs=$GLOBALS['dbh']->update ( $tbpos, $p_dbarray, $posdata, $wherestring );
 }
 function lxc2db ( $parastr ) {
-    $rsdata=array ( );
-    $ret=-10;
-    $db_name="lxcars";
+    $rsdata = array();
+    $ret = -10;
+    $db_name = 'lxcars';
     //$command = "./lxc2db -d ".$_SESSION['dbname']." ".$parastr;
-    $command="./lxc2db -d ".$db_name." ".$parastr;
+    $command = __DIR__.'/../lxc2db -d '.$db_name.' '.$parastr;
+    //writeLog( $command );
     exec ( $command, $rsdata, $ret );
     switch ( $ret ) {
         case 0:
