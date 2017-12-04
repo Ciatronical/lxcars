@@ -216,17 +216,26 @@ function printOrder( $data ){
     $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, ";
     $sql .= "customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, ";
     $sql .= "lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, ";
-    $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_flx, lxc_cars.c_bf, lxc_cars.c_wd ";
+    $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd ";
     $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id WHERE oe.id = ".$data;
 
 
-    writeLog( $sql );
+    //writeLog( $sql );
     $orderData = $GLOBALS['dbh']->getOne( $sql );
+
+
+    //$sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( $orderData['c_3'], 0, 3 )."'";
+    $sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( 'AAS', 0, 3 )."'";
+
+    $orderData['flxgr'] = $GLOBALS['dbh']->getOne( $sql )['flxgr'];
+
+
+
 
     //Add Cardata from lxc2db
     $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
 
-    writeLog( $orderData );
+    //writeLog( $orderData );
 
     define( 'FPDF_FONTPATH', '../font/');
     define( 'x', 0 );
@@ -286,10 +295,10 @@ function printOrder( $data ){
     $pdf->Text('68','106',utf8_decode($orderData["c_zrd"]));
     $pdf->Text('148','45',$orderData["c_2"]." ".$orderData["c_3"]);
     $pdf->Text('148','51',$orderData["c_d"]);
-    $pdf->Text('148','58',$orderData["fin"]);
-    $pdf->Text('148','63',$orderData["mkb"]);
+    $pdf->Text('148','58',$orderData["c_fin"]);
+    $pdf->Text('148','63',$orderData["c_mkb"]);
     $pdf->Text('148','69',$orderData["c_hu"]);
-    $pdf->Text('148','74',$aufData[0]['lxc_a_km']);
+    $pdf->Text('148','74',$orderData["km_stnd"]);
     $pdf->Text('148','81',$orderData["c_em"]);
     $pdf->Text('148','88',$orderData["6"]);
     $pdf->Text('148','94',utf8_decode($orderData["c_flx"]));
@@ -299,7 +308,7 @@ function printOrder( $data ){
     $pdf->SetTextColor(255, 0, 0);
     $pdf->Text('20','115','Fertigstellung:');
     $pdf->SetFont('Helvetica','','16');
-    $pdf->Text('75','115',utf8_decode($data[0]['finish_time']));
+    $pdf->Text('75','115',utf8_decode($orderData['finish_time']));
     $pdf->SetTextColor(0, 0, 0);
     $pdf->SetFont('Helvetica','','10');
     $pos_todo[x] = 20;$pos_todo[y] = 110;
