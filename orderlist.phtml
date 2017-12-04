@@ -119,9 +119,14 @@ $(document).ready(function() {
 
 
                 //holt die order Infos und die Beschreibung der ersten Position aus der Datenbank
-                //$rs = $GLOBALS['dbh']->getAll( "SELECT distinct oe.id, oe.ordnumber, oe.transdate, oe.amount, orderitems.description from oe join orderitems on orderitems.trans_id = oe.id join instructions on instructions.trans_id = oe.id where customer_id = '".$owner."' AND (orderitems.position='1' OR instructions.position = '1') AND oe.c_id = '".$c_id."' ORDER BY oe.id DESC" );
 
-                $rs = $GLOBALS['dbh']->getAll( "SELECT distinct oe.id, oe.ordnumber, oe.transdate, oe.amount, orderitems.description from oe join orderitems on orderitems.trans_id = oe.id where customer_id = '".$owner."' AND (orderitems.position='1') AND oe.c_id = '".$c_id."' ORDER BY oe.id DESC" );
+                $rs = $GLOBALS['dbh']->getALL("SELECT distinct on (ordnumber) * FROM
+                                              (
+                                                SELECT distinct on (oe.ordnumber) 'true'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, instructions.description, oe.amount FROM oe, instructions, parts WHERE oe.customer_id = ".$owner." AND instructions.trans_id = oe.id AND oe.c_id = ".$c_id." AND parts.id = instructions.parts_id UNION
+                                                SELECT distinct on (oe.ordnumber)'false'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, orderitems.description, oe.amount FROM oe, orderitems, parts WHERE oe.customer_id = ".$owner." AND oe.c_id = ".$c_id." AND orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id ORDER BY instruction DESC
+                                              ) AS testTable ORDER BY ordnumber DESC;");
+
+
                 //writeLog($rs);
 
                 foreach ($rs as $value){
