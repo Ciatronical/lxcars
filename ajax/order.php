@@ -222,14 +222,7 @@ function printOrder( $data ){
 
     $orderData = $GLOBALS['dbh']->getOne( $sql );
     
-    //SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, oe.employee_id, customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd, employee.name AS employee_name, lxc_flex.flxgr FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id join employee on oe.employee_id = employee.id  left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id 
-    //$sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( $orderData['c_3'], 0, 3 )."'";
-    //$sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( 'AAS', 0, 3 )."'";
-    
-    //$orderData['flxgr'] = $GLOBALS['dbh']->getOne( $sql )['flxgr'];
-    
 
-    
     
     //Add Cardata from lxc2db
     $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
@@ -279,11 +272,8 @@ function printOrder( $data ){
 
     //Daten aus DB
     $pdf->SetFont('Helvetica','','14');
-    // Besitzerstring einkürzen, wenn der dieser zu lang wird
-    if(strlen($orderData["ownerstring"])>34){
-        $orderData["ownerstring"] = substr($orderData["ownerstring"],0,34).".";
-    }
-    $pdf->Text('43','45',utf8_decode($orderData["name"]));
+
+    $pdf->Text('43','45',utf8_decode( substr( $orderData["name"], 0, 34 ) ) );
     $pdf->Text('43','52',utf8_decode($orderData["street"]));
     $pdf->Text('43','59',utf8_decode($orderData["city"]));
     $pdf->Text('43','66',$orderData["phone"]);
@@ -293,10 +283,10 @@ function printOrder( $data ){
     $pdf->Text('43','100',$orderData["c_zrk"]);
     $pdf->Text('68','106',utf8_decode($orderData["c_zrd"]));
     $pdf->Text('148','45',$orderData["c_2"]." ".$orderData["c_3"]);
-    $pdf->Text('148','51',$orderData["c_d"]);
+    $pdf->Text( '148', '51', db2date( $orderData["c_d"] ) );
     $pdf->Text('148','58',$orderData["c_fin"]);
     $pdf->Text('148','63',$orderData["c_mkb"]);
-    $pdf->Text('148','69',$orderData["c_hu"]);
+    $pdf->Text('148','69',db2date( $orderData["c_hu"] ) );
     $pdf->Text('148','74',$orderData["km_stnd"]);
     $pdf->Text('148','81',$orderData["c_em"]);
     $pdf->Text('148','88',$orderData["6"]);
