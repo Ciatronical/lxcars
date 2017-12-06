@@ -213,29 +213,28 @@ function printOrder( $data ){
     require_once( __DIR__.'/../inc/lxcLib.php' );
     include_once( __DIR__.'/../inc/config.php' );
 
-    $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, ";
+    $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, oe.employee_id, ";
     $sql .= "customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, ";
     $sql .= "lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, ";
-    $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd ";
-    $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id WHERE oe.id = ".$data;
+    $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd, lxc_cars.c_d, lxc_cars.c_hu, employee.name AS employee_name, lxc_flex.flxgr ";
+    $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id join employee on oe.employee_id = employee.id "; 
+    $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data;
 
-
-    //writeLog( $sql );
     $orderData = $GLOBALS['dbh']->getOne( $sql );
-
-
+    
+    //SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, oe.employee_id, customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd, employee.name AS employee_name, lxc_flex.flxgr FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id join employee on oe.employee_id = employee.id  left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id 
     //$sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( $orderData['c_3'], 0, 3 )."'";
-    $sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( 'AAS', 0, 3 )."'";
+    //$sql = "SELECT * FROM lxc_flex WHERE hsn = '".$orderData['c_2']."' AND tsn = '".substr( 'AAS', 0, 3 )."'";
+    
+    //$orderData['flxgr'] = $GLOBALS['dbh']->getOne( $sql )['flxgr'];
+    
 
-    $orderData['flxgr'] = $GLOBALS['dbh']->getOne( $sql )['flxgr'];
-
-
-
-
+    
+    
     //Add Cardata from lxc2db
     $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
 
-    //writeLog( $orderData );
+    writeLog( $orderData );
 
     define( 'FPDF_FONTPATH', '../font/');
     define( 'x', 0 );
@@ -244,9 +243,9 @@ function printOrder( $data ){
     $pdf=new FPDF('P','mm','A4');
     $pdf->AddPage();
 
-    $pdf->SetFont('Helvetica','B','18'); //('font_family','font_weight','font_size')
-    $pdf->Text('20','26','Autoprofis Reparaturauftrag'); //('pos_left','pos_top','text')
-    $pdf->Text('135','26',$data['0']['plate']); //utf8_decode(
+    $pdf->SetFont( 'Helvetica', 'B', '18' ); //('font_family','font_weight','font_size')
+    $pdf->Text( '20','26','Autoprofis Reparaturauftrag' ); //('pos_left','pos_top','text')
+    $pdf->Text( '135', '26', $orderData['c_ln'] ); //utf8_decode(
     $pdf->SetFont('Helvetica','','14');
     $pdf->Text('20','35',$orderData["cm"]."  ".$orderData["ct"]);
 
