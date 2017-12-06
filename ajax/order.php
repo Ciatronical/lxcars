@@ -217,13 +217,13 @@ function printOrder( $data ){
     $sql .= "customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, ";
     $sql .= "lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, ";
     $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd, lxc_cars.c_d, lxc_cars.c_hu, employee.name AS employee_name, lxc_flex.flxgr ";
-    $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id join employee on oe.employee_id = employee.id "; 
+    $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id join employee on oe.employee_id = employee.id ";
     $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data;
 
     $orderData = $GLOBALS['dbh']->getOne( $sql );
-    
 
-    
+
+
     //Add Cardata from lxc2db
     $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
 
@@ -339,9 +339,9 @@ function printOrder( $data ){
     $pdf->SetFont('Helvetica','','08');
     $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
 
-    //writeLog(  $data['0']['printDoc']);
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
-    //$pdf->OutPut('F', '/tmp/out.pdf' );
+
+
 
    // system( __DIR__.'/../out.pdf' );
 

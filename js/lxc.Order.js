@@ -745,7 +745,8 @@ namespace('kivi.Part', function(ns) {
       async: false,
       success: function ( data ) {
         //console.log(data);
-        alert( 'Order printed' );
+        //alert( 'Order printed' );
+        window.open( 'out.pdf' );
       },
       error: function () {
         alert( 'Error printOrder()!' )
