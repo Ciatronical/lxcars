@@ -66,6 +66,8 @@ $(document).ready(function() {
     })
 
     $('#btnNewOrder').button().click(function () {
+      window.location = 'order.phtml?owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=1  ';
+        /*
         $.ajax({
             url: 'ajax/order.php?action=newOrder',
             data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id }},
@@ -75,6 +77,8 @@ $(document).ready(function() {
             },
             error:  function(){ alert("Holen der Auftrags-Nr fehlgeschlagen!"); }
         })
+
+        */
     });
 
     $('#btnBack').button().click(function () {
@@ -123,7 +127,7 @@ $(document).ready(function() {
                 $rs = $GLOBALS['dbh']->getALL("SELECT distinct on (ordnumber) * FROM
                                               (
                                                 SELECT distinct on (oe.ordnumber) 'true'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, instructions.description, oe.amount FROM oe, instructions, parts WHERE oe.customer_id = ".$owner." AND instructions.trans_id = oe.id AND oe.c_id = ".$c_id." AND parts.id = instructions.parts_id UNION
-                                                SELECT distinct on (oe.ordnumber)'false'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, orderitems.description, oe.amount FROM oe, orderitems, parts WHERE oe.customer_id = ".$owner." AND oe.c_id = ".$c_id." AND orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id ORDER BY instruction DESC
+                                                SELECT distinct on (oe.ordnumber)'false'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, orderitems.description, oe.amount FROM oe, orderitems, parts WHERE oe.customer_id = ".$owner." AND oe.c_id = ".$c_id." AND orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 ORDER BY instruction DESC
                                               ) AS testTable ORDER BY ordnumber DESC;");
 
 
