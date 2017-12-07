@@ -151,7 +151,7 @@ function getOrderList( $data ) {
 }
 
 function printOrder( $data ){
-/*
+
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
     include_once( __DIR__.'/../inc/config.php' );
@@ -250,9 +250,11 @@ function printOrder( $data ){
     $merke = 0;
 
     $positions = getPositions( $data['orderId'], false );
+    //writeLog( $positions );
     foreach( $positions as $index => $element ){
+        writeLog( $element['description'].' '.$index );
         $b = 10;
-        $count = strlen( $element['description'] ) - strlen( str_replace( "\n", "", $data[$index-1]['description']));
+        $count = strlen( $positions[$index-1]['description'] ) - strlen( str_replace( "\n", "", $postions[$index-1]['description']));
         // Wenn die vorhergehende Position mehr als 3 Absätze hat, muss die nächste Position weiter nach unten verrückt werden
         if( $count >= 3 ) {
             $y = $pos_todo[y]+$b*($index+$merke+1);
@@ -269,7 +271,7 @@ function printOrder( $data ){
              $pdf->SetTextColor( 255, 0, 0 );
              $pdf->SetFont( 'Arial', 'BI', 11 );
         }
-        $pdf->Multicell( 0, 5, utf8_decode( $element['qty'].'  '.$eölement['unit'].'  '.$element['pos_description'] ) );
+        $pdf->Multicell( 0, 5, utf8_decode( $element['qty'].'  '.$element['unit'].'  '.$element['description'] ) );
         $pdf->Multicell( 0, 5, "\r\n" );
         $pdf->SetTextColor( 0, 0, 0 );
         $pdf->SetFont( '' );
@@ -289,7 +291,9 @@ function printOrder( $data ){
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
     if( $data['print'] ) system( __DIR__.'/../out.pdf' );
-*/
+
+    //writeLog( $data['print'] );
+
     echo 1;
 }
 

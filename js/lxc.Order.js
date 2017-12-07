@@ -764,7 +764,7 @@ namespace('kivi.Part', function(ns) {
       url: 'ajax/order.php?action=printOrder&data=',
       type: 'GET',
       async: false,
-      data: { data: { 'orderId': orderID, 'pdf': id == 'printOrder' ? 1 : 0 } },
+      data: { data: { 'orderId': orderID, 'print': id == 'printOrder' ? 1 : 0 } },
       success: function ( data ) {
         console.log($(this));
         //alert( 'Order printed' );
