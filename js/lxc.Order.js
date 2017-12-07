@@ -112,6 +112,24 @@ namespace('kivi.Part', function(ns) {
             rsp=rsp[0];
             var newPosArray={};
 
+             if ($('#ordernumber').text()=='0000') {
+
+              $( '#employee' ).text( kivi.myconfig.name );
+              $( '#milage' ).val( '0' );
+
+              $.ajax({
+                  url: 'ajax/order.php?action=newOrder',
+                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id }},
+                  type: 'POST',
+                  async: false,
+                  success: function ( newOrderID ){
+                     $('#ordernumber').text(newOrderID);
+                     orderID=newOrderID;
+                  },
+                  error:  function(){ alert("Holen der Auftrags-Nr fehlgeschlagen!"); }
+              })
+
+            }
 
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).text( rsp.partnumber );
 
@@ -199,6 +217,9 @@ namespace('kivi.Part', function(ns) {
             ns.countPos();//nummeriert die positionen
             ns.init();
             ns.recalc();
+
+
+
             ns.updateOrder();
 
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde

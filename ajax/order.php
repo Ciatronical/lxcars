@@ -42,7 +42,7 @@ function insertRow( $data ){
 }
 
 function updatePositions( $data) {
-    //writeLog($data);
+    writeLog($data);
 
     //writeLog( 'pArt1: '.!$value['pos_instruction'] );
     //writeLog( 'Part2: '.$value['pos_instruction'] == 'true' );
@@ -137,7 +137,7 @@ function saveLastArticleNumber( $data ){
 }
 
 function updateOrder( $data) {
-    //writeLog($data[0]);
+    writeLog($data[0]);
     echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['id'] );
 }
 
@@ -161,10 +161,11 @@ function removeOrder( $orderID ){
 
 function newOrder( $data ){
     //increase last ordernumber, insert data, returning order-id
-    //writeLog( $data );
+    writeLog( $data );
     //UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber //increase last ordernumber and return them
     echo $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id )  SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
     //ToDo
+
 }
 
 
@@ -227,7 +228,7 @@ function printOrder( $data ){
     //Add Cardata from lxc2db
     $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
 
-    writeLog( $orderData );
+    //writeLog( $orderData );
 
     define( 'FPDF_FONTPATH', '../font/');
     define( 'x', 0 );
