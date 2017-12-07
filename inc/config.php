@@ -1,7 +1,7 @@
 <?php
 /********************** Konfigurationsdatei für LxCars **************************/
 $lpr = "lpr"; // allgemeiner Druckbefehl
-//$lpr = " lpr -P Druckername -o PageSize=A4;
+//$lpr = " lpr -P Druckername -o PageSize=A4";
 
 
 /**** Variblen ****/

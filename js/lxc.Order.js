@@ -733,20 +733,22 @@ namespace('kivi.Part', function(ns) {
   });
 
 
-  $( "#printOrder" ).button({
-    label: "Print"
+  $( "#printOrder, #pdfOrder" ).button({
+    label: $(this)[0].id == 'printOrder' ? 'Print' : 'PDF'
   }).css({
     'margin':'5px'
   }).click( function(){
     //alert( 'tefdsfdsst' );
+    console.log( $(this)[0].id );
     $.ajax({
-      url: 'ajax/order.php?action=printOrder&data=' + orderID,
+      url: 'ajax/order.php?action=printOrder&data=',
       type: 'GET',
       async: false,
+      data: { data: { 'orderId': orderID, 'pdf': $(this)[0].id == 'printOrder' ? 1 : 0 } },
       success: function ( data ) {
         //console.log(data);
         //alert( 'Order printed' );
-        window.open( 'out.pdf' );
+        if( $(this)[1].id == 'pdfOrder' ) window.open( 'out.pdf' );
       },
       error: function () {
         alert( 'Error printOrder()!' )

@@ -208,7 +208,7 @@ function getOrderList( $data ) {
 }
 
 function printOrder( $data ){
-
+  //printArray( $data );
     require("fpdf.php");
     require_once( __DIR__.'/../inc/lxcLib.php' );
     include_once( __DIR__.'/../inc/config.php' );
@@ -218,7 +218,7 @@ function printOrder( $data ){
     $sql .= "lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, ";
     $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd, lxc_cars.c_d, lxc_cars.c_hu, employee.name AS employee_name, lxc_flex.flxgr ";
     $sql .= "FROM oe join customer on oe.customer_id = customer.id join lxc_cars on oe.c_id = lxc_cars.c_id join employee on oe.employee_id = employee.id ";
-    $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data;
+    $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data['orderId'];
 
     $orderData = $GLOBALS['dbh']->getOne( $sql );
 
@@ -343,7 +343,7 @@ function printOrder( $data ){
 
 
 
-   // system( __DIR__.'/../out.pdf' );
+    if( $data['print'] ) system( __DIR__.'/../out.pdf' );
 
     echo 1;
 }
