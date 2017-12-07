@@ -734,21 +734,21 @@ namespace('kivi.Part', function(ns) {
 
 
   $( "#printOrder, #pdfOrder" ).button({
-    label: $(this)[0].id == 'printOrder' ? 'Print' : 'PDF'
+    //label: this.id == 'printOrder' ? 'Print' : 'PDF'
   }).css({
     'margin':'5px'
   }).click( function(){
-    //alert( 'tefdsfdsst' );
-    console.log( $(this)[0].id );
+    var id = $(this)[0].id;
     $.ajax({
       url: 'ajax/order.php?action=printOrder&data=',
       type: 'GET',
       async: false,
-      data: { data: { 'orderId': orderID, 'pdf': $(this)[0].id == 'printOrder' ? 1 : 0 } },
+      data: { data: { 'orderId': orderID, 'pdf': id == 'printOrder' ? 1 : 0 } },
       success: function ( data ) {
-        //console.log(data);
+        console.log($(this));
         //alert( 'Order printed' );
-        if( $(this)[1].id == 'pdfOrder' ) window.open( 'out.pdf' );
+        //alert( xxxx );
+        if( id == 'pdfOrder' ) window.open( 'out.pdf' );
       },
       error: function () {
         alert( 'Error printOrder()!' )
