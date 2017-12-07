@@ -42,7 +42,7 @@ function insertRow( $data ){
 }
 
 function updatePositions( $data) {
-    writeLog($data);
+    //writeLog($data);
 
     //writeLog( 'pArt1: '.!$value['pos_instruction'] );
     //writeLog( 'Part2: '.$value['pos_instruction'] == 'true' );
@@ -63,7 +63,7 @@ function delPosition( $data ){
     //writeLog( __FUNCTION__ );
     //writeLog( $data);
    // writeLog(  "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
-    writeLog( $data['instruction'] );
+   // writeLog( $data['instruction'] );
     echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
 }
 
@@ -96,9 +96,9 @@ function newPart( $data ){
 }
 
 function getPartJSON( $parts_id ){
-    writeLog( "partID: ".$parts_id );
+    //writeLog( "partID: ".$parts_id );
     //writeLog( "SQL: SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false");
-    writeLog( 'Antwort: '.$GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE ));
+    //writeLog( 'Antwort: '.$GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE ));
 
     //echo $GLOBALS['dbh']->getALL( "SELECT partnumber, part_type, instruction FROM parts WHERE id = '".$parts_id."' AND obsolete = false", TRUE );
     echo $GLOBALS['dbh']->getALL( "SELECT * FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE );
@@ -161,7 +161,7 @@ function removeOrder( $orderID ){
 
 function newOrder( $data ){
     //increase last ordernumber, insert data, returning order-id
-    writeLog( $data );
+    //writeLog( $data );
     //UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber //increase last ordernumber and return them
     echo $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id )  SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
     //ToDo
