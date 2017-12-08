@@ -164,7 +164,7 @@ function printOrder( $data ){
     $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data['orderId'];
 
     $orderData = $GLOBALS['dbh']->getOne( $sql );
-    writeLog($orderData['printed']);
+    //writeLog($orderData['printed']);
 
 
     //Add Cardata from lxc2db
@@ -180,30 +180,30 @@ function printOrder( $data ){
     $pdf->AddPage();
 
     if( $orderData['printed'] ){
-      $pdf->SetFont( 'Helvetica', 'B', '14' );
+      $pdf->SetFont( 'Helvetica', 'B', '12' );
       $pdf->SetTextColor(255, 0, 0);
-      $pdf->Text( '20','6','Kopie' );
+      $pdf->Text( '10','5','Kopie' );
       $pdf->SetTextColor(0, 0, 0);
     }
 
     $pdf->SetFont( 'Helvetica', 'B', '18' ); //('font_family','font_weight','font_size')
-    $pdf->Text( '20','12','Autoprofis Reparaturauftrag' ); //('pos_left','pos_top','text')
+    $pdf->Text( '10','12','Autoprofis Reparaturauftrag' ); //('pos_left','pos_top','text')
     $pdf->Text( '135', '12', $orderData['c_ln'] ); //utf8_decode(
     $pdf->SetFont('Helvetica','','14');
-    $pdf->Text('20','35',$orderData["cm"]."  ".$orderData["ct"]);
+    $pdf->Text('10','35',$orderData["cm"]."  ".$orderData["ct"]);
 
     //Feste Werte
-    $pdf->SetFont('Helvetica','','12');
-    $pdf->Text('22','45','Kunde:');
-    $pdf->Text('22','52',utf8_decode('Straße').':');
-    $pdf->Text('22','59','Ort:');
-    $pdf->Text('22','66','Tele.:');
-    $pdf->Text('22','73','Mobil:');
-    $pdf->Text('22','80','Bearb.:');
-    $pdf->Text('22','87','Farbe:');
-    $pdf->Text('22','94','Hubr.:');
-    $pdf->Text('22','100','Zr. Km:');
-    $pdf->Text('22','106',utf8_decode('nächst. ZR-Wechsel').':');
+    $pdf->SetFont('Helvetica','B','12');
+    $pdf->Text('12','45','Kunde:');
+    $pdf->Text('12','52',utf8_decode('Straße').':');
+    $pdf->Text('12','59','Ort:');
+    $pdf->Text('12','66','Tele.:');
+    $pdf->Text('12','73','Mobil:');
+    $pdf->Text('12','80','Bearb.:');
+    $pdf->Text('12','87','Farbe:');
+    $pdf->Text('12','94','Hubr.:');
+    $pdf->Text('12','100','Zr. Km:');
+    $pdf->Text('12','106',utf8_decode('nächst. ZR-Wechsel').':');
     $pdf->Text('124','45','KBA:');
     $pdf->Text('124','51','Baujahr:');
     $pdf->Text('124','58','FIN:');
@@ -216,12 +216,12 @@ function printOrder( $data ){
     $pdf->Text('124','100',utf8_decode('nächst. Bremsfl.').':');
     $pdf->Text('124','106',utf8_decode('nächst. WD').':');
 
-    $pdf->SetLineWidth(0.3);
-    $pdf->Rect('20', '38', '100', '70');
+    $pdf->SetLineWidth(0.2);
+    $pdf->Rect('10', '38', '100', '70');
     $pdf->Rect('122', '38', '84', '70');
 
     //Daten aus DB
-    $pdf->SetFont('Helvetica','','14');
+    $pdf->SetFont('Helvetica','','12');
 
     $pdf->Text('43','45',utf8_decode( substr( $orderData["name"], 0, 34 ) ) );
     $pdf->Text('43','52',utf8_decode($orderData["street"]));
@@ -245,7 +245,7 @@ function printOrder( $data ){
     $pdf->Text('151','106',utf8_decode($orderData["c_wd"]));
     $pdf->SetFont('Helvetica','B','16');
     $pdf->SetTextColor(255, 0, 0);
-    $pdf->Text('20','115','Fertigstellung:');
+    $pdf->Text('10','115','Fertigstellung:');
     $pdf->SetFont('Helvetica','','16');
     $pdf->Text('75','115',utf8_decode($orderData['finish_time']));
     $pdf->SetTextColor(0, 0, 0);
@@ -257,33 +257,36 @@ function printOrder( $data ){
     $merke = 0;
 
     $positions = getPositions( $data['orderId'], false );
+
     //writeLog( $positions );
-    foreach( $positions as $index => $element ){
-        writeLog( $element['description'].' '.$index );
-        $b = 10;
-        $count = strlen( $positions[$index-1]['description'] ) - strlen( str_replace( "\n", "", $postions[$index-1]['description']));
-        // Wenn die vorhergehende Position mehr als 3 Absätze hat, muss die nächste Position weiter nach unten verrückt werden
-        if( $count >= 3 ) {
-            $y = $pos_todo[y]+$b*($index+$merke+1);
-            $merke++;
+
+    //Instructions und Positionen
+    $pdf->SetFont('Helvetica','','12');
+    $height = '125';
+    foreach( array_reverse($positions) as $index => $element ){
+      //writeLog($element['description']);
+      $height = $height + 10;
+      $pdf->SetLineWidth(0.2);
+      $pdf->Rect('10', $height - 6, '160', '20');
+      if( $element['instruction'] ){
+        $pdf->SetFont('Helvetica','B','16');
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
+      }else {
+        $pdf->SetFont('Helvetica','','12');
+        $pdf->SetTextColor(0, 0, 0);
+        if(strlen($element['description'])>60){ // Bei zu langem Text muss string gesplittet werden
+          $pdf->SetFont('Helvetica','','8');
+          $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
+        }else{
+          $pdf->SetFont('Helvetica','','12');
+          $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
         }
-        else {
-            $y = $pos_todo[y]+$b*($index+$merke);
-        }
-        if($index >= 1) {
-        $pdf->SetXY($pos_todo[x], $y);
-        $pdf->Rect($pos_todo[x], $y-2, '185', '10');
-        //writeLog( $data[$index]['pos_instruction'] );
-        if( $element['instruction'] == 'true'  ){
-             $pdf->SetTextColor( 255, 0, 0 );
-             $pdf->SetFont( 'Arial', 'BI', 11 );
-        }
-        $pdf->Multicell( 0, 5, utf8_decode( $element['qty'].'  '.$element['unit'].'  '.$element['description'] ) );
-        $pdf->Multicell( 0, 5, "\r\n" );
-        $pdf->SetTextColor( 0, 0, 0 );
-        $pdf->SetFont( '' );
-        }
+      }
+
     }
+
+
 
     $pdf->SetFont('Helvetica','','14');
     $pdf->Text('22','270','Datum:');
