@@ -156,7 +156,7 @@ function printOrder( $data ){
     require_once( __DIR__.'/../inc/lxcLib.php' );
     include_once( __DIR__.'/../inc/config.php' );
 
-    $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, oe.employee_id, ";
+    $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, oe.employee_id, printed,";
     $sql .= "customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, ";
     $sql .= "lxc_cars.c_ln, lxc_cars.c_2, lxc_cars.c_3, lxc_cars.c_mkb, lxc_cars.c_t, lxc_cars.c_fin, lxc_cars.c_st_l, lxc_cars.c_wt_l, ";
     $sql .= "lxc_cars.c_text, lxc_cars.c_color, lxc_cars.c_zrk, lxc_cars.c_zrd, lxc_cars.c_em, lxc_cars.c_bf, lxc_cars.c_wd, lxc_cars.c_d, lxc_cars.c_hu, employee.name AS employee_name, lxc_flex.flxgr ";
@@ -164,7 +164,7 @@ function printOrder( $data ){
     $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data['orderId'];
 
     $orderData = $GLOBALS['dbh']->getOne( $sql );
-
+    writeLog($orderData['printed']);
 
 
     //Add Cardata from lxc2db
@@ -179,9 +179,16 @@ function printOrder( $data ){
     $pdf=new FPDF('P','mm','A4');
     $pdf->AddPage();
 
+    if( $orderData['printed'] ){
+      $pdf->SetFont( 'Helvetica', 'B', '14' );
+      $pdf->SetTextColor(255, 0, 0);
+      $pdf->Text( '20','6','Kopie' );
+      $pdf->SetTextColor(0, 0, 0);
+    }
+
     $pdf->SetFont( 'Helvetica', 'B', '18' ); //('font_family','font_weight','font_size')
-    $pdf->Text( '20','26','Autoprofis Reparaturauftrag' ); //('pos_left','pos_top','text')
-    $pdf->Text( '135', '26', $orderData['c_ln'] ); //utf8_decode(
+    $pdf->Text( '20','12','Autoprofis Reparaturauftrag' ); //('pos_left','pos_top','text')
+    $pdf->Text( '135', '12', $orderData['c_ln'] ); //utf8_decode(
     $pdf->SetFont('Helvetica','','14');
     $pdf->Text('20','35',$orderData["cm"]."  ".$orderData["ct"]);
 
@@ -289,6 +296,9 @@ function printOrder( $data ){
     $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
 
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
+
+    if( !$orderData['printed'] )
+     $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
 
     if( $data['print'] ) system( __DIR__.'/../out.pdf' );
 
