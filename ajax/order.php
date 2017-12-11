@@ -187,7 +187,7 @@ function printOrder( $data ){
     if( $orderData['printed'] ){
       $pdf->SetFont( 'Helvetica', 'B', '10' );
       $pdf->SetTextColor(255, 0, 0);
-      $pdf->Text( '10','5','Kopie' );
+      $pdf->Text( '10','7','Kopie' );
       $pdf->SetTextColor(0, 0, 0);
     }
 
@@ -338,7 +338,7 @@ function printOrder( $data ){
     if( !$orderData['printed'] )
      $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
 
-    if( $data['print'] ) system( __DIR__.'/../out.pdf' );
+    if( $data['print'] ) system('lpr '.__DIR__.'/../out.pdf' );
 
     //writeLog( $data['print'] );
 

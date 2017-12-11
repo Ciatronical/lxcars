@@ -771,7 +771,9 @@ namespace('kivi.Part', function(ns) {
         console.log($(this));
         //alert( 'Order printed' );
         //alert( xxxx );
+
         if( id == 'pdfOrder' ) window.open( 'out.pdf' );
+
       },
       error: function () {
         alert( 'Error printOrder()!' )
@@ -780,6 +782,11 @@ namespace('kivi.Part', function(ns) {
     });
     return false;
   });
+
+
+
+
+
 
 
   ns.recalc=function() {
