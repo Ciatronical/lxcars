@@ -137,6 +137,13 @@ namespace('kivi.Part', function(ns) {
             $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
             var number=parseFloat($(':focus').parents().eq( 2 ).find( '[name=qty_as_number]') .val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text(kivi.t8(rsp.part_type));
+
+            if(rsp.instruction){
+
+              $( '.row_entry:last [name=partclassification]' ).text( kivi.t8("I") );
+
+            }
+
             $( ':focus' ).parents().eq(3).find( '[name=unit]').val( rsp.unit );
             $( ':focus' ).parents().eq(3).find( '[name=linetotal]').text(ns.formatNumber( parseFloat( rsp.sellprice*number ).toFixed( 2 )) );
             $( ':focus' ).parents().eq(3).find( '[name=item_partpicker_name]' ).val( rsp.description );
@@ -195,7 +202,7 @@ namespace('kivi.Part', function(ns) {
             });
 
 
-            if( rsp.description.includes( 'Hauptuntersuchung' ) ){
+            if( rsp.description.includes( 'Hauptuntersuchung' ) || rsp.description.includes( 'HU/AU' ) ){
               $.ajax({
                 url: 'ajax/order.php?action=setHuAuDate&data=' + c_id,
                 type: 'GET'
@@ -318,15 +325,23 @@ namespace('kivi.Part', function(ns) {
                     resizable: false,
                     create: function( event, ui ){
                       console.log("test");
-                       $("dialogSelectUnits").val("Stck").change();
-                        $( '#instructionCheckbox' ).checkboxradio();
-                        if( $('#dialogDescription').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
+                        $('#dialogDescription').val(description_name);
+                        $( '#dialogPart_typ' ).change();
+
+                        if( $('#dialogDescription').val().length >17 ) {
+
+                          $( '#dialogPart_typ' ).val('instruction').change();
+                          $("dialogSelectUnits").val('Std').change();
+                        }else {
+                          $( '#dialogPart_typ' ).val('dimension').change();
+                          $("dialogSelectUnits").val('Stck').change();
+                        }
 
                 }
 
             });
 
-            $('#dialogDescription').val(description_name);
+
 
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_none) self.run_action(callbacks.match_none, [ self, self.$dummy.val() ]);
@@ -439,7 +454,7 @@ namespace('kivi.Part', function(ns) {
 
         }
          return $( "<li>" )
-          .attr( "data-value", item.value )
+          .attr("data-value", item.value)
           .append( item.label )
           .appendTo( ul );
       };
@@ -813,6 +828,7 @@ namespace('kivi.Part', function(ns) {
   }
 
  $("label[for='instructionCheckbox']").text(kivi.t8('Instruction'));
+ $("btnNewOrder").val(kivi.t8('new Order'));
 
   $('#row_table_id').on('sortstop', function(event, ui) {
     //$('#row_table_id thead a img').remove();
@@ -883,7 +899,11 @@ namespace('kivi.Part', function(ns) {
             $.each( data.reverse(), function( index, item ){
 
               $( '.row_entry [name=partnumber]' ).last().text( item.partnumber );
+
               $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( item.part_type ) );
+              if (item.instruction)
+                $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( 'I') );
+
               $( '.row_entry').last().attr( 'id', item.id );
               $( '.row_entry [name=partnumber]').last().attr( 'part_id', item.parts_id );
               $( '.row_entry [name=position]').last().text( item.position );
@@ -949,11 +969,24 @@ namespace('kivi.Part', function(ns) {
       dataArray['sellprice'] = $( '#dialogSellPrice' ).val();
       dataArray['buchungsgruppen_id'] = accountingGroupsID;
       dataArray['quantity'] = $( "#quantity" ).val();
-      dataArray['instruction'] = $( '#instructionCheckbox' ).is( ":checked" );
+
+      var part_type = $( '#dialogPart_typ' ).val();
+      console.log(part_type);
+      if(part_type == "instruction"){
+      console.log("instruction")
+
+
+     dataArray['instruction'] = true;
+     }else
+     dataArray['instruction'] = false;
+
       dataArray['order_id'] = orderID;
       dataArray['part_type'] = unitsType[$( '#dialogSelectUnits' ).val()];
       if( dataArray['part_type'] == 'dimension' )
-      dataArray['part_type'] = 'part';
+        dataArray['part_type'] = 'part';
+      if (dataArray['part_type'] == 'instruction')
+        dataArray['part_type'] = 'service';
+
       dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
       //console.log( dataArray );
 
@@ -966,7 +999,12 @@ namespace('kivi.Part', function(ns) {
             alert( 'new Part saved' );
 
             $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
-            $( '.row_entry:last [name=partclassification]' ).text( dataArray.part_type );
+            $( '.row_entry:last [name=partclassification]' ).text( kivi.t8(dataArray.part_type) );
+            if(dataArray.instruction){
+
+              $( '.row_entry:last [name=partclassification]' ).text( kivi.t8("I") );
+
+            }
             $( '.row_entry:last').attr('id', data.id);
             $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', dataArray.parts_id );
             $( '.row_entry:last [name=position]').text( dataArray.position );
@@ -1007,6 +1045,14 @@ namespace('kivi.Part', function(ns) {
             ns.init();
 
             $( '#newPart_dialog' ).dialog( 'close' );
+
+
+            $( '.instruction , .instruction div , .instruction :input ' ).css({
+              'color' : 'red',
+              'background-color' : 'lightblue',
+
+            });
+            ns.updateOrder();
 
          },
          error: function () {
@@ -1085,8 +1131,8 @@ namespace('kivi.Part', function(ns) {
         if( part_type=='dimension' )
             unit='Stck';
         else
-            unit='Std'
-
+            unit='Std';
+    $('#dialogSelectUnits').val(unit).change();
     $.ajax({
         url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
         type: 'GET',
@@ -1112,12 +1158,12 @@ namespace('kivi.Part', function(ns) {
         success: function (data) {
           $( '#dialogNewArticleNumber' ).val( data.newnumber );
           var partnumber= data.newnumber;
-
+          /*
           if(partnumber<2000)
             $( '#dialogPart_typ' ).val('dimension').change();
           else if(partnumber>2000)
             $( '#dialogPart_typ' ).val('service').change();
-
+          */
         },
         error: function(){
            alert( 'Error: getArticleNumber' )

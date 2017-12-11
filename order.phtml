@@ -42,7 +42,7 @@
           <label id="head09">bearbeitet von:</label>
           <label id="labellicenseplate">Amtl.-Kennz.:</label>
           <input id="licenseplate" type="text" class="orderupdate"></br>
-          <label id="employee">employee</label>
+          <label id="employee"></label>
           <label id="head11">bearbeitet am:</label>
           <label id="head12"></label></br>
           <label id="head13">KfZ:</label>
@@ -173,12 +173,11 @@
         <tr>
           <td>Beschreibung:</td>
           <td><input type="text" id="dialogDescription" >
-            <label for="instructionCheckbox">Instruction</label>
-            <input type="checkbox" name="instructionCheckbox" id="instructionCheckbox">
+
           </td>
         </tr>
         <tr>
-         <td>Artikeltyp:</td><td><select type="text" id="dialogPart_typ"><option value="dimension">Ware</option><option value="service">Dienstleistung</option></select></td>
+         <td>Artikeltyp:</td><td><select type="text" id="dialogPart_typ"><option value="instruction">Anweisung</option><option value="dimension">Ware</option><option value="service">Dienstleistung</option> </select></td>
         </tr>
         <tr>
          <td>Quantity:</td><td><input type="text" id="quantity" value="1"></td>
@@ -186,7 +185,7 @@
         <tr>
           <td>Einheit:</td>
           <td>
-            <select id="dialogSelectUnits" value="Stck" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
+            <select id="dialogSelectUnits" name="unit" type="text" class="ui-widget-content ui-corner-all"autocomplete="off" style="width: 100%">
             </select>
           </td>
         </tr>

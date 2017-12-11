@@ -13,6 +13,7 @@ namespace("kivi").setupLocale({
 "Back to Orderlist":"zur Auftragsliste",
 "Back to Car":"zum Fahrzeug",
 "Print": "Drucken",
-"New Order":"Neuer Auftrag",
-"back":"Zurück"
+"new Order":"Neuer Auftrag",
+"back":"Zurück",
+"I":"A"
 })
