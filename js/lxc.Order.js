@@ -317,6 +317,8 @@ namespace('kivi.Part', function(ns) {
                     width: 'auto',
                     resizable: false,
                     create: function( event, ui ){
+                      console.log("test");
+                       $("dialogSelectUnits").val("Stck").change();
                         $( '#instructionCheckbox' ).checkboxradio();
                         if( $('#dialogDescription').val().length >=18 ) $( '#instructionCheckbox' ).prop( "checked", true ).checkboxradio( 'refresh' );
 
@@ -736,7 +738,7 @@ namespace('kivi.Part', function(ns) {
   });
 
   $( "#backToOrderList" ).button({
-    label: "Back to Orderlist"
+    label: kivi.t8("Back to Orderlist")
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -745,7 +747,7 @@ namespace('kivi.Part', function(ns) {
   });
 
   $( "#backToCar" ).button({
-    label: "Back to Car"
+    label: kivi.t8("Back to Car")
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -800,31 +802,10 @@ namespace('kivi.Part', function(ns) {
       $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
       $( '#orderTotalNetto' ).val(  ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     });
-    /*
-    var price = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ) );
-    var number = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val().replace( ',','.' ) );
-    var discount = parseFloat( $( ':focus' ).parents().eq( 2 ).find( '[name=discount_as_percent]' ).val().replace( ',','.' ) );
-    discount = discount / 100;
-    $( ':focus' ).parents().eq( 2 ).find( '[name=linetotal]' ).text(ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ));
-    */
-    //var totalprice = 0;
-    //var totalnetto = 0;
-    /*
-    $( '[name=linetotal]' ).each( function(){
-      //console.log(parseFloat(this.textContent).toFixed(2));
-      var linetotal = parseFloat( this.textContent );
-
-      //console.log( linetotal );
-      totalprice = totalprice + linetotal;
-      var netto = linetotal - linetotal * 0.19;
-      totalnetto = totalnetto + netto;
-
-    });
-    //console.log( totalprice );
-    */
-
 
   }
+
+ $("label[for='instructionCheckbox']").text(kivi.t8('Instruction'));
 
   $('#row_table_id').on('sortstop', function(event, ui) {
     //$('#row_table_id thead a img').remove();
@@ -1086,6 +1067,9 @@ namespace('kivi.Part', function(ns) {
       },800);
 
   }
+
+
+
 
   //Ändert die Artikelnummer bei Artikeltypauswahl
   $( '#dialogPart_typ' ).change( function(){

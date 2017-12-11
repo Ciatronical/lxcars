@@ -7,5 +7,12 @@ namespace("kivi").setupLocale({
 " hour":" Stunde",
 " minute":" Minute",
 " Now":" Jetzt",
-" finished":" Fertig"
+" finished":" Fertig",
+"Instruction":"Anweisung",
+"Order":"Auftrag",
+"Back to Orderlist":"zur Auftragsliste",
+"Back to Car":"zum Fahrzeug",
+"Print": "Drucken",
+"New Order":"Neuer Auftrag",
+"back":"Zurück"
 })
