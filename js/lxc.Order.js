@@ -1,4 +1,4 @@
-namespace('kivi.Part', function(ns) {
+ namespace('kivi.Part', function(ns) {
   'use strict';
 
    $.urlParam = function( name ){
@@ -284,37 +284,50 @@ namespace('kivi.Part', function(ns) {
 
           if (data.length == 1) {
             self.set_item(data[0]);
-            if (callbacks && callbacks.match_one) self.run_action(callbacks.match_one, [ data[0] ]);
+            if ( callbacks && callbacks.match_one) self.run_action(callbacks.match_one, [ data[0] ] );
 
           } else if (data.length > 1) {
             self.state = self.STATES.UNDEFINED;
-            if (callbacks && callbacks.match_many) self.run_action(callbacks.match_many, [ data ]);
+            if ( callbacks && callbacks.match_many ) self.run_action( callbacks.match_many, [ data ] );
           } else {
 
-              var description_name=$(":focus").parents().eq(3).find("[name=item_partpicker_name]").val();
+              var description_name = $( ":focus" ).parents().eq(3).find( "[name=item_partpicker_name]" ).val();
 
               var descriptionArray=description_name.split(" ");
 
-              //console.log(descriptionArray);
-              $.each(descriptionArray, function (index) {
+              console.log(descriptionArray);
+              $.each(descriptionArray, function(index) {
                 //console.log(descriptionArray[index]);
                 $.ajax({
                   url: 'ajax/order.php?action=getQtyNewPart&data='+descriptionArray[index],
                   type: 'GET',
-                  success: function (data) {
+                  success: function( data ) {
                     //console.log(data);
-                    if (data>1) {
-                    $('#quantity').val(data);
+                     $( '#dialogDescription' ).val( description_name );
+                      $( '#dialogPart_typ' ).change();
+
+                        if( $('#dialogDescription').val().length >17 ) {
+
+                          $( '#dialogPart_typ' ).val( 'instruction' ).change();
+                          $( "dialogSelectUnits" ).val( 'Std' ).change();
+                        }else {
+                          $( '#dialogPart_typ' ).val( 'dimension' ).change();
+                          $( "dialogSelectUnits" ).val( 'Stck' ).change();
+                        }
+
+
+                    if ( data>1 ) {
+                    $( '#quantity' ).val( data );
                     return false;
                     }
                   },
-                  error: function () {
-                    alert('error: getQtyNewPart');
+                  error: function() {
+                    alert( 'error: getQtyNewPart' );
                   }
                 });
               });
-              $('#quantity').val();
-              $('#newPart_dialog').dialog({
+              $( '#quantity' ).val();
+              $( '#newPart_dialog' ).dialog({
                     modal: true,
                     title: 'Artikel anlegen',
                     zIndex: 10000,
@@ -323,17 +336,8 @@ namespace('kivi.Part', function(ns) {
                     resizable: false,
                     create: function( event, ui ){
                       console.log("test");
-                        $('#dialogDescription').val(description_name);
-                        $( '#dialogPart_typ' ).change();
+                        $( '#dialogDescription' ).val( description_name );
 
-                        if( $('#dialogDescription').val().length >17 ) {
-
-                          $( '#dialogPart_typ' ).val('instruction').change();
-                          $("dialogSelectUnits").val('Std').change();
-                        }else {
-                          $( '#dialogPart_typ' ).val('dimension').change();
-                          $("dialogSelectUnits").val('Stck').change();
-                        }
 
                 }
 
@@ -441,7 +445,7 @@ namespace('kivi.Part', function(ns) {
         }
 
 
-      }) .data("ui-autocomplete")._renderItem= function( ul, item ) {
+      }) .data( "ui-autocomplete" )._renderItem= function( ul, item ) {
 
         if(item.instruction){
 
@@ -452,7 +456,7 @@ namespace('kivi.Part', function(ns) {
 
         }
          return $( "<li>" )
-          .attr("data-value", item.value)
+          .attr( "data-value", item.value )
           .append( item.label )
           .appendTo( ul );
       };
@@ -668,7 +672,7 @@ namespace('kivi.Part', function(ns) {
         })
       },
       error:  function(){
-        alert( "Ajaxerror getMechnics()!");
+        alert( "Ajaxerror getMechnics()!" );
       }
     })
 
@@ -715,7 +719,7 @@ namespace('kivi.Part', function(ns) {
   function AddButton( input ){
     setTimeout( function(){
       var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
-      var btn = $('<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>');
+      var btn = $( '<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>' );
       btn.appendTo( buttonPane );
       btn.bind( "click", function(){
           $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!");
@@ -1116,17 +1120,17 @@ namespace('kivi.Part', function(ns) {
   $( '#dialogPart_typ' ).change( function(){
     var unit;
     var part_type = $( '#dialogPart_typ' ).val();
-        if( part_type=='dimension' )
+        if( part_type == 'dimension' )
             unit='Stck';
         else
             unit='Std';
-    $('#dialogSelectUnits').val(unit).change();
+    $( '#dialogSelectUnits' ).val( unit ).change();
     $.ajax({
         url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
         type: 'GET',
-        success: function (data) {
+        success: function ( data ) {
 
-        var partnumber= $( '#dialogNewArticleNumber' ).val( data.newnumber );
+        var partnumber = $( '#dialogNewArticleNumber' ).val( data.newnumber );
 
         },
         error: function(){
@@ -1143,7 +1147,7 @@ namespace('kivi.Part', function(ns) {
       $.ajax({
         url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
         type: 'GET',
-        success: function (data) {
+        success: function ( data ) {
           $( '#dialogNewArticleNumber' ).val( data.newnumber );
           var partnumber= data.newnumber;
           /*
@@ -1160,9 +1164,9 @@ namespace('kivi.Part', function(ns) {
     });
   });
 
-  $('#instructionCheckbox').change(function () {
-    if($('#instructionCheckbox').val())
-        $( '#dialogPart_typ' ).val('service').change();
+  $( '#instructionCheckbox' ).change( function() {
+    if($( '#instructionCheckbox' ).val())
+        $( '#dialogPart_typ' ).val( 'service' ).change();
 
   });
 
@@ -1184,7 +1188,7 @@ namespace('kivi.Part', function(ns) {
     ns.updateOrder();
   });
 
-  ns.removeOrder=function () {
+  ns.removeOrder = function() {
 
     $.ajax({
       url: 'ajax/order.php?action=removeOrder&data='+orderID,
@@ -1195,11 +1199,11 @@ namespace('kivi.Part', function(ns) {
 
   }
 
-  ns.updatePosition=function () {
+  ns.updatePosition = function() {
 
      var updatePosData = new Array;
 
-     $('.row_entry').each(function (index) {
+     $( '.row_entry' ).each(function( index ) {
         //console.log( $( this ).text() );
        if($( this ).find( '[name=item_partpicker_name]' ).val()!=""){
           updatePosData.push({
@@ -1223,7 +1227,7 @@ namespace('kivi.Part', function(ns) {
      console.log(updatePosData);
      //clearTimeout( timer );
      //timer = setTimeout( function(){
-       console.log('update Pos')
+       console.log( 'update Pos' )
        $.ajax({
          url: 'ajax/order.php',
          data: { action: "updatePositions", data: updatePosData },
