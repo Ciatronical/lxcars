@@ -445,20 +445,20 @@
         }
 
 
-      }) .data( "ui-autocomplete" )._renderItem= function( ul, item ) {
+      }) .data( "ui-autocomplete" )._renderItem = function( ul, item ) {
 
-        if(item.instruction){
-
-          return $( "<li style='color : blue';>" )
-          .attr( "data-value", item.value )
-          .append( item.label )
-          .appendTo( ul );
-
+        if( item.instruction ){
+          return $( "<li>" )
+              .data( "data-value", item )
+              .append( "<a style='color : blue'; >" + item.label + "</a>" )
+              .appendTo( ul );
         }
-         return $( "<li>" )
-          .attr( "data-value", item.value )
-          .append( item.label )
-          .appendTo( ul );
+
+        return $( "<li>" )
+            .data( "data-value", item )
+            .append( "<a>" + item.label + "</a>" )
+            .appendTo( ul );
+
       };
 
       this.$dummy.keydown(function(event){ self.handle_keydown(event) });
