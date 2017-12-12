@@ -10,7 +10,9 @@ function autocompletePart( $term ){
 }
 
 function getOrder( $id ){
-    echo $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id", true);
+    require_once __DIR__.'/../inc/lxcLib.php';
+    $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
+    echo json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
 }
 
 

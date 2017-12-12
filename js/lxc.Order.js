@@ -138,10 +138,8 @@ namespace('kivi.Part', function(ns) {
             var number=parseFloat($(':focus').parents().eq( 2 ).find( '[name=qty_as_number]') .val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text(kivi.t8(rsp.part_type));
 
-            if(rsp.instruction){
-
-              $( '.row_entry:last [name=partclassification]' ).text( kivi.t8("I") );
-
+            if( rsp.instruction ){
+              $( '.row_entry:last [name = partclassification]' ).text( kivi.t8("I") );
             }
 
             $( ':focus' ).parents().eq(3).find( '[name=unit]').val( rsp.unit );
@@ -783,12 +781,7 @@ namespace('kivi.Part', function(ns) {
       async: false,
       data: { data: { 'orderId': orderID, 'print': id == 'printOrder' ? 1 : 0 } },
       success: function ( data ) {
-        console.log($(this));
-        //alert( 'Order printed' );
-        //alert( xxxx );
-
         if( id == 'pdfOrder' ) window.open( 'out.pdf' );
-
       },
       error: function () {
         alert( 'Error printOrder()!' )
@@ -797,11 +790,6 @@ namespace('kivi.Part', function(ns) {
     });
     return false;
   });
-
-
-
-
-
 
 
   ns.recalc=function() {
@@ -884,7 +872,7 @@ namespace('kivi.Part', function(ns) {
       $( '#licenseplate' ).val( data.c_ln );
       $( '#orderstatus' ).val( data.order_status ).change();
       $( '#car_status' ).val( data.car_status ).change();
-      //ow = data.customer_id;
+      $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
       orderID = data.oe_id;
 
       //Get Position
