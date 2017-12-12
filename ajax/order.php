@@ -17,7 +17,7 @@ function getOrder( $id ){
 function getPositions( $orderID, $json = true ){
     $sql = "SELECT 'true'::BOOL AS instruction,parts.instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
     $sql.= "SELECT 'false'::BOOL AS instruction,parts.instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY position DESC";
-    $rs = $GLOBALS['dbh']->getAll( $sql, $json );//testd
+    $rs = $GLOBALS['dbh']->getAll( $sql, $json );
     if( $json ) echo $rs;
     else return $rs;
 }
@@ -47,14 +47,10 @@ function getUsersFromGroup( $data ){
 }
 
 function getUnits(){
-    //writeLog( $orderID );
-    $rs = $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
-
-    echo $rs;
+    echo $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
 }
 
 function getAccountingGroups(){
-    //writeLog( $orderID );
     $rs = $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen", true );
     echo $rs;
 }
@@ -64,7 +60,6 @@ function newPart( $data ){
 }
 
 function getPartJSON( $parts_id ){
-
     echo $GLOBALS['dbh']->getALL( "SELECT * FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE );
 }
 
@@ -74,14 +69,13 @@ function getArticleNumber( $unit ){
      //print_r($type);
     if( $type[type] == "dimension" )
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, articlenumber::INT + 1 AS newnumber, 0 AS service FROM defaults");
-    elseif( $type[type] == "service")
+    elseif( $type[type] == "service") //or instruction??
         $rs = $GLOBALS['dbh']->getOne( "SELECT id AS defaults_id, servicenumber::INT + 1 AS newnumber, customer_hourly_rate, 1 AS service FROM defaults");
 
     //increase partnumber if partnumber exists
     while( $GLOBALS['dbh']->getOne( "SELECT partnumber FROM parts WHERE partnumber = '".$rs['newnumber']."'" )['partnumber'] ) $rs['newnumber']++;
     //writeLog( $rs );
-    echo  json_encode( $rs );//JS-friendly JSON
-    //echo  '['.json_encode( $rs ).']';//JS-friendly JSON
+    echo  json_encode( $rs );//JS-friendly JSON, ToDo: get JSON from db
 }
 
 function saveLastArticleNumber( $data ){
@@ -90,12 +84,10 @@ function saveLastArticleNumber( $data ){
 }
 
 function updateOrder( $data) {
-    writeLog($data[0]);
     echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['id'] );
 }
 
 function getCar( $c_id ){
-   //writeLog( $c_id );
    echo $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
 }
 
@@ -108,53 +100,13 @@ function newOrder( $data ){
     //writeLog( $data );
     //UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber //increase last ordernumber and return them
     echo $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id )  SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
-    //ToDo
-
-}
-
-function getOrderList( $data ) {
-    //Hier muss natürlich noch die oe.id geholt werden, da sämtliche Aufträge via id gehändelt werden
-    $statusSearchString = $data['statusSearch'] == 'alle' ? '' : " oe.status = '".$data['statusSearch']."' AND ";//tenärer Operator
-    $dateStringFrom = varExist( $data['datum_von'] ) ? " oe.transdate BETWEEN  <= '".$data['datum_von']."' AND " : '';
-    $dateStringTo   = varExist( $data['datum_bis'] ) ?  " oe.transdate BETWEEN  >= '".$data['datum_bis']."' AND " : '';
-    //writeLog($data['kennzeichen'].', '.$data['kundenname'].', '.$data['datum_von'].', '.$data['datum_bis'].', '.$data['statusSearch']);
-    //writeLog($data);
-    $sql = "
-        SELECT
-            oe.id AS id,
-            oe.status AS auftragsstatus,
-            oe.transdate AS auftragsdatum,
-            oe.ordnumber AS auftragsnummer,
-            oe.car_status AS car_status,
-            orderitems.description AS ersteposition,
-            customer.name AS besitzer,
-            customer.id AS owner,
-            lxc_cars.c_ln AS kennzeichen,
-            lxc_cars.c_id AS c_id
-        FROM
-            oe,
-            orderitems,
-            customer,
-            lxc_cars
-        WHERE"
-            .$statusSearchString
-            .$dateStringFrom
-            .$dateStringTo
-            ." orderitems.trans_id = oe.id AND orderitems.position = 1 AND
-             customer.name ILIKE '%".$data['kundenname']."%' AND customer.id = oe.customer_id AND
-             lxc_cars.c_ln ILIKE '%".$data['kennzeichen']."%' AND lxc_cars.c_id = oe.c_id
-        ORDER BY
-            oe.ordnumber ASC";
-    //writeLog( $sql );
-    echo $rs = $GLOBALS['dbh']->getAll( $sql, true );
-
 }
 
 function printOrder( $data ){
 
-    require("fpdf.php");
-    require_once( __DIR__.'/../inc/lxcLib.php' );
-    include_once( __DIR__.'/../inc/config.php' );
+    require 'fpdf.php';
+    require_once __DIR__.'/../inc/lxcLib.php';
+    include_once __DIR__.'/../inc/config.php';
 
     $sql  = "SELECT oe.ordnumber, oe.transdate, oe.finish_time, oe.km_stnd, oe.employee_id, printed, ";
     $sql .= "customer.name, customer.street, customer.zipcode, customer.city, customer.phone, customer.fax, customer.notes, ";
@@ -164,8 +116,6 @@ function printOrder( $data ){
     $sql .= "left join lxc_flex on ( lxc_cars.c_2 = lxc_flex.hsn AND lxc_flex.tsn = substring( lxc_cars.c_3 from 1 for 3 ) ) WHERE oe.id = ".$data['orderId'];
 
     $orderData = $GLOBALS['dbh']->getOne( $sql );
-    //writeLog($orderData['printed']);
-
 
     //Add Cardata from lxc2db
     $orderData = array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] );
@@ -176,7 +126,7 @@ function printOrder( $data ){
     define( 'x', 0 );
     define( 'y', 1 );
 
-    $pdf=new FPDF('P','mm','A4');
+    $pdf = new FPDF( 'P','mm','A4' );
     $pdf->AddPage();
 
     $fontsize = '9';
@@ -185,186 +135,163 @@ function printOrder( $data ){
     $textPosX_2 = '12';
 
     if( $orderData['printed'] ){
-      $pdf->SetFont( 'Helvetica', 'B', '10' );
-      $pdf->SetTextColor(255, 0, 0);
-      $pdf->Text( '10','7','Kopie' );
-      $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetFont( 'Helvetica', 'B', '10' );
+        $pdf->SetTextColor( 255, 0, 0 );
+        $pdf->Text( '10','7','Kopie' );
+        $pdf->SetTextColor( 0, 0, 0 );
     }
 
     $pdf->SetFont( 'Helvetica', 'B', '14' ); //('font_family','font_weight','font_size')
-    $pdf->Text( '10','12','Autoprofis Reparaturauftrag' ); //('pos_left','pos_top','text')
-    $pdf->Text( '78', '12', $orderData['c_ln'] ); //utf8_decode(
-    $pdf->SetFont('Helvetica','','14');
-    $pdf->Text('10','35',$orderData["cm"]."  ".$orderData["ct"]);
-    writeLog($orderData['employee.name']);
-    //Feste Werte
-    $pdf->SetFont('Helvetica','B',$fontsize);
-    $pdf->Text($textPosX_2,$textPosY,'Kunde:');
-    $pdf->Text($textPosX_2,$textPosY + 5 ,utf8_decode('Straße').':');
-    $pdf->Text($textPosX_2,$textPosY + 10,'Ort:');
-    $pdf->Text($textPosX_2,$textPosY + 15,'Tele.:');
-    $pdf->Text($textPosX_2,$textPosY + 20,'Fax:');
-    $pdf->Text($textPosX_2,$textPosY + 25,'Bearb.:');
+    $pdf->Text( '10','12','Autoprofis Reparaturauftrag '.' '.$orderData['1'].' '.$orderData['2'].' '.$orderData['3'].' '.$orderData['c_ln'] );
+    $pdf->SetFont( 'Helvetica', '', '14' );
 
-    $pdf->Text($textPosX_2,$textPosY + 35,'Farbe:');
-    $pdf->Text($textPosX_2,$textPosY + 40,'Hubr.:');
-    $pdf->Text($textPosX_2,$textPosY + 45,'Zr. Km:');
+    //fix values
+    $pdf->SetFont( 'Helvetica', 'B', $fontsize ) ;
+    $pdf->Text( $textPosX_2, $textPosY,'Kunde:' );
+    $pdf->Text( $textPosX_2, $textPosY + 5, utf8_decode( 'Straße' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 10, 'Ort:' );
+    $pdf->Text( $textPosX_2, $textPosY + 15, 'Tele.:' );
+    $pdf->Text( $textPosX_2, $textPosY + 20, 'Mobil:' );
+    $pdf->Text( $textPosX_2, $textPosY + 25, 'Bearb.:' );
 
-    $pdf->Text($textPosX,$textPosY,'KBA:');
-    $pdf->Text($textPosX,$textPosY + 5,'Baujahr:');
-    $pdf->Text($textPosX,$textPosY + 10,'AU/HU:');
-    $pdf->Text($textPosX,$textPosY + 15,'FIN:');
-    $pdf->Text($textPosX,$textPosY + 20,'MK:');
-    $pdf->Text($textPosX,$textPosY + 25,'KM:');
+    $pdf->Text( $textPosX_2, $textPosY + 35, 'Farbe:' );
+    $pdf->Text( $textPosX_2, $textPosY + 40, 'Hubr.:' );
+    $pdf->Text( $textPosX_2, $textPosY + 45, 'Zr. Km:' );
 
-    $pdf->Text($textPosX,$textPosY + 35,'Abgas.:');
-    $pdf->Text($textPosX,$textPosY + 40,'Peff:');
-    $pdf->Text($textPosX,$textPosY + 45,'Flexgr.:');
+    $pdf->Text( $textPosX, $textPosY, 'KBA:' );
+    $pdf->Text( $textPosX, $textPosY + 5, 'Baujahr:' );
+    $pdf->Text( $textPosX, $textPosY + 10,' HU/AU:' );
+    $pdf->Text( $textPosX, $textPosY + 15, 'FIN:' );
+    $pdf->Text( $textPosX, $textPosY + 20, 'MK:' );
+    $pdf->Text( $textPosX, $textPosY + 25, 'KM:' );
 
-    $pdf->Text($textPosX,$textPosY + 55,utf8_decode('Lo Sommerräder.:'));
-    $pdf->Text($textPosX,$textPosY + 60,utf8_decode('Lo Winterräder.:'));
+    $pdf->Text( $textPosX, $textPosY + 35, 'Abgas.:' );
+    $pdf->Text( $textPosX, $textPosY + 40, 'Peff:' );
+    $pdf->Text( $textPosX, $textPosY + 45, 'Flexgr.:' );
 
-     $pdf->Text($textPosX_2,$textPosY + 55,utf8_decode('nächst. ZR-Wechsel').':');
-    $pdf->Text($textPosX_2,$textPosY + 65,utf8_decode('nächst. Bremsfl.').':');
-    $pdf->Text($textPosX_2,$textPosY + 60,utf8_decode('nächst. WD').':');
+    $pdf->Text( $textPosX, $textPosY + 55, utf8_decode( 'Lo Sommerräder.:' ) );
+    $pdf->Text( $textPosX, $textPosY + 60, utf8_decode( 'Lo Winterräder.:' ) );
 
-    $pdf->SetLineWidth(0.2);
-    //$pdf->Rect('10', '28', '100', '45');
-    //$pdf->Rect('114', '28', '65', '45');
+    $pdf->Text( $textPosX_2, $textPosY + 55, utf8_decode( 'nächst. ZR-Wechsel' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 65, utf8_decode( 'nächst. Bremsfl.' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 60, utf8_decode( 'nächst. WD' ).':' );
 
-   // $pdf->Rect('10', '77', '100', '30');
-    //$pdf->Rect('114', '77', '65', '30');
+    $pdf->SetLineWidth( 0.2 );
 
-    //Daten aus DB
-    $pdf->SetFont('Helvetica','',$fontsize);
+    $pdf->SetFont( 'Helvetica', '', $fontsize );
 
-    $pdf->Text($textPosX_2 + 20,$textPosY,utf8_decode( substr( $orderData["name"], 0, 34 ) ) );
-    $pdf->Text($textPosX_2 + 20,$textPosY + 5,utf8_decode($orderData["street"]));
-    $pdf->Text($textPosX_2 + 20,$textPosY + 10,utf8_decode($orderData["city"]));
-    $pdf->Text($textPosX_2 + 20,$textPosY + 15,$orderData["phone"]);
-    $pdf->Text($textPosX_2 + 20,$textPosY + 20,$orderData["fax"]);
-    $pdf->Text($textPosX_2 + 20,$textPosY + 25,$orderData["employee_name"]);
+    $pdf->Text( $textPosX_2 + 20, $textPosY, utf8_decode( substr( $orderData['name'], 0, 34 ) ) );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 5, utf8_decode( $orderData['street'] ) );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 10, $orderData['zipcode'].' '.utf8_decode( $orderData['city'] ) );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 15, $orderData['phone'] );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 20, $orderData['fax'] );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 25, $orderData['employee_name'] );
 
-    $pdf->Text($textPosX_2 + 20,$textPosY + 35,$orderData["c_color"]);
-    $pdf->Text($textPosX_2 + 20,$textPosY + 40,$orderData["4"]);
-    $pdf->Text($textPosX_2 + 20,$textPosY + 45,$orderData["c_zrk"]);
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 35, $orderData['c_color'] );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 40, $orderData['4'] );
+    $pdf->Text( $textPosX_2 + 20, $textPosY + 45, $orderData['c_zrk'] );
 
-    $pdf->Text($textPosX + 20,$textPosY,$orderData["c_2"]." ".$orderData["c_3"]);
-    $pdf->Text($textPosX + 20,$textPosY + 5, db2date( $orderData["c_d"] ) );
-    $pdf->Text($textPosX + 20,$textPosY + 10,db2date( $orderData["c_hu"] ) );
-    $pdf->Text($textPosX + 20,$textPosY + 15,$orderData["c_fin"]);
-    $pdf->Text($textPosX + 20,$textPosY + 20,$orderData["c_mkb"]);
+    $pdf->Text( $textPosX + 20, $textPosY, $orderData['c_2'].' '.$orderData['c_3'] );
+    $pdf->Text( $textPosX + 20, $textPosY + 5, db2date( $orderData['c_d'] ) );
+    $pdf->Text( $textPosX + 20, $textPosY + 10, db2date( $orderData['c_hu'] ) );
+    $pdf->Text( $textPosX + 20, $textPosY + 15, $orderData['c_fin'] );
+    $pdf->Text( $textPosX + 20, $textPosY + 20, $orderData['c_mkb'] );
 
-    $pdf->Text($textPosX + 20,$textPosY + 25,$orderData["km_stnd"]);
+    $pdf->Text( $textPosX + 20, $textPosY + 25, $orderData['km_stnd'] );
 
-    $pdf->Text($textPosX + 20,$textPosY + 35,$orderData["c_em"]);
-    $pdf->Text($textPosX + 20,$textPosY + 40,$orderData["6"]);
-    $pdf->Text($textPosX + 20,$textPosY + 45,utf8_decode($orderData["flxgr"]));
+    $pdf->Text( $textPosX + 20, $textPosY + 35, $orderData['c_em'] );
+    $pdf->Text( $textPosX + 20, $textPosY + 40, $orderData['6'] );
+    $pdf->Text( $textPosX + 20, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
 
-    $pdf->Text($textPosX_2 + 40,$textPosY + 65,utf8_decode($orderData["c_bf"]));
-    $pdf->Text($textPosX_2 + 40,$textPosY + 60,utf8_decode($orderData["c_wd"]));
-    $pdf->Text($textPosX_2 + 40,$textPosY + 55,utf8_decode($orderData["c_zrd"]));
+    $pdf->Text( $textPosX_2 + 40, $textPosY + 65, utf8_decode( $orderData['c_bf'] ) );
+    $pdf->Text( $textPosX_2 + 40, $textPosY + 60, utf8_decode( $orderData['c_wd'] ) );
+    $pdf->Text( $textPosX_2 + 40, $textPosY + 55, utf8_decode( $orderData['c_zrd'] ) );
 
-    $pdf->Text($textPosX + 40,$textPosY + 55,utf8_decode($orderData["c_st_l"]));
-    $pdf->Text($textPosX + 40,$textPosY + 60,utf8_decode($orderData["c_wt_l"]));
+    $pdf->Text( $textPosX + 40, $textPosY + 55, utf8_decode( $orderData['c_st_l'] ) );
+    $pdf->Text( $textPosX + 40, $textPosY + 60, utf8_decode( $orderData['c_wt_l'] ) );
 
-    $pdf->SetFont('Helvetica','B','10');
-    $pdf->SetTextColor(255, 0, 0);
-    $pdf->Text('12','94','Fertigstellung:');
-    $pdf->SetFont('Helvetica','','10');
-    $pdf->Text('112','94',utf8_decode($orderData['finish_time']));
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->SetFont('Helvetica','','10');
-    $pos_todo[x] = 20;$pos_todo[y] = 110;
+    $pdf->SetFont( 'Helvetica', 'B', '10' );
+    $pdf->SetTextColor( 255, 0, 0 );
+    $pdf->Text( '12', '94', 'Fertigstellung:' );
+    $pdf->SetFont( 'Helvetica', '', '10' );
+    $pdf->Text( '112', '94', utf8_decode( $orderData['finish_time'] ) );
+    $pdf->SetTextColor( 0, 0, 0 );
+    $pdf->SetFont( 'Helvetica', '', '10' );
+    $pos_todo[x] = 20; $pos_todo[y] = 110;
 
-
-    //"Merk"-Variable ob es Positionen mit Absätzen gab
-    $merke = 0;
-
+    //get postions as assoz. array
     $positions = getPositions( $data['orderId'], false );
 
-    //writeLog( $positions );
-
-    //Instructions und Positionen
-    $pdf->SetFont('Helvetica','','8');
+    //Instructions and positions
+    $pdf->SetFont( 'Helvetica', '', '8' );
     $height = '95';
 
-    $pdf->Text( '12','48', utf8_decode('__________________________________________________________________________________________________________' ));
+    $pdf->Text( '12','48', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
-    $pdf->Text( '12','68', utf8_decode('__________________________________________________________________________________________________________' ));
+    $pdf->Text( '12','68', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
-    $pdf->Text( '12','88', utf8_decode('__________________________________________________________________________________________________________' ));
+    $pdf->Text( '12','88', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
-    foreach( array_reverse($positions) as $index => $element ){
-      //writeLog($element['description']);
-      $height = $height + 8;
-      $pdf->SetTextColor(255, 0, 0);
-      $pdf->SetLineWidth(0.1);
+    foreach( array_reverse( $positions ) as $index => $element ){
+        //writeLog( $element['description'] );
+        $height = $height + 8;
+        $pdf->SetTextColor( 255, 0, 0 );
+        $pdf->SetLineWidth( 0.1 );
 
-      $pdf->Rect('10', $height - 5, '170', '7');
-      if( $element['instruction'] ){
-
-        $pdf->SetFont('Helvetica','B','10');
-        $pdf->SetTextColor(255, 0, 0);
-        $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
-      }else {
-        $pdf->SetFont('Helvetica','','8');
-        $pdf->SetTextColor(0, 0, 0);
-        if(strlen($element['description'])>60){ // Bei zu langem Text muss string gesplittet werden
-          $pdf->SetFont('Helvetica','','8');
-          $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
-        }else{
-          $pdf->SetFont('Helvetica','','8');
-          $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
+        $pdf->Rect( '10', $height - 5, '170', '7' );
+        if( $element['instruction'] ){
+            $pdf->SetFont('Helvetica','B','10');
+            $pdf->SetTextColor(255, 0, 0);
+            $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
         }
-      }
-
+        else{
+            $pdf->SetFont( 'Helvetica', '', '8' );
+            $pdf->SetTextColor( 0, 0, 0 );
+            if( strlen( $element['description'] ) > 60 ){ //split long text
+                $pdf->SetFont( 'Helvetica', '', '8' );
+                $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
+            }
+            else{
+                $pdf->SetFont('Helvetica','','8');
+                $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
+            }
+        }
     }
 
-
-
-    $pdf->SetFont('Helvetica','','10');
-    $pdf->Text('22','270','Datum:');
-    $pdf->Text('45','270',date('d.m.Y'));
-    $pdf->Text('105','270','Kundenunterschrift: __________________');
-    $pdf->SetTextColor(255, 0, 0);
-    $pdf->Text('22','280',utf8_decode('Endkontrolle UND Probefahrt durchgeführt von: __________________'));
-    $pdf->SetTextColor(0, 0, 0);
-    $pdf->SetFont('Helvetica','','08');
-    $pdf->Text('75','290','Powered by lxcars.de - Freie Kfz-Werkstatt Software');
+    $pdf->SetFont( 'Helvetica', '', '10' );
+    $pdf->Text( '22', '270', 'Datum:' );
+    $pdf->Text( '45', '270', date( 'd.m.Y' ) );
+    $pdf->Text( '105','270','Kundenunterschrift: __________________' );
+    $pdf->SetTextColor( 255, 0, 0 );
+    $pdf->Text( '22', '280', utf8_decode( 'Endkontrolle UND Probefahrt durchgeführt von: __________________' ) );
+    $pdf->SetTextColor( 0, 0, 0 );
+    $pdf->SetFont( 'Helvetica', '', '08' );
+    $pdf->Text( '75', '290', 'Powered by lxcars.de - Freie Kfz-Werkstatt Software' );
 
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
-    if( !$orderData['printed'] )
-     $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
+    if( !$orderData['printed'] ) $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
 
     if( $data['print'] ) system('lpr '.__DIR__.'/../out.pdf' );
 
-    //writeLog( $data['print'] );
 
     echo 1;
 }
 
 function setHuAuDate( $c_id ){
-    //writeLog($c_id);
     $today   = date( 'Y-m-d' );
-    //writeLog($today);
     $newdate = date( 'Y-m-01', strtotime( $today.' + 2 year ' ) );
-    //writeLog($newdate);
     return $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_hu' ), array( $newdate ), 'c_id = '.$c_id );
 }
 
-function getQtyNewPart($description){
-  //writeLog($description);
-  $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description ILIKE '%$description%' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
-
-  echo $rs? $rs : 1;
+function getQtyNewPart( $description ){
+    $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description ILIKE '%$description%' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
+    echo $rs? $rs : 1;
 }
 
 function getQty( $description ){
     //Method 1: most popular
     $rs = intval( $GLOBALS['dbh']->getOne( "SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1" )['qty'] );
-
 
     //Method 2: last modification
     //echo $GLOBALS['dbh']->getOne( "SELECT qty FROM orderitems WHERE description = '$description'  ORDER BY mtime DESC LIMIT 1" )['qty'];
