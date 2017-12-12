@@ -982,19 +982,19 @@ namespace('kivi.Part', function(ns) {
          url: 'ajax/order.php',
          type: 'POST',
          data: { action: "newPart", data: dataArray },
-         success: function (data) {
-
+         success: function( data ){
+            console.log(data);
             alert( 'new Part saved' );
 
             $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
             $( '.row_entry:last [name=partclassification]' ).text( kivi.t8(dataArray.part_type) );
-            if(dataArray.instruction){
+            if( dataArray.instruction ){
 
               $( '.row_entry:last [name=partclassification]' ).text( kivi.t8("I") );
 
             }
-            $( '.row_entry:last').attr('id', data.id);
-            $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', dataArray.parts_id );
+            $( '.row_entry:last').attr('id', data);
+            $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
             $( '.row_entry:last [name=position]').text( dataArray.position );
             $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
             $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
