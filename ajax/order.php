@@ -141,9 +141,9 @@ function printOrder( $data ){
     $pdf = new FPDF( 'P','mm','A4' );
     $pdf->AddPage();
 
-    $fontsize = '9';
-    $textPosX = '112';
-    $textPosY = '20';
+    $fontsize = '11';
+    $textPosX = '92';
+    $textPosY = '25';
     $textPosX_2 = '12';
 
     if( $orderData['printed'] ){
@@ -163,30 +163,30 @@ function printOrder( $data ){
     $pdf->Text( $textPosX_2, $textPosY + 5, utf8_decode( 'Straße' ).':' );
     $pdf->Text( $textPosX_2, $textPosY + 10, 'Ort:' );
     $pdf->Text( $textPosX_2, $textPosY + 15, 'Tele.:' );
-    $pdf->Text( $textPosX_2, $textPosY + 20, 'Mobil:' );
+    //$pdf->Text( $textPosX_2, $textPosY + 20, 'Mobil:' );
     $pdf->Text( $textPosX_2, $textPosY + 25, 'Bearb.:' );
 
-    $pdf->Text( $textPosX_2, $textPosY + 35, 'Farbe:' );
-    $pdf->Text( $textPosX_2, $textPosY + 40, 'Hubr.:' );
-    $pdf->Text( $textPosX_2, $textPosY + 45, 'Zr. Km:' );
+    //$pdf->Text( $textPosX_2, $textPosY + 35, 'Farbe:' );
+    //$pdf->Text( $textPosX_2, $textPosY + 40, 'Hubr.:' );
+    $pdf->Text( $textPosX, $textPosY + 50, 'Zr. Km:' );
 
     $pdf->Text( $textPosX, $textPosY, 'KBA:' );
     $pdf->Text( $textPosX, $textPosY + 5, 'Baujahr:' );
-    $pdf->Text( $textPosX, $textPosY + 10,' HU/AU:' );
+    $pdf->Text( $textPosX, $textPosY + 10,'HU/AU:' );
     $pdf->Text( $textPosX, $textPosY + 15, 'FIN:' );
     $pdf->Text( $textPosX, $textPosY + 20, 'MK:' );
     $pdf->Text( $textPosX, $textPosY + 25, 'KM:' );
 
-    $pdf->Text( $textPosX, $textPosY + 35, 'Abgas.:' );
-    $pdf->Text( $textPosX, $textPosY + 40, 'Peff:' );
+    //$pdf->Text( $textPosX, $textPosY + 35, 'Abgas.:' );
+    //$pdf->Text( $textPosX, $textPosY + 40, 'Peff:' );
     $pdf->Text( $textPosX, $textPosY + 45, 'Flexgr.:' );
 
-    $pdf->Text( $textPosX, $textPosY + 55, utf8_decode( 'Lo Sommerräder.:' ) );
-    $pdf->Text( $textPosX, $textPosY + 60, utf8_decode( 'Lo Winterräder.:' ) );
+    $pdf->Text( $textPosX, $textPosY + 35, utf8_decode( 'Lo Sommerräder.:' ) );
+    $pdf->Text( $textPosX, $textPosY + 40, utf8_decode( 'Lo Winterräder.:' ) );
 
-    $pdf->Text( $textPosX_2, $textPosY + 55, utf8_decode( 'nächst. ZR-Wechsel' ).':' );
-    $pdf->Text( $textPosX_2, $textPosY + 65, utf8_decode( 'nächst. Bremsfl.' ).':' );
-    $pdf->Text( $textPosX_2, $textPosY + 60, utf8_decode( 'nächst. WD' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 35, utf8_decode( 'nächst. ZR-Wechsel' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 40, utf8_decode( 'nächst. Bremsfl.' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 45, utf8_decode( 'nächst. WD' ).':' );
 
     $pdf->SetLineWidth( 0.2 );
 
@@ -199,9 +199,9 @@ function printOrder( $data ){
     $pdf->Text( $textPosX_2 + 20, $textPosY + 20, $orderData['fax'] );
     $pdf->Text( $textPosX_2 + 20, $textPosY + 25, $orderData['employee_name'] );
 
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 35, $orderData['c_color'] );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 40, $orderData['4'] );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 45, $orderData['c_zrk'] );
+    //$pdf->Text( $textPosX_2 + 20, $textPosY + 35, $orderData['c_color'] );
+    //$pdf->Text( $textPosX_2 + 20, $textPosY + 40, $orderData['4'] );
+    $pdf->Text( $textPosX + 45, $textPosY + 50, $orderData['c_zrk'] );
 
     $pdf->Text( $textPosX + 20, $textPosY, $orderData['c_2'].' '.$orderData['c_3'] );
     $pdf->Text( $textPosX + 20, $textPosY + 5, db2date( $orderData['c_d'] ) );
@@ -211,22 +211,22 @@ function printOrder( $data ){
 
     $pdf->Text( $textPosX + 20, $textPosY + 25, $orderData['km_stnd'] );
 
-    $pdf->Text( $textPosX + 20, $textPosY + 35, $orderData['c_em'] );
-    $pdf->Text( $textPosX + 20, $textPosY + 40, $orderData['6'] );
-    $pdf->Text( $textPosX + 20, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
+    //$pdf->Text( $textPosX + 20, $textPosY + 35, $orderData['c_em'] );
+    //$pdf->Text( $textPosX + 20, $textPosY + 40, $orderData['6'] );
+    $pdf->Text( $textPosX + 45, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
 
-    $pdf->Text( $textPosX_2 + 40, $textPosY + 65, utf8_decode( $orderData['c_bf'] ) );
-    $pdf->Text( $textPosX_2 + 40, $textPosY + 60, utf8_decode( $orderData['c_wd'] ) );
-    $pdf->Text( $textPosX_2 + 40, $textPosY + 55, utf8_decode( $orderData['c_zrd'] ) );
+    $pdf->Text( $textPosX_2 + 45, $textPosY + 40, utf8_decode( $orderData['c_bf'] ) );
+    $pdf->Text( $textPosX_2 + 45, $textPosY + 45, utf8_decode( $orderData['c_wd'] ) );
+    $pdf->Text( $textPosX_2 + 45, $textPosY + 35, utf8_decode( $orderData['c_zrd'] ) );
 
-    $pdf->Text( $textPosX + 40, $textPosY + 55, utf8_decode( $orderData['c_st_l'] ) );
-    $pdf->Text( $textPosX + 40, $textPosY + 60, utf8_decode( $orderData['c_wt_l'] ) );
+    $pdf->Text( $textPosX + 45, $textPosY + 35, utf8_decode( $orderData['c_st_l'] ) );
+    $pdf->Text( $textPosX + 45, $textPosY + 40, utf8_decode( $orderData['c_wt_l'] ) );
 
     $pdf->SetFont( 'Helvetica', 'B', '10' );
-    $pdf->SetTextColor( 255, 0, 0 );
-    $pdf->Text( '12', '94', 'Fertigstellung:' );
+    //$pdf->SetTextColor( 255, 0, 0 );
+    $pdf->Text( '12', '86', 'Fertigstellung:' );
     $pdf->SetFont( 'Helvetica', '', '10' );
-    $pdf->Text( '112', '94', utf8_decode( $orderData['finish_time'] ) );
+    $pdf->Text( '112', '86', utf8_decode( $orderData['finish_time'] ) );
     $pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '10' );
     $pos_todo[x] = 20; $pos_todo[y] = 110;
@@ -236,13 +236,13 @@ function printOrder( $data ){
 
     //Instructions and positions
     $pdf->SetFont( 'Helvetica', '', '8' );
-    $height = '95';
+    $height = '90';
 
-    $pdf->Text( '12','48', utf8_decode( '__________________________________________________________________________________________________________' ) );
+    $pdf->Text( '12','54', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
-    $pdf->Text( '12','68', utf8_decode( '__________________________________________________________________________________________________________' ) );
+    //$pdf->Text( '12','74', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
-    $pdf->Text( '12','88', utf8_decode( '__________________________________________________________________________________________________________' ) );
+    $pdf->Text( '12','78', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
     foreach( array_reverse( $positions ) as $index => $element ){
         //writeLog( $element['description'] );
@@ -252,29 +252,29 @@ function printOrder( $data ){
 
         $pdf->Rect( '10', $height - 5, '170', '7' );
         if( $element['instruction'] ){
-            $pdf->SetFont('Helvetica','B','10');
-            $pdf->SetTextColor(255, 0, 0);
+            $pdf->SetFont('Helvetica','B','12');
+            $pdf->SetTextColor(100, 100, 100);
             $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
         }
         else{
-            $pdf->SetFont( 'Helvetica', '', '8' );
+            $pdf->SetFont( 'Helvetica', '', '10' );
             $pdf->SetTextColor( 0, 0, 0 );
             if( strlen( $element['description'] ) > 60 ){ //split long text
-                $pdf->SetFont( 'Helvetica', '', '8' );
+                $pdf->SetFont( 'Helvetica', '', '10' );
                 $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
             }
             else{
-                $pdf->SetFont('Helvetica','','8');
+                $pdf->SetFont('Helvetica','','10');
                 $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
             }
         }
     }
-
+    $pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '10' );
     $pdf->Text( '22', '270', 'Datum:' );
     $pdf->Text( '45', '270', date( 'd.m.Y' ) );
     $pdf->Text( '105','270','Kundenunterschrift: __________________' );
-    $pdf->SetTextColor( 255, 0, 0 );
+   // $pdf->SetTextColor( 255, 0, 0 );
     $pdf->Text( '22', '280', utf8_decode( 'Endkontrolle UND Probefahrt durchgeführt von: __________________' ) );
     $pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '08' );
