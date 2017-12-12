@@ -858,6 +858,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
+
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
