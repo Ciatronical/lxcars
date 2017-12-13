@@ -48,6 +48,11 @@ function delPosition( $data ){
     echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
 }
 
+//ToDo Init-Funktion schreiben
+/* Diese holt beim Aufruf des Dokuments die Einheiten, Benutzer, Stundensatz und gibt diese als mehrdimensionales Array zurück*/
+
+//function() {
+
 function getUsersFromGroup( $data ){
     echo json_encode( ERPUsersfromGroup( $data ) );
 }
@@ -59,6 +64,13 @@ function getUnits(){
 function getAccountingGroups(){
     $rs = $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen", true );
     echo $rs;
+}
+
+function getCustomer_hourly_rate() {
+   writeLog('getCustomer_hourly_rate');
+  $rs = $GLOBALS['dbh']->getOne( "SELECT customer_hourly_rate FROM defaults",true );
+   writeLog($rs);
+  echo $rs;
 }
 
 function newPart( $data ){
@@ -175,7 +187,7 @@ function printOrder( $data ){
     //$pdf->Text( $textPosX_left + 20, $textPosY + 20, $orderData['fax'] );
     $pdf->Text( $textPosX_left + 20, $textPosY + 25, $orderData['employee_name'] );
 
-     $pdf->SetFont( 'Helvetica', 'B', $fontsize );
+    $pdf->SetFont( 'Helvetica', 'B', $fontsize );
     $pdf->Text( $textPosX_right, $textPosY, 'KBA:' );
     $pdf->Text( $textPosX_right, $textPosY + 5, 'Baujahr:' );
     $pdf->Text( $textPosX_right, $textPosY + 10,'HU/AU:' );

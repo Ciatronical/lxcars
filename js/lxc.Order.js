@@ -7,16 +7,18 @@
       else return decodeURIComponent( results[1] || 0 );
     }
 
-    var id = $.urlParam( 'id' );
-    var owner = $.urlParam( 'owner' );
-    var c_id = $.urlParam( 'c_id' );
-    var previous = $.urlParam( 'previous' );
-    var newOrder = $.urlParam( 'newOrder' );
+  var id = $.urlParam( 'id' );
+  var owner = $.urlParam( 'owner' );
+  var c_id = $.urlParam( 'c_id' );
+  var previous = $.urlParam( 'previous' );
+  var newOrder = $.urlParam( 'newOrder' );
 
 
   var orderID;
   var ready=false;
   var timer;
+
+  var customer_hourly_rate;
 
   var KEY = {
     TAB:       9,
@@ -134,7 +136,13 @@
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).text( rsp.partnumber );
 
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).attr( 'part_id',rsp.id );
-            $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
+
+            if(rsp.unit == 'Std')
+              $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( customer_hourly_rate ).toFixed( 2 ) ) );
+            else
+              $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
+
+
             var number=parseFloat($(':focus').parents().eq( 2 ).find( '[name=qty_as_number]') .val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text(kivi.t8(rsp.part_type));
 
@@ -180,8 +188,6 @@
             if (rsp.instruction) {
               $( ':focus' ).parents().eq(3).addClass( 'instruction' );
             }
-
-
 
             $.ajax({
                  url: 'ajax/order.php',
@@ -314,6 +320,9 @@
                           $( '#dialogPart_typ' ).val( 'dimension' ).change();
                           $( "dialogSelectUnits" ).val( 'Stck' ).change();
                         }
+
+
+
 
 
                     if ( data>1 ) {
@@ -677,6 +686,21 @@
     })
 
 
+    $.ajax({
+      url: 'ajax/order.php?action=getCustomer_hourly_rate',
+      type: 'GET',
+      success: function (data) {
+              console.log(data);
+        customer_hourly_rate = data['customer_hourly_rate'];
+
+      },
+      error: function() {
+        alert('Error: getCustomer_hourly_rate');
+      }
+
+    })
+
+
     var accountingGroupsID;
     $.ajax({
       url: 'ajax/order.php?action=getAccountingGroups',
@@ -902,7 +926,11 @@
               $( '.row_entry [name=position]').last().text( item.position );
               $( '.row_entry [name=item_partpicker_name]').last().val( item.description );
               $( '.row_entry [name=mechanics]').last().val( item.u_id );
+              if(item.unit == 'Std')
+              $( '.row_entry [name=sellprice_as_number]').last().val(customer_hourly_rate.toFixed(2));
+              else
               $( '.row_entry [name=sellprice_as_number]').last().val( ns.formatNumber(item.sellprice.toFixed(2)) );
+
               $( '.row_entry [name=unit]' ).last().val( item.unit ).change();
               $( '.row_entry [name=pos_status]' ).last().val( item.status ).change();
               $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber(item.qty.toFixed(2)) );
@@ -1004,6 +1032,9 @@
             $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
             $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
             $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
+
+
+
             $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
             $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
             $( '.row_entry:last [class=x]' ).show();
@@ -1121,10 +1152,18 @@
   $( '#dialogPart_typ' ).change( function(){
     var unit;
     var part_type = $( '#dialogPart_typ' ).val();
-        if( part_type == 'dimension' )
+        if( part_type == 'dimension' ){
+
             unit='Stck';
-        else
+        }
+        else{
             unit='Std';
+            $('#dialogSellPrice').val(customer_hourly_rate);
+        }
+
+
+
+
     $( '#dialogSelectUnits' ).val( unit ).change();
     $.ajax({
         url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
@@ -1151,6 +1190,9 @@
         success: function ( data ) {
           $( '#dialogNewArticleNumber' ).val( data.newnumber );
           var partnumber= data.newnumber;
+
+
+
           /*
           if(partnumber<2000)
             $( '#dialogPart_typ' ).val('dimension').change();
