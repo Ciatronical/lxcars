@@ -176,7 +176,7 @@ function printOrder( $data ){
     $pdf->Text( $textPosX_left, $textPosY + 5, utf8_decode( 'Straße:' ) );
     $pdf->Text( $textPosX_left, $textPosY + 10, 'Ort:' );
     $pdf->Text( $textPosX_left, $textPosY + 15, 'Tele.:' );
-    //$pdf->Text( $textPosX_left, $textPosY + 20, 'Mobil:' );
+    $pdf->Text( $textPosX_left, $textPosY + 20, 'Tele2:' );
     $pdf->Text( $textPosX_left, $textPosY + 25, 'Bearb.:' );
 
     $pdf->SetFont( 'Helvetica', '', $fontsize );
@@ -184,7 +184,7 @@ function printOrder( $data ){
     $pdf->Text( $textPosX_left + 20, $textPosY + 5, utf8_decode( $orderData['street'] ) );
     $pdf->Text( $textPosX_left + 20, $textPosY + 10, $orderData['zipcode'].' '.utf8_decode( $orderData['city'] ) );
     $pdf->Text( $textPosX_left + 20, $textPosY + 15, $orderData['phone'] );
-    //$pdf->Text( $textPosX_left + 20, $textPosY + 20, $orderData['fax'] );
+    $pdf->Text( $textPosX_left + 20, $textPosY + 20, $orderData['fax'] );
     $pdf->Text( $textPosX_left + 20, $textPosY + 25, $orderData['employee_name'] );
 
     $pdf->SetFont( 'Helvetica', 'B', $fontsize );

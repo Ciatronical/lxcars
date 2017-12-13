@@ -746,7 +746,7 @@
       var btn = $( '<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>' );
       btn.appendTo( buttonPane );
       btn.bind( "click", function(){
-          $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!");
+          $( "#finish_time" ).val("Kunde wartet! SOFORT anfangen!").change();
       });
     }, 1 );
   }
