@@ -141,102 +141,109 @@ function printOrder( $data ){
     $pdf = new FPDF( 'P','mm','A4' );
     $pdf->AddPage();
 
-    $fontsize = '11'; //ToDo : Warum ist das ein String???? Lies: http://fpdf.de/dokumentation/funktionsreferenz/funktionsreferenz.html
-    $textPosX = '120'; //Warum heißt die so?? völlig verwirrend!!
-    $textPosY = '25';
-    $textPosX_2 = '12';//Warum heißt die so?? völlig verwirrend!! besser  "$textPosX_left"
+    $fontsize = 11;
+    $textPosX_right = 120;
+    $textPosY = 25;
+    $textPosX_left = 12;
 
     if( $orderData['printed'] ){
-        $pdf->SetFont( 'Helvetica', 'B', '10' );
+        $pdf->SetFont( 'Helvetica', 'B', 10 );
         $pdf->SetTextColor( 255, 0, 0 );
         $pdf->Text( '10','7','Kopie' );
         $pdf->SetTextColor( 0, 0, 0 );
     }
 
-    $pdf->SetFont( 'Helvetica', 'B', '14' ); //('font_family','font_weight','font_size')
+    $pdf->SetFont( 'Helvetica', 'B', 14 ); //('font_family','font_weight','font_size')
     $pdf->Text( '10','12','Autoprofis Rep.-Auftrag '.' '.$orderData['1'].' '.$orderData['2'].' '.$orderData['3'] );
     $pdf->Text( '166','12', $orderData['c_ln'] );
-    $pdf->SetFont( 'Helvetica', '', '14' );
+    $pdf->SetFont( 'Helvetica', '', 14 );
 
     //fix values
     $pdf->SetFont( 'Helvetica', 'B', $fontsize ) ;
-    $pdf->Text( $textPosX_2, $textPosY,'Kunde:' );
-    $pdf->Text( $textPosX_2, $textPosY + 5, utf8_decode( 'Straße' ).':' ); //ToDo: Warum StringVerkettung??
-    $pdf->Text( $textPosX_2, $textPosY + 10, 'Ort:' );
-    $pdf->Text( $textPosX_2, $textPosY + 15, 'Tele.:' );
-    //$pdf->Text( $textPosX_2, $textPosY + 20, 'Mobil:' );
-    $pdf->Text( $textPosX_2, $textPosY + 25, 'Bearb.:' );
+    $pdf->Text( $textPosX_left, $textPosY,'Kunde:' );
+    $pdf->Text( $textPosX_left, $textPosY + 5, utf8_decode( 'Straße:' ) );
+    $pdf->Text( $textPosX_left, $textPosY + 10, 'Ort:' );
+    $pdf->Text( $textPosX_left, $textPosY + 15, 'Tele.:' );
+    //$pdf->Text( $textPosX_left, $textPosY + 20, 'Mobil:' );
+    $pdf->Text( $textPosX_left, $textPosY + 25, 'Bearb.:' );
 
-    //$pdf->Text( $textPosX_2, $textPosY + 35, 'Farbe:' );
-    //$pdf->Text( $textPosX_2, $textPosY + 40, 'Hubr.:' );
+    $pdf->SetFont( 'Helvetica', '', $fontsize );
+    $pdf->Text( $textPosX_left + 20, $textPosY, utf8_decode( substr( $orderData['name'], 0, 34 ) ) );
+    $pdf->Text( $textPosX_left + 20, $textPosY + 5, utf8_decode( $orderData['street'] ) );
+    $pdf->Text( $textPosX_left + 20, $textPosY + 10, $orderData['zipcode'].' '.utf8_decode( $orderData['city'] ) );
+    $pdf->Text( $textPosX_left + 20, $textPosY + 15, $orderData['phone'] );
+    //$pdf->Text( $textPosX_left + 20, $textPosY + 20, $orderData['fax'] );
+    $pdf->Text( $textPosX_left + 20, $textPosY + 25, $orderData['employee_name'] );
+
+     $pdf->SetFont( 'Helvetica', 'B', $fontsize );
+    $pdf->Text( $textPosX_right, $textPosY, 'KBA:' );
+    $pdf->Text( $textPosX_right, $textPosY + 5, 'Baujahr:' );
+    $pdf->Text( $textPosX_right, $textPosY + 10,'HU/AU:' );
+    $pdf->Text( $textPosX_right, $textPosY + 15, 'FIN:' );
+    $pdf->Text( $textPosX_right, $textPosY + 20, 'MK:' );
+    $pdf->Text( $textPosX_right, $textPosY + 25, 'KM:' );
+
+    $pdf->SetFont( 'Helvetica', '', $fontsize );
+    $pdf->Text( $textPosX_right + 20, $textPosY, $orderData['c_2'].' '.$orderData['c_3'] );
+    $pdf->Text( $textPosX_right + 20, $textPosY + 5, db2date( $orderData['c_d'] ) );
+    $pdf->Text( $textPosX_right + 20, $textPosY + 10, db2date( $orderData['c_hu'] ) );
+    $pdf->Text( $textPosX_right + 20, $textPosY + 15, $orderData['c_fin'] );
+    $pdf->Text( $textPosX_right + 20, $textPosY + 20, $orderData['c_mkb'] );
+    $pdf->Text( $textPosX_right + 20, $textPosY + 25, $orderData['km_stnd'] );
 
 
-    $pdf->Text( $textPosX, $textPosY, 'KBA:' );
-    $pdf->Text( $textPosX, $textPosY + 5, 'Baujahr:' );
-    $pdf->Text( $textPosX, $textPosY + 10,'HU/AU:' );
-    $pdf->Text( $textPosX, $textPosY + 15, 'FIN:' );
-    $pdf->Text( $textPosX, $textPosY + 20, 'MK:' );
-    $pdf->Text( $textPosX, $textPosY + 25, 'KM:' );
 
-    //$pdf->Text( $textPosX, $textPosY + 35, 'Abgas.:' );
-    //$pdf->Text( $textPosX, $textPosY + 40, 'Peff:' );
-    $pdf->Text( $textPosX, $textPosY + 45, 'Flexgr.:' );
-    $pdf->Text( $textPosX, $textPosY + 50, 'Color.:' );
 
-    $pdf->Text( $textPosX, $textPosY + 35, utf8_decode( 'Lo Sommerräder.:' ) );
-    $pdf->Text( $textPosX, $textPosY + 40, utf8_decode( 'Lo Winterräder.:' ) );
+    $pdf->Text( $textPosX_right, $textPosY + 45, 'Flexgr.:' );
+    $pdf->Text( $textPosX_right, $textPosY + 50, 'Color.:' );
 
-    $pdf->Text( $textPosX_2, $textPosY + 35, utf8_decode( 'nächst. ZR-Wechsel KM:' ) );
-    $pdf->Text( $textPosX_2, $textPosY + 40, utf8_decode( 'nächst. ZR-Wechsel' ).':' );
-    $pdf->Text( $textPosX_2, $textPosY + 45, utf8_decode( 'nächst. Bremsfl.' ).':' );
-    $pdf->Text( $textPosX_2, $textPosY + 50, utf8_decode( 'nächst. WD' ).':' );
+    $pdf->Text( $textPosX_right, $textPosY + 35, utf8_decode( 'Lo Sommerräder.:' ) );
+    $pdf->Text( $textPosX_right, $textPosY + 40, utf8_decode( 'Lo Winterräder.:' ) );
+
+    $pdf->Text( $textPosX_left, $textPosY + 35, utf8_decode( 'nächst. ZR-Wechsel KM:' ) );
+    $pdf->Text( $textPosX_left, $textPosY + 40, utf8_decode( 'nächst. ZR-Wechsel:' ) );
+    $pdf->Text( $textPosX_left, $textPosY + 45, utf8_decode( 'nächst. Bremsfl.:' ) );
+    $pdf->Text( $textPosX_left, $textPosY + 50, utf8_decode( 'nächst. WD:' ) );
 
     $pdf->SetLineWidth( 0.2 );
 
     $pdf->SetFont( 'Helvetica', '', $fontsize );
 
-    $pdf->Text( $textPosX_2 + 20, $textPosY, utf8_decode( substr( $orderData['name'], 0, 34 ) ) );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 5, utf8_decode( $orderData['street'] ) );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 10, $orderData['zipcode'].' '.utf8_decode( $orderData['city'] ) );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 15, $orderData['phone'] );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 20, $orderData['fax'] );
-    $pdf->Text( $textPosX_2 + 20, $textPosY + 25, $orderData['employee_name'] );
-
-    //$pdf->Text( $textPosX_2 + 20, $textPosY + 35, $orderData['c_color'] );
-    //$pdf->Text( $textPosX_2 + 20, $textPosY + 40, $orderData['4'] );
 
 
-    $pdf->Text( $textPosX + 20, $textPosY, $orderData['c_2'].' '.$orderData['c_3'] );
-    $pdf->Text( $textPosX + 20, $textPosY + 5, db2date( $orderData['c_d'] ) );
-    $pdf->Text( $textPosX + 20, $textPosY + 10, db2date( $orderData['c_hu'] ) );
-    $pdf->Text( $textPosX + 20, $textPosY + 15, $orderData['c_fin'] );
-    $pdf->Text( $textPosX + 20, $textPosY + 20, $orderData['c_mkb'] );
+    //$pdf->Text( $textPosX_left + 20, $textPosY + 35, $orderData['c_color'] );
+    //$pdf->Text( $textPosX_left + 20, $textPosY + 40, $orderData['4'] );
+    //$pdf->Text( $textPosX_left, $textPosY + 35, 'Farbe:' );
+    //$pdf->Text( $textPosX_left, $textPosY + 40, 'Hubr.:' );
+    //$pdf->Text( $textPosX_right + 20, $textPosY + 35, $orderData['c_em'] );
+    //$pdf->Text( $textPosX_right + 20, $textPosY + 40, $orderData['6'] );
+    //$pdf->Text( $textPosX_right, $textPosY + 35, 'Abgas.:' );
+    //$pdf->Text( $textPosX_right, $textPosY + 40, 'Peff:' );
 
-    $pdf->Text( $textPosX + 20, $textPosY + 25, $orderData['km_stnd'] );
 
-    //$pdf->Text( $textPosX + 20, $textPosY + 35, $orderData['c_em'] );
-    //$pdf->Text( $textPosX + 20, $textPosY + 40, $orderData['6'] );
-    $pdf->Text( $textPosX + 45, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
-    $pdf->Text( $textPosX + 45, $textPosY + 50, utf8_decode( $orderData['c_color'] ) );
+
+
+    $pdf->Text( $textPosX_right + 45, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
+    $pdf->Text( $textPosX_right + 45, $textPosY + 50, utf8_decode( $orderData['c_color'] ) );
 
     //left side under line one
     $lsulo = 50;
-    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 35, $orderData['c_zrk'] );
-    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 40, utf8_decode( $orderData['c_zrd'] ) );
-    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 45, utf8_decode( $orderData['c_bf'] ) );
-    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 50, utf8_decode( $orderData['c_wd'] ) );
+    $pdf->Text( $textPosX_left + $lsulo, $textPosY + 35, $orderData['c_zrk'] );
+    $pdf->Text( $textPosX_left + $lsulo, $textPosY + 40, utf8_decode( $orderData['c_zrd'] ) );
+    $pdf->Text( $textPosX_left + $lsulo, $textPosY + 45, utf8_decode( $orderData['c_bf'] ) );
+    $pdf->Text( $textPosX_left + $lsulo, $textPosY + 50, utf8_decode( $orderData['c_wd'] ) );
 
 
-    $pdf->Text( $textPosX + 45, $textPosY + 35, utf8_decode( $orderData['c_st_l'] ) );
-    $pdf->Text( $textPosX + 45, $textPosY + 40, utf8_decode( $orderData['c_wt_l'] ) );
+    $pdf->Text( $textPosX_right + 45, $textPosY + 35, utf8_decode( $orderData['c_st_l'] ) );
+    $pdf->Text( $textPosX_right + 45, $textPosY + 40, utf8_decode( $orderData['c_wt_l'] ) );
 
     //Finish Time
     if( strpos( $orderData['finish_time'], 'wartet' ) ) $pdf->SetTextColor( 255, 0, 0 );
     $pdf->SetFont( 'Helvetica', 'B', '10' );
     $finishTimeHeight = 85;
-    $pdf->Text( $textPosX_2, $finishTimeHeight, 'Fertigstellung:' );
+    $pdf->Text( $textPosX_left, $finishTimeHeight, 'Fertigstellung:' );
     $pdf->SetFont( 'Helvetica', '', '10' );
-    $pdf->Text( $textPosX, $finishTimeHeight, utf8_decode( $orderData['finish_time'] ) );
+    $pdf->Text( $textPosX_right, $finishTimeHeight, utf8_decode( $orderData['finish_time'] ) );
     $pdf->SetTextColor( 0, 0, 0 );
 
 
@@ -256,10 +263,10 @@ function printOrder( $data ){
     //draw first Line x1, y1, x2, y2
     $lineHeight = 54;
     $lineWidth  = 180;
-    $pdf->Line( $textPosX_2, $lineHeight, $textPosX_2 + $lineWidth , $lineHeight );
+    $pdf->Line( $textPosX_left, $lineHeight, $textPosX_left + $lineWidth , $lineHeight );
     //draw second Line x1, y1, x2, y2
     $lineHeight = 78;
-    $pdf->Line( $textPosX_2, $lineHeight, $textPosX_2 + $lineWidth , $lineHeight );
+    $pdf->Line( $textPosX_left, $lineHeight, $textPosX_left + $lineWidth , $lineHeight );
 
 
 

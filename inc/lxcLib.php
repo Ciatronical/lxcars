@@ -417,12 +417,20 @@ function GetCars ( $owner, $owner_name ) {
                 $typ= ( $rskba!=-1 )? ( $rskba[0][2] ): ( "Keine Daten gefunden" );
                 $name= ( $rskba!=-1 )? ( $rskba[0][3] ): ( "Keine Daten gefunden" );
                 if ( $rskba==-1 ) {
+                    $rskba=lxc2db ( "-c ".$z2." ".$z3 );
+                    $herst= ( $rskba!=-1 )? ( $rskba[0][1] ): ( "Keine Daten gefunden" );
+                    $typ= ( $rskba!=-1 )? ( $rskba[0][9] ): ( "Keine Daten gefunden" );
+                    $name= ( $rskba!=-1 )? ( $rskba[0][9].' '.$rskba[0][10] ): ( "Keine Daten gefunden" );
+                    $typ=$rs_mykba['bezeichung'];
+                }
+                if ( $rskba==-1 ) {
                     $rs_mykba=GetFhzTyp ( $z2, $z3 );
                     $herst=$rs_mykba['hersteller']!=''?$rs_mykba['hersteller']:"Keine Daten eingetragen";
                     $art=$rs_mykba['klasse_aufbau']!=''?$rs_mykba['klasse_aufbau']:"???";;
                     $name=$rs_mykba['typ']!=''?$rs_mykba['typ']:"Keine Daten eingetragen";
                     $typ=$rs_mykba['bezeichung'];
                 }
+
             }
             else {
                 //echo "</br> Suche nach Typnr  </br>";
