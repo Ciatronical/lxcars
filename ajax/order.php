@@ -141,10 +141,10 @@ function printOrder( $data ){
     $pdf = new FPDF( 'P','mm','A4' );
     $pdf->AddPage();
 
-    $fontsize = '11';
-    $textPosX = '92';
+    $fontsize = '11'; //ToDo : Warum ist das ein String???? Lies: http://fpdf.de/dokumentation/funktionsreferenz/funktionsreferenz.html
+    $textPosX = '120'; //Warum heißt die so?? völlig verwirrend!!
     $textPosY = '25';
-    $textPosX_2 = '12';
+    $textPosX_2 = '12';//Warum heißt die so?? völlig verwirrend!! besser  "$textPosX_left"
 
     if( $orderData['printed'] ){
         $pdf->SetFont( 'Helvetica', 'B', '10' );
@@ -154,13 +154,14 @@ function printOrder( $data ){
     }
 
     $pdf->SetFont( 'Helvetica', 'B', '14' ); //('font_family','font_weight','font_size')
-    $pdf->Text( '10','12','Autoprofis Reparaturauftrag '.' '.$orderData['1'].' '.$orderData['2'].' '.$orderData['3'].' '.$orderData['c_ln'] );
+    $pdf->Text( '10','12','Autoprofis Rep.-Auftrag '.' '.$orderData['1'].' '.$orderData['2'].' '.$orderData['3'] );
+    $pdf->Text( '166','12', $orderData['c_ln'] );
     $pdf->SetFont( 'Helvetica', '', '14' );
 
     //fix values
     $pdf->SetFont( 'Helvetica', 'B', $fontsize ) ;
     $pdf->Text( $textPosX_2, $textPosY,'Kunde:' );
-    $pdf->Text( $textPosX_2, $textPosY + 5, utf8_decode( 'Straße' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 5, utf8_decode( 'Straße' ).':' ); //ToDo: Warum StringVerkettung??
     $pdf->Text( $textPosX_2, $textPosY + 10, 'Ort:' );
     $pdf->Text( $textPosX_2, $textPosY + 15, 'Tele.:' );
     //$pdf->Text( $textPosX_2, $textPosY + 20, 'Mobil:' );
@@ -168,7 +169,7 @@ function printOrder( $data ){
 
     //$pdf->Text( $textPosX_2, $textPosY + 35, 'Farbe:' );
     //$pdf->Text( $textPosX_2, $textPosY + 40, 'Hubr.:' );
-    $pdf->Text( $textPosX, $textPosY + 50, 'Zr. Km:' );
+
 
     $pdf->Text( $textPosX, $textPosY, 'KBA:' );
     $pdf->Text( $textPosX, $textPosY + 5, 'Baujahr:' );
@@ -180,13 +181,15 @@ function printOrder( $data ){
     //$pdf->Text( $textPosX, $textPosY + 35, 'Abgas.:' );
     //$pdf->Text( $textPosX, $textPosY + 40, 'Peff:' );
     $pdf->Text( $textPosX, $textPosY + 45, 'Flexgr.:' );
+    $pdf->Text( $textPosX, $textPosY + 50, 'Color.:' );
 
     $pdf->Text( $textPosX, $textPosY + 35, utf8_decode( 'Lo Sommerräder.:' ) );
     $pdf->Text( $textPosX, $textPosY + 40, utf8_decode( 'Lo Winterräder.:' ) );
 
-    $pdf->Text( $textPosX_2, $textPosY + 35, utf8_decode( 'nächst. ZR-Wechsel' ).':' );
-    $pdf->Text( $textPosX_2, $textPosY + 40, utf8_decode( 'nächst. Bremsfl.' ).':' );
-    $pdf->Text( $textPosX_2, $textPosY + 45, utf8_decode( 'nächst. WD' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 35, utf8_decode( 'nächst. ZR-Wechsel KM:' ) );
+    $pdf->Text( $textPosX_2, $textPosY + 40, utf8_decode( 'nächst. ZR-Wechsel' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 45, utf8_decode( 'nächst. Bremsfl.' ).':' );
+    $pdf->Text( $textPosX_2, $textPosY + 50, utf8_decode( 'nächst. WD' ).':' );
 
     $pdf->SetLineWidth( 0.2 );
 
@@ -201,7 +204,7 @@ function printOrder( $data ){
 
     //$pdf->Text( $textPosX_2 + 20, $textPosY + 35, $orderData['c_color'] );
     //$pdf->Text( $textPosX_2 + 20, $textPosY + 40, $orderData['4'] );
-    $pdf->Text( $textPosX + 45, $textPosY + 50, $orderData['c_zrk'] );
+
 
     $pdf->Text( $textPosX + 20, $textPosY, $orderData['c_2'].' '.$orderData['c_3'] );
     $pdf->Text( $textPosX + 20, $textPosY + 5, db2date( $orderData['c_d'] ) );
@@ -214,20 +217,29 @@ function printOrder( $data ){
     //$pdf->Text( $textPosX + 20, $textPosY + 35, $orderData['c_em'] );
     //$pdf->Text( $textPosX + 20, $textPosY + 40, $orderData['6'] );
     $pdf->Text( $textPosX + 45, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
+    $pdf->Text( $textPosX + 45, $textPosY + 50, utf8_decode( $orderData['c_color'] ) );
 
-    $pdf->Text( $textPosX_2 + 45, $textPosY + 40, utf8_decode( $orderData['c_bf'] ) );
-    $pdf->Text( $textPosX_2 + 45, $textPosY + 45, utf8_decode( $orderData['c_wd'] ) );
-    $pdf->Text( $textPosX_2 + 45, $textPosY + 35, utf8_decode( $orderData['c_zrd'] ) );
+    //left side under line one
+    $lsulo = 50;
+    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 35, $orderData['c_zrk'] );
+    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 40, utf8_decode( $orderData['c_zrd'] ) );
+    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 45, utf8_decode( $orderData['c_bf'] ) );
+    $pdf->Text( $textPosX_2 + $lsulo, $textPosY + 50, utf8_decode( $orderData['c_wd'] ) );
+
 
     $pdf->Text( $textPosX + 45, $textPosY + 35, utf8_decode( $orderData['c_st_l'] ) );
     $pdf->Text( $textPosX + 45, $textPosY + 40, utf8_decode( $orderData['c_wt_l'] ) );
 
+    //Finish Time
+    if( strpos( $orderData['finish_time'], 'wartet' ) ) $pdf->SetTextColor( 255, 0, 0 );
     $pdf->SetFont( 'Helvetica', 'B', '10' );
-    //$pdf->SetTextColor( 255, 0, 0 );
-    $pdf->Text( '12', '86', 'Fertigstellung:' );
+    $finishTimeHeight = 85;
+    $pdf->Text( $textPosX_2, $finishTimeHeight, 'Fertigstellung:' );
     $pdf->SetFont( 'Helvetica', '', '10' );
-    $pdf->Text( '112', '86', utf8_decode( $orderData['finish_time'] ) );
+    $pdf->Text( $textPosX, $finishTimeHeight, utf8_decode( $orderData['finish_time'] ) );
     $pdf->SetTextColor( 0, 0, 0 );
+
+
     $pdf->SetFont( 'Helvetica', '', '10' );
     $pos_todo[x] = 20; $pos_todo[y] = 110;
 
@@ -238,11 +250,18 @@ function printOrder( $data ){
     $pdf->SetFont( 'Helvetica', '', '8' );
     $height = '90';
 
-    $pdf->Text( '12','54', utf8_decode( '__________________________________________________________________________________________________________' ) );
 
-    //$pdf->Text( '12','74', utf8_decode( '__________________________________________________________________________________________________________' ) );
+    $pdf->SetLineWidth(0.4);
 
-    $pdf->Text( '12','78', utf8_decode( '__________________________________________________________________________________________________________' ) );
+    //draw first Line x1, y1, x2, y2
+    $lineHeight = 54;
+    $lineWidth  = 180;
+    $pdf->Line( $textPosX_2, $lineHeight, $textPosX_2 + $lineWidth , $lineHeight );
+    //draw second Line x1, y1, x2, y2
+    $lineHeight = 78;
+    $pdf->Line( $textPosX_2, $lineHeight, $textPosX_2 + $lineWidth , $lineHeight );
+
+
 
     foreach( array_reverse( $positions ) as $index => $element ){
         //writeLog( $element['description'] );
