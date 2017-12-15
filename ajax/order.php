@@ -5,6 +5,59 @@ require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
 
+function getOrderlist( $data ){
+
+  require_once __DIR__.'/../inc/lxcLib.php';
+
+
+  //Suchfilter
+  if( $data['customerName'] != '' )
+    $customer = "customer.name = '".$data['customerName']."' AND ";
+  else
+    $customer = '';
+
+  if( $data['license_plate'] != '' )
+    $license_plate = "lxc_cars.c_ln = '".$data['license_plate']."' AND ";
+  else
+    $license_plate = '';
+
+  if( $data['dateFrom'] != '' )
+    $dateFrom = "oe.finish_time > '".$data['dateFrom']."' AND ";
+  else
+    $dateFrom = '';
+
+  if( $data['dateTo'] != '' )
+    $dateTo = "oe.finish_time < '".$data['dateTo']."' AND ";
+  else
+    $dateTo = '';
+
+  if( $data['statusSearch'] != 'alle' )
+    $state = "oe.status = '".$data['statusSearch']."' AND ";
+
+  $rs = $GLOBALS['dbh']->getALL("SELECT distinct on ( ordnumber ) * FROM
+                                    (
+                                      SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate,oe.finish_time, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$customer.$license_plate.$dateFrom.$dateTo.$state." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION
+                                      SELECT distinct on ( ordnumber )'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate,oe.finish_time, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$customer.$license_plate.$dateFrom.$dateTo.$state." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC
+                                    ) AS testTable ORDER BY ordnumber DESC;");
+
+
+
+/* holt Fahrzeugdaten aus Datenbank
+  foreach( $rs as $item ){
+
+
+    array_merge( $item, lxc2db( '-c '.$item['c_2'].' '.substr( $item['c_3'], 0, 3 ) )['0'] );
+    //writeLog($item);
+  }
+*/
+//echo json_encode( array_merge( $rs, lxc2db( '-C '.$rs['c_2'].' '.substr( $rs['c_3'], 0, 3 ) )['0'] ) );
+
+echo json_encode($rs);
+
+}
+
+
+
 function autocompletePart( $term ){
     echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE ( description ILIKE '%$term%' OR partnumber ILIKE '$term%' ) AND obsolete = FALSE LIMIT 20", true );
 }
@@ -12,6 +65,7 @@ function autocompletePart( $term ){
 function getOrder( $id ){
     require_once __DIR__.'/../inc/lxcLib.php';
     $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
+    writeLog(lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) ));
 
       if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) )=='null' )
         echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
@@ -67,9 +121,9 @@ function getAccountingGroups(){
 }
 
 function getCustomer_hourly_rate() {
-   writeLog('getCustomer_hourly_rate');
+  // writeLog('getCustomer_hourly_rate');
   $rs = $GLOBALS['dbh']->getOne( "SELECT customer_hourly_rate FROM defaults",true );
-   writeLog($rs);
+   //writeLog($rs);
   echo $rs;
 }
 

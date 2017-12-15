@@ -31,9 +31,12 @@ $s = $_GET["s"] ? $_GET["s"] : $_POST["s"];
 ?>
 
 
-  <script type="text/javascript" src="autocomplete_customer.js"></script>
-  <script type="text/javascript" src="autocomplete_part.js"></script>
-  <script type="text/javascript" src="kivi.Order.js"></script>
+ <script type="text/javascript" src="jQueryAddOns/date-time-picker.js"></script>
+ <script type="text/javascript" src="jQueryAddOns/german-date-time-picker.js"></script>
+ <link rel="stylesheet" href="css/lxc.Order.css" type="text/css" title="Stylesheet">
+ <script type="text/javascript" src="js/lxc.Order.js"></script>
+ <script type="text/javascript" src="js/locale/de.js"></script>
+
 
 <script>
 
@@ -49,52 +52,30 @@ $(document).ready(function() {
     var url = window.location.pathname;
     var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
 
-    /*****************************/
-     /**************************/
-      /***********************/
-       /********************/
-        /*****************/
 
-/*
-    window.onbeforeunload = function() {
-        localStorage['dataObject'] = JSON.stringify(dataObject);
-    }
-
-    window.onload = function() {
-        dataObject = JSON.parse(localStorage['dataObject']);
-        //console.log(dataObject);
-        $('#txtKennzeichen').val(dataObject['kennzeichen']);
-        $('#txtKundenname').val(dataObject['kundenname']);
-        $('#txtDatumVon').val(dataObject['datum_von']);
-        $('#txtDatumBis').val(dataObject['datum_bis']);
-        $('#txtStatus').val(dataObject['statusSearch']);
-        getOrderList();
-    }
-*/
-
-    var kennzeichen;
-    var kundenname;
-    var datum_von;
-    var datum_bis;
+    var license_plate;
+    var customerName;
+    var dateFrom;
+    var dateTo;
     var statusSearch = $('#txtStatus').val();
     var dataObject = {};
 
     $('button').button();
 
-    $('#txtKennzeichen').on('keyup', function () {
-        kennzeichen = $(this).val();
+    $('#autocomplete_License_plate').on('change', function () {
+        license_plate = $(this).val();
     })
 
-    $('#txtKundenname').on('keyup', function () {
-        kundenname = $(this).val();
+    $('#autocomplete_customer_name').on('change', function () {
+        customerName = $(this).val();
     })
 
-    $('#txtDatumVon').on('keyup', function () {
-        datum_von = $(this).val();
+    $('#dateFrom').on('change', function () {
+        dateFrom = $(this).val();
     })
 
-    $('#txtDatumBis').on('keyup', function () {
-        datum_bis = $(this).val();
+    $('#dateTo').on('change', function () {
+        dateTo = $(this).val();
     })
 
     $('#txtStatus').change(function () {
@@ -104,55 +85,65 @@ $(document).ready(function() {
 
     $('#btnSearch').click(function () {
         $('.showtableRow').remove();
-        dataObject['kennzeichen'] = kennzeichen;
-        dataObject['kundenname'] = kundenname;
-        dataObject['datum_von'] = datum_von;
-        dataObject['datum_bis'] = datum_bis;
+        dataObject['license_plate'] = license_plate;
+        dataObject['customerName'] = customerName;
+        dataObject['dateFrom'] = dateFrom;
+        dataObject['dateTo'] = dateTo;
         dataObject['statusSearch'] = statusSearch;
         //console.log(dataObject);
         getOrderList();
     })
 
-    /*
-    $('.tblSearchTxt').on('keyup', function () {
-        $('#showtableTBody tr').show();
-        $('#showtableTBody tr:not(:contains(' + $(this).val() + '))').hide();
-    })
-    */
+    function AddButton( input ){
+    setTimeout( function(){
+
+
+    }, 1 );
+  }
+
+    $( ".datePicker" ).datetimepicker({
+
+    });
+
+
+    var autocomplete_License_plate = [];
+    var autocomplete_customer_name = [];
 
     function getOrderList() {
         //if (statusSearch == 'alle') {
             $.ajax({
                 url: 'ajax/order.php',
                 data: { action: "getOrderList", data: dataObject },
-                type: "GET",
+                type: "POST",
                 success: function (data) {
                     //console.log(data);
 
                     $.each(data, function (index, item) {
-                        if (item.auftragsstatus == null) {
-                            item.auftragsstatus = '';
+                        if (item.status == null) {
+                            item.status = '';
                         }
                         if (item.car_status == null) {
                             item.car_status = '';
                         }else {
                             item.car_status = ' / '+item.car_status;
                         }
-                        $(  '<tr id="'+item.auftragsnummer+'" class="showtableRow">'+
-                                '<td class="back">'+item.auftragsstatus + '' + item.car_status+'</td>'+
-                                '<td>'+item.kennzeichen+'</td>'+
-                                '<td>'+item.besitzer+'</td>'+
-                                '<td>'+item.auftragsdatum+'</td>'+
-                                '<td>'+item.ersteposition+'</td>'+
-                                '<td>'+item.auftragsnummer+'</td>'+
-                                '<td class="vals v1">'+item.owner+'</td>'+
-                                '<td class="vals v2">'+item.c_id+'</td>'+
+
+                          autocomplete_License_plate.push(item.c_ln);
+                          autocomplete_customer_name.push(item.owner);
+
+                        $(  '<tr id="'+item.id+'" owner = "'+item.customer_id+'" c_id = '+item.c_id+'  class="showtableRow">'+
+                                '<td class="back">'+item.status + '' + item.car_status+'</td>'+
+                                '<td>'+item.c_ln+'</td>'+
+                                '<td>'+item.owner+'</td>'+
+                                '<td>'+item.finish_time+'</td>'+
+                                '<td>'+item.description+'</td>'+
+                                '<td>'+item.ordnumber+'</td>'+
                             '</tr>'
                         ).appendTo('#showtableTBody');
 
                         $('.showtableRow').click(function () {
                             //console.log($(this).attr('id'));
-                            window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).children('.v1').text()+'&c_id='+$(this).children('.v2').text() + '&previous=' + filename;
+                            window.location = 'order.phtml?id='+$(this).attr('id')+'&customer_id='+$(this).attr('owner')+'&c_id='+$(this).attr('c_id') + '&previous=' + filename;
                         })
 
                         $('.vals').hide();
@@ -160,7 +151,7 @@ $(document).ready(function() {
                         $('#showtable').trigger('update');
 
                     })
-
+                    /*
                     $('#showtable tr').each( function () {
                         if (
                             $(this).children('.back').text() == '') {
@@ -193,20 +184,49 @@ $(document).ready(function() {
                                 })
                         }
                     } )
-
+                  */
                 },
                 error: function () {
                     alert('holen der Orderliste fehlgeschlagen');
                 }
             })
+
+
         //}
     }
 
-        /*****************/
-       /********************/
-      /***********************/
-     /**************************/
-    /*****************************/
+
+      dataObject['license_plate'] = license_plate;
+      dataObject['customerName'] = customerName;
+      dataObject['dateFrom'] = dateFrom;
+      dataObject['dateTo'] = dateTo;
+      dataObject['statusSearch'] = statusSearch;
+      getOrderList();
+
+
+
+
+    $( "#autocomplete_License_plate" ).autocomplete({
+      source: autocomplete_License_plate
+    });
+
+    $( "#autocomplete_customer_name" ).autocomplete({
+      source: autocomplete_customer_name
+    });
+
+    $("#btnDelete").click(function () {
+       $( "#autocomplete_License_plate, #autocomplete_customer_name" ).val("");
+       $("#dateFrom, #dateTo").val("");
+       $("#statusSearch").val('alle');
+
+       license_plate='';
+       customerName='';
+       dateFrom='';
+       dateTo='';
+
+
+    });
+
 
 }); //Ende $(document).ready()
 
@@ -239,7 +259,7 @@ $(document).ready(function() {
                 Kennzeichen:
             </td>
             <td>
-                <input type="text" id="txtKennzeichen" class="tblSearchTxt">
+                <input type="text" id="autocomplete_License_plate" class="tblSearchTxt ">
             </td>
         </tr>
         <tr>
@@ -247,7 +267,7 @@ $(document).ready(function() {
                 Kundenname:
             </td>
             <td>
-                <input type="text" id="txtKundenname" class="tblSearchTxt">
+                <input type="text" id="autocomplete_customer_name" class="tblSearchTxt">
             </td>
         </tr>
         <tr>
@@ -255,7 +275,7 @@ $(document).ready(function() {
                 Datum von:
             </td>
             <td>
-                <input type="text" id="txtDatumVon" class="tblSearchTxt">
+                <input type="text" id="dateFrom" class="datePicker">
             </td>
         </tr>
         <tr>
@@ -263,7 +283,7 @@ $(document).ready(function() {
                 Datum bis:
             </td>
             <td>
-                <input type="text" id="txtDatumBis" class="tblSearchTxt">
+                <input type="text" id="dateTo" class="datePicker">
             </td>
         </tr>
         <tr>
@@ -272,11 +292,11 @@ $(document).ready(function() {
             </td>
             <td>
                 <select id="txtStatus" class="tblSearchTxt">
-                    <option value="alle">alle</option>
+                    <option value="alle" selected="true">alle</option>
                     <option value="angenommen">angenommen</option>
                     <option value="bearbeitet">bearbeitet</option>
                     <option value="abgerechnet">abgerechnet</option>
-                    <option value="nicht abgerechnet" selected="true">nicht abgerechnet</option>
+                    <option value="nicht abgerechnet">nicht abgerechnet</option>
                 </select>
             </td>
         </tr>
@@ -300,6 +320,7 @@ $(document).ready(function() {
                     <th>Auftragsdatum</th>
                     <th>Erste Position</th>
                     <th>Auftrags-Nr.</th>
+                    <th>Fahrzeugtyp</th>
                 </tr>
             </thead>
             <tbody id="showtableTBody">
@@ -312,4 +333,7 @@ $(document).ready(function() {
 
     </div>
 </body>
+
+
+
 </html>
