@@ -624,6 +624,7 @@
     lastRow.find( '[name=sellprice_as_number]' ).val( 0 );
     lastRow.find( '[name=linetotal]' ).text( 0 );
     lastRow.find( '[name=partclassification]' ).text( '' );
+    lastRow.find( '[name=txtArea]' ).val( '' );
     lastRow.find( '[name=qty_as_number]' ).val( '1' );
     lastRow.removeAttr( 'id' );
     lastRow.find( 'img' ).hide();
@@ -936,6 +937,7 @@
               $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber(item.qty.toFixed(2)) );
               $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber(item.discount.toFixed(2)) );
               $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed( 2 )) );
+              $( '.row_entry [name=txtArea]' ).last().val( item.longdescription).change();
               $( '.row_entry [class=x]' ).last().show();
 
               if ( item.instruction )
@@ -1247,7 +1249,7 @@
      var updatePosData = new Array;
 
      $( '.row_entry' ).each(function( index ) {
-        //console.log( $( this ).text() );
+
        if($( this ).find( '[name=item_partpicker_name]' ).val()!=""){
           updatePosData.push({
 
@@ -1262,9 +1264,13 @@
             "pos_status": $( this ).find( '[name=pos_status]' ).val(),
             "pos_id": $( this ).attr( 'id' ),
             "parts_id": $( this ).find( '[name=partnumber]' ).attr('part_id'),
-            "pos_instruction": $( this ).hasClass( 'instruction' )
+            "pos_instruction": $( this ).hasClass( 'instruction' ),
+            "longdescription": $( this ).find( '[name=txtArea]' ).val()
+
           });
        }
+
+
 
      });
      console.log(updatePosData);
