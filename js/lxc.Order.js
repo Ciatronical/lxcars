@@ -1134,8 +1134,7 @@
         data: { action: "updateOrder", data: updateDataJSON },
         type: "POST",
         success: function(){
-          if(newOrder==1)
-            window.location ='order.phtml?id='+orderID+'&owner='+owner+'&c_id='+c_id+'&previous=orderlist.phtml&newOrder=0';
+
         },
         error:  function(){
           alert( 'Update des Auftrages fehlgeschlagen' );
