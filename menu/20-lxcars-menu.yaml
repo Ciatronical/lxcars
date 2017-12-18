@@ -19,13 +19,12 @@
   name: AuftragSuchen
   order: 300
   access: crm_other
-  module: crm/lxcars/orderSearch.phtml
+  module: crm/lxcars/lxcaufSuche.php
 - parent: lxcars
   id: lx4
   name: MotorSuchen
   order: 400
   access: crm_other
   module: crm/lxcars/lxcmotSuche.php
-  
- 
+
   
