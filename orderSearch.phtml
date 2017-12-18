@@ -101,13 +101,40 @@ $(document).ready(function() {
     }, 1 );
   }
 
-    $( ".datePicker" ).datetimepicker({
+    $( ".datePicker" ).datepicker({
 
     });
 
 
     var autocomplete_License_plate = [];
+
     var autocomplete_customer_name = [];
+
+    $.ajax({
+      url: 'ajax/order.php?action=getAutocomplete_License_plates',
+      type: 'GET',
+      success: function (data) {
+
+          for( i = 0; i < data.length; i++ ){
+           autocomplete_License_plate.push( data[i].c_ln );
+          }
+
+      }
+
+    })
+
+    $.ajax({
+      url: 'ajax/order.php?action=getAutocomplete_customer',
+      type: 'GET',
+      success: function ( data ) {
+
+          for( i = 0; i < data.length; i++ ) {
+              autocomplete_customer_name.push( data[i].name );;
+          }
+
+
+      }
+    })
 
     function getOrderList() {
         //if (statusSearch == 'alle') {
@@ -128,14 +155,14 @@ $(document).ready(function() {
                             item.car_status = ' / '+item.car_status;
                         }
 
-                          autocomplete_License_plate.push(item.c_ln);
-                          autocomplete_customer_name.push(item.owner);
+
+
 
                         $(  '<tr id="'+item.id+'" owner = "'+item.customer_id+'" c_id = '+item.c_id+'  class="showtableRow">'+
                                 '<td class="back">'+item.status + '' + item.car_status+'</td>'+
                                 '<td>'+item.c_ln+'</td>'+
                                 '<td>'+item.owner+'</td>'+
-                                '<td>'+item.finish_time+'</td>'+
+                                '<td>'+item.transdate+'</td>'+
                                 '<td>'+item.description+'</td>'+
                                 '<td>'+item.ordnumber+'</td>'+
                             '</tr>'

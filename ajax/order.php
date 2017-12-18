@@ -22,12 +22,12 @@ function getOrderlist( $data ){
     $license_plate = '';
 
   if( $data['dateFrom'] != '' )
-    $dateFrom = "oe.finish_time > '".$data['dateFrom']."' AND ";
+    $dateFrom = "oe.transdate > '".$data['dateFrom']."' AND ";
   else
     $dateFrom = '';
 
   if( $data['dateTo'] != '' )
-    $dateTo = "oe.finish_time < '".$data['dateTo']."' AND ";
+    $dateTo = "oe.transdate < '".$data['dateTo']."' AND ";
   else
     $dateTo = '';
 
@@ -36,8 +36,8 @@ function getOrderlist( $data ){
 
   $rs = $GLOBALS['dbh']->getALL("SELECT distinct on ( ordnumber ) * FROM
                                     (
-                                      SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate,oe.finish_time, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$customer.$license_plate.$dateFrom.$dateTo.$state." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION
-                                      SELECT distinct on ( ordnumber )'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate,oe.finish_time, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$customer.$license_plate.$dateFrom.$dateTo.$state." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC
+                                      SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$customer.$license_plate.$dateFrom.$dateTo.$state." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION
+                                      SELECT distinct on ( ordnumber )'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$customer.$license_plate.$dateFrom.$dateTo.$state." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC
                                     ) AS testTable ORDER BY ordnumber DESC;");
 
 
@@ -56,7 +56,18 @@ echo json_encode($rs);
 
 }
 
+function getAutocomplete_License_plates(){
 
+echo $GLOBALS['dbh']->getAll( "SELECT distinct c_ln FROM lxc_cars, oe WHERE lxc_cars.c_id = oe.c_id",true );
+
+
+}
+
+function getAutocomplete_customer(){
+
+  echo $GLOBALS['dbh']->getAll( "SELECT distinct name FROM customer, oe, lxc_cars WHERE customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id",true );
+
+}
 
 function autocompletePart( $term ){
     echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE ( description ILIKE '%$term%' OR partnumber ILIKE '$term%' ) AND obsolete = FALSE LIMIT 20", true );
@@ -116,7 +127,7 @@ function getUnits(){
 }
 
 function getAccountingGroups(){
-    $rs = $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen", true );
+    $rs = $GLOBALS['dbh']->getOne( "SELECT id, description FROM buchungsgruppen", true );
     echo $rs;
 }
 
