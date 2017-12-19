@@ -373,6 +373,33 @@ function printOrder( $data ){
                 $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
             }
         }
+
+        if( $element['longdescription'] != '' ){
+           $height = $height + 6;
+           $pdf->SetFont( 'Helvetica', '', '8' );
+           $pdf->SetTextColor( 0, 0, 0 );
+           $longdescription = $element['longdescription'];
+           $arrayLongdescription = explode( "\n", $longdescription );
+
+           foreach( $arrayLongdescription as $index => $element ){
+
+              if( strlen( $element ) < 125 ) {
+                $pdf->Text( '16',$height, utf8_decode( $element ) );
+                $height = $height + 4;
+              }else{
+
+                $arrayLong = str_split( $element, 125 );
+                foreach( $arrayLong as $i => $item ){
+                    $pdf->Text( '16',$height, utf8_decode( $item ) );
+                    $height = $height + 4;
+                 }
+
+              }
+
+           }
+
+
+        }
     }
     $pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '10' );
