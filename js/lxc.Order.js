@@ -114,7 +114,7 @@
             rsp=rsp[0];
             var newPosArray={};
 
-             if ($('#ordernumber').text()=='0000') {
+             if( $( '#ordernumber' ).text() == '0000' ) {
 
               $( '#employee' ).text( kivi.myconfig.name );
               $( '#milage' ).val( '0' );
@@ -128,7 +128,7 @@
                      $('#ordernumber').text(newOrderID);
                      orderID=newOrderID;
                   },
-                  error:  function(){ alert("Holen der Auftrags-Nr fehlgeschlagen!"); }
+                  error:  function(){ alert( "Holen der Auftrags-Nr fehlgeschlagen!" ); }
               })
 
             }
@@ -320,9 +320,6 @@
                           $( '#dialogPart_typ' ).val( 'dimension' ).change();
                           $( "dialogSelectUnits" ).val( 'Stck' ).change();
                         }
-
-
-
 
 
                     if ( data>1 ) {
@@ -624,7 +621,7 @@
     lastRow.find( '[name=sellprice_as_number]' ).val( 0 );
     lastRow.find( '[name=linetotal]' ).text( 0 );
     lastRow.find( '[name=partclassification]' ).text( '' );
-    lastRow.find( '[name=txtArea]' ).val( '' );
+    lastRow.find( '[name=longdescription]' ).val( '' );
     lastRow.find( '[name=qty_as_number]' ).val( '1' );
     lastRow.removeAttr( 'id' );
     lastRow.find( 'img' ).hide();
@@ -691,7 +688,7 @@
       url: 'ajax/order.php?action=getCustomer_hourly_rate',
       type: 'GET',
       success: function (data) {
-              console.log(data);
+              //console.log(data);
         customer_hourly_rate = data['customer_hourly_rate'];
 
       },
@@ -937,7 +934,7 @@
               $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber(item.qty.toFixed(2)) );
               $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber(item.discount.toFixed(2)) );
               $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed( 2 )) );
-              $( '.row_entry [name=txtArea]' ).last().val( item.longdescription).change();
+              $( '.row_entry [name=longdescription]' ).last().val( item.longdescription ).change();
               $( '.row_entry [class=x]' ).last().show();
 
               if ( item.instruction )
@@ -1265,7 +1262,7 @@
             "pos_id": $( this ).attr( 'id' ),
             "parts_id": $( this ).find( '[name=partnumber]' ).attr('part_id'),
             "pos_instruction": $( this ).hasClass( 'instruction' ),
-            "longdescription": $( this ).find( '[name=txtArea]' ).val()
+            "longdescription": $( this ).find( '[name=longdescription]' ).val()
 
           });
        }

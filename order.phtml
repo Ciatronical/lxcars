@@ -78,10 +78,12 @@
                     <th id="partnumber_header_id"  class="listheading" nowrap width="15"><a href='#' onClick='javascript:kivi.Order.reorder_items("partnumber")'> Artikelnummer</a></th>
                     <th id="partclass_header_id"   class="listheading" nowrap width="2">Typ</th>
                     <th id="description_header_id" class="listheading" nowrap           ><a href='#' onClick='javascript:kivi.Order.reorder_items("description")'>Beschreibung</a></th>
+                    <th id="longdescription_header_id" class="listheading" nowrap           ><a href='#' onClick='javascript:kivi.Order.reorder_items("description")'>Langtext</a></th>
+
                     <th id="qty_header_id"         class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("qty")'>        Menge</a></th>
                     <th class="listheading" nowrap width="5" >Einheit </th>
-                    <th id="sellprice_header_id"   class="listheading" nowrap width="15" ><a href='#' onClick='javascript:kivi.Order.reorder_items("sellprice")'> Preis</a></th>
-                    <th id="discount_header_id"    class="listheading" nowrap width="15" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  Rabatt in %</a></th>
+                    <th id="sellprice_header_id"   class="listheading" nowrap width="10" ><a href='#' onClick='javascript:kivi.Order.reorder_items("sellprice")'> Preis</a></th>
+                    <th id="discount_header_id"    class="listheading" nowrap width="10" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  Rabatt in %</a></th>
                     <th class="listheading" nowrap width="10">Gesamt </th>
                     <th class="listheading" nowrap width="5" >Mechaniker </th>
                     <th class="listheading" nowrap width="5" >Status </th>
@@ -106,8 +108,12 @@
                       <div name="partclassification"></div>
                     </td>
                     <td>
-                      <span class="part_picker"><input type="hidden" class="autocomplete add_item_input part_autocomplete " name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 100px&quot;}"><input type="text" fat_set_item="1" style="width: 550px" class="add_item_input" name="item_partpicker_name" value=""></span>
-                     <!-- <img src="../../image/edit-entry.png" onclick="kivi.switch_areainput_to_textarea('add_item_parts_id_name')"style="margin-left: 2px;"> -->
+                     <span class="part_picker"><input type="hidden" class="autocomplete add_item_input part_autocomplete " name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 100px&quot;}"><input type="text" fat_set_item="1" style="width: 450px" class="add_item_input" name="item_partpicker_name" value=""></span>
+                    </td>
+                    <td>
+                      <span>
+                        <textarea rows="1" cols="50" class="orderupdate" name="longdescription"> </textarea>
+                      </span>
                     </td>
                     <td>
                       <span>
