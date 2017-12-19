@@ -128,9 +128,9 @@ function getUnits(){
     echo $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
 }
 
+//get accounting groups and order by most in parts
 function getAccountingGroups(){
-    $rs = $GLOBALS['dbh']->getOne( "SELECT id, description FROM buchungsgruppen", true );
-    echo $rs;
+    echo $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen ORDER BY id = ( SELECT buchungsgruppen_id FROM ( SELECT buchungsgruppen_id, count( buchungsgruppen_id ) AS id FROM parts GROUP BY 1 ORDER BY id DESC LIMIT 1 ) AS nothing ) DESC", true );
 }
 
 function getCustomer_hourly_rate() {

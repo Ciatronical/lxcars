@@ -698,20 +698,12 @@
 
     })
 
-
-    var accountingGroupsID;
     $.ajax({
       url: 'ajax/order.php?action=getAccountingGroups',
       type: 'GET',
       success: function( data ){
         $.each( data, function( index, item ){
-          //console.log(item);accountingGroups
           $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
-          accountingGroupsID=item.id;
-          if( item.id == 859 ){ //ToDo: 859????
-            $( '#accountingGroups' ).children( '#'+item.id ).attr( 'selected', 'selected' );
-
-          }
         })
       },
       error: function(){
@@ -987,7 +979,8 @@
       dataArray['unit'] = $( '#dialogSelectUnits' ).val();
       dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
       dataArray['sellprice'] = $( '#dialogSellPrice' ).val();
-      dataArray['buchungsgruppen_id'] = accountingGroupsID;
+      dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
+      //alert(  );
       dataArray['quantity'] = $( "#quantity" ).val();
 
       var part_type = $( '#dialogPart_typ' ).val();
@@ -1015,16 +1008,9 @@
          type: 'POST',
          data: { action: "newPart", data: dataArray },
          success: function( data ){
-            console.log(data);
-            alert( 'new Part saved' );
-
             $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
             $( '.row_entry:last [name=partclassification]' ).text( kivi.t8(dataArray.part_type) );
-            if( dataArray.instruction ){
-
-              $( '.row_entry:last [name=partclassification]' ).text( kivi.t8("I") );
-
-            }
+            if( dataArray.instruction ) $( '.row_entry:last[name = partclassification]' ).text( kivi.t8( "I" ) );
             $( '.row_entry:last').attr('id', data);
             $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
             $( '.row_entry:last [name=position]').text( dataArray.position );
