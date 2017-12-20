@@ -1,6 +1,7 @@
-namespace("kivi").setupLocale({
+namespace( "kivi" ).setupLocale({
 "service":"D",
 "part":"W",
+"assembly":"E",
 "partnumber":"Artikelnummer",
 " clock":" Uhr",
 " Time":" Zeit",
