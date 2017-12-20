@@ -1,27 +1,27 @@
 table.tablesorter { width:auto; cursor:pointer; }
 
     .input_02{width: 248px;}
-
-    #head01           { position: absolute; top: 135px; left: 5px; font-size: 12px;}
-    #ordernumber      { position: absolute; top: 135px; left: 125px; font-size: 12px;}
-    #head03           { position: absolute; top: 135px; left: 500px; font-size: 12px;}
-    #name             { position: absolute; top: 135px; left: 650px; font-size: 12px;}
-    #head05           { position: absolute; top: 150px; left: 5px; font-size: 12px;}
-    #finish_time      { position: absolute; top: 150px; left: 125px; font-size: 12px;}
-    #head07           { position: absolute; top: 150px; left: 500px; font-size: 12px;}
-    #milage           { position: absolute; top: 150px; left: 650px; font-size: 12px;}
-    #head09           { position: absolute; top: 165px; left: 5px; font-size: 12px;}
-    #employee         { position: absolute; top: 165px; left: 125px; font-size: 12px;}
-    #head11           { position: absolute; top: 165px; left: 500px; font-size: 12px;}
-    #head12           { position: absolute; top: 165px; left: 650px; font-size: 12px;}
-    #head13           { position: absolute; top: 180px; left: 500px; font-size: 12px;}
-    #car_status           { position: absolute; top: 180px; left: 650px; font-size: 12px;}
-    #head15           { position: absolute; top: 200px; left: 5px; font-size: 12px;}
-    #date             { position: absolute; top: 200px; left: 125px; font-size: 12px;}
-    #head17           { position: absolute; top: 200px; left: 500px; font-size: 12px;}
-    #orderstatus      { position: absolute; top: 200px; left: 650px; font-size: 12px;}
-    #labellicenseplate{ position: absolute; top: 150px; left: 850px; font-size: 12px;}
-    #licenseplate     { position: absolute; top: 150px; left: 950px; font-size: 12px; width: 100px; background: none; border-style: none; pointer-events: none;}
+    .tools.ui-state-highlight.ui-corner-all.lang{ height: 150px; background-color: lightyellow;}
+    #head01           { position: absolute; top: 150px; left: 20px }
+    #ordernumber      { position: absolute; top: 150px; left: 185px; }
+    #head03           { position: absolute; top: 150px; left: 500px; }
+    #name             { position: absolute; top: 150px; left: 650px; }
+    #head05           { position: absolute; top: 180px; left: 20px; }
+    #finish_time      { position: absolute; top: 180px; left: 185px; }
+    #head07           { position: absolute; top: 180px; left: 500px; }
+    #milage           { position: absolute; top: 180px; left: 650px; }
+    #head09           { position: absolute; top: 210px; left: 20px; }
+    #employee         { position: absolute; top: 210px; left: 185px; }
+    #head11           { position: absolute; top: 270px; left: 20px; }
+    #mtime           { position: absolute; top: 270px; left: 185px; }
+    #head13           { position: absolute; top: 210px; left: 500px; }
+    #car_status       { position: absolute; top: 210px; left: 650px; }
+    #head15           { position: absolute; top: 240px; left: 20px; }
+    #date             { position: absolute; top: 240px; left: 185px; }
+    #head17           { position: absolute; top: 240px; left: 500px; }
+    #orderstatus      { position: absolute; top: 240px; left: 650px; }
+    #labellicenseplate{ position: absolute; top: 270px; left: 500px; }
+    #licenseplate     { position: absolute; top: 270px; left: 650px;  100px; background: none; border-style: none; pointer-events: none;}
     #netto            { position: absolute; left: 1030px; text-align: right; }
     #orderTotalNetto  { position: absolute; left: 1133px; width: 100px; text-align: right; }
     #brutto           { position: absolute; left: 1030px; text-align: right; }
@@ -30,8 +30,13 @@ table.tablesorter { width:auto; cursor:pointer; }
     #all_mechanics     {position: absolute; left: 1450px; text-align: right;}
     #all_status     {position: absolute; left: 1700px; text-align: right;}
 
+    label{font-size: 14px;}
+    div p{font-size: 16px;}
+    p label{font-size: 14px; font-weight: bold;}
+    p label.val{font-size: 14px; font-weight: normal;}
+
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
-    #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
+    #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 16px; height: 30px; }
     #sortable li span { position: absolute; margin-left: -1.3em; }
     #buttons { padding-left: 2.5em; padding-top: 1em;    }
     .btn { position: relative; left: 15px; }
