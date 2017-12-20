@@ -316,7 +316,7 @@
 
                           $( '#dialogPart_typ' ).val( 'instruction' ).change();
                           $( "dialogSelectUnits" ).val( 'Std' ).change();
-                        }else {
+                        }else{
                           $( '#dialogPart_typ' ).val( 'dimension' ).change();
                           $( "dialogSelectUnits" ).val( 'Stck' ).change();
                         }
@@ -1143,7 +1143,7 @@
         }
         else{
             unit='Std';
-            $('#dialogSellPrice').val(customer_hourly_rate);
+            $('#dialogSellPrice').val(ns.formatNumber(parseFloat(customer_hourly_rate).toFixed(2)));
         }
 
 
