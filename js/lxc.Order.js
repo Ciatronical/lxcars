@@ -675,7 +675,7 @@
       success: function( data ){
         $.each( data, function( index, item ){
         //console.log(item);
-          $( '[name = mechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
+          $( '[name = mechanics], [name = allMechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
         })
       },
       error:  function(){
@@ -1226,6 +1226,29 @@
     });
 
   }
+
+  $("#allMechanicsID").change(function () {
+
+    $("[name=mechanics]").each(function ( index ) {
+
+      $(this).val($("#allMechanicsID").val()).change();
+
+
+    });
+
+  });
+
+
+  $("#allStatusID").change(function () {
+
+    $("[name=pos_status]").each(function ( index ) {
+
+      $(this).val($("#allStatusID").val()).change();
+
+
+    });
+
+  });
 
   ns.updatePosition = function() {
 

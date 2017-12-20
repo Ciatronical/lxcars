@@ -153,14 +153,42 @@
                 </tbody>
               </table>
               <br>
-                <li>
-                  <label id="netto">Netto:</label>
-                  <input name="pos_orderTotalNetto" value="0" type="text" id="orderTotalNetto" class="recalc reformat_number numeric">
-                </li><br>
-                <li>
-                  <label id="brutto">Brutto:</label>
-                  <input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="recalc reformat_number numeric">
-                </li>
+                <table width="100%">
+                  <tbody class="listrow_2 ">
+                    <tr style="width: 1533px;">
+                     <td>  </td>
+                     <td>
+                        <label id="netto">Netto:</label>
+                        <input name="pos_orderTotalNetto" value="0" type="text" id="orderTotalNetto" class="recalc reformat_number numeric">
+                      <br>
+                      <br>
+                        <label id="brutto">Brutto:</label>
+                        <input name="pos_orderTotalBrutto" value="0" type="text" id="orderTotalBrutto" class="recalc reformat_number numeric">
+                     </td>
+                     <td>  </td>
+                     <td><span></span>  </td>
+                     <td>  <span id="all_mechanics"><label>Alle Positionen Mechaniker:</label> <br> <br> <select  name="allMechanics" value="0" type="text" id="allMechanicsID"></span></td>
+                     <td>  <span id="all_status">
+                            <label>Alle Positionen Status:</label>
+                            <br> <br>
+                            <select  name="allStatus" value="0" type="text" id="allStatusID">
+                              <option value="0"></option>
+                              <option value="gelesen">gelesen</option>
+                              <option value="Bearbeitung">Bearbeitung</option>
+                              <option value="erledigt">erledigt</option>
+                            </select>
+                        </span>
+                     </td>
+                     <td></td>
+                    </tr>
+                  </tbody>
+
+                </table>
+
+
+
+
+
             </div>
           </td>
         </tr>

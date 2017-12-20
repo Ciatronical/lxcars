@@ -26,6 +26,9 @@ table.tablesorter { width:auto; cursor:pointer; }
     #orderTotalNetto  { position: absolute; left: 1133px; width: 100px; text-align: right; }
     #brutto           { position: absolute; left: 1030px; text-align: right; }
     #orderTotalBrutto { position: absolute; left: 1133px; width: 100px; text-align: right; }
+    #sellprice_header_id{max-width: 5px;}
+    #all_mechanics     {position: absolute; left: 1450px; text-align: right;}
+    #all_status     {position: absolute; left: 1700px; text-align: right;}
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
     #sortable li, #head li { margin: 0 3px 3px 3px; font-size: 1.4em; height: 30px; }
