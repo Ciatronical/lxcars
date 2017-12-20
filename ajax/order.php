@@ -22,12 +22,12 @@ function getOrderlist( $data ){
     $license_plate = '';
 
   if( $data['dateFrom'] != '' )
-    $dateFrom = "oe.transdate > '".$data['dateFrom']."' AND ";
+    $dateFrom = "oe.transdate >= '".$data['dateFrom']."' AND ";
   else
     $dateFrom = '';
 
   if( $data['dateTo'] != '' )
-    $dateTo = "oe.transdate < '".$data['dateTo']."' AND ";
+    $dateTo = "oe.transdate <= '".$data['dateTo']."' AND ";
   else
     $dateTo = '';
 
