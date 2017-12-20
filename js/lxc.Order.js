@@ -1233,7 +1233,8 @@
 
      $( '.row_entry' ).each(function( index ) {
 
-       if($( this ).find( '[name=item_partpicker_name]' ).val()!=""){
+
+       if($( this ).find( '[name=partnumber]' ).text()!=""){
           updatePosData.push({
 
             "order_nr": $( this ).find( '[name=position]' ).text(),
