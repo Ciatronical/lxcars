@@ -16,5 +16,6 @@ namespace( "kivi" ).setupLocale({
 "Print": "Drucken",
 "new Order":"Neuer Auftrag",
 "back":"Zurück",
-"I":"A"
+"I":"A",
+"invoice":"Rechnung"
 })

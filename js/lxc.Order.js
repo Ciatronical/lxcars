@@ -795,8 +795,6 @@
     return false;
   });
 
-
-
   $( "#printOrder, #pdfOrder" ).button({
     label: this.id == 'printOrder' ? 'Print' : 'PDF'  //ToDo does not work!!!!
   }).css({
@@ -816,6 +814,16 @@
       }
 
     });
+    return false;
+  });
+
+  $( '#invoice' ).button({
+    label: kivi.t8( 'invoice' )
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    alert( 'currently not implemented' );
+    //window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
     return false;
   });
 
