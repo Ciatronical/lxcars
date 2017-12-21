@@ -187,7 +187,7 @@
 
             //console.log(newPosArray);
 
-            console.log(rsp.id);
+            //console.log(rsp.id);
 
             newPosArray['instruction']=rsp.instruction;
             if (rsp.instruction) {
@@ -200,7 +200,7 @@
                  async:false,
                  data: { action: "insertRow", data: newPosArray },
                  success: function ( data ) {
-                    console.log( data );
+                    //console.log( data );
                     $( ':focus' ).parents().eq(3).attr( 'id',data );
 
                  },
@@ -895,12 +895,23 @@
     type: 'GET',
     async: false,
     success: function( data ){
-      if( data.c_manuf != "" && data.c_manuf !== "undefined" )
-        cm_ct = true;
-      else {
-        cm = data.c_manuf;
-        ct = data.c_type;
-      }
+
+        cm = data[1];
+        ct = data[2];
+
+        var updatelxc = {};
+        updatelxc['cm'] = cm;
+        updatelxc['ct'] = ct;
+        updatelxc['c_id'] = data.c_id;
+
+        $.ajax({
+          url: 'ajax/order.php',
+          type: 'POST',
+          data: { action: "lxc_carsUpdate", data: updatelxc }
+
+        })
+
+
 
 
       var car = data.c_id;
@@ -1015,9 +1026,9 @@
       dataArray['quantity'] = $( "#quantity" ).val();
 
       var part_type = $( '#dialogPart_typ' ).val();
-      console.log(part_type);
+      //console.log(part_type);
       if(part_type == "instruction"){
-      console.log("instruction")
+      //console.log("instruction")
 
 
      dataArray['instruction'] = true;
@@ -1143,7 +1154,7 @@
       timer = setTimeout( function(){
 
        ns.updatePosition()
-       console.log( 'update Order' );
+       //console.log( 'update Order' );
        $.ajax({
         url: 'ajax/order.php',
         async: false,
@@ -1311,10 +1322,10 @@
 
 
      });
-     console.log(updatePosData);
+     //console.log(updatePosData);
      //clearTimeout( timer );
      //timer = setTimeout( function(){
-       console.log( 'update Pos' )
+       //console.log( 'update Pos' )
        $.ajax({
          url: 'ajax/order.php',
          data: { action: "updatePositions", data: updatePosData },

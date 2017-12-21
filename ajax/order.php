@@ -157,10 +157,13 @@ function removeOrder( $orderID ){
 }
 
 
-
+function lxc_carsUpdate($data){
+    //writeLog($data);
+    echo $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_manuf', 'c_type'), array( $data['cm'], $data['ct']), 'c_id = '.$data['c_id'] );
+}
 
 function newOrder( $data ){
-    writeLog($data);
+    //writeLog($data);
 
     if( $data['cm_ct'] != "true" )
     $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_manuf', 'c_type'), array( $data['cm'], $data['ct']), 'c_id = '.$data['car_id'] );
