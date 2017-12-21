@@ -178,43 +178,7 @@ $(document).ready(function() {
                         $('#showtable').trigger('update');
 
                     })
-                    /*
-                    $('#showtable tr').each( function () {
-                        if (
-                            $(this).children('.back').text() == '') {
-                                $(this).children('.back').css({
-                                   backgroundColor: 'none'
-                                })
-                        }else if (
-                            $(this).children('.back').text() == 'angenommen / Auto hier' ||
-                            $(this).children('.back').text() == 'angenommen / Sonstiges zur Reparatur gebracht' ||
-                            $(this).children('.back').text() == 'angenommen / Bestellung') {
-                                $(this).children('.back').css({
-                                   backgroundColor: 'yellow'
-                                })
-                        }else if (
-                            $(this).children('.back').text() == 'bearbeitet / Auto hier' ||
-                            $(this).children('.back').text() == 'bearbeitet / Sonstiges zur Reparatur gebracht' ||
-                            $(this).children('.back').text() == 'bearbeitet / Bestellung') {
-                                $(this).children('.back').css({
-                                   backgroundColor: 'green'
-                                })
-                        }else if (
-                            $(this).children('.back').text() == 'angenommen / Auto nicht hier' ||
-                            $(this).children('.back').text() == 'nicht abgerechnet / Auto nicht hier') {
-                                $(this).children('.back').css({
-                                   backgroundColor: 'red'
-                                })
-                        } else {
-                                $(this).children('.back').css({
-                                   backgroundColor: 'lightgrey'
-                                })
-                        }
-                    } )
-                  */
-                },
-                error: function () {
-                    alert('holen der Orderliste fehlgeschlagen');
+
                 }
             })
 

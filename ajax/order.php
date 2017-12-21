@@ -13,19 +13,19 @@ function getOrderlist( $data ){
         $where .= "customer.name = '".$data['customerName']."' AND ";
 
     if( $data['license_plate'] != '' )
-        $where = "lxc_cars.c_ln = '".$data['license_plate']."' AND ";
+        $where .= "lxc_cars.c_ln = '".$data['license_plate']."' AND ";
 
     if( $data['dateFrom'] != '' )
-        $where = "oe.transdate >= '".$data['dateFrom']."' AND ";
+        $where .= "oe.transdate >= '".$data['dateFrom']."' AND ";
 
     if( $data['dateTo'] != '' )
-        $where = "oe.transdate <= '".$data['dateTo']."' AND ";
+        $where .= "oe.transdate <= '".$data['dateTo']."' AND ";
 
-    if( $data['statusSearch'] != 'alle' )
-        $where = "oe.status = '".$data['statusSearch']."' AND ";
+    if( $data['statusSearch'] != 'alle' && $data['statusSearch'] != 'nicht abgerechnet' )
+        $where .= "oe.status = '".$data['statusSearch']."' AND ";
 
-    if( $data['statusSearch'] != 'nicht abgerechnet' )
-        $where = "oe.status = 'abgerechnet' OR oe.status = 'bearbeitet' OR oe.status = 'angenommen' AND ";
+    if( $data['statusSearch'] == 'nicht abgerechnet' )
+        $where = " oe.status != 'abgerechnet'  AND ";
 
     $sql = "SELECT distinct on ( ordnumber ) * FROM ( ";
     $sql.= "SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";

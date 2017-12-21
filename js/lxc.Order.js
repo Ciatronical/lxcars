@@ -786,6 +786,16 @@
     return false;
   });
 
+  $( "#back" ).button({
+    label: kivi.t8("back")
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
+    return false;
+  });
+
+
 
   $( "#printOrder, #pdfOrder" ).button({
     //label: this.id == 'printOrder' ? 'Print' : 'PDF'
