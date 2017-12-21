@@ -6,61 +6,37 @@ require_once __DIR__.'/../inc/ajax2function.php';
 
 
 function getOrderlist( $data ){
+    require_once __DIR__.'/../inc/lxcLib.php';
 
-  require_once __DIR__.'/../inc/lxcLib.php';
+    $where = '';
+    if( $data['customerName'] != '' )
+        $where .= "customer.name = '".$data['customerName']."' AND ";
 
+    if( $data['license_plate'] != '' )
+        $where = "lxc_cars.c_ln = '".$data['license_plate']."' AND ";
 
-  //Suchfilter
-  if( $data['customerName'] != '' )
-    $customer = "customer.name = '".$data['customerName']."' AND ";
-  else
-    $customer = '';
+    if( $data['dateFrom'] != '' )
+        $where = "oe.transdate >= '".$data['dateFrom']."' AND ";
 
-  if( $data['license_plate'] != '' )
-    $license_plate = "lxc_cars.c_ln = '".$data['license_plate']."' AND ";
-  else
-    $license_plate = '';
+    if( $data['dateTo'] != '' )
+        $where = "oe.transdate <= '".$data['dateTo']."' AND ";
 
-  if( $data['dateFrom'] != '' )
-    $dateFrom = "oe.transdate >= '".$data['dateFrom']."' AND ";
-  else
-    $dateFrom = '';
+    if( $data['statusSearch'] != 'alle' )
+        $where = "oe.status = '".$data['statusSearch']."' AND ";
 
-  if( $data['dateTo'] != '' )
-    $dateTo = "oe.transdate <= '".$data['dateTo']."' AND ";
-  else
-    $dateTo = '';
+    if( $data['statusSearch'] != 'nicht abgerechnet' )
+        $where = "oe.status = 'abgerechnet' OR oe.status = 'bearbeitet' OR oe.status = 'angenommen' AND ";
 
-  if( $data['statusSearch'] != 'alle' )
-    $state = "oe.status = '".$data['statusSearch']."' AND ";
-
-  $rs = $GLOBALS['dbh']->getALL("SELECT distinct on ( ordnumber ) * FROM
-                                    (
-                                      SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$customer.$license_plate.$dateFrom.$dateTo.$state." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION
-                                      SELECT distinct on ( ordnumber )'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$customer.$license_plate.$dateFrom.$dateTo.$state." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC
-                                    ) AS testTable ORDER BY ordnumber DESC;");
-
-
-
-/* holt Fahrzeugdaten aus Datenbank
-  foreach( $rs as $item ){
-
-
-    array_merge( $item, lxc2db( '-c '.$item['c_2'].' '.substr( $item['c_3'], 0, 3 ) )['0'] );
-    //writeLog($item);
-  }
-*/
-//echo json_encode( array_merge( $rs, lxc2db( '-C '.$rs['c_2'].' '.substr( $rs['c_3'], 0, 3 ) )['0'] ) );
-
-echo json_encode($rs);
-
+    $sql = "SELECT distinct on ( ordnumber ) * FROM ( ";
+    $sql.= "SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";
+    $sql.= "SELECT distinct on ( ordnumber ) 'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$where." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC";
+    $sql.= ") AS testTable ORDER BY ordnumber DESC";
+    writeLog( $sql );
+    echo $GLOBALS['dbh']->getALL( $sql, true );
 }
 
 function getAutocomplete_License_plates(){
-
-echo $GLOBALS['dbh']->getAll( "SELECT distinct c_ln FROM lxc_cars, oe WHERE lxc_cars.c_id = oe.c_id",true );
-
-
+    echo $GLOBALS['dbh']->getAll( "SELECT distinct c_ln FROM lxc_cars, oe WHERE lxc_cars.c_id = oe.c_id", true );
 }
 
 function getAutocomplete_customer(){
