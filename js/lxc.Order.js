@@ -759,7 +759,7 @@
     currentText: 'Jetzt'
   });
 
-  $( "#backToCRM" ).button({
+  $( "#crm" ).button({
     label: "CRM"
   }).css({
     'margin':'5px'
@@ -768,8 +768,8 @@
     return false;
   });
 
-  $( "#backToOrderList" ).button({
-    label: kivi.t8("Back to Orderlist")
+  $( "#orderList" ).button({
+    label: kivi.t8("Orderlist")
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -777,8 +777,8 @@
     return false;
   });
 
-  $( "#backToCar" ).button({
-    label: kivi.t8("Back to Car")
+  $( "#car" ).button({
+    label: kivi.t8("Car")
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -798,7 +798,7 @@
 
 
   $( "#printOrder, #pdfOrder" ).button({
-    //label: this.id == 'printOrder' ? 'Print' : 'PDF'
+    label: this.id == 'printOrder' ? 'Print' : 'PDF'  //ToDo does not work!!!!
   }).css({
     'margin':'5px'
   }).click( function(){

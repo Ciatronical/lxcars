@@ -1,0 +1,20 @@
+namespace( "kivi" ).setupLocale({
+"service":"S",
+"part":"P",
+"assembly":"A",
+"partnumber":"Partnumber",
+" clock":" Clock",
+" Time":" Time",
+" hour":" Hour",
+" minute":" Minute",
+" Now":" Now",
+" finished":" Fineshed",
+"Instruction":"Instruction",
+"Order":"Order",
+"Orderlist":"Orderlist",
+"Car":"Car",
+"Print": "Print",
+"new Order":"new order",
+"back":"back",
+"I":"I"
+})
