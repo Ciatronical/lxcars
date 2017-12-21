@@ -891,6 +891,7 @@
       $( '#licenseplate' ).val( data.c_ln );
       $( '#orderstatus' ).val( data.order_status ).change();
       $( '#car_status' ).val( data.car_status ).change();
+      $( '#mtime' ).text(data.mtime);
       $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
       orderID = data.oe_id;
 
