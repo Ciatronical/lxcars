@@ -12,6 +12,11 @@
   var c_id = $.urlParam( 'c_id' );
   var previous = $.urlParam( 'previous' );
   var newOrder = $.urlParam( 'newOrder' );
+  var cm = $.urlParam( 'cm' );
+  var ct = $.urlParam( 'ct' );
+
+
+  var cm_ct = false;
 
 
   var orderID;
@@ -102,7 +107,7 @@
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
 
-      console.log(item.id);
+      //console.log(item.id);
       if (this.o.fat_set_item && item.id) {
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
@@ -121,7 +126,7 @@
 
               $.ajax({
                   url: 'ajax/order.php?action=newOrder',
-                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id }},
+                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id, cm: cm, ct: ct, cm_ct: cm_ct }},
                   type: 'POST',
                   async: false,
                   success: function ( newOrderID ){
@@ -773,7 +778,7 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id;
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id + '&cm=' + cm + '&ct=' + ct;
     return false;
   });
 
@@ -791,7 +796,7 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id + '&task=3' + '&cm=' + cm + '&ct=' + ct;
     return false;
   });
 
@@ -890,6 +895,13 @@
     type: 'GET',
     async: false,
     success: function( data ){
+      if( data.c_manuf != "" && data.c_manuf !== "undefined" )
+        cm_ct = true;
+      else {
+        cm = data.c_manuf;
+        ct = data.c_type;
+      }
+
 
       var car = data.c_id;
       if( data.km_stnd == null ){
