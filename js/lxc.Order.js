@@ -999,7 +999,7 @@
       dataArray['description'] = $( '#dialogDescription' ).val();
       dataArray['unit'] = $( '#dialogSelectUnits' ).val();
       dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
-      dataArray['sellprice'] = $( '#dialogSellPrice' ).val();
+      dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace(",",".");
       dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
       //alert(  );
       dataArray['quantity'] = $( "#quantity" ).val();
