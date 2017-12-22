@@ -52,7 +52,7 @@ function autocompletePart( $term ){
 function getOrder( $id ){
     require_once __DIR__.'/../inc/lxcLib.php';
     $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
-    writeLog(lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) ));
+   // writeLog(lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) ));
 
       if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) )=='null' )
         echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
@@ -80,7 +80,7 @@ function updatePositions( $data) {
 
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
-      writeLog($value);
+      //writeLog($value);
         $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status', 'longdescription'), array($value['order_nr'], $value['parts_id'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status'], $value['longdescription']), 'id = '.$value['pos_id'] );
 
     }
@@ -157,10 +157,24 @@ function removeOrder( $orderID ){
 }
 
 function newOrder( $data ){
-    //increase last ordernumber, insert data, returning order-id
-    //writeLog( $data );
-    //UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber //increase last ordernumber and return them
-    echo $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id )  SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
+   require_once __DIR__.'/../inc/lxcLib.php';
+   //writeLog($data);
+
+    $carData = lxc2db( '-C '.$data['c_hsn'].' '.substr( $data['c_tsn'], 0, 3 ) );
+    if( $carData == 'null' )
+      $carData = lxc2db( '-c '.$data['c_hsn'].' '.substr( $data['c_tsn'], 0, 3 ) );
+    if( $carData == 'null' )
+      $carData = $GLOBALS['dbh']->getALL("SELECT id, hersteller , typ , bezeichung AS car_type FROM lxc_mykba");
+
+    //writeLog($carData[0][1]);
+
+   $id = $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id) SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
+
+   $GLOBALS['dbh']->update( 'oe', array( 'car_manuf', 'car_type' ), array( $carData[0][1], $carData[0][2]." ".$carData[0][3] ), 'id = '.$id );
+
+   echo $id;
+
+
 }
 
 function printOrder( $data ){

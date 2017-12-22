@@ -12,6 +12,8 @@
   var c_id = $.urlParam( 'c_id' );
   var previous = $.urlParam( 'previous' );
   var newOrder = $.urlParam( 'newOrder' );
+  var c_hsn = $.urlParam( 'c_hsn' );
+  var c_tsn = $.urlParam( 'c_tsn' );
 
 
   var orderID;
@@ -118,10 +120,10 @@
 
               $( '#employee' ).text( kivi.myconfig.name );
               $( '#milage' ).val( '0' );
-
+              console.log(c_hsn);
               $.ajax({
                   url: 'ajax/order.php?action=newOrder',
-                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id }},
+                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id, c_hsn: c_hsn, c_tsn: c_tsn }},
                   type: 'POST',
                   async: false,
                   success: function ( newOrderID ){
@@ -773,7 +775,7 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id;
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id + '&c_hsn = ' + c_hsn + '&c_tsn = ' + c_tsn;
     return false;
   });
 
@@ -791,7 +793,7 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3' + '&c_hsn = ' + c_hsn + '&c_tsn = ' + c_tsn;
     return false;
   });
 
