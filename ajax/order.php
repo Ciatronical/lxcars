@@ -28,8 +28,8 @@ function getOrderlist( $data ){
         $where = " oe.status != 'abgerechnet'  AND ";
 
     $sql = "SELECT distinct on ( ordnumber ) * FROM ( ";
-    $sql.= "SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, lxc_cars.c_manuf, lxc_cars.c_type FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";
-    $sql.= "SELECT distinct on ( ordnumber ) 'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 , lxc_cars.c_manuf, lxc_cars.c_type FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$where." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC";
+    $sql.= "SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";
+    $sql.= "SELECT distinct on ( ordnumber ) 'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3 FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$where." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction DESC";
     $sql.= ") AS testTable ORDER BY ordnumber DESC";
     writeLog( $sql );
     echo $GLOBALS['dbh']->getALL( $sql, true );
@@ -156,19 +156,11 @@ function removeOrder( $orderID ){
     echo $Globals['dbh']->getOne( "DELETE from oe WHERE oe.id='".$orderID."'" );
 }
 
-
-
-
 function newOrder( $data ){
-    writeLog($data);
-
-    if( $data['cm_ct'] != "true" )
-    $GLOBALS['dbh']->update( 'lxc_cars', array( 'c_manuf', 'c_type'), array( $data['cm'], $data['ct']), 'c_id = '.$data['car_id'] );
-
-
-
+    //increase last ordernumber, insert data, returning order-id
+    //writeLog( $data );
+    //UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber //increase last ordernumber and return them
     echo $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id )  SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
-
 }
 
 function printOrder( $data ){

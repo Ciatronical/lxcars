@@ -40,8 +40,6 @@ $(document).ready(function() {
     //var task  = $.urlParam( 'task'  );
     var owner = $.urlParam( 'owner' );
     var c_id  = $.urlParam( 'c_id'  ); //Car-Id
-    var cm = $.urlParam( 'cm' );
-    var ct = $.urlParam( 'ct' );
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
 
@@ -64,11 +62,11 @@ $(document).ready(function() {
 
     $('.showtableRow').click(function () {
         //console.log($(this).attr('id'));
-        window.location = 'order.phtml?id=' + $(this).attr('id') + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=0'  + '&cm=' + cm + '&ct=' + ct;
+        window.location = 'order.phtml?id=' + $(this).attr('id') + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=0';
     })
 
     $('#btnNewOrder').button().click(function () {
-      window.location = 'order.phtml?owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=1 ' + '&cm=' + cm + '&ct=' + ct;
+      window.location = 'order.phtml?owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=1  ';
 
     });
 
