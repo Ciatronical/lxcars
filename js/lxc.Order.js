@@ -123,7 +123,7 @@
               console.log(c_hsn);
               $.ajax({
                   url: 'ajax/order.php?action=newOrder',
-                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id, c_hsn: c_hsn, c_tsn: c_tsn }},
+                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id} },
                   type: 'POST',
                   async: false,
                   success: function ( newOrderID ){

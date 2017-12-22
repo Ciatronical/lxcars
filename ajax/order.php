@@ -56,8 +56,14 @@ function getOrder( $id ){
 
       if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) )=='null' )
         echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
-      else
+      else if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) )=='null' )
         echo json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
+      else {
+
+
+
+      }
+
 }
 
 
@@ -158,15 +164,24 @@ function removeOrder( $orderID ){
 
 function newOrder( $data ){
    require_once __DIR__.'/../inc/lxcLib.php';
-   //writeLog($data);
+    writeLog($data);
 
-    $carData = lxc2db( '-C '.$data['c_hsn'].' '.substr( $data['c_tsn'], 0, 3 ) );
-    if( $carData == 'null' )
-      $carData = lxc2db( '-c '.$data['c_hsn'].' '.substr( $data['c_tsn'], 0, 3 ) );
-    if( $carData == 'null' )
-      $carData = $GLOBALS['dbh']->getALL("SELECT id, hersteller , typ , bezeichung AS car_type FROM lxc_mykba");
+    $c_keys = $GLOBALS['dbh']->getAll("SELECT c_2 AS c_hsn, c_3 AS c_tsn FROM lxc_cars WHERE c_id = ".$data['car_id']);
 
-    //writeLog($carData[0][1]);
+    $carData = lxc2db( '-C '.$c_keys[0]['c_hsn'].' '.substr( $c_keys[0]['c_tsn'], 0, 3 ) );
+    if( $carData == -1 )
+      $carData = lxc2db( '-c '.$c_keys[0]['c_hsn'].' '.substr( $c_keys[0]['c_tsn'], 0, 3 ) );
+    if( $carData == -1 || $carData[0][0] == "" || $carData =='null'){
+      writeLog("test");
+
+      $car = $GLOBALS['dbh']->getALL( "SELECT id , hersteller , typ, bezeichung FROM lxc_mykba WHERE hsn ='".$c_keys[0]['c_hsn']."' AND tsn ='".substr($c_keys[0]['c_tsn'], 0, 3 )."'" );
+      $carData[0][1] = $car[0]['hersteller'];
+      $carData[0][2] = $car[0]['typ'];
+      $carData[0][3] = $car[0]['bezeichung'];
+
+    }
+    writeLog($carData);
+    //writeLog($GLOBALS['dbh']->getALL( "SELECT id, hersteller, typ, bezeichnung FROM lxc_mykba WHERE hsn ='".$c_keys[0]['c_hsn']."' AND tsn ='".substr($c_keys[0]['c_tsn'], 0, 3 )."'" ));
 
    $id = $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id) SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
 
