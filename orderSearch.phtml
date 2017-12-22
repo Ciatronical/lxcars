@@ -52,7 +52,8 @@ $(document).ready(function() {
     var url = window.location.pathname;
     var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
 
-
+    var c_hsn = $.urlParam( 'c_hsn' );
+    var c_tsn = $.urlParam( 'c_tsn' );
     var license_plate;
     var customerName;
     var dateFrom;
@@ -165,12 +166,14 @@ $(document).ready(function() {
                                 '<td>'+item.transdate+'</td>'+
                                 '<td>'+item.description+'</td>'+
                                 '<td>'+item.ordnumber+'</td>'+
+                                '<td>'+item.car_manuf+'</td>'+
+                                '<td>'+item.car_type+'</td>'+
                             '</tr>'
                         ).appendTo('#showtableTBody');
 
                         $('.showtableRow').click(function () {
                             //console.log($(this).attr('id'));
-                            window.location = 'order.phtml?id='+$(this).attr('id')+'&customer_id='+$(this).attr('owner')+'&c_id='+$(this).attr('c_id') + '&previous=' + filename;
+                            window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).attr('owner')+'&c_id='+$(this).attr('c_id') + '&previous=' + filename + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
                         })
 
                         $('.vals').hide();
@@ -311,6 +314,7 @@ $(document).ready(function() {
                     <th>Auftragsdatum</th>
                     <th>Erste Position</th>
                     <th>Auftrags-Nr.</th>
+                    <th>Hersteller</th>
                     <th>Fahrzeugtyp</th>
                 </tr>
             </thead>

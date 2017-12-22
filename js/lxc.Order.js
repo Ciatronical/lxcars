@@ -775,7 +775,7 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id + '&c_hsn = ' + c_hsn + '&c_tsn = ' + c_tsn;
+    window.location = baseUrl + '/crm/lxcars/orderlist.phtml?owner=' + owner + '&c_id=' + c_id + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
     return false;
   });
 
@@ -793,7 +793,7 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3' + '&c_hsn = ' + c_hsn + '&c_tsn = ' + c_tsn;
+    window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id + '&task=3' + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
     return false;
   });
 

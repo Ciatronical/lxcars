@@ -87,7 +87,7 @@
         $( '#g_art_drop' ).selectmenu({ width: 140 });
 
         $('#auftragExp').button().click(function () {
-            window.location = "orderlist.phtml?task=3&owner={owner}&c_id={c_id}&c_2={c_2}&c_3={c_3}";
+            window.location = "orderlist.phtml?task=3&owner={owner}&c_id={c_id}&c_hsn={c_2}&c_tsn={c_3}";
             return false;
         });
     });
