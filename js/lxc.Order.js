@@ -865,6 +865,10 @@
     var totalprice = 0;
     var totalnetto = 0;
     $( '.listrow' ).each(function () {
+      if($( this ).hasClass( 'instruction' )){
+        var linetotal = 0;
+      }else {
+
       var price = parseFloat( $( this ).find( '[name=sellprice_as_number]' ).val() );
       var number = parseFloat( $( this ).find( '[name=qty_as_number]' ).val() );
       var discount = parseFloat( $( this ).find( '[name=discount_as_percent]' ).val());
@@ -872,6 +876,11 @@
       $( this ).find( '[name=linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
 
       var linetotal = parseFloat($( this ).find( '[name=linetotal]' ).text());
+
+
+      }
+
+
 
       //console.log( linetotal );
       totalprice = totalprice + linetotal;
@@ -908,7 +917,7 @@
      if( fractionalPart[1].length==2 )
       number = number.replace( ',','.' );
     }
-   if ( number.length>6 ) {
+   if ( number.length > 6 ) {
    //var str='.';
    //number = [number.slice(0, number.length-6), str , number.slice(number.length-6)].join('');
    //console.log(number);
@@ -1154,6 +1163,7 @@
   ns.updateOrder=function () {
 
       var updateDataJSON = new Array;
+
       updateDataJSON.push({
         //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
         "id": orderID,
@@ -1316,6 +1326,9 @@
 
 
        if($( this ).find( '[name=partnumber]' ).text()!=""){
+
+
+
           updatePosData.push({
 
             "order_nr": $( this ).find( '[name=position]' ).text(),
