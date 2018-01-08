@@ -828,8 +828,11 @@
     return false;
   });
 
+
+
   $( "#printOrder, #pdfOrder" ).button({
-    label: this.id == 'printOrder' ? 'Print' : 'PDF'  //ToDo does not work!!!!
+
+    label:  kivi.t8('Print')   //ToDo does not work!!!!
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -859,7 +862,11 @@
     //window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
     return false;
   });
+$( "#pdfOrder" ).button({
 
+  label: 'Pdf'
+
+})
 
   ns.recalc=function() {
     var totalprice = 0;
