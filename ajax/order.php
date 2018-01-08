@@ -54,9 +54,21 @@ function getOrder( $id ){
     $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
    // writeLog(lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) ));
 
-      if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) )=='null' )
-        echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
-      else
+
+      $test = lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) );
+      writeLog($test);
+      if($test[0][0]!='')
+        writeLog('true');
+
+
+
+      if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) ) == 'null' ){
+        if( $test[0][0]=='' )
+          echo json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) );
+        else
+          echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
+
+      }else
         echo json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
 
 

@@ -865,9 +865,9 @@
     var totalprice = 0;
     var totalnetto = 0;
     $( '.listrow' ).each(function () {
-      var price = parseFloat( $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ) );
-      var number = parseFloat( $( this ).find( '[name=qty_as_number]' ).val().replace( ',','.' ) );
-      var discount = parseFloat( $( this ).find( '[name=discount_as_percent]' ).val().replace( ',','.' ) );
+      var price = parseFloat( $( this ).find( '[name=sellprice_as_number]' ).val() );
+      var number = parseFloat( $( this ).find( '[name=qty_as_number]' ).val() );
+      var discount = parseFloat( $( this ).find( '[name=discount_as_percent]' ).val());
       discount = discount / 100;
       $( this ).find( '[name=linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
 
@@ -923,7 +923,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
-
+      console.log(data);
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -943,6 +943,9 @@
       $( '#orderstatus' ).val( data.order_status ).change();
       $( '#car_status' ).val( data.car_status ).change();
       $( '#mtime' ).text(data.mtime);
+      //if (data[1]=="undefined")
+      //$( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
+      //else
       $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
       orderID = data.oe_id;
 
@@ -976,7 +979,8 @@
               $( '.row_entry [name=unit]' ).last().val( item.unit ).change();
               $( '.row_entry [name=pos_status]' ).last().val( item.status ).change();
               $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber(item.qty.toFixed(2)) );
-              $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber(item.discount.toFixed(2)) );
+              $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber((item.discount * 100).toFixed(2) ) );
+
               $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed( 2 )) );
               $( '.row_entry [name=longdescription]' ).last().val( item.longdescription ).change();
               $( '.row_entry [class=x]' ).last().show();
@@ -1308,6 +1312,8 @@
 
      $( '.row_entry' ).each(function( index ) {
 
+       var discount = $( this ).find( '[name=discount_as_percent]' ).val().replace(',','.')/100;
+
 
        if($( this ).find( '[name=partnumber]' ).text()!=""){
           updatePosData.push({
@@ -1317,7 +1323,7 @@
             "pos_unit": $( this ).find( '[name=unit]' ).val(),
             "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',','.' ),
             "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ),
-            "pos_discount": $( this ).find( '[name=discount_as_percent]' ).val().replace( ',','.' ),
+            "pos_discount": discount,
             "pos_total": $( this ).find( '[name=linetotal]' ).text().replace( ',','.' ),
             "pos_emp": $( this ).find( '[name=mechanics]' ).val(),
             "pos_status": $( this ).find( '[name=pos_status]' ).val(),
