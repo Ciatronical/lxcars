@@ -77,12 +77,25 @@ $(document).ready(function() {
 
     $('#dateTo').on('change', function () {
         dateTo = $(this).val();
+
     })
 
     $('#txtStatus').change(function () {
         statusSearch = $(this).val();
+
+        $('.showtableRow').remove();
+        dataObject['license_plate'] = license_plate;
+        dataObject['customerName'] = customerName;
+        dataObject['dateFrom'] = dateFrom;
+        dataObject['dateTo'] = dateTo;
+        dataObject['statusSearch'] = statusSearch;
+        //console.log(dataObject);
+        getOrderList();
+
         //console.log(statusSearch);
     })
+
+
 
     $('#btnSearch').click(function () {
         $('.showtableRow').remove();
@@ -286,11 +299,11 @@ $(document).ready(function() {
             </td>
             <td>
                 <select id="txtStatus" class="tblSearchTxt">
-                    <option value="alle" selected="true">alle</option>
+                    <option value="alle">alle</option>
                     <option value="angenommen">angenommen</option>
                     <option value="bearbeitet">bearbeitet</option>
                     <option value="abgerechnet">abgerechnet</option>
-                    <option value="nicht abgerechnet">nicht abgerechnet</option>
+                    <option value="nicht abgerechnet" selected="true">nicht abgerechnet</option>
                 </select>
             </td>
         </tr>

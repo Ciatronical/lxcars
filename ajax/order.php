@@ -432,9 +432,9 @@ function printOrder( $data ){
 
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
-    if( !$orderData['printed'] ) $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
 
     if( $data['print'] ) system('lpr '.__DIR__.'/../out.pdf' );
+      if( !$orderData['printed'] ) $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
 
 
     echo 1;
