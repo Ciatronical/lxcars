@@ -246,8 +246,13 @@ function printOrder( $data ){
     }
 
     $pdf->SetFont( 'Helvetica', 'B', 14 ); //('font_family','font_weight','font_size')
+    //if( strlen( $orderData['2'] ) < 26 ) {
     $pdf->Text( '10','12','Autoprofis Rep.-Auftrag '.' '.$orderData['1'].' '.$orderData['2'].' '.$orderData['3'] );
-    $pdf->Text( '166','12', $orderData['c_ln'] );
+    //else{
+    //$pdf->Text( '10','12','Autoprofis Rep.-Auftrag '.' '.$orderData['1'].' '.$orderData['2'] );
+    //$pdf->Text( '10','22',$orderData['3']);
+    //}
+    $pdf->Text( '10','18', $orderData['c_ln'] );
     $pdf->SetFont( 'Helvetica', '', 14 );
 
     //fix values
