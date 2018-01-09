@@ -831,8 +831,7 @@
 
 
   $( "#printOrder, #pdfOrder" ).button({
-
-    label:  kivi.t8('Print')   //ToDo does not work!!!!
+    label:  kivi.t8('Print')
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -848,10 +847,13 @@
       error: function () {
         alert( 'Error printOrder()!' )
       }
-
     });
     return false;
   });
+
+  $( "#pdfOrder" ).button({
+    label: 'Pdf'
+  })
 
   $( '#invoice' ).button({
     label: kivi.t8( 'invoice' )
@@ -862,74 +864,60 @@
     //window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
     return false;
   });
-$( "#pdfOrder" ).button({
 
-  label: 'Pdf'
-
-})
-
-  ns.recalc=function() {
+  ns.recalc = function(){
     var totalprice = 0;
     var totalnetto = 0;
-    $( '.listrow' ).each(function () {
-      if($( this ).hasClass( 'instruction' )){
+    $( '.listrow' ).each( function(){
+      if( $( this ).hasClass( 'instruction' ) ){
         var linetotal = 0;
-      }else {
-
-      var price = parseFloat( $( this ).find( '[name=sellprice_as_number]' ).val() );
-      var number = parseFloat( $( this ).find( '[name=qty_as_number]' ).val() );
-      var discount = parseFloat( $( this ).find( '[name=discount_as_percent]' ).val());
-      discount = discount / 100;
-      $( this ).find( '[name=linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
-
-      var linetotal = parseFloat($( this ).find( '[name=linetotal]' ).text());
-
-
       }
-
-
+      else{
+        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val() );
+        var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val() );
+        var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val() );
+        discount = discount / 100;
+        $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
+        var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text() );
+      }
 
       //console.log( linetotal );
       totalprice = totalprice + linetotal;
-      var netto = linetotal - linetotal * 0.19;
+      var netto = linetotal - linetotal * 0.19;//ToDo Was passiert wenn der Staat den Steuersatz auf 22 Prozent anhebt??
       totalnetto = totalnetto + netto;
       //console.log(totalprice);
       $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
-      $( '#orderTotalNetto' ).val(  ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+      $( '#orderTotalNetto' ).val( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     });
-
   }
 
- $("label[for='instructionCheckbox']").text(kivi.t8('Instruction'));
- $("btnNewOrder").val(kivi.t8('new Order'));
+  $( "label[for = 'instructionCheckbox']" ).text( kivi.t8( 'Instruction' ) );
+  $( "btnNewOrder" ).val( kivi.t8( 'new Order' ) );
 
-  $('#row_table_id').on('sortstop', function(event, ui) {
+  $( '#row_table_id' ).on( 'sortstop', function( event, ui ){
     //$('#row_table_id thead a img').remove();
     ns.countPos();
     ns.updatePosition();
   });
 
   ns.formatNumber = function ( number ){
-
     var format = kivi.myconfig.numberformat;
     var fractionalPart = format.split( ',' );
 
-    if( fractionalPart[1].length == 2 )
-    {
-       number = number.replace( '.',',' );
-
-    }else {
-
-     fractionalPart = format.split( '.' );
-     if( fractionalPart[1].length==2 )
-      number = number.replace( ',','.' );
+    if( fractionalPart[1].length == 2 ){
+      number = number.replace( '.',',' );
     }
-   if ( number.length > 6 ) {
-   //var str='.';
-   //number = [number.slice(0, number.length-6), str , number.slice(number.length-6)].join('');
-   //console.log(number);
-   }
-   return number;
+    else{
+      fractionalPart = format.split( '.' );
+      if( fractionalPart[1].length == 2 )
+        number = number.replace( ',','.' );
+    }
+    if( number.length > 6 ){ //ToDo: Was macht dieser Code??
+    //var str='.';
+    //number = [number.slice(0, number.length-6), str , number.slice(number.length-6)].join('');
+    //console.log(number);
+    }
+    return number;
   }
 
 
@@ -939,7 +927,7 @@ $( "#pdfOrder" ).button({
     type: 'GET',
     async: false,
     success: function( data ){
-      console.log(data);
+      console.log( data );
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -1164,17 +1152,12 @@ $( "#pdfOrder" ).button({
 
 
   }
-
-  //updateOrder
-
-  ns.updateOrder=function () {
-
-      var updateDataJSON = new Array;
-
-      updateDataJSON.push({
-        //"Bezeichnung des Arrays": Inhalt der zu Speichern ist
+  //ToDo FORMATIEREN!!!!!
+  ns.updateOrder = function(){
+    var updateDataJSON = new Array;
+    updateDataJSON.push({
         "id": orderID,
-        "km_stnd": $( '#milage' ).val().replace ( ',','.' ),
+        "km_stnd": $( '#milage' ).val() == '' ? 0 : $( '#milage' ).val(),
         "netamount": $( '#orderTotalNetto' ).val().replace( ',','.' ),
         "amount": $( '#orderTotalBrutto' ).val().replace( ',','.' ),
         "status": $( '#orderstatus' ).val(),
@@ -1182,9 +1165,9 @@ $( "#pdfOrder" ).button({
         "car_status": $( '#car_status' ).val()
       });
       clearTimeout( timer );
-      timer = setTimeout( function(){
 
-       ns.updatePosition()
+      timer = setTimeout( function(){
+        ns.updatePosition()
        console.log( 'update Order' );
        $.ajax({
         url: 'ajax/order.php',
@@ -1199,7 +1182,7 @@ $( "#pdfOrder" ).button({
         }
 
        });
-      },800);
+      },800 );
 
   }
 
