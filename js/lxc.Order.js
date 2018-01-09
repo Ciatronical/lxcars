@@ -871,6 +871,7 @@
   ns.recalc = function(){
     var totalprice = 0;
     var totalnetto = 0;
+    var totalbrutto = 0;
     $( '.listrow' ).each( function(){
       if( $( this ).hasClass( 'instruction' ) ){
         var linetotal = 0;
@@ -887,15 +888,15 @@
 
 
 
-      var mws;
-
-
+      var mws = 0.19;
 
       totalprice = totalprice + linetotal;
-      var netto = linetotal - linetotal * 0.19;
-      totalnetto = totalnetto + netto;
+
+      totalnetto = totalprice;
+      totalbrutto = totalprice + totalprice * mws;
+
       //console.log(totalprice);
-      $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
+      $( '#orderTotalBrutto' ).val( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
       $( '#orderTotalNetto' ).val( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     });
   }
