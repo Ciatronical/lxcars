@@ -17,8 +17,9 @@
 
 
   var orderID;
-  var ready=false;
+  var ready = false;
   var timer;
+  var updateTime = 1500;
 
   var customer_hourly_rate;
 
@@ -1182,7 +1183,7 @@
         }
 
        });
-      },800 );
+      }, updateTime );
 
   }
 
