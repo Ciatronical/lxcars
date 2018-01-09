@@ -745,7 +745,7 @@
       }
     }); //end ajax accountingGroups
 
-    var unitsType=new Array;
+    var unitsType = new Array;
 
     $.ajax({
       url: 'ajax/order.php?action=getUnits',
@@ -866,6 +866,8 @@
     return false;
   });
 
+
+
   ns.recalc = function(){
     var totalprice = 0;
     var totalnetto = 0;
@@ -882,9 +884,15 @@
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text() );
       }
 
-      //console.log( linetotal );
+
+
+
+      var mws;
+
+
+
       totalprice = totalprice + linetotal;
-      var netto = linetotal - linetotal * 0.19;//ToDo Was passiert wenn der Staat den Steuersatz auf 22 Prozent anhebt??
+      var netto = linetotal - linetotal * 0.19;
       totalnetto = totalnetto + netto;
       //console.log(totalprice);
       $( '#orderTotalBrutto' ).val( ns.formatNumber( totalprice.toFixed( 2 ) ) );
@@ -1039,7 +1047,7 @@
       dataArray['description'] = $( '#dialogDescription' ).val();
       dataArray['unit'] = $( '#dialogSelectUnits' ).val();
       dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
-      dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace(",",".");
+      dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace("," , ".");
       dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
       //alert(  );
       dataArray['quantity'] = $( "#quantity" ).val();
@@ -1058,7 +1066,7 @@
       dataArray['part_type'] = unitsType[$( '#dialogSelectUnits' ).val()];
       if( dataArray['part_type'] == 'dimension' )
         dataArray['part_type'] = 'part';
-      if (dataArray['part_type'] == 'instruction')
+      if( dataArray['part_type'] == 'instruction' )
         dataArray['part_type'] = 'service';
 
       dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
@@ -1069,10 +1077,12 @@
          type: 'POST',
          data: { action: "newPart", data: dataArray },
          success: function( data ){
+           console.log( dataArray );
             $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
-            $( '.row_entry:last [name=partclassification]' ).text( kivi.t8(dataArray.part_type) );
-            if( dataArray.instruction ) $( '.row_entry:last[name = partclassification]' ).text( kivi.t8( "I" ) );
-            $( '.row_entry:last').attr('id', data);
+            $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
+            if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
+
+            $( '.row_entry:last').attr( 'id', data );
             $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
             $( '.row_entry:last [name=position]').text( dataArray.position );
             $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
@@ -1096,7 +1106,7 @@
               data: { action: "insertRow", data: dataArray },
               success: function (data) {
                 //console.log(data);
-                $('.row_entry').last().attr( 'id',data );
+                $( '.row_entry' ).last().attr( 'id',data );
 
              },
              error: function(){
@@ -1105,7 +1115,7 @@
 
             });
 
-            if (dataArray.instruction)
+            if( dataArray.instruction )
               $( '.row_entry' ).last().addClass( 'instruction' );
 
             $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
@@ -1159,8 +1169,8 @@
     updateDataJSON.push({
         "id": orderID,
         "km_stnd": $( '#milage' ).val() == '' ? 0 : $( '#milage' ).val().replace(/\D/g,''),
-        "netamount": $( '#orderTotalNetto' ).val().replace( ',','.' ),
-        "amount": $( '#orderTotalBrutto' ).val().replace( ',','.' ),
+        "netamount": $( '#orderTotalNetto' ).val().replace( ','  ,  '.' ),
+        "amount": $( '#orderTotalBrutto' ).val().replace( ','  ,  '.' ),
         "status": $( '#orderstatus' ).val(),
         "finish_time": $( '#finish_time' ).val(),
         "car_status": $( '#car_status' ).val()
@@ -1200,7 +1210,7 @@
         }
         else{
             unit='Std';
-            $('#dialogSellPrice').val(ns.formatNumber(parseFloat(customer_hourly_rate).toFixed(2)));
+            $( '#dialogSellPrice' ).val(ns.formatNumber( parseFloat( customer_hourly_rate ).toFixed( 2 )) );
         }
 
 
@@ -1257,7 +1267,7 @@
 
 
   $( document ).on( 'change','.unitselect, .orderupdate', function(){
-    if(ready){
+    if( ready ){
     //console.log('change');
     ns.recalc();
     //ns.updatePosition();
@@ -1284,9 +1294,9 @@
 
   }
 
-  $("#allMechanicsID").change(function () {
+  $( "#allMechanicsID" ).change(function () {
 
-    $("[name=mechanics]").each(function ( index ) {
+    $( "[name=mechanics]" ).each(function ( index ) {
 
       $(this).val($("#allMechanicsID").val()).change();
 
@@ -1296,11 +1306,11 @@
   });
 
 
-  $("#allStatusID").change(function () {
+  $( "#allStatusID" ).change(function () {
 
-    $("[name=pos_status]").each(function ( index ) {
+    $( "[name=pos_status]" ).each(function ( index ) {
 
-      $(this).val($("#allStatusID").val()).change();
+      $(this).val( $( "#allStatusID" ).val() ).change();
 
 
     });
