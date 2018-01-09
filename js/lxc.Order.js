@@ -171,7 +171,7 @@
 
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).attr( 'part_id',rsp.id );
 
-            if(rsp.unit == 'Std')
+            if(rsp.unit == 'Std') //ToDo
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( customer_hourly_rate ).toFixed( 2 ) ) );
             else
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
@@ -976,9 +976,9 @@
               $( '.row_entry [name=position]').last().text( item.position );
               $( '.row_entry [name=item_partpicker_name]').last().val( item.description );
               $( '.row_entry [name=mechanics]').last().val( item.u_id );
-              if(item.unit == 'Std')
-              $( '.row_entry [name=sellprice_as_number]').last().val(customer_hourly_rate.toFixed(2));
-              else
+              //if(item.unit == 'Std')
+              //$( '.row_entry [name=sellprice_as_number]').last().val(customer_hourly_rate.toFixed(2));
+              //else
               $( '.row_entry [name=sellprice_as_number]').last().val( ns.formatNumber(item.sellprice.toFixed(2)) );
 
               $( '.row_entry [name=unit]' ).last().val( item.unit ).change();
