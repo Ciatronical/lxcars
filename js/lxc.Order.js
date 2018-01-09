@@ -1158,7 +1158,7 @@
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
-        "km_stnd": $( '#milage' ).val() == '' ? 0 : $( '#milage' ).val(),
+        "km_stnd": $( '#milage' ).val() == '' ? 0 : $( '#milage' ).val().replace(/\D/g,''),
         "netamount": $( '#orderTotalNetto' ).val().replace( ',','.' ),
         "amount": $( '#orderTotalBrutto' ).val().replace( ',','.' ),
         "status": $( '#orderstatus' ).val(),
