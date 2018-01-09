@@ -874,8 +874,8 @@
         var linetotal = 0;
       }
       else{
-        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val() );
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val() );
+        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val() );
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val() );
         discount = discount / 100;
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
@@ -1307,13 +1307,14 @@
 
   });
 
+  //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {
 
      var updatePosData = new Array;
 
      $( '.row_entry' ).each(function( index ) {
 
-       var discount = $( this ).find( '[name=discount_as_percent]' ).val().replace(',','.')/100;
+       var discount = $( this ).find( '[name=discount_as_percent]' ).val().replace( ',', '.' ).replace( /[^\d.-]/g, '' ) / 100;
 
 
        if($( this ).find( '[name=partnumber]' ).text()!=""){
@@ -1325,8 +1326,8 @@
             "order_nr": $( this ).find( '[name=position]' ).text(),
             "pos_description": $( this ).find( '[name=item_partpicker_name]' ).val(),
             "pos_unit": $( this ).find( '[name=unit]' ).val(),
-            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',','.' ),
-            "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ),
+            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',','.' ).replace( /[^\d.-]/g, '' ),
+            "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ).replace( /[^\d.-]/g, '' ),
             "pos_discount": discount,
             "pos_total": $( this ).find( '[name=linetotal]' ).text().replace( ',','.' ),
             "pos_emp": $( this ).find( '[name=mechanics]' ).val(),
