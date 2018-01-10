@@ -392,7 +392,7 @@ function printOrder( $data ){
             }
         }
 
-        if( $element['longdescription'] != '' ){
+        if( trim( $element['longdescription'] ) != '' ){
            $height = $height + 6;
            $pdf->SetFont( 'Helvetica', '', '8' );
            $pdf->SetTextColor( 0, 0, 0 );
