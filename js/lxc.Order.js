@@ -111,7 +111,7 @@
           url: 'ajax/order.php?action=getPartJSON',
           data: { 'data': item.id },
           success: function( rsp ){
-            self.$real.trigger( 'set_item:PartPicker', rsp);
+            self.$real.trigger( 'set_item:PartPicker', rsp );
 
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
             rsp=rsp[0];
@@ -885,19 +885,49 @@
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text() );
       }
 
+      $.ajax({
+
+        url: 'ajax/order.php?action=getPartJSON',
+        data: { 'data': $( this ).find( '[name = partnumber]' ).attr( 'part_id' ) },
+        success: function( rsp ){
+
+          rsp=rsp[0];
+          var getTaxArray = {};
+          getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
+          getTaxArray['taxzone_id'] = 4;
+
+          $.ajax({
+            url: 'ajax/order.php',
+            data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
+            type: "POST",
+            success: function( data ){
+              //console.log( data[0].rate );
+              var tax = data[0].rate;
+
+              totalprice = totalprice + linetotal;
+
+              totalnetto = totalprice;
+              totalbrutto = totalprice + totalprice * tax;
+
+              //console.log(totalprice);
+              $( '#orderTotalBrutto' ).val( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
+              $( '#orderTotalNetto' ).val( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+
+
+            },
+            error:  function(){
+              alert( 'getTax fehlgeschlagen' );
+            }
+
+        })
+
+       }
+
+
+      })
 
 
 
-      var mws = 0.19;
-
-      totalprice = totalprice + linetotal;
-
-      totalnetto = totalprice;
-      totalbrutto = totalprice + totalprice * mws;
-
-      //console.log(totalprice);
-      $( '#orderTotalBrutto' ).val( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
-      $( '#orderTotalNetto' ).val( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     });
   }
 

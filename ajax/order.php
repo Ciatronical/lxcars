@@ -200,6 +200,18 @@ function newOrder( $data ){
 
 }
 
+function getTaxzones(){
+
+}
+
+function getTaxbyAccountingGroupID( $data ){
+  writeLog( $data );
+  $sql = "select rate from tax join taxkeys on taxkeys.tax_id = tax.id join taxzone_charts on taxzone_charts.income_accno_id = taxkeys.chart_id where taxzone_charts.buchungsgruppen_id = ".$data['accountingGroups_id']." and taxzone_id = ".$data['taxzone_id']." order by startdate DESC Limit 1";
+
+  echo $GLOBALS['dbh']->getAll( $sql,true );
+
+}
+
 function printOrder( $data ){
 
     require 'fpdf.php';
