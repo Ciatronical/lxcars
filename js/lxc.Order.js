@@ -718,6 +718,24 @@
     })
 
 
+     $.ajax({
+      url: 'ajax/order.php?action=getTaxzones',
+      type: 'GET',
+      success: function( data ){
+        $.each( data, function( index, item ){
+        //console.log(item);
+        if (index == 0)
+          $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" selected = "true">' + item.description + '</option>' ) );
+        else
+           $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" >' + item.description + '</option>' ) );
+        })
+      },
+      error:  function(){
+        alert( "Ajaxerror getTaxzones()!" );
+      }
+    })
+
+
     $.ajax({
       url: 'ajax/order.php?action=getCustomer_hourly_rate',
       type: 'GET',
