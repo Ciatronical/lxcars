@@ -173,21 +173,30 @@ $(document).ready(function() {
 
 
                         $(  '<tr id="'+item.id+'" owner = "'+item.customer_id+'" c_id = '+item.c_id+'  class="showtableRow">'+
-                                '<td class="back">'+item.status + '' + item.car_status+'</td>'+
-                                '<td>'+item.c_ln+'</td>'+
+
+
                                 '<td>'+item.owner+'</td>'+
-                                '<td>'+item.transdate+'</td>'+
+                                '<td>'+item.c_ln+'</td>'+
                                 '<td>'+item.description+'</td>'+
-                                '<td>'+item.ordnumber+'</td>'+
                                 '<td>'+item.car_manuf+'</td>'+
                                 '<td>'+item.car_type+'</td>'+
+                                '<td>'+item.transdate+'</td>'+
+                                '<td>'+item.ordnumber+'</td>'+
+                                '<td class="status_'+item.status+' '+item.car_status+' ">'+item.status + '' + item.car_status+'</td>'+
+
                             '</tr>'
                         ).appendTo('#showtableTBody');
+
+                        $('.status_angenommen').css('background-color', 'yellow');
+                        $('.status_bearbeitet').css('background-color', 'green');
+                        $('.status_nicht').css('background-color', 'lightgrey');
+                        $('.nicht').css('background-color', 'red');
 
                         $('.showtableRow').click(function () {
                             //console.log($(this).attr('id'));
                             window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).attr('owner')+'&c_id='+$(this).attr('c_id') + '&previous=' + filename + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
                         })
+
 
                         $('.vals').hide();
 
@@ -321,14 +330,15 @@ $(document).ready(function() {
         <table id="showtable" class="tablesorter">
             <thead>
                 <tr>
-                    <th>Status</th>
+                    <th>Name</th>
                     <th>Kennzeichen</th>
-                    <th>Besitzer</th>
-                    <th>Auftragsdatum</th>
                     <th>Erste Position</th>
-                    <th>Auftrags-Nr.</th>
                     <th>Hersteller</th>
                     <th>Fahrzeugtyp</th>
+                    <th>Datum</th>
+                    <th>Auftragsnummer</th>
+                    <th>Status</th>
+
                 </tr>
             </thead>
             <tbody id="showtableTBody">

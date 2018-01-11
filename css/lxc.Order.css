@@ -81,3 +81,6 @@ table.tablesorter { width:auto; cursor:pointer; }
     .pos-instruction { position: relative; left: 640px; }
     .pos-instruction2 { position: relative; left: 1500px; top: -24px; }
     .instruction {color: red; background-color: yellow;  }
+
+
+    #showtable{ width: 85%; font-size: 12px; }
