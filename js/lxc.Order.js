@@ -912,7 +912,7 @@
           rsp=rsp[0];
           var getTaxArray = {};
           getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
-          getTaxArray['taxzone_id'] = 4;
+          getTaxArray['taxzone_id'] = $('#taxzone_id').val();
 
           $.ajax({
             url: 'ajax/order.php',
@@ -928,8 +928,8 @@
               totalbrutto = totalprice + totalprice * tax;
 
               //console.log(totalprice);
-              $( '#orderTotalBrutto' ).val( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
-              $( '#orderTotalNetto' ).val( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+              $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
+              $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
 
 
             },
@@ -1385,14 +1385,14 @@
             "order_nr": $( this ).find( '[name=position]' ).text(),
             "pos_description": $( this ).find( '[name=item_partpicker_name]' ).val(),
             "pos_unit": $( this ).find( '[name=unit]' ).val(),
-            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',','.' ).replace( /[^\d.-]/g, '' ),
+            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',' , '.' ).replace( /[^\d.-]/g, '' ),
             "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ).replace( /[^\d.-]/g, '' ),
             "pos_discount": discount,
-            "pos_total": $( this ).find( '[name=linetotal]' ).text().replace( ',','.' ),
+            "pos_total": $( this ).find( '[name=linetotal]' ).text().replace( ',' , '.' ),
             "pos_emp": $( this ).find( '[name=mechanics]' ).val(),
             "pos_status": $( this ).find( '[name=pos_status]' ).val(),
             "pos_id": $( this ).attr( 'id' ),
-            "parts_id": $( this ).find( '[name=partnumber]' ).attr('part_id'),
+            "parts_id": $( this ).find( '[name=partnumber]' ).attr('part_id' ),
             "pos_instruction": $( this ).hasClass( 'instruction' ),
             "longdescription": $( this ).find( '[name=longdescription]' ).val()
 
