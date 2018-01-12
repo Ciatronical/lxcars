@@ -142,8 +142,8 @@
                         if ( data.car_status == null ) {
                           data.car_status = 'Auto hier';
                         }
-                        $( '#orderTotalNetto' ).val(data.netamount);
-                        $( '#orderTotalBrutto' ).val(data.amount);
+                        $( '#orderTotalNetto' ).text(data.netamount);
+                        $( '#orderTotalBrutto' ).text(data.amount);
                         $( '#ordernumber' ).text( data.ordnumber );
                         $( '#name' ).text( data.customer_name );
                         $( '#employee' ).text( kivi.myconfig.name );
@@ -265,7 +265,7 @@
 
 
 
-            ns.updateOrder();
+
 
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
@@ -925,12 +925,12 @@
               totalprice = totalprice + linetotal;
 
               totalnetto = totalprice;
-              totalbrutto = totalprice + totalprice * tax;
-
+              totalbrutto = totalbrutto + linetotal + linetotal * tax;
+              console.log
               //console.log(totalprice);
               $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
               $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
-
+              ns.updateOrder();
 
             },
             error:  function(){
@@ -993,8 +993,8 @@
       if ( data.car_status == null ) {
         data.car_status = 'Auto hier';
       }
-      $( '#orderTotalNetto' ).val(data.netamount);
-      $( '#orderTotalBrutto' ).val(data.amount);
+      $( '#orderTotalNetto' ).text(data.netamount);
+      $( '#orderTotalBrutto' ).text(data.amount);
       $( '#ordernumber' ).text( data.ordnumber );
       $( '#name' ).text( data.customer_name );
       $( '#employee' ).text( kivi.myconfig.name );
@@ -1013,7 +1013,7 @@
 
       //Get Position
       //console.log(data.amount);
-      if( data.amount!=null ){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
+      if( newOrder!=1 ){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data=' + orderID,
           type: 'GET',
@@ -1218,8 +1218,8 @@
     updateDataJSON.push({
         "id": orderID,
         "km_stnd": $( '#milage' ).val() == '' ? 0 : $( '#milage' ).val().replace(/\D/g,''),
-        "netamount": $( '#orderTotalNetto' ).val().replace( ','  ,  '.' ),
-        "amount": $( '#orderTotalBrutto' ).val().replace( ','  ,  '.' ),
+        "netamount": $( '#orderTotalNetto' ).text().replace( ',' , '.' ),
+        "amount": $( '#orderTotalBrutto' ).text().replace( ',' , '.' ),
         "status": $( '#orderstatus' ).val(),
         "finish_time": $( '#finish_time' ).val(),
         "car_status": $( '#car_status' ).val()
