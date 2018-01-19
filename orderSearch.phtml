@@ -125,7 +125,7 @@ $(document).ready(function() {
     var autocomplete_customer_name = [];
 
     $.ajax({
-      url: 'ajax/order.php?action=getAutocomplete_License_plates',
+      url: 'ajax/order.php?action=getAutocompleteLicensePlates',
       type: 'GET',
       success: function (data) {
 
@@ -138,7 +138,7 @@ $(document).ready(function() {
     })
 
     $.ajax({
-      url: 'ajax/order.php?action=getAutocomplete_customer',
+      url: 'ajax/order.php?action=getAutocompleteCustomer',
       type: 'GET',
       success: function ( data ) {
 

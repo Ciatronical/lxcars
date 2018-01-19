@@ -35,11 +35,11 @@ function getOrderlist( $data ){
     echo $GLOBALS['dbh']->getALL( $sql, true );
 }
 
-function getAutocomplete_License_plates(){
+function getAutocompleteLicensePlates(){
     echo $GLOBALS['dbh']->getAll( "SELECT distinct c_ln FROM lxc_cars, oe WHERE lxc_cars.c_id = oe.c_id", true );
 }
 
-function getAutocomplete_customer(){
+function getAutocompleteCustomer(){
 
   echo $GLOBALS['dbh']->getAll( "SELECT distinct name FROM customer, oe, lxc_cars WHERE customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id",true );
 
