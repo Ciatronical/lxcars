@@ -58,32 +58,32 @@ $(document).ready(function() {
     var customerName;
     var dateFrom;
     var dateTo;
-    var statusSearch = $('#txtStatus').val();
+    var statusSearch = $( '#txtStatus' ).val();
     var dataObject = {};
 
-    $('button').button();
+    $( 'button' ).button();
 
-    $('#autocomplete_License_plate').on('change', function () {
-        license_plate = $(this).val();
+    $( '#autocomplete_License_plate' ).on('change', function () {
+        license_plate = $( this ).val();
     })
 
-    $('#autocomplete_customer_name').on('change', function () {
-        customerName = $(this).val();
+    $( '#autocomplete_customer_name' ).on( 'change', function () {
+        customerName = $( this ).val();
     })
 
-    $('#dateFrom').on('change', function () {
+    $( '#dateFrom' ).on( 'change', function () {
         dateFrom = $(this).val();
     })
 
-    $('#dateTo').on('change', function () {
+    $( '#dateTo' ).on( 'change', function () {
         dateTo = $(this).val();
 
     })
 
-    $('#txtStatus').change(function () {
+    $( '#txtStatus' ).change(function () {
         statusSearch = $(this).val();
 
-        $('.showtableRow').remove();
+        $( '.showtableRow' ).remove();
         dataObject['license_plate'] = license_plate;
         dataObject['customerName'] = customerName;
         dataObject['dateFrom'] = dateFrom;
@@ -97,8 +97,8 @@ $(document).ready(function() {
 
 
 
-    $('#btnSearch').click(function () {
-        $('.showtableRow').remove();
+    $( '#btnSearch' ).click(function () {
+        $( '.showtableRow' ).remove();
         dataObject['license_plate'] = license_plate;
         dataObject['customerName'] = customerName;
         dataObject['dateFrom'] = dateFrom;
@@ -125,7 +125,7 @@ $(document).ready(function() {
     var autocomplete_customer_name = [];
 
     $.ajax({
-      url: 'ajax/order.php?action=getAutocomplete_License_plates',
+      url: 'ajax/order.php?action=getAutocompleteLicensePlates',
       type: 'GET',
       success: function (data) {
 
@@ -138,7 +138,7 @@ $(document).ready(function() {
     })
 
     $.ajax({
-      url: 'ajax/order.php?action=getAutocomplete_customer',
+      url: 'ajax/order.php?action=getAutocompleteCustomer',
       type: 'GET',
       success: function ( data ) {
 
@@ -172,17 +172,17 @@ $(document).ready(function() {
 
 
 
-                        $(  '<tr id="'+item.id+'" owner = "'+item.customer_id+'" c_id = '+item.c_id+'  class="showtableRow">'+
+                        $( '<tr id="'+ item.id +'" owner = "' + item.customer_id + '" c_id = '+ item.c_id + '  class="showtableRow">' +
 
 
-                                '<td>'+item.owner+'</td>'+
-                                '<td>'+item.c_ln+'</td>'+
-                                '<td>'+item.description+'</td>'+
-                                '<td>'+item.car_manuf+'</td>'+
-                                '<td>'+item.car_type+'</td>'+
-                                '<td>'+item.transdate+'</td>'+
-                                '<td>'+item.ordnumber+'</td>'+
-                                '<td class="status_'+item.status+' '+item.car_status+' ">'+item.status + '' + item.car_status+'</td>'+
+                                '<td>' + item.owner + '</td>' +
+                                '<td>' + item.c_ln + '</td>' +
+                                '<td>' + item.description + '</td>' +
+                                '<td>' + item.car_manuf + '</td>' +
+                                '<td>' + item.car_type + '</td>' +
+                                '<td>' + item.transdate + '</td>' +
+                                '<td>' + item.ordnumber + '</td>' +
+                                '<td class="status_' + item.status + ' '+item.car_status + ' ">' + item.status + '' + item.car_status + '</td>'+
 
                             '</tr>'
                         ).appendTo('#showtableTBody');
@@ -190,17 +190,19 @@ $(document).ready(function() {
                         $('.status_angenommen').css('background-color', 'yellow');
                         $('.status_bearbeitet').css('background-color', 'green');
                         $('.status_nicht').css('background-color', 'lightgrey');
-                        $('.nicht').css('background-color', 'red');
 
-                        $('.showtableRow').click(function () {
+                        $( '.nicht' ).css( 'background-color', 'red' );
+                        $( '.status_bearbeitet.nicht' ).css('background-color', 'grey');
+
+                        $( '.showtableRow' ).click( function () {
                             //console.log($(this).attr('id'));
-                            window.location = 'order.phtml?id='+$(this).attr('id')+'&owner='+$(this).attr('owner')+'&c_id='+$(this).attr('c_id') + '&previous=' + filename + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
+                            window.location = 'order.phtml?id=' + $(this).attr( 'id' )+'&owner=' + $(this).attr( 'owner' ) + '&c_id=' + $(this).attr( 'c_id' ) + '&previous=' + filename + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
                         })
 
 
-                        $('.vals').hide();
+                        $( '.vals' ).hide();
 
-                        $('#showtable').trigger('update');
+                        $( '#showtable' ).trigger( 'update' );
 
                     })
 
@@ -230,15 +232,15 @@ $(document).ready(function() {
       source: autocomplete_customer_name
     });
 
-    $("#btnDelete").click(function () {
-       $( "#autocomplete_License_plate, #autocomplete_customer_name" ).val("");
-       $("#dateFrom, #dateTo").val("");
-       $("#statusSearch").val('alle');
+    $( "#btnDelete" ).click(function() {
+       $( "#autocomplete_License_plate, #autocomplete_customer_name" ).val( "" );
+       $( "#dateFrom, #dateTo" ).val( "" );
+       $( "#statusSearch" ).val( 'alle' );
 
-       license_plate='';
-       customerName='';
-       dateFrom='';
-       dateTo='';
+       license_plate = '';
+       customerName = '';
+       dateFrom = '';
+       dateTo = '';
 
 
     });
