@@ -276,8 +276,8 @@
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
             $( '.instruction , .instruction div , .instruction :input ' ).css({
-              'color' : 'red',
-              'background-color' : 'lightblue',
+              'color' : 'white',
+              'background-color' : 'blue',
 
             });
 
@@ -1074,8 +1074,8 @@
 
 
             $( 'instrution, .instruction div , .instruction :input ' ).css({
-              'color' : 'red',
-              'background-color' : 'lightblue'
+              'color' : 'white',
+              'background-color' : 'blue'
 
             });
 
@@ -1184,8 +1184,8 @@
 
 
             $( '.instruction , .instruction div , .instruction :input ' ).css({
-              'color' : 'red',
-              'background-color' : 'lightblue',
+              'color' : 'white',
+              'background-color' : 'blue',
 
             });
             ns.updateOrder();
