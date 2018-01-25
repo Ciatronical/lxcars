@@ -896,9 +896,18 @@
       }
       else{
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val() );
-        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val() );
+
+        number = isNaN( number ) ? 0 : number;
+
+        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace(',' , '.') );
+
+        price = isNaN( price ) ? 0 : price;
+
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val() );
-        discount = discount / 100;
+
+        discount = isNaN( discount ) ? 0 : discount / 100;
+        //console.log( discount );
+       //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text() );
       }
@@ -909,7 +918,7 @@
         data: { 'data': $( this ).find( '[name = partnumber]' ).attr( 'part_id' ) },
         success: function( rsp ){
 
-          rsp=rsp[0];
+          rsp = rsp[0];
           var getTaxArray = {};
           getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
           getTaxArray['taxzone_id'] = $('#taxzone_id').val();
@@ -926,7 +935,7 @@
 
               totalnetto = totalprice;
               totalbrutto = totalbrutto + linetotal + linetotal * tax;
-              console.log
+              //console.log
               //console.log(totalprice);
               $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
               $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
@@ -985,7 +994,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
-      console.log( data );
+      //console.log( data );
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -1102,9 +1111,9 @@
       dataArray['quantity'] = $( "#quantity" ).val();
 
       var part_type = $( '#dialogPart_typ' ).val();
-      console.log(part_type);
+      //console.log(part_type);
       if(part_type == "instruction"){
-      console.log("instruction")
+      //console.log("instruction")
 
 
      dataArray['instruction'] = true;
@@ -1126,7 +1135,7 @@
          type: 'POST',
          data: { action: "newPart", data: dataArray },
          success: function( data ){
-           console.log( dataArray );
+           //console.log( dataArray );
             $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
             $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
             if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
@@ -1228,7 +1237,7 @@
 
       timer = setTimeout( function(){
         ns.updatePosition()
-       console.log( 'update Order' );
+       //console.log( 'update Order' );
        $.ajax({
         url: 'ajax/order.php',
         async: false,
@@ -1402,10 +1411,10 @@
 
 
      });
-     console.log(updatePosData);
+     //console.log(updatePosData);
      //clearTimeout( timer );
      //timer = setTimeout( function(){
-       console.log( 'update Pos' )
+       //console.log( 'update Pos' )
        $.ajax({
          url: 'ajax/order.php',
          data: { action: "updatePositions", data: updatePosData },
