@@ -906,7 +906,8 @@
         //console.log( discount );
        //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
-        var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text() );
+        console.log($( this ).find( '[name = linetotal]' ).text());
+        var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
       }
 
       $.ajax({
