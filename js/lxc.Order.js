@@ -895,17 +895,14 @@
         var linetotal = 0;
       }
       else{
-        var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val() );
+        var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( '' , 0 ) );
 
-        number = isNaN( number ) ? 0 : number;
+        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
 
-        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace(',' , '.') );
+        var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
 
-        price = isNaN( price ) ? 0 : price;
+        discount = discount / 100;
 
-        var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val() );
-
-        discount = isNaN( discount ) ? 0 : discount / 100;
         //console.log( discount );
        //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
