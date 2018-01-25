@@ -895,7 +895,7 @@
         var linetotal = 0;
       }
       else{
-        var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( '' , 0 ) );
+        var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
 
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
 
@@ -936,7 +936,7 @@
               //console.log(totalprice);
               $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
               $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
-              ns.updateOrder();
+              //ns.updateOrder();
 
             },
             error:  function(){
@@ -1230,11 +1230,9 @@
         "finish_time": $( '#finish_time' ).val(),
         "car_status": $( '#car_status' ).val()
       });
-      clearTimeout( timer );
 
-      timer = setTimeout( function(){
         ns.updatePosition()
-       //console.log( 'update Order' );
+       console.log( 'update Order' );
        $.ajax({
         url: 'ajax/order.php',
         async: false,
@@ -1248,7 +1246,7 @@
         }
 
        });
-      }, updateTime );
+
 
   }
 
@@ -1321,13 +1319,11 @@
   });
 
 
-  $( document ).on( 'change','.unitselect, .orderupdate', function(){
+  $( document ).on( 'change ','select, .hasDatepicker', function(){
     if( ready ){
-    //console.log('change');
-    ns.recalc();
-    //ns.updatePosition();
-    ns.updateOrder();
-  }
+      ns.recalc();
+      ns.updateOrder();
+    }
 
   });
 
@@ -1335,7 +1331,12 @@
   $( document ).on( 'keyup','.recalc, .orderupdate, .add_item_input:not(:last)' , function(){
     ns.recalc();
     //ns.updatePosition();
-    ns.updateOrder();
+
+    clearTimeout( timer );
+    timer = setTimeout( function(){
+      ns.updateOrder();
+    }, updateTime );
+
   });
 
   ns.removeOrder = function() {
