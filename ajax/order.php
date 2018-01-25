@@ -48,7 +48,7 @@ function getAutocompleteCustomer(){
 function autocompletePart( $term ){
     //Index installieren create index idx_orderitems on orderitems ( parts_id );
     //echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE ( description ILIKE '%$term%' OR partnumber ILIKE '$term%' ) AND obsolete = FALSE LIMIT 20", true );
-    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE ( description ILIKE '%$term%' OR partnumber ILIKE '$term%' ) AND obsolete = FALSE ORDER BY ( SELECT  ( SELECT ct FROM ( SELECT qty, count( qty ) AS ct FROM orderitems WHERE parts_id = parts.id GROUP BY 1 ORDER BY ct DESC LIMIT 1 ) AS ct ) ) DESC NULLS LAST LIMIT 20", true );
+    echo $GLOBALS['dbh']->getAll( "SELECT description, partnumber, id, partnumber || ' ' || description AS value, part_type, unit,  partnumber || ' ' || description AS label, instruction FROM parts WHERE ( description ILIKE '%$term%' OR partnumber ILIKE '$term%' ) AND obsolete = FALSE ORDER BY ( SELECT ( SELECT count( qty ) FROM orderitems WHERE parts_id = parts.id ) ) DESC NULLS LAST LIMIT 20", true );
 }
 
 function getOrder( $id ){
