@@ -277,7 +277,7 @@
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
 
             ns.changeInstructionColor();
-            //ns.updateOrder();
+            ns.updateOrder();
 
           },
         });
@@ -1225,8 +1225,9 @@
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
 
-    ns.updatePosition();
-
+   ns.updatePosition();
+   clearTimeout( timer );
+   timer = setTimeout( function(){
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
@@ -1237,7 +1238,6 @@
         "finish_time": $( '#finish_time' ).val(),
         "car_status": $( '#car_status' ).val()
       });
-
 
        console.log( 'update Order' );
        $.ajax({
@@ -1253,6 +1253,12 @@
         }
 
        });
+
+      console.log('sum_total:' + $( '#orderTotalBrutto' ).text());
+    }, 400 );
+
+
+
 
 
   }
@@ -1405,8 +1411,8 @@
             "order_nr": $( this ).find( '[name=position]' ).text(),
             "pos_description": $( this ).find( '[name=item_partpicker_name]' ).val(),
             "pos_unit": $( this ).find( '[name=unit]' ).val(),
-            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',' , '.' ).replace( /[^\d.-]/g, '' ),
-            "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ).replace( /[^\d.-]/g, '' ),
+            "pos_qty": $( this ).find( '[name=qty_as_number]' ).val().replace( ',' , '.' ).replace( /[^\d.-]/g, '' ).replace( '' , 0 ),
+            "pos_price": $( this ).find( '[name=sellprice_as_number]' ).val().replace( ',','.' ).replace( /[^\d.-]/g, '' ).replace( '' , 0 ),
             "pos_discount": discount,
             "pos_total": $( this ).find( '[name=linetotal]' ).text().replace( ',' , '.' ),
             "pos_emp": $( this ).find( '[name=mechanics]' ).val(),
@@ -1425,7 +1431,8 @@
      //console.log(updatePosData);
      //clearTimeout( timer );
      //timer = setTimeout( function(){
-       //console.log( 'update Pos' )
+       console.log('pos_total:' + updatePosData[0].pos_total);
+       console.log( 'update Pos' )
        $.ajax({
          url: 'ajax/order.php',
          data: { action: "updatePositions", data: updatePosData },
