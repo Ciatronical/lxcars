@@ -277,7 +277,7 @@
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
 
             ns.changeInstructionColor();
-
+            //ns.updateOrder();
 
           },
         });
@@ -704,8 +704,6 @@
 
   $( document ).ready( function(){
 
-
-
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
     $('[name=item_partpicker_name]').focus();
@@ -914,8 +912,10 @@
         //console.log( discount );
        //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
-        console.log($( this ).find( '[name = linetotal]' ).text());
+        //console.log($( this ).find( '[name = linetotal]' ).text());
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
+
+
       }
 
       $.ajax({
@@ -962,6 +962,9 @@
 
 
     });
+
+    //ns.updateOrder();
+
   }
 
   $( "label[for = 'instructionCheckbox']" ).text( kivi.t8( 'Instruction' ) );
@@ -1221,6 +1224,9 @@
   }
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
+
+    ns.updatePosition();
+
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
@@ -1232,7 +1238,7 @@
         "car_status": $( '#car_status' ).val()
       });
 
-        ns.updatePosition()
+
        console.log( 'update Order' );
        $.ajax({
         url: 'ajax/order.php',
@@ -1250,8 +1256,6 @@
 
 
   }
-
-
 
 
   //Ändert die Artikelnummer bei Artikeltypauswahl
@@ -1322,15 +1326,23 @@
 
   $( document ).on( 'change ','select, .hasDatepicker', function(){
     if( ready ){
-      ns.recalc();
+
       ns.updateOrder();
     }
 
   });
 
+  $( document ).on( 'keyup ','.recalc', function(){
 
-  $( document ).on( 'keyup','.recalc, .orderupdate, .add_item_input:not(:last)' , function(){
-    ns.recalc();
+   ns.recalc();
+   ns.updateOrder();
+
+
+  });
+
+
+  $( document ).on( 'keyup','.orderupdate, .add_item_input:not(:last)' , function(){
+
     //ns.updatePosition();
 
     clearTimeout( timer );
