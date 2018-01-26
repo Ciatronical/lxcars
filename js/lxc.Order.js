@@ -275,11 +275,9 @@
 
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
-            $( '.instruction , .instruction div , .instruction :input ' ).css({
-              'color' : 'red',
-              'background-color' : 'lightblue',
 
-            });
+            ns.changeInstructionColor();
+
 
           },
         });
@@ -665,6 +663,16 @@
   });
 
 
+//Instruction Color
+  ns.changeInstructionColor = function () {
+
+   $( 'instrution, .instruction div , .instruction :input ' ).css({
+        'color' : '#0000FF',
+        'font-weight' : 'bold',
+        'background-color' : '#FEFE8A'
+   });
+
+  };
 
   ns.delete_order_item_row = function(clicked) {
     var row = $( clicked ).parents( "tbody" ).first();
@@ -1073,11 +1081,7 @@
 
 
 
-            $( 'instrution, .instruction div , .instruction :input ' ).css({
-              'color' : 'red',
-              'background-color' : 'lightblue'
-
-            });
+            ns.changeInstructionColor();
 
             //console.log(data);
           },
@@ -1183,11 +1187,7 @@
             $( '#newPart_dialog' ).dialog( 'close' );
 
 
-            $( '.instruction , .instruction div , .instruction :input ' ).css({
-              'color' : 'red',
-              'background-color' : 'lightblue',
-
-            });
+            ns.changeInstructionColor();
             ns.updateOrder();
 
          },
