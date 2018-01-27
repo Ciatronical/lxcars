@@ -117,28 +117,31 @@ $(document).ready(function() {
 
                 //holt die order Infos und die Beschreibung der ersten Position aus der Datenbank
 
-                $rs = $GLOBALS['dbh']->getALL("SELECT distinct on (ordnumber) * FROM
-                                              (
-                                                SELECT distinct on (oe.ordnumber) 'true'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, instructions.description, oe.amount FROM oe, instructions, parts WHERE oe.customer_id = ".$owner." AND instructions.trans_id = oe.id AND oe.c_id = ".$c_id." AND parts.id = instructions.parts_id UNION
-                                                SELECT distinct on (oe.ordnumber)'false'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, orderitems.description, oe.amount FROM oe, orderitems, parts WHERE oe.customer_id = ".$owner." AND oe.c_id = ".$c_id." AND orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 ORDER BY instruction DESC
-                                              ) AS testTable ORDER BY ordnumber DESC;");
 
 
-                writeLog($rs);
+    $sql = "SELECT distinct on ( ordnumber ) * FROM ( SELECT distinct on (oe.ordnumber) 'true'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, instructions.description, oe.amount ";
+    $sql.= "FROM oe, instructions, parts WHERE oe.customer_id = ".$owner." AND instructions.trans_id = oe.id AND oe.c_id = ".$c_id." AND parts.id = instructions.parts_id AND instructions.position = 1 UNION ";
+    $sql.= "SELECT distinct on (oe.ordnumber)'false'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, orderitems.description, oe.amount FROM oe, orderitems, parts ";
+    $sql.= "WHERE oe.customer_id = ".$owner." AND oe.c_id = ".$c_id." AND orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 ";
+    $sql.= "ORDER BY instruction DESC ) AS testTable ORDER BY ordnumber DESC;";
 
-                foreach ($rs as $value){
-                    echo ('
-                        <tr id="'.$value['id'].'" class="showtableRow">
-                            <td>'.$value['transdate'].'</td>
-                            <td>'.$value['ordnumber'].'</td>
-                            <td>'.$value['description'].'</td>
-                            <td align="right">'.number_format($value['amount'], 2, ',', '.').'</td>
-                        </tr>');
-                }
-                echo (  '</tbody></table>'
-                            .$head["JQTABLE-PAGER"].
-                            '<input type="button" id="btnNewOrder" value="Neuer Auftrag">
-                             <input type="button" id="btnBack" value="zurück">');
+    $rs = $GLOBALS['dbh']->getALL( $sql );
+    writeLog( $sql );
+
+    foreach ($rs as $value){
+        echo '
+            <tr id="'.$value['id'].'" class="showtableRow">
+                <td>'.$value['transdate'].'</td>
+                <td>'.$value['ordnumber'].'</td>
+                <td>'.$value['description'].'</td>
+                <td align="right">'.number_format($value['amount'], 2, ',', '.').'</td>
+            </tr>';
+    }
+
+    echo '</tbody></table>'
+         .$head["JQTABLE-PAGER"].
+         '<input type="button" id="btnNewOrder" value="Neuer Auftrag">
+          <input type="button" id="btnBack" value="zurück">';
 
 
 
