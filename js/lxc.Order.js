@@ -889,6 +889,45 @@
     return false;
   });
 
+  $( '#deleteOrder' ).button({
+    label: kivi.t8( 'delete Order' )
+  }).click( function(){
+    $( "#confirmDialog" ).dialog({
+      resizable: false,
+      height: "auto",
+      width: 400,
+      modal: true,
+      title: 'Delete Order!',
+      open: function() {
+        $( this ).html( 'Do you want to delete this order irretrievably?' );
+      },
+      buttons: [{
+        text: "Delete Order",
+        click: function(){
+          $.ajax({
+            url: 'ajax/order.php',
+            data: { action: 'removeOrder', data: { orderID: id } },
+            type: 'POST',
+            success: function(){
+              window.location = baseUrl + '/crm/lxcars/orderlist.phtml?owner=' + owner + '&c_id=' + c_id + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
+            },
+            error: function(){
+              alert( 'Error in function removeOrder()!' );
+            }
+          }) //ajax
+          $( this ).dialog( "close" );
+        } //click
+      }, //button
+      {
+        text: "Cancel",
+        click: function(){
+          $( this ).dialog( "close" );
+        }
+      }]
+    }); //dialog
+    return false;
+  });
+
 
 
   ns.recalc = function(){
