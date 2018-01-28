@@ -114,58 +114,9 @@
             self.$real.trigger( 'set_item:PartPicker', rsp );
 
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
-            rsp=rsp[0];
-            var newPosArray={};
-
-             if( $( '#ordernumber' ).text() == '0000' ) {
-
-              $( '#employee' ).text( kivi.myconfig.name );
-              $( '#milage' ).val( '0' );
-              console.log(c_hsn);
-              $.ajax({
-                  url: 'ajax/order.php',
-                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id} },
-                  type: 'POST',
-                  async: false,
-                  success: function ( newOrderID ){
-
-                  $.ajax({
-                    url: 'ajax/order.php?action=getOrder&data=' + newOrderID,
-                    type: 'GET',
-                    async: false,
-                    success: function( data ){
-
-                        var car = data.c_id;
-                        if( data.km_stnd == null ){
-                          data.km_stnd = '0';
-                        }
-                        if ( data.car_status == null ) {
-                          data.car_status = 'Auto hier';
-                        }
-                        $( '#orderTotalNetto' ).text(data.netamount);
-                        $( '#orderTotalBrutto' ).text(data.amount);
-                        $( '#ordernumber' ).text( data.ordnumber );
-                        $( '#name' ).text( data.customer_name );
-                        $( '#employee' ).text( kivi.myconfig.name );
-                        $( '#date' ).text( data.transdate );
-                        $( '#finish_time' ).val( data.finish_time );
-                        $( '#milage' ).val( data.km_stnd );
-                        $( '#licenseplate' ).val( data.c_ln );
-                        $( '#orderstatus' ).val( data.order_status ).change();
-                        $( '#car_status' ).val( data.car_status ).change();
-                        $( '#mtime' ).text(data.mtime);
-                        $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
-
-                    }
-                  })
-
-
-                     orderID=newOrderID;
-                  },
-                  error:  function(){ alert( "Holen der Auftrags-Nr fehlgeschlagen!" ); }
-              })
-
-            }
+            rsp = rsp[0];
+            var newPosArray = {};
+            if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
 
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).text( rsp.partnumber );
 
@@ -701,6 +652,54 @@
 
   };
 
+  ns.newOrder = function () {
+    $( '#employee' ).text( kivi.myconfig.name );
+              $( '#milage' ).val( '0' );
+              //console.log(c_hsn);
+              $.ajax({
+                  url: 'ajax/order.php',
+                  data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id} },
+                  type: 'POST',
+                  async: false,
+                  success: function ( newOrderID ){
+
+                  $.ajax({
+                    url: 'ajax/order.php?action=getOrder&data=' + newOrderID,
+                    type: 'GET',
+                    async: false,
+                    success: function( data ){
+
+                        var car = data.c_id;
+                        if( data.km_stnd == null ){
+                          data.km_stnd = '0';
+                        }
+                        if ( data.car_status == null ) {
+                          data.car_status = 'Auto hier';
+                        }
+                        $( '#orderTotalNetto' ).text(data.netamount);
+                        $( '#orderTotalBrutto' ).text(data.amount);
+                        $( '#ordernumber' ).text( data.ordnumber );
+                        $( '#name' ).text( data.customer_name );
+                        $( '#employee' ).text( kivi.myconfig.name );
+                        $( '#date' ).text( data.transdate );
+                        $( '#finish_time' ).val( data.finish_time );
+                        $( '#milage' ).val( data.km_stnd );
+                        $( '#licenseplate' ).val( data.c_ln );
+                        $( '#orderstatus' ).val( data.order_status ).change();
+                        $( '#car_status' ).val( data.car_status ).change();
+                        $( '#mtime' ).text(data.mtime);
+                        $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
+
+                    }
+                  })
+
+
+                     orderID = newOrderID;
+                  },
+                  error:  function(){ alert( "Holen der Auftrags-Nr fehlgeschlagen!" ); }
+              })
+
+          }
 
   $( document ).ready( function(){
 
@@ -1031,7 +1030,7 @@
 
       //Get Position
       //console.log(data.amount);
-      if( newOrder!=1 ){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
+      if( newOrder != 1 ){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data=' + orderID,
           type: 'GET',
@@ -1101,9 +1100,10 @@
 
 
 
-  $( '#btnSaveNewPart' ).click(function () {
+  $( '#btnSaveNewPart' ).click( function(){
+    if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
 
-    if ( $( '#dialogNewArticleNumber' ).val()!="" ) {
+    if ( $( '#dialogNewArticleNumber' ).val() != '' ){
 
       var dataArray = {};
       dataArray['partnumber'] = $( '#dialogNewArticleNumber' ).val();
