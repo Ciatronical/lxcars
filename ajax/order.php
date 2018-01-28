@@ -170,39 +170,29 @@ function getCar( $c_id ){
    echo $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
 }
 
-function removeOrder( $orderID ){
-    echo $Globals['dbh']->getOne( "DELETE from oe WHERE oe.id='".$orderID."'" );
+function removeOrder( $data ){
+    echo $GLOBALS['dbh']->query( "DELETE from oe WHERE oe.id = ".$data['orderID'] );
 }
 
 function newOrder( $data ){
-   require_once __DIR__.'/../inc/lxcLib.php';
-    writeLog($data);
-
+    require_once __DIR__.'/../inc/lxcLib.php';
     $c_keys = $GLOBALS['dbh']->getAll("SELECT c_2 AS c_hsn, c_3 AS c_tsn FROM lxc_cars WHERE c_id = ".$data['car_id']);
-
     $carData = lxc2db( '-C '.$c_keys[0]['c_hsn'].' '.substr( $c_keys[0]['c_tsn'], 0, 3 ) );
     if( $carData == -1 )
-      $carData = lxc2db( '-c '.$c_keys[0]['c_hsn'].' '.substr( $c_keys[0]['c_tsn'], 0, 3 ) );
+        $carData = lxc2db( '-c '.$c_keys[0]['c_hsn'].' '.substr( $c_keys[0]['c_tsn'], 0, 3 ) );
     if( $carData == -1 || $carData[0][0] == "" || $carData =='null'){
-      writeLog("test");
-
-      $car = $GLOBALS['dbh']->getALL( "SELECT id , hersteller , typ, bezeichung FROM lxc_mykba WHERE hsn ='".$c_keys[0]['c_hsn']."' AND tsn ='".substr($c_keys[0]['c_tsn'], 0, 3 )."'" );
-      $carData[0][1] = $car[0]['hersteller'];
-      $carData[0][2] = $car[0]['typ'];
-      $carData[0][3] = $car[0]['bezeichung'];
-
+        $car = $GLOBALS['dbh']->getALL( "SELECT id , hersteller , typ, bezeichung FROM lxc_mykba WHERE hsn ='".$c_keys[0]['c_hsn']."' AND tsn ='".substr($c_keys[0]['c_tsn'], 0, 3 )."'" );
+        $carData[0][1] = $car[0]['hersteller'];
+        $carData[0][2] = $car[0]['typ'];
+        $carData[0][3] = $car[0]['bezeichung'];
     }
-    writeLog($carData);
-    //writeLog($GLOBALS['dbh']->getALL( "SELECT id, hersteller, typ, bezeichnung FROM lxc_mykba WHERE hsn ='".$c_keys[0]['c_hsn']."' AND tsn ='".substr($c_keys[0]['c_tsn'], 0, 3 )."'" ));
 
-   $id = $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id) SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
+    $id = $GLOBALS['dbh']->getOne( "WITH tmp AS ( UPDATE defaults SET sonumber = sonumber::INT + 1 RETURNING sonumber) INSERT INTO oe ( ordnumber, customer_id, employee_id, taxzone_id, currency_id, c_id) SELECT ( SELECT sonumber FROM tmp), ".$data['owner_id'].", ".$_SESSION['id'].",  customer.taxzone_id, customer.currency_id, ".$data['car_id']." FROM customer WHERE customer.id = ".$data['owner_id']." RETURNING id ")['id'];
 
-   $GLOBALS['dbh']->update( 'oe', array( 'car_manuf', 'car_type' ), array( $carData[0][1], $carData[0][2]." ".$carData[0][3] ), 'id = '.$id );
-
-   echo $id;
-
-
+    $GLOBALS['dbh']->update( 'oe', array( 'car_manuf', 'car_type' ), array( $carData[0][1], $carData[0][2]." ".$carData[0][3] ), 'id = '.$id );
+    echo $id;
 }
+
 
 function getTaxzones(){
 
@@ -324,20 +314,6 @@ function printOrder( $data ){
     $pdf->SetLineWidth( 0.2 );
 
     $pdf->SetFont( 'Helvetica', '', $fontsize );
-
-
-
-    //$pdf->Text( $textPosX_left + 20, $textPosY + 35, $orderData['c_color'] );
-    //$pdf->Text( $textPosX_left + 20, $textPosY + 40, $orderData['4'] );
-    //$pdf->Text( $textPosX_left, $textPosY + 35, 'Farbe:' );
-    //$pdf->Text( $textPosX_left, $textPosY + 40, 'Hubr.:' );
-    //$pdf->Text( $textPosX_right + 20, $textPosY + 35, $orderData['c_em'] );
-    //$pdf->Text( $textPosX_right + 20, $textPosY + 40, $orderData['6'] );
-    //$pdf->Text( $textPosX_right, $textPosY + 35, 'Abgas.:' );
-    //$pdf->Text( $textPosX_right, $textPosY + 40, 'Peff:' );
-
-
-
 
     $pdf->Text( $textPosX_right + 45, $textPosY + 45, utf8_decode( $orderData['flxgr'] ) );
     $pdf->Text( $textPosX_right + 45, $textPosY + 50, utf8_decode( $orderData['c_color'] ) );

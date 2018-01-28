@@ -123,7 +123,7 @@
               $( '#milage' ).val( '0' );
               console.log(c_hsn);
               $.ajax({
-                  url: 'ajax/order.php?action=newOrder',
+                  url: 'ajax/order.php',
                   data: { action: 'newOrder', data: { owner_id: owner, car_id: c_id} },
                   type: 'POST',
                   async: false,

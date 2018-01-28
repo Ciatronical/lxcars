@@ -18,12 +18,8 @@
     //echo $head['JUI-DROPDOWN'];
     echo $head['TRANSLATION'];
 
-
-
-ob_start();
-
-$c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
-$owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
+    $c_id = $_GET["c_id"] ? $_GET["c_id"] : $_POST["c_id"];
+    $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
 
 
 ?>
@@ -34,49 +30,90 @@ $owner = $_GET["owner"] ? $_GET["owner"] : $_POST["owner"];
 
 $(document).ready(function() {
 
-    $.urlParam = function( name ){
-        var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-        if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-        else return decodeURIComponent( results[1] || 0 );
-    }
-    //var task  = $.urlParam( 'task'  );
-    var owner = $.urlParam( 'owner' );
-    var c_id  = $.urlParam( 'c_id'  ); //Car-Id
-    var c_hsn = $.urlParam( 'c_hsn' );
-    var c_tsn = $.urlParam( 'c_tsn' );
+  $.urlParam = function( name ){
+      var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+      if( results == null ) alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+      else return decodeURIComponent( results[1] || 0 );
+  }
+  //var task  = $.urlParam( 'task'  );
+  var owner = $.urlParam( 'owner' );
+  var c_id  = $.urlParam( 'c_id'  ); //Car-Id
+  var c_hsn = $.urlParam( 'c_hsn' );
+  var c_tsn = $.urlParam( 'c_tsn' );
 
-    var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
+  var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
 
-    //Filename of this script
-    var url = window.location.pathname;
-    var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
+  //Filename of this script
+  var url = window.location.pathname;
+  var filename = url.substring( url.lastIndexOf( '/' ) + 1 );
 
-    console.log('test');
-    var language = kivi.myconfig.countrycode;
-    $( ".lang" ).each( function(){
-        var key = $( this ).attr( "data-lang" );
-        if( $( this ).is( ":input" ) ) $( this ).attr( 'title',  typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
-        else $( this ).text( typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
-    });
+  console.log('test');
+  var language = kivi.myconfig.countrycode;
+  $( ".lang" ).each( function(){
+      var key = $( this ).attr( "data-lang" );
+      if( $( this ).is( ":input" ) ) $( this ).attr( 'title',  typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
+      else $( this ).text( typeof( langData[language][key] ) != 'undefined' ? langData[language][key] : 'LNG ERR'  );
+  });
 
-    $("#showtable").tablesorter().tablesorterPager({
-        container: $("#pager"),
-        size: 9999
-    });
+  $("#showtable").tablesorter().tablesorterPager({
+      container: $("#pager"),
+      size: 9999
+  });
 
-    $('.showtableRow').click(function () {
-        //console.log($(this).attr('id'));
-        window.location = 'order.phtml?id=' + $(this).attr('id') + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=0' + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
-    })
+  $('.showtableRow').click(function () {
+      window.location = 'order.phtml?id=' + $(this).parents( '.tableRow' ).attr('id') + '&owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=0' + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
+  })
 
-    $('#btnNewOrder').button().click(function () {
-      window.location = 'order.phtml?owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=1' + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
 
-    });
 
-    $('#btnBack').button().click(function () {
-        window.location = 'lxcmain.php?task=3&owner=' + owner + '&c_id=' + c_id + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
-    });
+  $('#btnNewOrder').button().click(function () {
+    window.location = 'order.phtml?owner=' + owner + '&c_id=' + c_id + '&previous=' + filename + '&newOrder=1' + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
+
+  });
+
+  $('#btnBack').button().click(function () {
+      window.location = 'lxcmain.php?task=3&owner=' + owner + '&c_id=' + c_id + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
+  });
+
+  $( '.delete' ).click( function(){
+    var orderID = $( this ).parents( '.tableRow' ).attr( 'id' ) ;
+    var row = $( this ).parents( '.tableRow' );
+    $( "#confirmDialog" ).dialog({
+      resizable: false,
+      height: "auto",
+      width: 400,
+      modal: true,
+      title: 'Delete Order!',
+      open: function() {
+        $( this ).html( 'Do you want to delete this order irretrievably?' );
+      },
+      buttons: [{
+        text: "Delete Order",
+        click: function(){
+          $.ajax({
+            url: 'ajax/order.php',
+            data: { action: 'removeOrder', data: { orderID: orderID } },
+            type: 'POST',
+            success: function(){
+              row.remove();
+            },
+            error: function(){
+              alert( 'Error in fuction removeOrder()!'
+            )}
+          }) //ajax
+          $( this ).dialog( "close" );
+        } //click
+      }, //button
+      {
+        text: "Cancel",
+        click: function(){
+          $( this ).dialog( "close" );
+        }
+      }]
+    }); //dialog
+  });
+
+
 
 });
 
@@ -94,30 +131,21 @@ $(document).ready(function() {
     echo $menu['pre_content'];
     echo $menu['start_content'];
 ?>
-
-<?php echo $menu['end_content']; ?>
-
-
- <p class="ui-state-highlight ui-corner-all tools lang" style="margin-top: 20px; padding: 0.6em;" data-lang="TESTFILE">Testfile</p>
+  <div id="dialog-confirm">
+  <p class="ui-state-highlight ui-corner-all tools lang" style="margin-top: 20px; padding: 0.6em;" data-lang="TESTFILE">Testfile</p>
+  <table id="showtable" class="tablesorter">
+    <thead>
+      <tr>
+        <th>Datum</th>
+        <th>Auftrags-Nr.</th>
+        <th>Erster Posten</th>
+        <th>Betrag</th>
+        <th><input value="x" onclick="kivi.Part.deleteOrder( this )"  class="x" type="button"></th>
+      </tr>
+    </thead>
+    <tbody>
 
 <?php
-
-
-    echo (' <table id="showtable" class="tablesorter">
-                <thead>
-                    <tr>
-                        <th>Datum</th>
-                        <th>Auftrags-Nr.</th>
-                        <th>Erster Posten</th>
-                        <th>Betrag</th>
-                    </tr>
-                </thead>
-                <tbody>');
-
-
-                //holt die order Infos und die Beschreibung der ersten Position aus der Datenbank
-
-
 
     $sql = "SELECT distinct on ( ordnumber ) * FROM ( SELECT distinct on (oe.ordnumber) 'true'::BOOL AS instruction,oe.id, oe.transdate, oe.ordnumber, instructions.description, oe.amount ";
     $sql.= "FROM oe, instructions, parts WHERE oe.customer_id = ".$owner." AND instructions.trans_id = oe.id AND oe.c_id = ".$c_id." AND parts.id = instructions.parts_id AND instructions.position = 1 UNION ";
@@ -126,15 +154,15 @@ $(document).ready(function() {
     $sql.= "ORDER BY instruction DESC ) AS testTable ORDER BY ordnumber DESC;";
 
     $rs = $GLOBALS['dbh']->getALL( $sql );
-    writeLog( $sql );
 
-    foreach ($rs as $value){
+    foreach( $rs as $value ){
         echo '
-            <tr id="'.$value['id'].'" class="showtableRow">
-                <td>'.$value['transdate'].'</td>
-                <td>'.$value['ordnumber'].'</td>
-                <td>'.$value['description'].'</td>
-                <td align="right">'.number_format($value['amount'], 2, ',', '.').'</td>
+            <tr id="'.$value['id'].'" class="tableRow">
+                <td class="showtableRow">'.$value['transdate'].'</td>
+                <td class="showtableRow">'.$value['ordnumber'].'</td>
+                <td class="showtableRow">'.$value['description'].'</td>
+                <td class="showtableRow" align="right">'.number_format( $value['amount'], 2, ',', '.' ).'</td>
+                <td><input value="x"  class="delete" type="button"></td>
             </tr>';
     }
 
@@ -146,8 +174,8 @@ $(document).ready(function() {
 
 
 ?>
-
-
+<div id="confirmDialog">
+<?php echo $menu['end_content']; ?>
 
 </body>
 </html>
