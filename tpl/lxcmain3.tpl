@@ -86,7 +86,7 @@
         $( '#mkbwahl' ).selectmenu({ width: 110 });
         $( '#g_art_drop' ).selectmenu({ width: 140 });
 
-        $('#auftragExp').button().click(function () {
+        $('#auftragNew').button().click(function () {
             window.location = "orderlist.phtml?task=3&owner={owner}&c_id={c_id}&c_hsn={c_2}&c_tsn={c_3}";
             return false;
         });
@@ -154,8 +154,8 @@
 
 <button tabindex="21" type="submit" name="update" id="speichern" value="speichern">speichern</button>&nbsp;&nbsp;&nbsp;
 <button tabindex="22" type="button" name="close" onClick="myclose(document.car.owner.value);">schließen</button>&nbsp;&nbsp;&nbsp;
-<button tabindex="23" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);">Auftrag</button>&nbsp;&nbsp;&nbsp;
-<button id="auftragExp">Auftrag (exp.)</button>&nbsp;&nbsp;&nbsp;
+<button tabindex="23" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);">Auftrag alt</button>&nbsp;&nbsp;&nbsp;
+<button id="auftragNew">Auftrag</button>&nbsp;&nbsp;&nbsp;
 <button tabindex="24" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');"  style="visibility:{FhzTypVis}">KBA DB bearbeiten</button>&nbsp;
 
 {SPECIAL}
