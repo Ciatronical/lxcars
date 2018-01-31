@@ -960,7 +960,9 @@
 
         url: 'ajax/order.php?action=getPartJSON',
         data: { 'data': $( this ).find( '[name = partnumber]' ).attr( 'part_id' ) },
+        async:false,
         success: function( rsp ){
+
 
           rsp = rsp[0];
           var getTaxArray = {};
@@ -1265,8 +1267,8 @@
   ns.updateOrder = function(){
 
    ns.updatePosition();
-   clearTimeout( timer );
-   timer = setTimeout( function(){
+   //clearTimeout( timer );
+   //timer = setTimeout( function(){
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
@@ -1294,7 +1296,7 @@
        });
 
       console.log('sum_total:' + $( '#orderTotalBrutto' ).text());
-    }, 400 );
+    //}, 400 );
 
 
 
@@ -1378,8 +1380,9 @@
   });
 
   $( document ).on( 'keyup ','.recalc', function(){
-
+   console.log('recalc');
    ns.recalc();
+   console.log('update');
    ns.updateOrder();
 
 
@@ -1387,7 +1390,7 @@
 
 
   $( document ).on( 'keyup','.orderupdate, .add_item_input:not(:last)' , function(){
-
+    console.log('orderupdate');
     //ns.updatePosition();
 
     clearTimeout( timer );
