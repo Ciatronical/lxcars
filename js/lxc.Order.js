@@ -17,6 +17,7 @@
 
 
   var orderID;
+  var partID=0;
   var ready = false;
   var timer;
   var updateTime = 1500;
@@ -332,6 +333,8 @@
 
             });
 
+            partID=0;
+
 
 
             self.state = self.STATES.UNDEFINED;
@@ -624,6 +627,31 @@
    });
 
   };
+
+  ns.editPart = function ( clicked ) {
+
+    $( '#newPart_dialog' ).dialog({
+              modal: true,
+              title: 'Artikel bearbeiten',
+              zIndex: 10000,
+              autoOpen: true,
+              width: 'auto',
+              resizable: false,
+              create: function( event, ui ){
+
+
+              }
+
+    });
+
+    $( '#dialogDescription' ).val($( clicked ).parents( "tbody" ).first().find( '[name=item_partpicker_name]' ).val());
+    $( '#dialogNewArticleNumber' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).text());
+    $( '#dialogSellPrice' ).val($( clicked ).parents( "tbody" ).first().find( '[name=sellprice_as_number]' ).val());
+    partID = $( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).attr( 'part_id' );
+
+
+  }
+
 
   ns.delete_order_item_row = function(clicked) {
     var row = $( clicked ).parents( "tbody" ).first();
@@ -1142,6 +1170,9 @@
 
 
   $( '#btnSaveNewPart' ).click( function(){
+
+
+
     if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
 
     if ( $( '#dialogNewArticleNumber' ).val() != '' ){
@@ -1153,6 +1184,7 @@
       dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
       dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace("," , ".");
       dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
+      dataArray['partID'] = partID;
       //alert(  );
       dataArray['quantity'] = $( "#quantity" ).val();
 
@@ -1176,63 +1208,14 @@
       dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
       //console.log( dataArray );
 
+
       $.ajax({
          url: 'ajax/order.php',
          type: 'POST',
-         data: { action: "newPart", data: dataArray },
+         data: { action: partID == 0 ? "newPart" : "updatePart", data: dataArray },
          success: function( data ){
-           //console.log( dataArray );
-            $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
-            $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
-            if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
 
-            $( '.row_entry:last').attr( 'id', data );
-            $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
-            $( '.row_entry:last [name=position]').text( dataArray.position );
-            $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
-            $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
-            $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
-
-
-
-            $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
-            $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
-            $( '.row_entry:last [class=x]' ).show();
-
-            if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
-
-            $( '.row_entry [name=item_partpicker_name]' ).last().focus();
-
-            $.ajax({
-              url: 'ajax/order.php',
-              type: 'POST',
-              async:false,
-              data: { action: "insertRow", data: dataArray },
-              success: function (data) {
-                //console.log(data);
-                $( '.row_entry' ).last().attr( 'id',data );
-
-             },
-             error: function(){
-                alert( 'Error: new Pos not saved' )
-             }
-
-            });
-
-            if( dataArray.instruction )
-              $( '.row_entry' ).last().addClass( 'instruction' );
-
-            $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
-            $( '.row_entry' ).last().removeClass( 'instruction' );
-            ns.countPos();
-            ns.recalc();
-            ns.init();
-
-            $( '#newPart_dialog' ).dialog( 'close' );
-
-
-            ns.changeInstructionColor();
-            ns.updateOrder();
+           ns.newLine(data);
 
          },
          error: function () {
@@ -1244,6 +1227,64 @@
     }
 
   })
+
+  ns.newLine = function( data ){
+
+    if(partID == 0){
+    $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
+    $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
+    if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
+
+    $( '.row_entry:last').attr( 'id', data );
+    $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
+    $( '.row_entry:last [name=position]').text( dataArray.position );
+    $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
+    $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
+    $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
+
+
+
+    $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
+    $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
+    $( '.row_entry:last [class=x]' ).show();
+
+    if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
+
+    $( '.row_entry [name=item_partpicker_name]' ).last().focus();
+
+    $.ajax({
+      url: 'ajax/order.php',
+      type: 'POST',
+      async:false,
+      data: { action: "insertRow", data: dataArray },
+      success: function (data) {
+        //console.log(data);
+        $( '.row_entry' ).last().attr( 'id',data );
+
+     },
+     error: function(){
+        alert( 'Error: new Pos not saved' )
+     }
+
+    });
+
+    if( dataArray.instruction )
+      $( '.row_entry' ).last().addClass( 'instruction' );
+
+    $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
+    $( '.row_entry' ).last().removeClass( 'instruction' );
+    ns.countPos();
+    ns.recalc();
+    ns.init();
+
+    $( '#newPart_dialog' ).dialog( 'close' );
+
+  }
+    ns.changeInstructionColor();
+    ns.updateOrder();
+
+
+  }
 
   ns.getQtybyDescription = function ( description ) {
 
@@ -1433,6 +1474,9 @@
     });
 
   });
+
+
+
 
   //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {

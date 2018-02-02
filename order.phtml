@@ -74,6 +74,7 @@
                     <th class="listheading" nowrap width="25px" >Pos.</th>
                     <th class="listheading" style='text-align:center' nowrap width="1"><img src="../../image/updown.png" alt="umsortieren"></th>
                     <th class="listheading" style='text-align:center' nowrap width="1"><img src="../../image/close.png" alt="löschen"></th>
+                      <th class="listheading" style='text-align:center' nowrap width="1"><img alt="E"></th>
                     <th id="partnumber_header_id"  class="listheading" nowrap width="5"><a href='#' onClick='javascript:kivi.Order.reorder_items("partnumber")'> ArtNr.</a></th>
                     <th id="partclass_header_id"   class="listheading" nowrap width="2">Typ</th>
                     <th id="description_header_id" class="listheading" nowrap           ><a href='#' onClick='javascript:kivi.Order.reorder_items("description")'>Beschreibung</a></th>
@@ -92,22 +93,25 @@
                 <tbody class="row_entry listrow listrow">
                   <tr style="width: 1533px;">
                     <td>
-                      <div class="numeric" name="position">1</div>
+                      <div class = "numeric" name = "position">1</div>
                     </td>
-                    <td align="center">
+                    <td align = "center">
                       <img src="../../image/updown.png" alt="Eintrag umsortieren" class="dragdrop" style="display: none;">
                     </td>
                     <td align="center"> <!--onclick entfernt die selektierte Position außer Position 1-->
                       <input value="x" onclick="kivi.Part.delete_order_item_row(this)" type="button" style="display: none;" class="x">
                     </td>
+                    <td align = "center">
+                       <input value="E" onclick="kivi.Part.editPart(this)" type="button" class="edit">
+                    </td>
                     <td>
-                      <div name="partnumber"></div>
+                      <div name = "partnumber"></div>
                     </td>
                     <td>
                       <div name="partclassification"></div>
                     </td>
                     <td>
-                     <span class="part_picker"><input type="hidden" class="autocomplete add_item_input part_autocomplete " name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 100px&quot;}"><input type="text" fat_set_item="1" style="width: 350px" class="add_item_input" name="item_partpicker_name" value=""></span>
+                      <span class="part_picker"><input type="hidden" class="autocomplete add_item_input part_autocomplete " name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 100px&quot;}"><input type="text" fat_set_item="1" style="width: 350px" class="add_item_input" name="item_partpicker_name" value=""></span>
                     </td>
                     <td>
                       <span>
@@ -187,9 +191,6 @@
                   </tbody>
 
                 </table>
-
-
-
 
 
             </div>
