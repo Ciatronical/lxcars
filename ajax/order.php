@@ -135,16 +135,17 @@ function getCustomer_hourly_rate() {
 }
 
 function newPart( $data ){
-
+  writeLog('newPart');
   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), TRUE, 'id' );
 
 }
 
 function updatePart( $data ) {
-
+  writeLog('updatePart');
   echo $GLOBALS['dbh']->update( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), 'id = '.$data['partID']);
 
 }
+
 function getPartJSON( $parts_id ){
     echo $GLOBALS['dbh']->getALL( "SELECT * FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE );
 }

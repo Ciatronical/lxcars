@@ -21,6 +21,7 @@
   var ready = false;
   var timer;
   var updateTime = 1500;
+  var tax = 0;
 
   var customer_hourly_rate;
 
@@ -106,7 +107,7 @@
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
 
-      console.log(item.id);
+      //console.log(item.id);
       if (this.o.fat_set_item && item.id) {
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
@@ -168,7 +169,7 @@
 
             //console.log(newPosArray);
 
-            console.log(rsp.id);
+            //console.log(rsp.id);
 
             newPosArray['instruction']=rsp.instruction;
             if (rsp.instruction) {
@@ -181,7 +182,7 @@
                  async:false,
                  data: { action: "insertRow", data: newPosArray },
                  success: function ( data ) {
-                    console.log( data );
+                    //console.log( data );
                     $( ':focus' ).parents().eq(3).attr( 'id',data );
 
                  },
@@ -265,7 +266,7 @@
     handle_changed_text: function(callbacks) {
 
       var self = this;
-      console.log( self.ajax_data(self.$dummy.val()));
+      //console.log( self.ajax_data(self.$dummy.val()));
       $.ajax({
         url: '../../controller.pl?action=Part/ajax_autocomplete',
         dataType: "json",
@@ -285,7 +286,7 @@
 
               var descriptionArray=description_name.split(" ");
 
-              console.log(descriptionArray);
+              //console.log(descriptionArray);
               $.each(descriptionArray, function(index) {
                 //console.log(descriptionArray[index]);
                 $.ajax({
@@ -325,7 +326,7 @@
                     width: 'auto',
                     resizable: false,
                     create: function( event, ui ){
-                      console.log("test");
+                      //console.log("test");
                         $( '#dialogDescription' ).val( description_name );
 
 
@@ -416,7 +417,7 @@
             dataType: "json",
             data:     { data: req.term },
             success:  function ( data ){rsp( data );
-              console.log(data);
+              //console.log(data);
             }
           }));
         },
@@ -750,7 +751,36 @@
       }
     })
 
+    $.ajax({
 
+        url: 'ajax/order.php?action=getPartJSON',
+        data: { 'data': $( 'tbody' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
+        async:false,
+        success: function( rsp ){
+
+
+          rsp = rsp[0];
+          var getTaxArray = {};
+          getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
+          getTaxArray['taxzone_id'] = $('#taxzone_id').val();
+
+          $.ajax({
+            url: 'ajax/order.php',
+            data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
+            type: "POST",
+            success: function( data ){
+              //console.log( data[0].rate );
+
+              //ns.updateOrder();
+
+            },
+            error:  function(){
+              alert( 'getTax fehlgeschlagen' );
+            }
+
+        })
+       }
+    })
      $.ajax({
       url: 'ajax/order.php?action=getTaxzones',
       type: 'GET',
@@ -982,29 +1012,6 @@
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
 
 
-      }
-
-      $.ajax({
-
-        url: 'ajax/order.php?action=getPartJSON',
-        data: { 'data': $( this ).find( '[name = partnumber]' ).attr( 'part_id' ) },
-        async:false,
-        success: function( rsp ){
-
-
-          rsp = rsp[0];
-          var getTaxArray = {};
-          getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
-          getTaxArray['taxzone_id'] = $('#taxzone_id').val();
-
-          $.ajax({
-            url: 'ajax/order.php',
-            data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
-            type: "POST",
-            success: function( data ){
-              //console.log( data[0].rate );
-              var tax = data[0].rate;
-
               totalprice = totalprice + linetotal;
 
               totalnetto = totalprice;
@@ -1013,23 +1020,17 @@
               //console.log(totalprice);
               $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
               $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
-              //ns.updateOrder();
 
-            },
-            error:  function(){
-              alert( 'getTax fehlgeschlagen' );
-            }
-
-        })
-
-       }
-
-
-      })
+      }
 
 
 
-    });
+
+
+     });
+
+
+
 
     //ns.updateOrder();
 
@@ -1170,9 +1171,6 @@
 
 
   $( '#btnSaveNewPart' ).click( function(){
-
-
-
     if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
 
     if ( $( '#dialogNewArticleNumber' ).val() != '' ){
@@ -1184,7 +1182,6 @@
       dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
       dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace("," , ".");
       dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
-      dataArray['partID'] = partID;
       //alert(  );
       dataArray['quantity'] = $( "#quantity" ).val();
 
@@ -1208,14 +1205,63 @@
       dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
       //console.log( dataArray );
 
-
       $.ajax({
          url: 'ajax/order.php',
          type: 'POST',
-         data: { action: partID == 0 ? "newPart" : "updatePart", data: dataArray },
+         data: { action: "newPart", data: dataArray },
          success: function( data ){
+           //console.log( dataArray );
+            $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
+            $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
+            if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
 
-           ns.newLine(data);
+            $( '.row_entry:last').attr( 'id', data );
+            $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
+            $( '.row_entry:last [name=position]').text( dataArray.position );
+            $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
+            $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
+            $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
+
+
+
+            $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
+            $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
+            $( '.row_entry:last [class=x]' ).show();
+
+            if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
+
+            $( '.row_entry [name=item_partpicker_name]' ).last().focus();
+
+            $.ajax({
+              url: 'ajax/order.php',
+              type: 'POST',
+              async:false,
+              data: { action: "insertRow", data: dataArray },
+              success: function (data) {
+                //console.log(data);
+                $( '.row_entry' ).last().attr( 'id',data );
+
+             },
+             error: function(){
+                alert( 'Error: new Pos not saved' )
+             }
+
+            });
+
+            if( dataArray.instruction )
+              $( '.row_entry' ).last().addClass( 'instruction' );
+
+            $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
+            $( '.row_entry' ).last().removeClass( 'instruction' );
+            ns.countPos();
+            ns.recalc();
+            ns.init();
+
+            $( '#newPart_dialog' ).dialog( 'close' );
+
+
+            ns.changeInstructionColor();
+            ns.updateOrder();
 
          },
          error: function () {
@@ -1226,26 +1272,24 @@
 
     }
 
-  })
+})
 
-  ns.newLine = function( data ){
+  ns.newLine = function( dataArray ){
 
     if(partID == 0){
     $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
     $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
     if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
 
-    $( '.row_entry:last').attr( 'id', data );
-    $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
+    //$( '.row_entry:last').attr( 'id', data );
+    $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', dataArray.part_id );
     $( '.row_entry:last [name=position]').text( dataArray.position );
     $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
     $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
     $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
 
-
-
     $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
-    $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
+    $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty * dataArray.sellprice ).toFixed(2) ) );
     $( '.row_entry:last [class=x]' ).show();
 
     if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
@@ -1260,6 +1304,9 @@
       success: function (data) {
         //console.log(data);
         $( '.row_entry' ).last().attr( 'id',data );
+        console.log('test1');
+
+
 
      },
      error: function(){
@@ -1273,15 +1320,17 @@
 
     $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
     $( '.row_entry' ).last().removeClass( 'instruction' );
-    ns.countPos();
-    ns.recalc();
-    ns.init();
 
-    $( '#newPart_dialog' ).dialog( 'close' );
+
+
 
   }
     ns.changeInstructionColor();
-    ns.updateOrder();
+    console.log('test2');
+    ns.countPos();
+    ns.recalc();
+    ns.init();
+    //ns.updateOrder();
 
 
   }
@@ -1307,9 +1356,9 @@
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
 
-   ns.updatePosition();
-   //clearTimeout( timer );
-   //timer = setTimeout( function(){
+    ns.updatePosition();
+    //clearTimeout( timer );
+    //timer = setTimeout( function(){
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
@@ -1336,7 +1385,7 @@
 
        });
 
-      console.log('sum_total:' + $( '#orderTotalBrutto' ).text());
+      //console.log( 'sum_total:' + $( '#orderTotalBrutto' ).text() );
     //}, 400 );
 
 
@@ -1421,18 +1470,22 @@
   });
 
   $( document ).on( 'keyup ','.recalc', function(){
-   console.log('recalc');
-   ns.recalc();
-   console.log('update');
-   ns.updateOrder();
+
+
+   clearTimeout( timer );
+   timer = setTimeout( function(){
+      console.log('recalc');
+      ns.recalc();
+      ns.updateOrder();
+      console.log('update');
+   }, updateTime );
 
 
   });
 
 
   $( document ).on( 'keyup','.orderupdate, .add_item_input:not(:last)' , function(){
-    console.log('orderupdate');
-    //ns.updatePosition();
+
 
     clearTimeout( timer );
     timer = setTimeout( function(){
@@ -1490,8 +1543,6 @@
 
        if($( this ).find( '[name=partnumber]' ).text()!=""){
 
-
-
           updatePosData.push({
 
             "order_nr": $( this ).find( '[name=position]' ).text(),
@@ -1511,14 +1562,14 @@
           });
        }
 
-
+    console.log(updatePosData);
 
      });
      //console.log(updatePosData);
      //clearTimeout( timer );
      //timer = setTimeout( function(){
-       console.log('pos_total:' + updatePosData[0].pos_total);
-       console.log( 'update Pos' )
+       //console.log('pos_total:' + updatePosData[0].pos_total);
+       //console.log( 'update Pos' )
        $.ajax({
          url: 'ajax/order.php',
          data: { action: "updatePositions", data: updatePosData },
