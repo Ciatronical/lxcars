@@ -142,6 +142,7 @@ function newPart( $data ){
 
 function updatePart( $data ) {
   writeLog('updatePart');
+  writeLog($data['partID']);
   echo $GLOBALS['dbh']->update( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), 'id = '.$data['partID']);
 
 }

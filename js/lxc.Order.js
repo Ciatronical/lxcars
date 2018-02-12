@@ -144,6 +144,7 @@
             //console.log($( ':focus' ).parents().eq(3));
 
             $( ':focus' ).parents().eq(3).find( '[class=x]' ).show();
+            $( ':focus' ).parents().eq(3).find( '[class=edit]' ).show();
             //$('.autocomplete').removeClass('part_autocomplete');
 
             //console.log($(':focus').parent());
@@ -159,7 +160,7 @@
             newPosArray['status'] = $(':focus').parents().eq(3).find('[name=pos_status]').val();
 
             var discount;
-            if($(':focus').parents().eq(3).find('[name=discount_as_percent]').text()=="")
+            if($(':focus').parents().eq(3).find('[name=discount_as_percent]').text()== "" )
             discount='0';
             else
             discount=$(':focus').parents().eq(3).find('[name=discount_as_percent]').text();
@@ -613,6 +614,7 @@
     lastRow.removeAttr( 'id' );
     lastRow.find( 'img' ).hide();
     $( '.row_entry' ).last().find( '[class=x]' ).hide();
+    $( '.row_entry' ).last().find( '[class=edit]' ).hide();
     lastRow.addClass( 'pin' );
 
   });
@@ -648,6 +650,9 @@
     $( '#dialogDescription' ).val($( clicked ).parents( "tbody" ).first().find( '[name=item_partpicker_name]' ).val());
     $( '#dialogNewArticleNumber' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).text());
     $( '#dialogSellPrice' ).val($( clicked ).parents( "tbody" ).first().find( '[name=sellprice_as_number]' ).val());
+    $( '#dialogPart_typ' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partclassification]' ).text() == "A" ? "instruction" : ( $( clicked ).parents( "tbody" ).first().find( '[name=partclassification]' ).text() == "D" ? "service" : "dimension" ) );
+    $( '#dialogSelectUnits' ).val($( clicked ).parents( "tbody" ).first().find( '[name=unit]' ).val());
+
     partID = $( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).attr( 'part_id' );
 
 
@@ -1120,6 +1125,7 @@
               $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed( 2 )) );
               $( '.row_entry [name=longdescription]' ).last().val( item.longdescription ).change();
               $( '.row_entry [class=x]' ).last().show();
+              $( '.row_entry [class=edit]' ).last().show();
 
               if ( item.instruction )
               $( '.row_entry' ).last().addClass( 'instruction' );
@@ -1159,64 +1165,100 @@
 
     if ( $( '#dialogNewArticleNumber' ).val() != '' ){
 
-      var dataArray = {};
-      dataArray['partnumber'] = $( '#dialogNewArticleNumber' ).val();
-      dataArray['description'] = $( '#dialogDescription' ).val();
-      dataArray['unit'] = $( '#dialogSelectUnits' ).val();
-      dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
-      dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace("," , ".");
-      dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
-      //alert(  );
-      dataArray['quantity'] = $( "#quantity" ).val();
-
-      var part_type = $( '#dialogPart_typ' ).val();
-      //console.log(part_type);
-      if(part_type == "instruction"){
-      //console.log("instruction")
+     var dataArray = {};
+     dataArray['partnumber'] = $( '#dialogNewArticleNumber' ).val();
+     dataArray['description'] = $( '#dialogDescription' ).val();
+     dataArray['unit'] = $( '#dialogSelectUnits' ).val();
+     dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
+     dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace("," , ".");
+     dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
+     //alert(  );
+     dataArray['quantity'] = $( "#quantity" ).val();
 
 
-     dataArray['instruction'] = true;
-     }else
-     dataArray['instruction'] = false;
 
-      dataArray['order_id'] = orderID;
-      dataArray['part_type'] = unitsType[$( '#dialogSelectUnits' ).val()];
-      if( dataArray['part_type'] == 'dimension' )
-        dataArray['part_type'] = 'part';
-      if( dataArray['part_type'] == 'instruction' )
-        dataArray['part_type'] = 'service';
+     var part_type = $( '#dialogPart_typ' ).val();
+     //console.log(part_type);
 
-      dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
-      //console.log( dataArray );
+     if(part_type == "instruction"){
+       //console.log("instruction")
+       dataArray['instruction'] = true;
+     }else{
+       dataArray['instruction'] = false;
+     }
 
-      $.ajax({
+     dataArray['order_id'] = orderID;
+     dataArray['part_type'] = unitsType[$( '#dialogSelectUnits' ).val()];
+
+     if( dataArray['part_type'] == 'dimension' )
+       dataArray['part_type'] = 'part';
+     if( dataArray['part_type'] == 'instruction' )
+       dataArray['part_type'] = 'service';
+
+     dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
+     dataArray['partID'] = partID;
+     console.log( dataArray );
+
+     $.ajax({
          url: 'ajax/order.php',
          type: 'POST',
-         data: { action: "newPart", data: dataArray },
+         data: { action: partID == 0 ? "newPart" : "updatePart", data: dataArray },
          success: function( data ){
-           //console.log( dataArray );
-            $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
-            $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
-            if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
+            //console.log( dataArray );
 
-            $( '.row_entry:last').attr( 'id', data );
-            $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
-            $( '.row_entry:last [name=position]').text( dataArray.position );
-            $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
-            $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
-            $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
+            if( partID == 0){
+
+              $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
+              $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
+              if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
+
+              $( '.row_entry:last').attr( 'id', data );
+              $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
+              $( '.row_entry:last [name=position]').text( dataArray.position );
+              $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
+              $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
+              $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
+              $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
+              $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
+              $( '.row_entry:last [class=x]' ).show();
+              $( '.row_entry:last [class=edit]' ).show();
+
+              if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
+
+              $( '.row_entry [name=item_partpicker_name]' ).last().focus();
+
+              ns.newLine(dataArray);
+            }
+            ns.countPos();
+            ns.recalc();
+            ns.init();
 
 
+            $( '#newPart_dialog' ).dialog( 'close' );
 
-            $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
-            $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
-            $( '.row_entry:last [class=x]' ).show();
+            $( document.activeElement ).parents("tbody").first().find("[name = sellprice_as_number]").val(dataArray.sellprice);
+            $( document.activeElement ).parents("tbody").first().find("[name = item_partpicker_name]").val(dataArray.description);
+            $( document.activeElement ).parents("tbody").first().find("[name = qty_as_number]").val(dataArray.quantity);
+            $( document.activeElement ).parents("tbody").first().find("[name = unit]").val(dataArray.unit);
 
-            if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
+            ns.changeInstructionColor();
+            ns.updateOrder();
 
-            $( '.row_entry [name=item_partpicker_name]' ).last().focus();
+         },
+         error: function () {
+            alert( 'Error: new Part not saved' )
+         }
 
-            $.ajax({
+      });
+
+    }
+ })
+
+ ns.newLine = function( dataArray ){
+
+    if( partID == 0 ){
+
+         $.ajax({
               url: 'ajax/order.php',
               type: 'POST',
               async:false,
@@ -1237,87 +1279,10 @@
 
             $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
             $( '.row_entry' ).last().removeClass( 'instruction' );
-            ns.countPos();
-            ns.recalc();
-            ns.init();
-
-            $( '#newPart_dialog' ).dialog( 'close' );
-
-
-            ns.changeInstructionColor();
-            ns.updateOrder();
-
-         },
-         error: function () {
-            alert( 'Error: new Part not saved' )
-         }
-
-      });
 
     }
 
-})
-
-  ns.newLine = function( dataArray ){
-
-    if(partID == 0){
-    $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
-    $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
-    if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
-
-    //$( '.row_entry:last').attr( 'id', data );
-    $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', dataArray.part_id );
-    $( '.row_entry:last [name=position]').text( dataArray.position );
-    $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
-    $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
-    $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
-
-    $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
-    $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty * dataArray.sellprice ).toFixed(2) ) );
-    $( '.row_entry:last [class=x]' ).show();
-
-    if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
-
-    $( '.row_entry [name=item_partpicker_name]' ).last().focus();
-
-    $.ajax({
-      url: 'ajax/order.php',
-      type: 'POST',
-      async:false,
-      data: { action: "insertRow", data: dataArray },
-      success: function (data) {
-        //console.log(data);
-        $( '.row_entry' ).last().attr( 'id',data );
-        console.log('test1');
-
-
-
-     },
-     error: function(){
-        alert( 'Error: new Pos not saved' )
-     }
-
-    });
-
-    if( dataArray.instruction )
-      $( '.row_entry' ).last().addClass( 'instruction' );
-
-    $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
-    $( '.row_entry' ).last().removeClass( 'instruction' );
-
-
-
-
-  }
-    ns.changeInstructionColor();
-    console.log('test2');
-    ns.countPos();
-    ns.recalc();
-    ns.init();
-    //ns.updateOrder();
-
-
-  }
+ }
 
   ns.getQtybyDescription = function ( description ) {
 
