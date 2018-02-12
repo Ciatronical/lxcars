@@ -728,7 +728,7 @@
                   error:  function(){ alert( "Holen der Auftrags-Nr fehlgeschlagen!" ); }
               })
 
-          }
+}
 
   $( document ).ready( function(){
 
@@ -757,8 +757,6 @@
         data: { 'data': $( 'tbody' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
         async:false,
         success: function( rsp ){
-
-
           rsp = rsp[0];
           var getTaxArray = {};
           getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
@@ -771,7 +769,6 @@
             success: function( data ){
               //console.log( data[0].rate );
 
-              //ns.updateOrder();
 
             },
             error:  function(){
@@ -790,7 +787,7 @@
         if (index == 0)
           $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" selected = "true">' + item.description + '</option>' ) );
         else
-           $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" >' + item.description + '</option>' ) );
+          $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" >' + item.description + '</option>' ) );
         })
       },
       error:  function(){
@@ -1006,31 +1003,21 @@
         discount = discount / 100;
 
         //console.log( discount );
-       //console.log(price);
+        //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
         //console.log($( this ).find( '[name = linetotal]' ).text());
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
 
-
-              totalprice = totalprice + linetotal;
-
-              totalnetto = totalprice;
-              totalbrutto = totalbrutto + linetotal + linetotal * tax;
-              //console.log
-              //console.log(totalprice);
-              $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
-              $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
-
+        totalprice = totalprice + linetotal;
+        totalnetto = totalprice;
+        totalbrutto = totalbrutto + linetotal + linetotal * tax;
+        //console.log
+        //console.log(totalprice);
+        $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
+        $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
       }
 
-
-
-
-
      });
-
-
-
 
     //ns.updateOrder();
 
@@ -1165,9 +1152,6 @@
       }
     }
   });
-
-
-
 
 
   $( '#btnSaveNewPart' ).click( function(){
@@ -1363,8 +1347,8 @@
     updateDataJSON.push({
         "id": orderID,
         "km_stnd": $( '#milage' ).val() == '' ? 0 : $( '#milage' ).val().replace(/\D/g,''),
-        "netamount": $( '#orderTotalNetto' ).text().replace( ',' , '.' ),
-        "amount": $( '#orderTotalBrutto' ).text().replace( ',' , '.' ),
+        "netamount": $( '#orderTotalNetto' ).text().replace( ',' , '.' ).replace( '', '0' ),
+        "amount": $( '#orderTotalBrutto' ).text().replace( ',' , '.' ).replace( '', '0' ),
         "status": $( '#orderstatus' ).val(),
         "finish_time": $( '#finish_time' ).val(),
         "car_status": $( '#car_status' ).val()
@@ -1474,10 +1458,10 @@
 
    clearTimeout( timer );
    timer = setTimeout( function(){
-      console.log('recalc');
+      //console.log('recalc');
       ns.recalc();
       ns.updateOrder();
-      console.log('update');
+      //console.log('update');
    }, updateTime );
 
 
@@ -1497,7 +1481,7 @@
   ns.removeOrder = function() {
 
     $.ajax({
-      url: 'ajax/order.php?action=removeOrder&data='+orderID,
+      url: 'ajax/order.php?action=removeOrder&data=' + orderID,
       typ: 'GET',
       success: function () {},
       error: function () {alert('ERROR: removeOrder')}
