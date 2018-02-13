@@ -308,9 +308,9 @@
                         }
 
 
-                    if ( data>1 ) {
-                    $( '#quantity' ).val( data );
-                    return false;
+                    if ( data > 1 ){
+                      $( '#quantity' ).val( data );
+                      return false;
                     }
                   },
                   error: function() {
@@ -320,22 +320,20 @@
               });
               $( '#quantity' ).val();
               $( '#newPart_dialog' ).dialog({
-                    modal: true,
-                    title: 'Artikel anlegen',
-                    zIndex: 10000,
-                    autoOpen: true,
-                    width: 'auto',
-                    resizable: false,
-                    create: function( event, ui ){
-                      //console.log("test");
-                        $( '#dialogDescription' ).val( description_name );
+                modal: true,
+                title: 'Artikel anlegen',
+                zIndex: 10000,
+                autoOpen: true,
+                width: 'auto',
+                resizable: false,
+                open: function( event, ui ){
 
-
+                  $( '.editable' ).prop( 'disabled', false );
+                  $( '#dialogDescription' ).val( description_name );
                 }
+              });
 
-            });
-
-            partID=0;
+              partID = 0;
 
 
 
@@ -634,16 +632,17 @@
   ns.editPart = function ( clicked ) {
 
     $( '#newPart_dialog' ).dialog({
-              modal: true,
-              title: 'Artikel bearbeiten',
-              zIndex: 10000,
-              autoOpen: true,
-              width: 'auto',
-              resizable: false,
-              create: function( event, ui ){
-
-
-              }
+      modal: true,
+      title: 'Artikel bearbeiten',
+      zIndex: 10000,
+      autoOpen: true,
+      width: 'auto',
+      resizable: false,
+      open: function( event, ui ){
+        //ToDo: ajax Prüfen ob Artikel schon in anderen Aufträgen oder Re existiert
+        //wenn ja dann:
+        $( '.editable' ).prop( 'disabled', true );
+      }
 
     });
 
