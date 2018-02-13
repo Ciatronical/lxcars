@@ -174,7 +174,7 @@ function updateOrder( $data) {
 }
 
 function getCar( $c_id ){
-   echo $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
+    echo $GLOBALS['dbh']->getOne( "SELECT lxc_cars.c_ln AS amtl_kennz, lxc_cars.c_id AS car_id, customer.id AS customer_id, customer.name AS customer_name, customer.taxzone_id, customer.currency_id, defaults.sonumber AS last_order_nr, defaults.id AS defaults_id FROM lxc_cars, customer, defaults WHERE lxc_cars.c_id = '".$c_id."' AND customer.id = lxc_cars.c_ow", true);
 }
 
 function removeOrder( $data ){
@@ -209,7 +209,7 @@ function getTaxzones(){
 }
 
 function getTaxbyAccountingGroupID( $data ){
-  writeLog( $data );
+  //writeLog( $data );
   $sql = "select rate from tax join taxkeys on taxkeys.tax_id = tax.id join taxzone_charts on taxzone_charts.income_accno_id = taxkeys.chart_id where taxzone_charts.buchungsgruppen_id = ".$data['accountingGroups_id']." and taxzone_id = ".$data['taxzone_id']." order by startdate DESC Limit 1";
 
   echo $GLOBALS['dbh']->getAll( $sql, true );

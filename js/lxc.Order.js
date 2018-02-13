@@ -1025,9 +1025,7 @@
         totalprice = totalprice + linetotal;
         totalnetto = totalprice;
         totalbrutto = totalbrutto + linetotal + linetotal * tax;
-        console.log(tax);
-        console.log(totalnetto);
-        console.log(totalbrutto);
+
         $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
         $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
       }
@@ -1241,6 +1239,7 @@
               ns.newLine(dataArray);
             }
             ns.countPos();
+            ns.recalc();
             ns.recalc();
             ns.init();
 
