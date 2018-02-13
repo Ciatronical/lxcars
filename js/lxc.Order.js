@@ -1082,8 +1082,8 @@
       if ( data.car_status == null ) {
         data.car_status = 'Auto hier';
       }
-      $( '#orderTotalNetto' ).text(data.netamount);
-      $( '#orderTotalBrutto' ).text(data.amount);
+      $( '#orderTotalNetto' ).text(parseFloat(data.netamount).toFixed(2));
+      $( '#orderTotalBrutto' ).text(parseFloat(data.amount).toFixed(2));
       $( '#ordernumber' ).text( data.ordnumber );
       $( '#name' ).text( data.customer_name );
       $( '#employee' ).text( kivi.myconfig.name );
@@ -1147,6 +1147,7 @@
             });
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
             ns.countPos();
+            ns.recalc();
             ns.recalc();
             ns.init();
             ready = true;
