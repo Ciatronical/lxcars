@@ -763,33 +763,7 @@
       }
     })
 
-    $.ajax({
 
-        url: 'ajax/order.php?action=getPartJSON',
-        data: { 'data': $( 'tbody' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
-        async:false,
-        success: function( rsp ){
-          rsp = rsp[0];
-          var getTaxArray = {};
-          getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
-          getTaxArray['taxzone_id'] = $('#taxzone_id').val();
-
-          $.ajax({
-            url: 'ajax/order.php',
-            data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
-            type: "POST",
-            success: function( data ){
-              //console.log( data[0].rate );
-
-
-            },
-            error:  function(){
-              alert( 'getTax fehlgeschlagen' );
-            }
-
-        })
-       }
-    })
      $.ajax({
       url: 'ajax/order.php?action=getTaxzones',
       type: 'GET',
@@ -1014,6 +988,34 @@
 
         discount = discount / 100;
 
+        $.ajax({
+
+          url: 'ajax/order.php?action=getPartJSON',
+          data: { 'data': $( 'tbody' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
+          async:false,
+          success: function( rsp ){
+            rsp = rsp[0];
+            var getTaxArray = {};
+            getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
+            getTaxArray['taxzone_id'] = $('#taxzone_id').val();
+
+            $.ajax({
+              url: 'ajax/order.php',
+              data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
+              type: "POST",
+              success: function( data ){
+                console.log( data[0].rate );
+                tax=data[0].rate;
+
+              },
+              error:  function(){
+                  alert( 'getTax fehlgeschlagen' );
+             }
+
+            })
+           }
+        })
+
         //console.log( discount );
         //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
@@ -1023,8 +1025,9 @@
         totalprice = totalprice + linetotal;
         totalnetto = totalprice;
         totalbrutto = totalbrutto + linetotal + linetotal * tax;
-        //console.log
-        //console.log(totalprice);
+        console.log(tax);
+        console.log(totalnetto);
+        console.log(totalbrutto);
         $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
         $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
       }
