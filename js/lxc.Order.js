@@ -1,4 +1,4 @@
- namespace('kivi.Part', function(ns) {
+ namespace( 'kivi.Part', function( ns ){
   'use strict';
 
    $.urlParam = function( name ){
@@ -296,17 +296,16 @@
                   success: function( data ) {
                     //console.log(data);
                      $( '#dialogDescription' ).val( description_name );
-                      $( '#dialogPart_typ' ).change();
+                     $( '#dialogPart_typ' ).change();
 
-                        if( $('#dialogDescription').val().length >17 ) {
+                       if( $('#dialogDescription').val().length >17 ) {
 
-                          $( '#dialogPart_typ' ).val( 'instruction' ).change();
-                          $( "dialogSelectUnits" ).val( 'Std' ).change();
-                        }else{
-                          $( '#dialogPart_typ' ).val( 'dimension' ).change();
-                          $( "dialogSelectUnits" ).val( 'Stck' ).change();
-                        }
-
+                        $( '#dialogPart_typ' ).val( 'instruction' ).change();
+                        $( "dialogSelectUnits" ).val( 'Std' ).change();
+                       }else{
+                        $( '#dialogPart_typ' ).val( 'dimension' ).change();
+                        $( "dialogSelectUnits" ).val( 'Stck' ).change();
+                       }
 
                     if ( data > 1 ){
                       $( '#quantity' ).val( data );
@@ -320,22 +319,19 @@
               });
               $( '#quantity' ).val();
               $( '#newPart_dialog' ).dialog({
-                modal: true,
+                modal: true, //i
                 title: 'Artikel anlegen',
-                zIndex: 10000,
+                zIndex: 10000, //i
                 autoOpen: true,
-                width: 'auto',
-                resizable: false,
+                width: 'auto', //i
+                resizable: false, //i
                 open: function( event, ui ){
-
                   $( '.editable' ).prop( 'disabled', false );
                   $( '#dialogDescription' ).val( description_name );
                 }
               });
 
-              partID = 0;
-
-
+            partID = 0;
 
             self.state = self.STATES.UNDEFINED;
             if (callbacks && callbacks.match_none) self.run_action(callbacks.match_none, [ self, self.$dummy.val() ]);
@@ -631,20 +627,32 @@
 
   ns.editPart = function ( clicked ) {
 
+    partID = $( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).attr( 'part_id' );
+
     $( '#newPart_dialog' ).dialog({
       modal: true,
       title: 'Artikel bearbeiten',
-      zIndex: 10000,
-      autoOpen: true,
       width: 'auto',
       resizable: false,
       open: function( event, ui ){
+        console.log("test");
         //ToDo: ajax Prüfen ob Artikel schon in anderen Aufträgen oder Re existiert
         //wenn ja dann:
-        $( '.editable' ).prop( 'disabled', true );
+        $.ajax({
+          url: 'ajax/order.php?action=getPartCount&data=' + partID,
+          type: 'GET',
+          success: function ( data ){
+            console.log( data.count );
+            if( data.count > 0 )
+            $( '.editable' ).prop( 'disabled', true );
+          }
+
+        })
+
       }
 
     });
+
 
     $( '#dialogDescription' ).val($( clicked ).parents( "tbody" ).first().find( '[name=item_partpicker_name]' ).val());
     $( '#dialogNewArticleNumber' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).text());
@@ -652,7 +660,7 @@
     $( '#dialogPart_typ' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partclassification]' ).text() == "A" ? "instruction" : ( $( clicked ).parents( "tbody" ).first().find( '[name=partclassification]' ).text() == "D" ? "service" : "dimension" ) );
     $( '#dialogSelectUnits' ).val($( clicked ).parents( "tbody" ).first().find( '[name=unit]' ).val());
 
-    partID = $( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).attr( 'part_id' );
+
 
 
   }
