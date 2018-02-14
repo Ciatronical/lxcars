@@ -643,8 +643,11 @@
           type: 'GET',
           success: function ( data ){
             console.log( data.count );
+
             if( data.count > 1 )
-            $( '.editable' ).prop( 'disabled', true );
+              $( '.editable' ).prop( 'disabled', true );
+            else
+              $( '.editable' ).prop( 'disabled', false );
           }
 
         })
