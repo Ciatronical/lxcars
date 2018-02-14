@@ -71,7 +71,7 @@ function getOrder( $id ){
 }
 
 function getPartCount( $parts_id ){
-    $sql = "select count(*) from oe join orderitems on orderitems.trans_id = oe.id where orderitems.parts_id = ".$parts_id;
+    $sql = "select count(*) from oe left join instructions on instructions.trans_id = oe.id left join orderitems on orderitems.trans_id = oe.id where orderitems.parts_id = ".$parts_id." OR instructions.parts_id = ".$parts_id ;
     $count = $GLOBALS['dbh']->getOne( $sql, true );
     //$count = $GLOBALS['dbh']->getOne( "select count(*) from invoice  where parts_id = ".$parts_id );
     writeLog( $count );

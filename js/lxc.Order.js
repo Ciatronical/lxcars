@@ -643,7 +643,7 @@
           type: 'GET',
           success: function ( data ){
             console.log( data.count );
-            if( data.count > 0 )
+            if( data.count > 1 )
             $( '.editable' ).prop( 'disabled', true );
           }
 
@@ -989,10 +989,9 @@
         discount = discount / 100;
 
         $.ajax({
-
           url: 'ajax/order.php?action=getPartJSON',
           data: { 'data': $( 'tbody' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
-          async:false,
+          async: false,
           success: function( rsp ){
             rsp = rsp[0];
             var getTaxArray = {};
@@ -1003,31 +1002,36 @@
               url: 'ajax/order.php',
               data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
               type: "POST",
+              async: false,
               success: function( data ){
-                console.log( data[0].rate );
-                tax=data[0].rate;
+                console.log(totalprice);
+                tax = data[0].rate;
 
               },
               error:  function(){
-                  alert( 'getTax fehlgeschlagen' );
+                alert( 'getTax fehlgeschlagen' );
              }
 
             })
            }
         })
 
-        //console.log( discount );
+
+        //tax=0.19;
+        //console.log( tax );
         //console.log(price);
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
         //console.log($( this ).find( '[name = linetotal]' ).text());
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
-
+        //console.log(totalprice);
         totalprice = totalprice + linetotal;
+        console.log(totalprice);
         totalnetto = totalprice;
         totalbrutto = totalbrutto + linetotal + linetotal * tax;
 
         $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
         $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+
       }
 
      });
@@ -1146,7 +1150,7 @@
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
             ns.countPos();
             ns.recalc();
-            ns.recalc();
+
             ns.init();
             ready = true;
             $( '.listrow' ).filter( ':last' ).find( '[name=item_partpicker_name]' ).focus();
@@ -1215,7 +1219,7 @@
          success: function( data ){
             //console.log( dataArray );
 
-            if( partID == 0){
+            if( partID == 0 ){
 
               $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
               $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
@@ -1228,7 +1232,7 @@
               $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
               $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
               $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
-              $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed(2) ) );
+              $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed( 2 ) ) );
               $( '.row_entry:last [class=x]' ).show();
               $( '.row_entry:last [class=edit]' ).show();
 
@@ -1236,20 +1240,20 @@
 
               $( '.row_entry [name=item_partpicker_name]' ).last().focus();
 
-              ns.newLine(dataArray);
+              ns.newLine( dataArray );
             }
             ns.countPos();
             ns.recalc();
-            ns.recalc();
+
             ns.init();
 
 
             $( '#newPart_dialog' ).dialog( 'close' );
 
-            $( document.activeElement ).parents("tbody").first().find("[name = sellprice_as_number]").val(dataArray.sellprice);
-            $( document.activeElement ).parents("tbody").first().find("[name = item_partpicker_name]").val(dataArray.description);
-            $( document.activeElement ).parents("tbody").first().find("[name = qty_as_number]").val(dataArray.quantity);
-            $( document.activeElement ).parents("tbody").first().find("[name = unit]").val(dataArray.unit);
+            $( document.activeElement ).parents( "tbody" ).first().find( "[name = sellprice_as_number]" ).val( dataArray.sellprice );
+            $( document.activeElement ).parents( "tbody" ).first().find( "[name = item_partpicker_name]" ).val( dataArray.description );
+            $( document.activeElement ).parents( "tbody" ).first().find( "[name = qty_as_number]" ).val( dataArray.quantity );
+            $( document.activeElement ).parents( "tbody" ).first().find( "[name = unit]" ).val( dataArray.unit );
 
             ns.changeInstructionColor();
             ns.updateOrder();
@@ -1316,8 +1320,7 @@
   ns.updateOrder = function(){
 
     ns.updatePosition();
-    //clearTimeout( timer );
-    //timer = setTimeout( function(){
+
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
@@ -1344,8 +1347,6 @@
 
        });
 
-      //console.log( 'sum_total:' + $( '#orderTotalBrutto' ).text() );
-    //}, 400 );
 
 
 
