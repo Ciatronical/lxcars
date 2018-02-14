@@ -1257,6 +1257,13 @@
             $( document.activeElement ).parents( "tbody" ).first().find( "[name = item_partpicker_name]" ).val( dataArray.description );
             $( document.activeElement ).parents( "tbody" ).first().find( "[name = qty_as_number]" ).val( dataArray.quantity );
             $( document.activeElement ).parents( "tbody" ).first().find( "[name = unit]" ).val( dataArray.unit );
+            $( document.activeElement ).parents( "tbody" ).first().find( "[name = partnumber]" ).text( dataArray.partnumber );
+            $( document.activeElement ).parents( "tbody" ).first().find( "[name = partclassification]" ).text( kivi.t8( dataArray.part_type ) );
+            if( dataArray['instruction'] ){
+             $( document.activeElement ).parents( "tbody" ).first().find( "[name = partclassification]" ).text( kivi.t8( "I" ) );
+             $( document.activeElement ).parents( "tbody" ).first().addClass( 'instruction' );
+
+            }
 
             ns.changeInstructionColor();
             ns.updateOrder();
