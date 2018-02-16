@@ -1,4 +1,12 @@
-table.tablesorter { width:auto; cursor:pointer; }
+    .instruction div{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction input{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction tr{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction select{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction textarea{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction td input{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+
+
+    table.tablesorter { width:auto; cursor:pointer; }
 
     .input_02{width: 248px;}
     .tools.ui-state-highlight.ui-corner-all.lang{ height: 150px; background-color: lightyellow;}
@@ -80,7 +88,8 @@ table.tablesorter { width:auto; cursor:pointer; }
     .partID2 { position: relative; left: 70px; }
     .pos-instruction { position: relative; left: 640px; }
     .pos-instruction2 { position: relative; left: 1500px; top: -24px; }
-    .instruction {color: red; background-color: yellow;  }
+
+
 
 
     #showtable{ width: 85%; font-size: 12px; }

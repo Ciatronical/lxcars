@@ -130,8 +130,8 @@
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
 
 
-            var number=parseFloat($(':focus').parents().eq( 2 ).find( '[name=qty_as_number]') .val() );
-            $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text(kivi.t8(rsp.part_type));
+            var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ) .val() );
+            $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text( kivi.t8( rsp.part_type ) );
 
             if( rsp.instruction ){
               $( '.row_entry:last [name = partclassification]' ).text( kivi.t8("I") );
@@ -172,7 +172,7 @@
 
             //console.log(rsp.id);
 
-            newPosArray['instruction']=rsp.instruction;
+            newPosArray['instruction'] = rsp.instruction;
             if (rsp.instruction) {
               $( ':focus' ).parents().eq(3).addClass( 'instruction' );
             }
@@ -230,7 +230,7 @@
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
 
-            ns.changeInstructionColor();
+            //ns.changeInstructionColor();
             ns.updateOrder();
 
           },
@@ -617,7 +617,7 @@
 //Instruction Color
   ns.changeInstructionColor = function () {
 
-   $( 'instrution, .instruction div , .instruction :input ' ).css({
+   $( 'instruction, .instruction div , .instruction :input ' ).css({
         'color' : '#0000FF',
         'font-weight' : 'bold',
         'background-color' : '#FEFE8A'
@@ -1162,7 +1162,7 @@
 
 
 
-            ns.changeInstructionColor();
+            //ns.changeInstructionColor();
 
             //console.log(data);
           },
@@ -1263,9 +1263,10 @@
              $( document.activeElement ).parents( "tbody" ).first().find( "[name = partclassification]" ).text( kivi.t8( "I" ) );
              $( document.activeElement ).parents( "tbody" ).first().addClass( 'instruction' );
 
+            }else {
+              $( document.activeElement ).parents( "tbody" ).first().removeClass( 'instruction' );
             }
-
-            ns.changeInstructionColor();
+            //ns.changeInstructionColor();
             ns.updateOrder();
 
          },
