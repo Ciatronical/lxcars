@@ -657,9 +657,9 @@ function ShowCar ( $c_id ) {
 
      $lxcrs=lxc2db ( " -c ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) );
 
-       $lxc_data[0][4]=$lxcrs[0][1];
-       $lxc_data[0][5]=$lxcrs[0][10];
-       $lxc_data[0][6]=$lxcrs[0][2];
+     $lxc_data[0][4]=$lxcrs[0][1];
+     $lxc_data[0][5]=$lxcrs[0][10];
+     $lxc_data[0][6]=$lxcrs[0][2];
      $lxc_data[0][7]=$lxcrs[0][7];
      $lxc_data[0][8]=$lxcrs[0][8];
 
@@ -673,7 +673,7 @@ function ShowCar ( $c_id ) {
     if($lxc_data[0][7]=="" && $lxc_data[0][8]=="" || $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
 
 
-    $kba=false;
+    $kba=true;
 
 
     }

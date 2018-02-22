@@ -217,10 +217,6 @@
             ns.init();
             ns.recalc();
 
-
-
-
-
             ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
             $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
             $('.listrow').filter(':last').removeClass('instruction');
@@ -230,7 +226,7 @@
             //insertRow(rsp);//insert Position oder Instruction
             //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
 
-            //ns.changeInstructionColor();
+
             ns.updateOrder();
 
           },
@@ -614,17 +610,6 @@
   });
 
 
-//Instruction Color
-  ns.changeInstructionColor = function () {
-
-   $( 'instruction, .instruction div , .instruction :input ' ).css({
-        'color' : '#0000FF',
-        'font-weight' : 'bold',
-        'background-color' : '#FEFE8A'
-   });
-
-  };
-
   ns.editPart = function ( clicked ) {
 
     partID = $( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).attr( 'part_id' );
@@ -732,7 +717,12 @@
                         $( '#orderstatus' ).val( data.order_status ).change();
                         $( '#car_status' ).val( data.car_status ).change();
                         $( '#mtime' ).text(data.mtime);
-                        $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
+                        //$( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
+
+                        if( data[1] == undefined )
+                          $( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
+                        else
+                          $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
 
                     }
                   })
@@ -1079,7 +1069,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
-      //console.log( data );
+
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -1099,10 +1089,12 @@
       $( '#orderstatus' ).val( data.order_status ).change();
       $( '#car_status' ).val( data.car_status ).change();
       $( '#mtime' ).text(data.mtime);
-      //if (data[1]=="undefined")
-      //$( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
-      //else
-      $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
+
+      if( data[1] == undefined )
+        $( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
+      else
+        $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
+
       orderID = data.oe_id;
 
       //Get Position
@@ -1160,9 +1152,6 @@
 
             $( '.ui-sortable' ).sortable( {items: '> tbody:not(.pin)'} );
 
-
-
-            //ns.changeInstructionColor();
 
             //console.log(data);
           },
@@ -1266,7 +1255,7 @@
             }else {
               $( document.activeElement ).parents( "tbody" ).first().removeClass( 'instruction' );
             }
-            //ns.changeInstructionColor();
+
             ns.updateOrder();
 
          },
