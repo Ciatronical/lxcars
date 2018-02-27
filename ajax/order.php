@@ -62,9 +62,16 @@ function getOrder( $id ){
     writeLog(json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) ));
 
     if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) ) == 'null' ){
-        if( $test[0][0] == '' )
-            echo json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) );
-        else
+        if( $test[0][0] == '' ){
+            $sql = "SELECT marke AS \"0\", typ AS \"1\", hersteller AS \"2\", bezeichung AS \"3\" FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'";
+            writeLog( $sql );
+            $data = array_merge( $orderData, $GLOBALS['dbh']->getALL( $sql ) ) ;
+              //writeLog($data);
+              $orderData = array_merge($orderData, $data[0]);
+              writeLog($orderData);
+
+              echo json_encode($orderData);
+        }else
             echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
 
      }

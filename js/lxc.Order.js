@@ -719,9 +719,9 @@
                         $( '#mtime' ).text(data.mtime);
                         //$( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
 
-                        if( data[1] == undefined )
-                          $( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
-                        else
+                        //if( data[1] == undefined )
+                          //$( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
+                        //else
                           $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
 
                     }
@@ -1069,7 +1069,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
-
+      console.log(data);
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -1090,9 +1090,9 @@
       $( '#car_status' ).val( data.car_status ).change();
       $( '#mtime' ).text(data.mtime);
 
-      if( data[1] == undefined )
-        $( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
-      else
+      //if( data[1] == undefined )
+        //$( '#headline' ).html( '<b>Auftrag ' + data[0]['hersteller'] + ' ' + data[0]['typ'] + ' ' + data[0]['bezeichung'] + ' von ' + data.customer_name + '</b>' );
+      //else
         $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
 
       orderID = data.oe_id;
