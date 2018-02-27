@@ -500,7 +500,7 @@ function ShowCar ( $c_id ) {
     Ist nicht c_t vorhanden? Dann ermitteln und in
     Ermitteln ob TypNr vergeben wenn nicht dieses tun sonst prüfen ob Typnummer zur KBA passt (Fahrzeugwechsel)
     */
-    $lxcrs=lxc2db ( ( $rs[0]['c_d']=="1900-01-01" )? ( " -C ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) ): ( " -CJ ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 )." ".$rs[0]['c_d'] ) );
+    $lxcrs=lxc2db ( ( $rs[0]['c_d']=="1900-01-01" )? ( " -c ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) ): ( " -CJ ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 )." ".$rs[0]['c_d'] ) );
     if ( $lxcrs==-1 ) {
         // wenn beispielsweise das Bj nicht passt
         $lxcrs=lxc2db ( " -C ".$rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 ) );
@@ -540,7 +540,7 @@ function ShowCar ( $c_id ) {
     </head>
     <body >
    <script language="JavaScript">
-    <!--
+
     function SaveTypNr (owner,c_id, c_t) {
         Frame=eval("parent.main_window");
         uri1="lxcmain.php?owner=" + owner;
@@ -550,7 +550,7 @@ function ShowCar ( $c_id ) {
         uri=uri1+uri2+uri3+uri4;
         location.href=uri;
     }
-    //-->
+
     </script>
     <p class="listtop">Folgende Fahrzeuge stehen zur KBA  <?php echo $rs[0]['c_2']." ".substr ( $rs[0]['c_3'], 0, 3 );?> zur Auswahl. Wähle ein Fahrzeug! </p>
 
