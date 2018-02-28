@@ -26,48 +26,60 @@
         echo $menu['start_content'];
     ?>
 
-    <p id='headline' class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px;  padding: 0.6em;"></p>
+    <p id='headline' class="ui-state-highlight ui-corner-all tools" style="background-color: #light-yellow;margin-top: 10px; height: 15px;  padding: 0.4em;"></p>
 
     <div class="ui-widget-content">
       <div>
-        <p class="tools ui-state-highlight ui-corner-all lang" style="margin-top: 20px;  padding: 0.6em;" data-lang="HEADLINE">
-          <label id="head01">Auftragsnummer:</label>
-          <label class="val" id="ordernumber">0000</label>
-          <label id="head03">Auftraggeber:</label>
-          <label id="name">Name:</label></br>
-          <label id="head05">Fertigstellung:</label>
-          <input class="val orderupdate" id="finish_time" type="text">
-          <label id="head07">KM-Stand:</label>
-          <input class="val orderupdate" id="milage" type="text" ></br>
-          <label id="head09">bearbeitet von:</label>
-          <label id="labellicenseplate">Amtl.-Kennz.:</label>
-          <input class="val orderupdate" id="licenseplate" type="text" ></br>
-          <label class="val" id="employee"></label>
-          <label id="head11">bearbeitet am:</label>
-          <label class="val" id="mtime"></label></br>
-          <label id="head13">KfZ Ort:</label>
-          <select class="val orderupdate" id="car_status" type="text">
-            <option>Auto nicht hier</option>
-            <option selected="selected">Auto hier</option>
-            <option>Sonstiges zur Reparatur gebracht</option>
-            <option>Bestellung</option>
-          </select></br>
-          <label id="head15">erstellt am:</label>
-          <label class="val" id="date"></label>
-          <label id="head17">Status:</label>
-          <select class="val orderupdate" id="orderstatus" type="text">
-            <option>angenommen</option>
-            <option>bearbeitet</option>
-            <option selected="selected">abgerechnet</option>
-          </select>
-        </p>
+           <p></p>
+          <table class="table1">
+            <tr>
+              <td><label id="head01">Auftragsnummer:</label></td>
+              <td><label class="val" id="ordernumber">0000</label></td>
+              <td><label id="head03">Auftraggeber:</label></td>
+              <td><label id="name">Name:</label></br></td>
+              <td><label id="head05">Fertigstellung:</label></td>
+              <td><input class="val orderupdate" id="finish_time" type="text"></td>
+              <td><label id="head07">KM-Stand:</label></td>
+              <td><input class="val orderupdate" id="milage" type="text" ></br></td>
+              <td><label id="head09">bearbeitet von:</label></td>
+              <td><label class="val" id="employee"></label></td>
+            </tr>
+            <tr>
+              <td><label id="labellicenseplate">Amtl.-Kennz.:</label></td>
+              <td><input class="val orderupdate" id="licenseplate" type="text" ></br></td>
+              <td><label id="head11">bearbeitet am:</label></td>
+              <td><label class="val" id="mtime"></label></br></td>
+              <td><label id="head13">KfZ Ort:</label></td>
+              <td>
+                  <select class="val orderupdate" id="car_status" type="text">
+                  <option>Auto nicht hier</option>
+                  <option selected="selected">Auto hier</option>
+                  <option>Sonstiges zur Reparatur gebracht</option>
+                  <option>Bestellung</option>
+                </select></br>
+              </td>
+              <td><label id="head15">erstellt am:</label></td>
+              <td><label class="val" id="date"></label></td>
+              <td><label id="head17">Status:</label></td>
+              <td>
+                <select class="val orderupdate" id="orderstatus" type="text">
+                  <option>angenommen</option>
+                  <option>bearbeitet</option>
+                  <option selected="selected">abgerechnet</option>
+                </select>
+              </td>
+            </tr>
 
+
+          </table>
+
+       <p></p>
       </div>
 
       <table width="100%">
         <tr>
           <td>
-            <div id="row_table_scroll_id" style="overflow-y: auto; height: 55vh">
+            <div id="row_table_scroll_id" style="overflow-y: auto; height: 65vh">
               <table id="row_table_id"  class='ui-sortable' width="100%">
                 <thead>
                   <tr class="listheading pin">
@@ -155,42 +167,6 @@
                 </tbody>
               </table>
               <br>
-                <table width="100%">
-                  <tbody class="listrow_2 ">
-                    <tr style="width: 1533px;">
-                     <td>  </td>
-                     <td><br><br>
-                        <label id="netto">Netto:</label>
-                        <label name="pos_orderTotalNetto"  type="text" id="orderTotalNetto" class="recalc reformat_number numeric">0</label>
-                      <br>
-                      <br>
-                        <label id="brutto">Brutto:</label>
-                        <label name="pos_orderTotalBrutto"  type="text" id="orderTotalBrutto" class="recalc reformat_number numeric">0</label>
-                     </td>
-                     <td>  </td>
-                     <td><span></span>  </td>
-                     <td>  <span id="all_mechanics"><label>Alle Positionen Mechaniker:</label> <br> <br> <select  name="allMechanics" value="0" type="text" id="allMechanicsID" ></span></td>
-                     <td>  <span id="all_status">
-                            <label>Alle Positionen Status:</label>
-                            <br> <br>
-                            <select  name="allStatus" value="0" type="text" id="allStatusID" >
-                              <option value="gelesen">gelesen</option>
-                              <option value="Bearbeitung">Bearbeitung</option>
-                              <option value="erledigt">erledigt</option>
-                            </select>
-                        </span>
-                     </td>
-                     <td><span id="taxzones">
-                            <label>Steuersatz:</label>
-                            <br> <br>
-                            <select  name="taxzones" value="0" type="text" id="taxzone_id" class="unitselect">
-
-                            </select>
-                        </span></td>
-                    </tr>
-                  </tbody>
-
-                </table>
 
 
             </div>
@@ -198,6 +174,32 @@
         </tr>
       </table>
       <div>
+         <table class="sumTable">
+              <tr>
+               <td> <label id="netto">Netto:</label> </td>
+               <td> <label name="pos_orderTotalNetto"  type="text" id="orderTotalNetto" class="recalc reformat_number numeric">0</label></td>
+               <td> <label id="brutto">Brutto:</label> </td>
+               <td> <label name="pos_orderTotalBrutto"  type="text" id="orderTotalBrutto" class="recalc reformat_number numeric">0</label> </td>
+               <td> <label>Alle Positionen Mechaniker:</label> </td>
+               <td> <span id="all_mechanics">  <select  name="allMechanics" value="0" type="text" id="allMechanicsID" ></span> </td>
+               <td><label>Alle Positionen Status:</label></td>
+               <td>
+                  <span id="all_status">
+                      <select  name="allStatus" value="0" type="text" id="allStatusID" >
+                        <option value="gelesen">gelesen</option>
+                        <option value="Bearbeitung">Bearbeitung</option>
+                        <option value="erledigt">erledigt</option>
+                      </select>
+                  </span>
+               </td>
+               <td> <label>Steuersatz:</label> </td>
+               <td> <span id="taxzones">
+                      <select  name="taxzones" value="0" type="text" id="taxzone_id" class="unitselect"> </select>
+                    </span>
+               </td>
+              </tr>
+
+         </table>
         <button id="crm" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
         <button id="orderList" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
         <button id="car" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>

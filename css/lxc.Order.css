@@ -1,46 +1,78 @@
-    .instruction div{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
-    .instruction input{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
-    .instruction tr{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
-    .instruction select{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
-    .instruction textarea{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
-    .instruction td input{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+
+    textarea{ font-size: 12px; height: 15px;}
+
+    #row_table_id tr, #row_table_id input{
+     font-size: 12px;
+     text-align: left;
+     padding: 0.2px;
+     /*background-color: #eeeeee;
+     border-bottom-style: solid;
+     border-bottom-color: #000000;*/
+    }
+    /*#row_table_id input{ background-color: #ffffff;}*/
+
+    #row_table_id td{
+      border-bottom-style: solid;
+      border-bottom-color: #ffffff;
+      border-bottom-width: 2px;
+
+    }
+
+    table .table1 {
+
+     font-size: 12px;
+     font-weight: bold;
+
+
+    }
+
+    .table1 td, .table1 th {
+
+     text-align: left;
+     padding: 2px;
+     font-weight: bold;
+     background-color: #eeeeee;
+    }
+
+    .table1 td:nth-child(even) {
+     font-weight: normal;
+     background-color: #ffffff;
+    }
+
+     table .sumTable {
+     font-size: 14px;
+     font-weight: bold;
+     height: 40px;
+
+    }
+
+    .sumTable td, .sumTable th {
+
+     text-align: left;
+     font-size: 14px;
+     padding: 4px;
+     font-weight: bold;
+     background-color: #eeeeee;
+     height: 30px;
+    }
+
+    .sumTable td:nth-child(even) {
+     font-weight: normal;
+     background-color: #ffffff;
+    }
 
 
     table.tablesorter { width:auto; cursor:pointer; }
 
     .input_02{width: 248px;}
     .tools.ui-state-highlight.ui-corner-all.lang{ height: 150px; background-color: lightyellow;}
-    #head01           { position: absolute; top: 150px; left: 20px }
-    #ordernumber      { position: absolute; top: 150px; left: 185px; }
-    #head03           { position: absolute; top: 150px; left: 500px; }
-    #name             { position: absolute; top: 150px; left: 650px; }
-    #head05           { position: absolute; top: 180px; left: 20px; }
-    #finish_time      { position: absolute; top: 180px; left: 185px; }
-    #head07           { position: absolute; top: 180px; left: 500px; }
-    #milage           { position: absolute; top: 180px; left: 650px; }
-    #head09           { position: absolute; top: 210px; left: 20px; }
-    #employee         { position: absolute; top: 210px; left: 185px; }
-    #head11           { position: absolute; top: 270px; left: 20px; }
-    #mtime           { position: absolute; top: 270px; left: 185px; }
-    #head13           { position: absolute; top: 210px; left: 500px; }
-    #car_status       { position: absolute; top: 210px; left: 650px; }
-    #head15           { position: absolute; top: 240px; left: 20px; }
-    #date             { position: absolute; top: 240px; left: 185px; }
-    #head17           { position: absolute; top: 240px; left: 500px; }
-    #orderstatus      { position: absolute; top: 240px; left: 650px; }
-    #labellicenseplate{ position: absolute; top: 270px; left: 500px; }
-    #licenseplate     { position: absolute; top: 270px; left: 650px;  100px; background: none; border-style: none; pointer-events: none;}
-    #netto            { position: absolute; left: 1030px; text-align: right; }
-    #orderTotalNetto  { position: absolute; left: 1133px; width: 100px; text-align: right; }
-    #brutto           { position: absolute; left: 1030px; text-align: right; }
-    #orderTotalBrutto { position: absolute; left: 1133px; width: 100px; text-align: right; }
-    #sellprice_header_id{max-width: 5px;}
-    #all_mechanics     {position: absolute; left: 1450px; text-align: right;}
-    #all_status     {position: absolute; left: 1700px; text-align: right;}
 
-    label{font-size: 14px;}
+
+
+
+    label{font-size: 12px;}
     div p{font-size: 16px;}
-    p label{font-size: 14px; font-weight: bold;}
+    p label{font-size: 12px; font-weight: bold;}
     p label.val{font-size: 14px; font-weight: normal;}
 
     #sortable, #head { list-style-type: none; margin: 0; padding: 0;padding-left: 2.5em; width: 1550px; }
@@ -89,7 +121,12 @@
     .pos-instruction { position: relative; left: 640px; }
     .pos-instruction2 { position: relative; left: 1500px; top: -24px; }
 
-
+    .instruction div{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction input{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction tr{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction select{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction textarea{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
+    .instruction td input{color: #0000FF; background-color: #FEFE8A; font-weight: bold; }
 
 
     #showtable{ width: 85%; font-size: 12px; }
