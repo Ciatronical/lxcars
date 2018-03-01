@@ -620,14 +620,14 @@
       width: 'auto',
       resizable: false,
       open: function( event, ui ){
-        console.log("test");
+
         //ToDo: ajax Prüfen ob Artikel schon in anderen Aufträgen oder Re existiert
         //wenn ja dann:
         $.ajax({
           url: 'ajax/order.php?action=getPartCount&data=' + partID,
           type: 'GET',
           success: function ( data ){
-            console.log( data.count );
+            //console.log( data.count );
 
             if( data.count > 1 )
               $( '.editable' ).prop( 'disabled', true );
@@ -962,7 +962,18 @@
     return false;
   });
 
+  ns.calcPrice = function() {
 
+    var  calculation = $( ':focus' ).parents().eq( 3 ).find( '[name=sellprice_as_number]' ).val().replace( ',', '.' );
+    if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
+
+    var result = eval( calculation );
+    $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val( result );
+    console.log( result );
+
+    }
+
+  }
 
   ns.recalc = function(){
     var totalprice = 0;
@@ -980,7 +991,7 @@
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
 
         discount = discount / 100;
-        console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
+        //console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
           data: { 'data': $( 'tbody .listrow' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
@@ -990,7 +1001,7 @@
             var getTaxArray = {};
             getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
             getTaxArray['taxzone_id'] = $('#taxzone_id').val();
-            console.log($('#taxzone_id').val());
+            //console.log($('#taxzone_id').val());
             $.ajax({
               url: 'ajax/order.php',
               data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
@@ -999,8 +1010,8 @@
               success: function( data ){
                 //console.log(totalprice);
                 tax = data[0].rate;
-                console.log('tax:');
-                console.log( tax );
+                //console.log('tax:');
+                //console.log( tax );
               },
               error:  function(){
                 alert( 'getTax fehlgeschlagen' );
@@ -1019,7 +1030,7 @@
         var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
         //console.log(totalprice);
         totalprice = totalprice + linetotal;
-        console.log(totalprice);
+        //console.log(totalprice);
         totalnetto = totalprice;
         totalbrutto = totalbrutto + linetotal + linetotal * tax;
 
@@ -1070,7 +1081,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
-      console.log(data);
+      //console.log(data);
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -1333,7 +1344,7 @@
         "car_status": $( '#car_status' ).val()
       });
 
-       console.log( 'update Order' );
+       //console.log( 'update Order' );
        $.ajax({
         url: 'ajax/order.php',
         async: false,
@@ -1436,6 +1447,7 @@
    clearTimeout( timer );
    timer = setTimeout( function(){
       //console.log('recalc');
+      ns.calcPrice();
       ns.recalc();
       ns.updateOrder();
       //console.log('update');
@@ -1523,7 +1535,7 @@
           });
        }
 
-    console.log(updatePosData);
+    //console.log(updatePosData);
 
      });
      //console.log(updatePosData);
