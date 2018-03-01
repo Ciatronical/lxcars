@@ -387,7 +387,7 @@ function printOrder( $data ){
 
     //Instructions and positions
     $pdf->SetFont( 'Helvetica', '', '8' );
-    $height = '90';
+    $height = '85';
 
 
     $pdf->SetLineWidth(0.4);

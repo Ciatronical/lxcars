@@ -980,33 +980,34 @@
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
 
         discount = discount / 100;
-
+        console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
-          data: { 'data': $( 'tbody' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
+          data: { 'data': $( 'tbody .listrow' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
           async: false,
           success: function( rsp ){
             rsp = rsp[0];
             var getTaxArray = {};
             getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
             getTaxArray['taxzone_id'] = $('#taxzone_id').val();
-
+            console.log($('#taxzone_id').val());
             $.ajax({
               url: 'ajax/order.php',
               data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
               type: "POST",
               async: false,
               success: function( data ){
-                console.log(totalprice);
+                //console.log(totalprice);
                 tax = data[0].rate;
-
+                console.log('tax:');
+                console.log( tax );
               },
               error:  function(){
                 alert( 'getTax fehlgeschlagen' );
              }
 
             })
-           }
+           },error: function () {alert( 'getPartJSON fehlgeschlagen' );}
         })
 
 
