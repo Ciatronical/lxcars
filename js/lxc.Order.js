@@ -994,7 +994,7 @@
     var totalprice = 0;
     var totalnetto = 0;
     var totalbrutto = 0;
-    $( '.listrow' ).each( function(){
+    $( 'tbody .listrow' ).each( function(item){
       if( $( this ).hasClass( 'instruction' ) ){
         var linetotal = 0;
       }
@@ -1002,14 +1002,14 @@
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
 
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
-
+        console.log(this);
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
 
         discount = discount / 100;
         //console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
-          data: { 'data': $( 'tbody .listrow' ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
+          data: { 'data': $( this ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
           async: false,
           success: function( rsp ){
             rsp = rsp[0];
@@ -1025,8 +1025,8 @@
               success: function( data ){
                 //console.log(totalprice);
                 tax = data[0].rate;
-                //console.log('tax:');
-                //console.log( tax );
+                console.log('tax:');
+                console.log( tax );
               },
               error:  function(){
                 alert( 'getTax fehlgeschlagen' );
