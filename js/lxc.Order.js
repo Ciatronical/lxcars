@@ -962,16 +962,31 @@
     return false;
   });
 
+/*
+  $( document ).on( 'keydown ','.recalc', function(e){
+  if(e.which == 13)
+    ns.calcPrice();
+
+  });
+*/
+
   ns.calcPrice = function() {
 
-    var  calculation = $( ':focus' ).parents().eq( 3 ).find( '[name=sellprice_as_number]' ).val().replace( ',', '.' );
+    var  calculation = $( ':focus' ).parents().eq( 3 ).find( '[name=sellprice_as_number]' ).val().toString().replace(',', '.' );;
+    calculation = calculation.toString().replace(',', '.' );
+
+    console.log(calculation);
     if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
 
     var result = eval( calculation );
-    $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val( result );
-    console.log( result );
+
+
+    $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
+
+    console.log( result);
 
     }
+
 
   }
 
