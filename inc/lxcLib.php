@@ -615,7 +615,7 @@ function ShowCar ( $c_id ) {
     $radstand=$rskba[0][2];
     $masse=$rskba[0][1];
     if ( $rskba==-1 ) {
-        //$kba=false;
+        $kba=true;
         //für den MyKBA Button
         $mykba=GetFhzTyp ( $rs[0]['c_2'], substr ( $rs[0]['c_3'], 0, 3 ) );
         $lxc_data[0][4]=$mykba['hersteller'];
@@ -673,9 +673,11 @@ function ShowCar ( $c_id ) {
     if($lxc_data[0][7]=="" && $lxc_data[0][8]=="" || $lxc_data[0][4]=="" || $lxc_data[0][6]==""){
 
 
-    $kba=true;
+    $kba=false;
 
 
+    }else {
+      $kba=true;
     }
 
 
