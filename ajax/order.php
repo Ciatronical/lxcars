@@ -59,25 +59,32 @@ function getOrder( $id ){
 
     $test = lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) );
     //writeLog($test);
-    writeLog(json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) ));
+    //writeLog(json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) ));
 
     if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) ) == 'null' ){
         if( $test[0][0] == '' ){
             $sql = "SELECT marke AS \"0\", typ AS \"1\", hersteller AS \"2\", bezeichung AS \"3\" FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'";
-            writeLog( $sql );
+
             $data = array_merge( $orderData, $GLOBALS['dbh']->getALL( $sql ) ) ;
-              //writeLog($data);
+
               $orderData = array_merge($orderData, $data[0]);
               writeLog($orderData);
+              if($orderData == "") {
+                $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
+                writeLog($orderData);
+                echo json_encode($orderData);
+              }else
+                echo json_encode($orderData);
 
-              echo json_encode($orderData);
-        }else
+        }else{
+
             echo json_encode( array_merge( $orderData, lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
-
+        }
      }
-     else
-        echo json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
+     else{
 
+        echo json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
+     }
 
 }
 
