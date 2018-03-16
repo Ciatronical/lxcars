@@ -1049,13 +1049,16 @@
         totalnetto = totalprice;
         totalbrutto = totalbrutto + linetotal + linetotal * tax;
 
-        $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
-        $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
+
 
       }
 
+
+
      });
 
+    $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
+    $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     //ns.updateOrder();
 
   }
@@ -1374,8 +1377,6 @@
         }
 
        });
-
-
 
 
 
