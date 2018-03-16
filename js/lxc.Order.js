@@ -975,7 +975,7 @@
     var  calculation = $( ':focus' ).parents().eq( 3 ).find( '[name=sellprice_as_number]' ).val().toString().replace(',', '.' );;
     calculation = calculation.toString().replace(',', '.' );
 
-    console.log(calculation);
+    //console.log(calculation);
     if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
 
     var result = eval( calculation );
@@ -983,7 +983,7 @@
 
     $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
 
-    console.log( result);
+    //console.log( result);
 
     }
 
@@ -1002,7 +1002,7 @@
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
 
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
-        console.log(this);
+       //console.log(this);
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
 
         discount = discount / 100;
@@ -1025,8 +1025,8 @@
               success: function( data ){
                 //console.log(totalprice);
                 tax = data[0].rate;
-                console.log('tax:');
-                console.log( tax );
+                //console.log('tax:');
+                //console.log( tax );
               },
               error:  function(){
                 alert( 'getTax fehlgeschlagen' );
@@ -1099,7 +1099,7 @@
     type: 'GET',
     async: false,
     success: function( data ){
-      console.log(data);
+      //console.log(data);
 
       var car = data.c_id;
       if( data.km_stnd == null ){
@@ -1233,7 +1233,7 @@
 
      dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
      dataArray['partID'] = partID;
-     console.log( dataArray );
+     //console.log( dataArray );
 
      $.ajax({
          url: 'ajax/order.php',
@@ -1287,7 +1287,7 @@
               $( document.activeElement ).parents( "tbody" ).first().removeClass( 'instruction' );
             }
 
-            ns.updateOrder();
+
 
          },
          error: function () {
@@ -1297,10 +1297,12 @@
       });
 
     }
+
+
  })
 
  ns.newLine = function( dataArray ){
-
+    console.log("NewLine");
     if( partID == 0 ){
 
          $.ajax({
@@ -1324,6 +1326,8 @@
 
             $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
             $( '.row_entry' ).last().removeClass( 'instruction' );
+            $( '.row_entry' ).last().find('[name=item_partpicker_name]').focus();
+
 
     }
 
@@ -1349,7 +1353,7 @@
   }
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
-
+    console.log("UpdateOrder")
     ns.updatePosition();
 
     var updateDataJSON = new Array;
@@ -1377,8 +1381,6 @@
         }
 
        });
-
-
 
 
   }
@@ -1497,24 +1499,14 @@
 
   $( "#allMechanicsID" ).change(function () {
 
-    $( "[name=mechanics]" ).each(function ( index ) {
-
-      $(this).val($("#allMechanicsID").val()).change();
-
-
-    });
+    $( "[name=mechanics]" ).val( $("#allMechanicsID").val() ).change();
 
   });
 
 
   $( "#allStatusID" ).change(function () {
 
-    $( "[name=pos_status]" ).each(function ( index ) {
-
-      $(this).val( $( "#allStatusID" ).val() ).change();
-
-
-    });
+    $( "[name=pos_status]" ).val( $( "#allStatusID" ).val() ).change();
 
   });
 
@@ -1523,7 +1515,7 @@
 
   //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {
-
+    //console.Log("updatePosition");
      var updatePosData = new Array;
 
      $( '.row_entry' ).each(function( index ) {
