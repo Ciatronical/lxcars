@@ -1328,6 +1328,10 @@
             $( '.row_entry' ).last().removeClass( 'instruction' );
             $( '.row_entry' ).last().find('[name=item_partpicker_name]').focus();
 
+            clearTimeout( timer );
+            timer = setTimeout( function(){
+              ns.updateOrder();
+            }, updateTime );
 
     }
 
