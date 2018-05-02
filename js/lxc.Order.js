@@ -913,6 +913,17 @@
     label: 'Pdf'
   })
 
+  $( "#kbaToCoparts" ).button({
+    label: 'Coparts'
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    alert( 'Coparts' );
+    window.location = 'coparts://0588123';
+    return false;
+  });
+
+
   $( '#invoice' ).button({
     label: kivi.t8( 'invoice' )
   }).css({
