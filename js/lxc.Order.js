@@ -918,8 +918,9 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    alert( 'Coparts' );
-    window.location = 'coparts://0588123';
+    //alert( 'Coparts' );
+    //Command: 3 Chars, rest: data
+    window.location = 'lxcars://kba' + c_hsn + c_tsn;
     return false;
   });
 
