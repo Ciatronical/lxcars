@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <windows.h>
 using namespace std;
 
+//C:\Users\work\AppData\Roaming\DVSE GmbH\COPARTS Online
 //HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname 3 \Control
 int main( int argc, char* argv[] ){
 
@@ -11,27 +13,24 @@ int main( int argc, char* argv[] ){
         return -1;
     }
 
-  string param = argv[1];
+	string param = argv[1];
     string command = param.substr( 0, 3 );
     string data = param.substr( 3 );
 
     ofstream outfile;
-    outfile.open( "control" );
+	ofstream debug;
+    outfile.open( "Controlfile.cf" );
+	debug.open( "debug.txt" );
+	debug << "1" << endl;
 
-  if( command == "kba" ){
-      cout << "KBA" << endl;
-      outfile << "<Commands> <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=" << data << " /> </Args></Command> </Commands>" <<endl;
-     //cout << "data: " << data << endl;
-     //cout << "hsn: " << data.substr( 0, 4 ) << "tsn: " << data.substr( 5 ) << endl;
+	if( command == "kba" ){
+		cout << "KBA" << endl;
+		//outfile << "<Commands> <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"\" /> </Args></Command> </Commands>" <<endl;
+		outfile << "<Commands> <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << data << "\" /> </Args></Command> </Commands>" <<endl;
+		debug << "kba" << endl;
+	}	
+	
+	Sleep( 5000 );
 
-  }
-
-
-
-
-
-  //cout << "argc: " << argc << endl;
-    //cout << "param: " << param << endl;
-    //cout << "command: " << command << endl;
-  return 0;
+	return 0;
 }
