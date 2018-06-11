@@ -5,17 +5,12 @@
 #include <windows.h>
 using namespace std;
 
-// g++ -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://kba07103620209
+// g++ -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://kba0710362020945___SRB-DT11___Tina%20Kuzia
 // %appdata%\DVSE GmbH\COPARTS Online
 // HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname 3 \Control
 // https://support.shotgunsoftware.com/hc/en-us/articles/219031308-Launching-applications-using-custom-browser-protocols
 
 int main(int argc, char* argv[]){
-	
-
-    //ShowWindow(::GetConsoleWindow(), SW_HIDE);
-
-	//cout << endl << endl << endl;
 	
 	string param = argv[1];
 	string comdata = param.substr( 9 ); //Command and Data
@@ -49,20 +44,25 @@ int main(int argc, char* argv[]){
 	ExpandEnvironmentStrings( ( LPSTR )&byteValue, ( LPSTR )&cOutputPath,  size );
 	
 	//convert to string
-	string path(( reinterpret_cast< char const* >( cOutputPath ) ) );
+	string path( ( reinterpret_cast< char const* >( cOutputPath ) ) );
 	
 	if( command == "kba" ){
+		//splitt data to plate and name
+		string kbadata = data.substr( 0, data.find( "___" ) );
+		string tmp = data.substr( data.find( "___" ) + 3 );
+		string plate = tmp.substr( 0, tmp.find( "___" ) );
+		string name  = tmp.substr( tmp.find( "___" ) + 3 );
+		name = name.replace( name.find( "%20" ), 3, " " );
+		
 		ofstream outfile;
 		/*outfile.open( path + "\\Controlfile.cf" );
 		outfile << "<Commands> <Command Name=\"[ APP]\"> <Arg Name=\"[COMMAND]\" Value=\"max\" /> </Args></Command></Commands>" << endl;
 		outfile.close();
 		Sleep( 200 );*/
 		outfile.open( path + "\\Controlfile.cf" );
-		outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << data << "\" /> <Arg Name = \"[KZN]\" Value =\"MOL-LX10\" /> <Arg Name = \"[KDName]\" Value =\"Ronny Zimmermann\" /> </Args></Command></Commands>" << endl;
+		outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << kbadata << "\" /> <Arg Name = \"[KZN]\" Value =\"" << plate << "\" /> <Arg Name = \"[KDName]\" Value =\"" << name << "\" /> </Args></Command></Commands>" << endl;
 		outfile.close();	
 	}	
-	
-	//Sleep( 16000 );
-	
+		
 	return 0;
 }
