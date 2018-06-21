@@ -12,14 +12,14 @@
   var c_id = $.urlParam( 'c_id' );
   var previous = $.urlParam( 'previous' );
   var newOrder = $.urlParam( 'newOrder' );
-  var c_hsn = $.urlParam( 'c_hsn' ); //DoDo: get via Ajax
-  var c_tsn = $.urlParam( 'c_tsn' ); //--||--
-  var c_ln = 'MOL-LX10'; //DoDo
-  var customer_name = 'Ronny Zimmermann';
+  var c_hsn;
+  var c_tsn;
+  var c_ln;
+  var customer_name;
 
 
   var orderID;
-  var partID=0;
+  var partID = 0;
   var ready = false;
   var timer;
   var updateTime = 1500;
@@ -682,7 +682,7 @@
     });
 
   };
-
+  //New Order
   ns.newOrder = function () {
     $( '#employee' ).text( kivi.myconfig.name );
               $( '#milage' ).val( '0' );
@@ -707,8 +707,8 @@
                         if ( data.car_status == null ) {
                           data.car_status = 'Auto hier';
                         }
-                        $( '#orderTotalNetto' ).text(data.netamount);
-                        $( '#orderTotalBrutto' ).text(data.amount);
+                        $( '#orderTotalNetto' ).text( data.netamount );
+                        $( '#orderTotalBrutto' ).text( data.amount );
                         $( '#ordernumber' ).text( data.ordnumber );
                         $( '#name' ).text( data.customer_name );
                         $( '#employee' ).text( kivi.myconfig.name );
@@ -721,6 +721,8 @@
                         $( '#mtime' ).text(data.mtime);
                         c_ln = data.c_ln;
                         customer_name = data.customer_name;
+                        c_hsn = data.c_2;
+                        c_tsn = data.c_3;
                         //$( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
 
                         if( data[1] == undefined )
@@ -1135,11 +1137,13 @@
       $( '#finish_time' ).val( data.finish_time );
       $( '#milage' ).val( data.km_stnd );
       $( '#licenseplate' ).val( data.c_ln );
-      c_ln = data.c_ln;
-      customer_name = data.customer_name;
       $( '#orderstatus' ).val( data.order_status ).change();
       $( '#car_status' ).val( data.car_status ).change();
       $( '#mtime' ).text(data.mtime);
+      c_ln = data.c_ln;
+      customer_name = data.customer_name;
+      c_hsn = data.c_2;
+      c_tsn = data.c_3;
 
       if( data[1] == undefined )
         $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
