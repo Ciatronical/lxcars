@@ -16,7 +16,7 @@ FunctionEnd
 OutFile "LxCarsClientInstall.exe"
 InstallDir $PROGRAMFILES\LxCarsClient
 
-VIProductVersion                 "1.0.0.0"
+VIProductVersion                 "1.1.0.0"
 VIAddVersionKey ProductName      "LxCars"
 VIAddVersionKey Comments         "Client for Windows"
 VIAddVersionKey CompanyName      "Inter-Data"
@@ -43,8 +43,8 @@ VIAddVersionKey OriginalFilename "LxCarsSetup.exe"
 
 Section ""
   SetOutPath $INSTDIR
-  File "C:\Users\autoprofi\AppData\Roaming\DVSE GmbH\COPARTS Online\LxCarsClient.exe"
-  File "C:\Users\autoprofi\AppData\Roaming\DVSE GmbH\COPARTS Online\Tutorial.pdf"
+  File "C:\Users\work\Desktop\LxCarsClient\LxCarsClient.exe"
+  File "C:\Users\work\Desktop\LxCarsClient\Tutorial.pdf"
   WriteUninstaller $INSTDIR\uninstall.exe
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "DisplayName" "LxCarsClient"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
