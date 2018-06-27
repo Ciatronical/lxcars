@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
 	string strKeyPath = "SOFTWARE\\DVSE GmbH\\CatClient\\COPARTS Online";
 	string strKeyName = "Control";
 	DWORD dwValueType;
-	const size_t size = 256;
+	const size_t size = 512;
 	byte byteValue[size];
 	DWORD dwValueSize;
 	TCHAR cOutputPath[size]; 
