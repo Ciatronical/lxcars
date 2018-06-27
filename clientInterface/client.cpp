@@ -35,8 +35,8 @@ int main(int argc, char* argv[]){
 	TCHAR cOutputPath[size]; 
 	
 	// for window in foreground
-	const TCHAR substring[] = TEXT("WindowsForms10.Window.8.app");
-
+	const TCHAR SUBSTRING[] = TEXT("WindowsForms10.Window.8.app");
+	//const string SUBSTRING = "WindowsForms10.Window.8.app";
 	
 	// read registry
 	if( RegOpenKeyExA( HKEY_LOCAL_MACHINE, strKeyPath.c_str(), 0, KEY_ALL_ACCESS, &hKey ) != ERROR_SUCCESS ){
@@ -73,10 +73,10 @@ int main(int argc, char* argv[]){
 		outfile.open( path + "\\Controlfile.cf" );
 		outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << kbadata << "\" /> <Arg Name = \"[KZN]\" Value =\"" << plate << "\" /> <Arg Name = \"[KDName]\" Value =\"" << name << "\" /> </Args></Command></Commands>" << endl;
 		outfile.close();	
-		
+
 		// for window in foreground
 		HWND windowHandle;
-		EnumWindows( FindWindowClassBySubstr, ( LPARAM )substring );
+		EnumWindows( FindWindowClassBySubstr, ( LPARAM )SUBSTRING );
 		windowHandle = FindWindow( windowClassName.c_str(), 0 );
 		SetForegroundWindow( windowHandle );
 
@@ -86,10 +86,10 @@ int main(int argc, char* argv[]){
 }
 
 BOOL CALLBACK FindWindowClassBySubstr( HWND hwnd, LPARAM substring ){
-    const DWORD CLASS_SIZE = 1024;
-    TCHAR windowClass[CLASS_SIZE];
+    const DWORD WINDOW_CLASS_SIZE = 1024;
+    TCHAR windowClass[WINDOW_CLASS_SIZE];
 
-    if( GetClassName( hwnd, windowClass, CLASS_SIZE ) ){
+    if( GetClassName( hwnd, windowClass, WINDOW_CLASS_SIZE ) ){
         if( _tcsstr( windowClass, LPCTSTR( substring ) ) != NULL ){ //finish
             windowClassName = windowClass;
 			return false;
