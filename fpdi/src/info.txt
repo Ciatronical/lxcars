@@ -1,0 +1,10 @@
+verschlüsseln:
+gpg -c DATEINAME
+
+entschlüsseln:
+gpg -d DATEINAME.gpg > DATEINAME
+
+übersetzen:
+apt-get install libpqxx-dev
+
+g++ -o lxc2db lxc2db.cc -lpqxx 
