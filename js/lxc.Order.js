@@ -1514,14 +1514,14 @@
 
   $(document).on('click', '.discount100', function(e){
     var percentfield = $(this).closest('tr').find('.discaspercent');
-    if (percentfield.val() == "0" || percentfield.val() == "0,00")
+    if (percentfield.val() == "100")
     {
-      percentfield.val("100");
-      $(this).val("0%");
-    }
-    else{
       percentfield.val("0");
       $(this).val("100%");
+    }
+    else{
+      percentfield.val("100");
+      $(this).val("0%");
     }
 
     percentfield.trigger("keyup");
