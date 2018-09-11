@@ -26,7 +26,7 @@
         echo $menu['start_content'];
     ?>
 
-    <p id='headline' class="ui-state-highlight ui-corner-all tools" style="background-color: #light-yellow;margin-top: 10px; height: 15px;  padding: 0.4em;"></p>
+    <p id='headline' class="ui-state-highlight ui-corner-all too1,00ls" style="background-color: #light-yellow;margin-top: 10px; height: 15px;  padding: 0.4em;"></p>
 
     <div class="ui-widget-content">
       <div>
@@ -96,6 +96,7 @@
                     <th class="listheading" nowrap width="5" >Einheit </th>
                     <th id="sellprice_header_id"   class="listheading" nowrap width="2" ><a href='#' onClick='javascript:kivi.Order.reorder_items("sellprice")'> Preis</a></th>
                     <th id="discount_header_id"    class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  Rabatt in %</a></th>
+                    <th id="discount_header_100_id"    class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  100%</a></th>
                     <th class="listheading" nowrap width="10">Gesamt </th>
                     <th class="listheading" nowrap width="2" >Mechaniker </th>
                     <th class="listheading" nowrap width="2" >Status </th>
@@ -145,10 +146,13 @@
                     </td>
                     <td>
                       <span>
-                        <input value="0.00" class="recalc reformat_number numeric pos1" name="discount_as_percent" size="5" type="text">
+                        <input value="0.00" class="recalc reformat_number numeric pos1 discaspercent" name="discount_as_percent" size="5" type="text">
                       </span>
                     </td>
-                    <td align="center">
+                    <td align = "center">
+                       <input value="100%" type="button" class="discount100">
+                    </td>
+                    <td align="center">1,00
                       <span>
                         <div name="linetotal">0.00</div>
                       </span>

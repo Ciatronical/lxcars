@@ -643,16 +643,17 @@
 
     });
 
+    $('#newPart_dialog').on('keypress', function(e){
+      if (e.which == 13) {
+        $('#btnSaveNewPart').trigger("click");
+      }
+    });
 
     $( '#dialogDescription' ).val($( clicked ).parents( "tbody" ).first().find( '[name=item_partpicker_name]' ).val());
     $( '#dialogNewArticleNumber' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).text());
     $( '#dialogSellPrice' ).val($( clicked ).parents( "tbody" ).first().find( '[name=sellprice_as_number]' ).val());
     $( '#dialogPart_typ' ).val($( clicked ).parents( "tbody" ).first().find( '[name=partclassification]' ).text() == "A" ? "instruction" : ( $( clicked ).parents( "tbody" ).first().find( '[name=partclassification]' ).text() == "D" ? "service" : "dimension" ) );
     $( '#dialogSelectUnits' ).val($( clicked ).parents( "tbody" ).first().find( '[name=unit]' ).val());
-
-
-
-
   }
 
 
@@ -1219,7 +1220,6 @@
     }
   });
 
-
   $( '#btnSaveNewPart' ).click( function(){
     if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
 
@@ -1503,6 +1503,30 @@
 
   });
 
+  $(document).on('click', 'input', function (e){
+    $(this)
+        .on('mouseup', function () {
+            $(this).select();
+            return false;
+        })
+        .select();
+  });
+
+  $(document).on('click', '.discount100', function(e){
+    var percentfield = $(this).closest('tr').find('.discaspercent');
+    if (percentfield.val() == "0" || percentfield.val() == "0,00")
+    {
+      percentfield.val("100");
+      $(this).val("0%");
+    }
+    else{
+      percentfield.val("0");
+      $(this).val("100%");
+    }
+
+    percentfield.trigger("keyup");
+  });
+
 
   $( document ).on( 'keyup','.orderupdate, .add_item_input:not(:last)' , function(){
 
@@ -1575,24 +1599,23 @@
     //console.log(updatePosData);
 
      });
+
+     var timer = setTimeout( function(){
+      $.ajax({
+        url: 'ajax/order.php',
+        data: { action: "updatePositions", data: updatePosData },
+        type: "POST",
+        success: function(){
+
+        },
+        error:  function(){
+           alert( 'Update der Positionen fehlgeschlagen' );
+        }
+
+      });
+   },750);
      //console.log(updatePosData);
-     //clearTimeout( timer );
-     //timer = setTimeout( function(){
-       //console.log('pos_total:' + updatePosData[0].pos_total);
-       //console.log( 'update Pos' )
-       $.ajax({
-         url: 'ajax/order.php',
-         data: { action: "updatePositions", data: updatePosData },
-         type: "POST",
-         success: function(){
-
-         },
-         error:  function(){
-            alert( 'Update der Positionen fehlgeschlagen' );
-         }
-
-       });
-    //},800);
+     clearTimeout( timer );
    }
 
 
