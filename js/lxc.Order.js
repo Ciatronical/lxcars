@@ -1385,7 +1385,7 @@
   }
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
-    console.log("UpdateOrder")
+    console.log("UpdateOrderFunction")
     ns.updatePosition();
 
     var updateDataJSON = new Array;
@@ -1406,7 +1406,7 @@
         data: { action: "updateOrder", data: updateDataJSON },
         type: "POST",
         success: function(){
-
+          console.log("UpdateOrderFunctionSucc");
         },
         error:  function(){
           alert( 'Update des Auftrages fehlgeschlagen' );
@@ -1600,26 +1600,21 @@
           });
        }
 
-    //console.log(updatePosData);
+    console.log(updatePosData);
 
      });
-
-     var timer = setTimeout( function(){
       $.ajax({
         url: 'ajax/order.php',
         data: { action: "updatePositions", data: updatePosData },
         type: "POST",
         success: function(){
-
+          console.log("UpdatePosistionFunctionSucc");
         },
         error:  function(){
            alert( 'Update der Positionen fehlgeschlagen' );
         }
 
       });
-   },750);
-     //console.log(updatePosData);
-     clearTimeout( timer );
    }
 
 
