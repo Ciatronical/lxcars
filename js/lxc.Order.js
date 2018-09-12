@@ -1192,6 +1192,12 @@
               $( '.row_entry [class=x]' ).last().show();
               $( '.row_entry [class=edit]' ).last().show();
               $( '.row_entry [class=discount100]' ).last().show();
+              //change 100%Discount button value if 100% already set
+              if ($( '.row_entry [name=discount_as_percent]' ).last().val() == "100,00") {
+                $('.row_entry [name=discount100button]').last().val("0%");
+              } else {
+                $('.row_entry [name=discount100button]').last().val("100%");
+              }
 
               if ( item.instruction )
               $( '.row_entry' ).last().addClass( 'instruction' );
@@ -1286,6 +1292,10 @@
               $( '.row_entry:last [class=x]' ).show();
               $( '.row_entry:last [class=edit]' ).show();
               $( '.row_entry:last [class=discount100]' ).show();
+              //change 100%Discount button value if 100% already set
+              if ($( '.row_entry:last [class=discaspercent]' ).value() == "100,00") {
+                $( '.row_entry:last [class=discount100]' ).value("0%");
+              }
 
               if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
 
@@ -1518,7 +1528,7 @@
 
   $(document).on('click', '.discount100', function(e){
     var percentfield = $(this).closest('tr').find('.discaspercent');
-    if (percentfield.val() == "100")
+    if (percentfield.val() == "100" || percentfield.val() == "100,00")
     {
       percentfield.val("0,00");
       $(this).val("100%");
