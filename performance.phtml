@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+<?php
+    require_once("../inc/stdLib.php");
+    $menu = $_SESSION['menu'];
+    echo $menu['stylesheets'];
+    echo $menu['javascripts'];
+    echo $head['JQUERY'];
+    echo $head['JQUERYUI'];
+    echo $head['JQTABLE'];
+    echo $head['THEME'];
+
+
+?>
+
+
+<script>
+  $( document ).ready( function(){
+    function drawTable( data ){
+            for( var i = 0; i < data.length; i++ ){
+                drawRow( data[i] );
+            }
+     }
+
+    function drawRow( rowData ) {
+          var row = $( "<tr>" );
+          $( "#tbody" ).append( row );
+          row.append( $( "<td>" + rowData.name  + "</td>" ) );
+
+          row.append( $( "<td>" + rowData.hours + "</td></tr>" ) );
+     }    
+    $.ajax({
+      dataType: 'json',
+      url: 'ajax/performance.php?action=getPerformanceData',
+      method: 'GET',
+      success: function( result ){
+        drawTable( result );
+        $( "#resTable" ).trigger( "update" );
+      }
+    })
+
+
+  });
+
+</script>
+<style>
+
+
+
+</style>
+</head>
+
+<body>
+<?php
+    echo $menu['pre_content'];
+    echo $menu['start_content'];
+?>
+
+  <p class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Leistungsübersicht sämlicher Mechainker und Formular für Urlaubsanträge </p>
+  <div id="example" style="position:absolute"></div>
+  
+
+       <table id="resTable" class="tablesorter">
+         <thead>
+          <tr>
+            <th class="res_id">Name</th>
+            <th class="res_category">abgerechnete Stunden</th>
+
+          </tr>
+         </thead>
+         <tbody id="tbody">
+         </tbody>
+       </table>
+   
+  
+
+<?php echo $menu['end_content']; ?>
+
+</html>
