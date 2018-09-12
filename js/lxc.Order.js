@@ -147,6 +147,7 @@
 
             $( ':focus' ).parents().eq(3).find( '[class=x]' ).show();
             $( ':focus' ).parents().eq(3).find( '[class=edit]' ).show();
+            $( ':focus ').parents().eq(3).find( '[class=discount100]' ).show();
             //$('.autocomplete').removeClass('part_autocomplete');
 
             //console.log($(':focus').parent());
@@ -607,6 +608,7 @@
     lastRow.find( 'img' ).hide();
     $( '.row_entry' ).last().find( '[class=x]' ).hide();
     $( '.row_entry' ).last().find( '[class=edit]' ).hide();
+    $( '.row_entry' ).last().find( '[class=discount100]' ).hide();
     lastRow.addClass( 'pin' );
 
   });
@@ -1189,6 +1191,7 @@
               $( '.row_entry [name=longdescription]' ).last().val( item.longdescription ).change();
               $( '.row_entry [class=x]' ).last().show();
               $( '.row_entry [class=edit]' ).last().show();
+              $( '.row_entry [class=discount100]' ).last().show();
 
               if ( item.instruction )
               $( '.row_entry' ).last().addClass( 'instruction' );
@@ -1282,6 +1285,7 @@
               $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed( 2 ) ) );
               $( '.row_entry:last [class=x]' ).show();
               $( '.row_entry:last [class=edit]' ).show();
+              $( '.row_entry:last [class=discount100]' ).show();
 
               if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
 
@@ -1516,7 +1520,7 @@
     var percentfield = $(this).closest('tr').find('.discaspercent');
     if (percentfield.val() == "100")
     {
-      percentfield.val("0");
+      percentfield.val("0,00");
       $(this).val("100%");
     }
     else{
