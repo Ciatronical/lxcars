@@ -169,11 +169,7 @@ $(document).ready(function() {
                             item.car_status = ' / '+item.car_status;
                         }
 
-
-
-
                         $( '<tr id="'+ item.id +'" owner = "' + item.customer_id + '" c_id = '+ item.c_id + '  class="showtableRow">' +
-
 
                                 '<td>' + item.owner + '</td>' +
                                 '<td>' + item.c_ln + '</td>' +
@@ -186,7 +182,9 @@ $(document).ready(function() {
 
                             '</tr>'
                         ).appendTo('#showtableTBody');
-
+                        if (item.internal_order){
+                            $('tr#'+item.id).css('background-color', 'lightgrey');
+                        }
                         $('.status_angenommen').css('background-color', 'yellow');
                         $('td:contains("angenommen / Bestellung")').css('background-color', 'LightSkyBlue');
                         $('.status_bearbeitet').css('background-color', 'green');
