@@ -185,30 +185,22 @@ $(document).ready(function() {
                         if (item.internal_order){
                             $('tr#'+item.id).css('background-color', 'lightgrey');
                         }
-                        $('.status_angenommen').css('background-color', 'yellow');
-                        $('td:contains("angenommen / Bestellung")').css('background-color', 'LightSkyBlue');
-                        $('.status_bearbeitet').css('background-color', 'green');
-                        $('.status_nicht').css('background-color', 'lightgrey');
-
-                        $( '.nicht' ).css( 'background-color', 'red' );
-                        $( '.status_bearbeitet.nicht' ).css('background-color', 'grey');
 
                         $( '.showtableRow' ).click( function () {
                             //console.log($(this).attr('id'));
                             window.location = 'order.phtml?id=' + $(this).attr( 'id' )+'&owner=' + $(this).attr( 'owner' ) + '&c_id=' + $(this).attr( 'c_id' ) + '&previous=' + filename + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
                         })
-
-
-                        $( '.vals' ).hide();
-
-                        $( '#showtable' ).trigger( 'update' );
-
                     })
-
+                    $('.status_angenommen').css('background-color', 'yellow');
+                    $('td:contains("angenommen / Bestellung")').css('background-color', 'LightSkyBlue');
+                    $('.status_bearbeitet').css('background-color', 'green');
+                    $('.status_nicht').css('background-color', 'lightgrey');
+                    $( '.nicht' ).css( 'background-color', 'red' );
+                    $( '.status_bearbeitet.nicht' ).css('background-color', 'grey');
+                    $( '.vals' ).hide();
+                    $( '#showtable' ).trigger( 'update' );
                 }
             })
-
-
         //}
     }
 
