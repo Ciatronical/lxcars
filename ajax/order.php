@@ -31,7 +31,7 @@ function getOrderlist( $data ){
     $sql.= "SELECT distinct on ( ordnumber, internal_order ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, oe.car_manuf AS car_manuf, oe.car_type AS car_type, oe.internalorder AS internal_order FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";
     $sql.= "SELECT distinct on ( ordnumber, internal_order ) 'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, oe.car_manuf AS car_manuf, oe.car_type AS car_type, oe.internalorder AS internal_order FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$where." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction ASC";
     $sql.= ") AS myTable ORDER BY internal_order ASC, ordnumber DESC";
-    writeLog( $sql );
+    //writeLog( $sql );
     echo $GLOBALS['dbh']->getALL( $sql, true );
 }
 
