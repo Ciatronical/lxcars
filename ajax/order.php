@@ -27,11 +27,11 @@ function getOrderlist( $data ){
     if( $data['statusSearch'] == 'nicht abgerechnet' )
         $where = " oe.status != 'abgerechnet'  AND ";
 
-    $sql = "SELECT distinct on ( ordnumber ) * FROM ( ";
-    $sql.= "SELECT distinct on ( ordnumber ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, oe.car_manuf AS car_manuf, oe.car_type AS car_type FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";
-    $sql.= "SELECT distinct on ( ordnumber ) 'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, oe.car_manuf AS car_manuf, oe.car_type AS car_type FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$where." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction ASC";
-    $sql.= ") AS myTable ORDER BY ordnumber DESC";
-    //writeLog( $sql );
+    $sql = "SELECT distinct on ( ordnumber, internal_order ) * FROM ( ";
+    $sql.= "SELECT distinct on ( ordnumber, internal_order ) 'true'::BOOL AS instruction, oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , instructions.description , oe.car_status , oe.status , oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, oe.car_manuf AS car_manuf, oe.car_type AS car_type, oe.internalorder AS internal_order FROM oe, instructions, parts, lxc_cars, customer WHERE ".$where." instructions.trans_id = oe.id AND parts.id = instructions.parts_id AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id UNION ";
+    $sql.= "SELECT distinct on ( ordnumber, internal_order ) 'false'::BOOL AS instruction,oe.id,lxc_cars.c_ln, oe.transdate, oe.ordnumber , orderitems.description , oe.car_status , oe.status ,oe.finish_time , customer.name AS owner, oe.c_id AS c_id, oe.customer_id,lxc_cars.c_2 AS c_2, lxc_cars.c_3 AS c_3, oe.car_manuf AS car_manuf, oe.car_type AS car_type, oe.internalorder AS internal_order FROM oe, orderitems, parts, lxc_cars, customer WHERE  ".$where." orderitems.trans_id = oe.id AND parts.id = orderitems.parts_id AND orderitems.position = 1 AND lxc_cars.c_id = oe.c_id AND customer.id = oe.customer_id ORDER BY instruction ASC";
+    $sql.= ") AS myTable ORDER BY internal_order ASC, ordnumber DESC";
+    writeLog( $sql );
     echo $GLOBALS['dbh']->getALL( $sql, true );
 }
 
@@ -55,7 +55,7 @@ function autocompletePart( $term ){
 
 function getOrder( $id ){
     require_once __DIR__.'/../inc/lxcLib.php';
-    $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
+    $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, oe.internalorder AS internalorder, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
 
     $test = lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) );
     //writeLog($test);
@@ -68,10 +68,10 @@ function getOrder( $id ){
             $data = array_merge( $orderData, $GLOBALS['dbh']->getALL( $sql ) ) ;
 
               $orderData = array_merge($orderData, $data[0]);
-              writeLog($orderData);
+              //writeLog($orderData);
               if($orderData == "") {
-                $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
-                writeLog($orderData);
+                $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, oe.internalorder AS internalorder, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
+                //writeLog($orderData);
                 echo json_encode($orderData);
               }else
                 echo json_encode($orderData);
@@ -92,7 +92,7 @@ function getPartCount( $parts_id ){
     $sql = "select count(*) from (select * from oe left join orderitems on orderitems.trans_id = oe.id where orderitems.parts_id = ".$parts_id." UNION select * from oe left join instructions on instructions.trans_id = oe.id where instructions.parts_id = ".$parts_id." ) AS count";
     $count = $GLOBALS['dbh']->getOne( $sql, true );
     //$count = $GLOBALS['dbh']->getOne( "select count(*) from invoice  where parts_id = ".$parts_id );
-    writeLog( $count );
+    //writeLog( $count );
     echo $count;
 }
 
@@ -157,8 +157,8 @@ function newPart( $data ){
 }
 
 function updatePart( $data ) {
-  writeLog('updatePart');
-  writeLog($data['partID']);
+  //writeLog('updatePart');
+  //writeLog($data['partID']);
   echo $GLOBALS['dbh']->update( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), 'id = '.$data['partID']);
 
 }
@@ -188,7 +188,7 @@ function saveLastArticleNumber( $data ){
 }
 
 function updateOrder( $data) {
-    echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'] ), 'id = '.$data[0]['id'] );
+    echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time', 'internalorder' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'], $data[0]['internalorder'] ), 'id = '.$data[0]['id'] );
 }
 
 function getCar( $c_id ){
@@ -254,7 +254,7 @@ function printOrder( $data ){
 
      $test = lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) );
     //writeLog($test);
-    writeLog(json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) ));
+    //writeLog(json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) ));
 
     if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) ) == 'null' ){
         if( $test[0][0] == '' )

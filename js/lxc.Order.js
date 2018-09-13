@@ -1142,6 +1142,7 @@
       $( '#licenseplate' ).val( data.c_ln );
       $( '#orderstatus' ).val( data.order_status ).change();
       $( '#car_status' ).val( data.car_status ).change();
+      $( '.isInternalOrder').prop('checked', data.internalorder);
       $( '#mtime' ).text(data.mtime);
       c_ln = data.c_ln;
       customer_name = data.customer_name;
@@ -1395,7 +1396,6 @@
   }
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
-    console.log("UpdateOrderFunction")
     ns.updatePosition();
 
     var updateDataJSON = new Array;
@@ -1406,17 +1406,17 @@
         "amount": $( '#orderTotalBrutto' ).text().replace( ',' , '.' ).replace( '', '0' ),
         "status": $( '#orderstatus' ).val(),
         "finish_time": $( '#finish_time' ).val(),
-        "car_status": $( '#car_status' ).val()
+        "car_status": $( '#car_status' ).val(),
+        "internalorder": ($('.isInternalOrder').is(':checked'))
       });
 
-       //console.log( 'update Order' );
+       //console.log(updateDataJSON);
        $.ajax({
         url: 'ajax/order.php',
         async: false,
         data: { action: "updateOrder", data: updateDataJSON },
         type: "POST",
         success: function(){
-          console.log("UpdateOrderFunctionSucc");
         },
         error:  function(){
           alert( 'Update des Auftrages fehlgeschlagen' );
@@ -1517,13 +1517,19 @@
 
   });
 
-  $(document).on('click', 'input', function (e){
-    $(this)
-        .on('mouseup', function () {
-            $(this).select();
-            return false;
-        })
-        .select();
+  $(document).on('click', 'input, textarea', function(e){
+    if ($(this).hasClass("isInternalOrder")) {
+      ns.updateOrder();
+      //use trigger of orderupdate to use timer
+      //$('.orderupdate').trigger('keyup');
+    } /*else {
+      $(this)
+          .on('mouseup', function(){
+              $(this).select();
+              return false;
+          })
+          .select();
+        }*/
   });
 
   $(document).on('click', '.discount100', function(e){
@@ -1541,15 +1547,11 @@
     percentfield.trigger("keyup");
   });
 
-
-  $( document ).on( 'keyup','.orderupdate, .add_item_input:not(:last)' , function(){
-
-
+  $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(){
     clearTimeout( timer );
     timer = setTimeout( function(){
       ns.updateOrder();
     }, updateTime );
-
   });
 
   ns.removeOrder = function() {
@@ -1569,7 +1571,6 @@
 
   });
 
-
   $( "#allStatusID" ).change(function () {
 
     $( "[name=pos_status]" ).val( $( "#allStatusID" ).val() ).change();
@@ -1581,18 +1582,14 @@
 
   //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {
-    //console.Log("updatePosition");
      var updatePosData = new Array;
 
      $( '.row_entry' ).each(function( index ) {
 
        var discount = $( this ).find( '[name=discount_as_percent]' ).val().replace( ',', '.' ).replace( /[^\d.-]/g, '' ) / 100;
 
-
        if($( this ).find( '[name=partnumber]' ).text()!=""){
-
           updatePosData.push({
-
             "order_nr": $( this ).find( '[name=position]' ).text(),
             "pos_description": $( this ).find( '[name=item_partpicker_name]' ).val(),
             "pos_unit": $( this ).find( '[name=unit]' ).val(),
@@ -1609,26 +1606,19 @@
 
           });
        }
-
-    console.log(updatePosData);
-
      });
       $.ajax({
         url: 'ajax/order.php',
         data: { action: "updatePositions", data: updatePosData },
         type: "POST",
         success: function(){
-          console.log("UpdatePosistionFunctionSucc");
         },
         error:  function(){
            alert( 'Update der Positionen fehlgeschlagen' );
         }
-
       });
    }
-
-
-  });
+ });
 
   //Print Order
 
