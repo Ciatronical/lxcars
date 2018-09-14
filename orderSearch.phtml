@@ -183,7 +183,7 @@ $(document).ready(function() {
                             '</tr>'
                         ).appendTo('#showtableTBody');
                         if (item.internal_order){
-                            $('tr#'+item.id).css('background-color', 'lightgrey');
+                            $('tr#'+item.id).addClass("internalorder");
                         }
 
                         $( '.showtableRow' ).click( function () {
@@ -246,9 +246,9 @@ $(document).ready(function() {
 .tablesorter { width:auto; cursor:pointer; widgets: ['zebra']; sortList: [[0,0]];}
 .tdLeft { text-align:right; }
 .tblSearchTxt { width: 200px; }
+tr.internalorder * { background-color: lightgrey; }
 
 #btnDelete { margin-left: 10px; }
-
 </style>
 </head>
 
