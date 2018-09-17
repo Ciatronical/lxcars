@@ -1326,7 +1326,7 @@
               $( document.activeElement ).parents( "tbody" ).first().removeClass( 'instruction' );
             }
 
-
+            $( '#newPart_dialog' ).dialog( 'close' );
 
          },
          error: function () {
