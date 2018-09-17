@@ -1294,8 +1294,8 @@
               $( '.row_entry:last [class=edit]' ).show();
               $( '.row_entry:last [class=discount100]' ).show();
               //change 100%Discount button value if 100% already set
-              if ($( '.row_entry:last [class=discaspercent]' ).value() == "100,00") {
-                $( '.row_entry:last [class=discount100]' ).value("0%");
+              if ($( '.row_entry:last [class=discaspercent]' ).val() == "100,00") {
+                $( '.row_entry:last [class=discount100]' ).val("0%");
               }
 
               if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
@@ -1326,8 +1326,8 @@
               $( document.activeElement ).parents( "tbody" ).first().removeClass( 'instruction' );
             }
 
+            ns.updateOrder();
             $( '#newPart_dialog' ).dialog( 'close' );
-
          },
          error: function () {
             alert( 'Error: new Part not saved' )
