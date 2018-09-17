@@ -1502,6 +1502,10 @@
 
   });
 
+  $( document ).on ( 'focus ','.recalc', function(){
+    $( this ).trigger("keyup");
+  })
+
   $( document ).on( 'keyup ','.recalc', function(){
 
 
