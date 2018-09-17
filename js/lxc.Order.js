@@ -1413,7 +1413,7 @@
        //console.log(updateDataJSON);
        $.ajax({
         url: 'ajax/order.php',
-        async: false,
+        async: true,
         data: { action: "updateOrder", data: updateDataJSON },
         type: "POST",
         success: function(){
@@ -1614,6 +1614,7 @@
       $.ajax({
         url: 'ajax/order.php',
         data: { action: "updatePositions", data: updatePosData },
+        async: true,
         type: "POST",
         success: function(){
         },
