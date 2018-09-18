@@ -16,7 +16,7 @@
   var c_tsn;
   var c_ln;
   var customer_name;
-
+  var rowsToUpdate = [];
 
   var orderID;
   var partID = 0;
@@ -1017,73 +1017,65 @@
     var totalprice = 0;
     var totalnetto = 0;
     var totalbrutto = 0;
+    var cachedRowsToUpdate = rowsToUpdate;
+    rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
       if( $( this ).hasClass( 'instruction' ) ){
         var linetotal = 0;
       }
       else{
-        var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
+        var rowNumber = parseInt($(this).find("[name=position]:first").html());
+        if (cachedRowsToUpdate.indexOf(rowNumber) != -1 ||
+            cachedRowsToUpdate.length < 1)
+        {
+          var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
+          var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
+          //console.log(this);
+          var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
 
-        var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
-       //console.log(this);
-        var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
-
-        discount = discount / 100;
-        //console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
-        $.ajax({
-          url: 'ajax/order.php?action=getPartJSON',
-          data: { 'data': $( this ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
-          async: false,
-          success: function( rsp ){
-            rsp = rsp[0];
-            var getTaxArray = {};
-            getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
-            getTaxArray['taxzone_id'] = $('#taxzone_id').val();
-            //console.log($('#taxzone_id').val());
-            $.ajax({
-              url: 'ajax/order.php',
-              data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
-              type: "POST",
-              async: false,
-              success: function( data ){
-                //console.log(totalprice);
-                tax = data[0].rate;
-                //console.log('tax:');
-                //console.log( tax );
-              },
-              error:  function(){
-                alert( 'getTax fehlgeschlagen' );
-             }
-
-            })
-           },error: function () {alert( 'getPartJSON fehlgeschlagen' );}
-        })
-
-
-        //tax=0.19;
-        //console.log( tax );
-        //console.log(price);
+          discount = discount / 100;
+          //console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
+          $.ajax({
+            url: 'ajax/order.php?action=getPartJSON',
+            data: { 'data': $( this ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
+            async: false,
+            success: function( rsp ){
+              rsp = rsp[0];
+              var getTaxArray = {};
+              getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
+              getTaxArray['taxzone_id'] = $('#taxzone_id').val();
+              //console.log($('#taxzone_id').val());
+              $.ajax({
+                url: 'ajax/order.php',
+                data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
+                type: "POST",
+                async: false,
+                success: function( data ){
+                  //console.log(totalprice);
+                  tax = data[0].rate;
+                  //console.log('tax:');
+                  //console.log( tax );
+                },
+                error:  function(){
+                  alert( 'getTax fehlgeschlagen' );
+                }
+              })
+            },error: function () {alert( 'getPartJSON fehlgeschlagen' );}
+          })
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
-        //console.log($( this ).find( '[name = linetotal]' ).text());
-        var linetotal = parseFloat($( this ).find( '[name = linetotal]' ).text().replace( ',' , '.' ) );
-        //console.log(totalprice);
-        totalprice = totalprice + linetotal;
-        //console.log(totalprice);
-        totalnetto = totalprice;
-        totalbrutto = totalbrutto + linetotal + linetotal * tax;
-
-
-
+        }
       }
-
-
-
-     });
-
+    });
+    //add linetotals
+    $( '[name=linetotal]' ).each(function(item){
+      var linetotal = parseFloat($( this ).text().replace( ',' , '.' ) );
+      totalprice = totalprice + linetotal;
+      totalnetto = totalprice;
+      totalbrutto = totalbrutto + linetotal + linetotal * tax;
+    });
     $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
     $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
     //ns.updateOrder();
-
   }
 
   $( "label[for = 'instructionCheckbox']" ).text( kivi.t8( 'Instruction' ) );
@@ -1507,18 +1499,25 @@
   })
 
   $( document ).on( 'keyup ','.recalc', function(){
+    //ARRAY für neu zu berechnende Zeilen
+    //Wenn array leer, dann alle neu berechnen
+    //delete array in recalc()
 
+    //get row number, add to array if not yet in it
+    var rowNumber = parseInt($(this).closest("tr").find("[name=position]:first").html());
+    if (rowsToUpdate.indexOf(rowNumber) == -1) {
+      rowsToUpdate.push(rowNumber);
+    }
+    console.log(rowsToUpdate);
 
-   clearTimeout( timer );
-   timer = setTimeout( function(){
-      //console.log('recalc');
-      ns.calcPrice();
-      ns.recalc();
-      ns.updateOrder();
-      //console.log('update');
-   }, updateTime );
-
-
+    clearTimeout( timer );
+     timer = setTimeout( function(){
+        //console.log('recalc');
+        ns.calcPrice();
+        ns.recalc();
+        ns.updateOrder();
+        //console.log('update');
+    },   updateTime );
   });
 
   $(document).on('click', 'input, textarea', function(e){
