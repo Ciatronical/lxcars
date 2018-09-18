@@ -637,6 +637,8 @@
               $( '.editable' ).prop( 'disabled', true );
             else
               $( '.editable' ).prop( 'disabled', false );
+            //disable: Typ des Artikels ändern
+            $( '#dialogPart_typ' ).prop( 'disabled', true );
           }
 
         })
@@ -1237,8 +1239,6 @@
      //alert(  );
      dataArray['quantity'] = $( "#quantity" ).val();
 
-
-
      var part_type = $( '#dialogPart_typ' ).val();
      //console.log(part_type);
 
@@ -1301,7 +1301,6 @@
 
             ns.init();
 
-
             $( '#newPart_dialog' ).dialog( 'close' );
 
             $( document.activeElement ).parents( "tbody" ).first().find( "[name = sellprice_as_number]" ).val( dataArray.sellprice );
@@ -1328,9 +1327,7 @@
       });
 
     }
-
-
- })
+  }) //#btnSaveNewPart
 
  ns.newLine = function( dataArray ){
     console.log("NewLine");
