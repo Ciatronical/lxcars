@@ -615,7 +615,6 @@
 
 
   ns.editPart = function ( clicked ) {
-
     partID = $( clicked ).parents( "tbody" ).first().find( '[name=partnumber]' ).attr( 'part_id' );
 
     $( '#newPart_dialog' ).dialog({
@@ -632,19 +631,22 @@
           type: 'GET',
           success: function ( data ){
             //console.log( data.count );
-
             if( data.count > 1 )
               $( '.editable' ).prop( 'disabled', true );
             else
               $( '.editable' ).prop( 'disabled', false );
-            //disable: Typ des Artikels ändern
-            $( '#dialogPart_typ' ).prop( 'disabled', true );
+            //disable: Typ des Artikels ändern, wenn ANWEISUNG || Änderung zu Anweisung nicht zulassen
+            //NOT on new part
+            if (data.count > 0){
+              if ($( '#dialogPart_typ option:selected' ).text() == "Anweisung") {
+                $( '#dialogPart_typ' ).prop( 'disabled', true );
+              } else {
+                $( '#dialogPart_typ option[value=instruction]' ).prop('disabled', true);
+              } 
+            }           
           }
-
         })
-
       }
-
     });
 
     $('#newPart_dialog').on('keypress', function(e){
