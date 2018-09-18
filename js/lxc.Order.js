@@ -1501,14 +1501,11 @@
   $( document ).on( 'keyup ','.recalc', function(){
     //ARRAY für neu zu berechnende Zeilen
     //Wenn array leer, dann alle neu berechnen
-    //delete array in recalc()
-
     //get row number, add to array if not yet in it
     var rowNumber = parseInt($(this).closest("tr").find("[name=position]:first").html());
     if (rowsToUpdate.indexOf(rowNumber) == -1) {
       rowsToUpdate.push(rowNumber);
     }
-    console.log(rowsToUpdate);
 
     clearTimeout( timer );
      timer = setTimeout( function(){
