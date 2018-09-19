@@ -1023,8 +1023,6 @@
     var cachedRowsToUpdate = rowsToUpdate;
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
-      if ($( this ).hasClass( 'instruction' ))
-        $( this ).find( '[name = linetotal]' ).addClass( 'linetotal_instruction' );
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
       if (cachedRowsToUpdate.indexOf(rowNumber) != -1 ||
           cachedRowsToUpdate.length < 1)
@@ -1162,9 +1160,10 @@
               $( '.row_entry [name=partnumber]' ).last().text( item.partnumber );
 
               $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( item.part_type ) );
-              if (item.instruction)
+              if (item.instruction) {
                 $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( 'I') );
-
+                $( '.row_entry [name=linetotal]' ).last().addClass('linetotal_instruction');
+              }
               $( '.row_entry').last().attr( 'id', item.id );
               $( '.row_entry [name=partnumber]').last().attr( 'part_id', item.parts_id );
               $( '.row_entry [name=position]').last().text( item.position );
@@ -1193,12 +1192,11 @@
               }
 
               if ( item.instruction )
-              $( '.row_entry' ).last().addClass( 'instruction' );
+                $( '.row_entry' ).last().addClass( 'instruction' );
 
               $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
               $( '.row_entry' ).last().removeClass( 'instruction' );
-
-
+              $( '.row_entry [name=linetotal]' ).last().removeClass('linetotal_instruction');
             });
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
             ns.countPos();
@@ -1270,7 +1268,10 @@
 
               $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
               $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
-              if( dataArray['instruction'] ) $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
+              if( dataArray['instruction'] ) {
+                $( '.row_entry:last [name=linetotal]' ).addClass( 'linetotal_instruction' );
+                $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
+              }
 
               $( '.row_entry:last').attr( 'id', data );
               $( '.row_entry:last [name=partnumber]' ).attr( 'part_id', data );
