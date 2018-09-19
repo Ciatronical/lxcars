@@ -642,8 +642,8 @@
                 $( '#dialogPart_typ' ).prop( 'disabled', true );
               } else {
                 $( '#dialogPart_typ option[value=instruction]' ).prop('disabled', true);
-              } 
-            }           
+              }
+            }
           }
         })
       }
@@ -753,7 +753,6 @@
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
     $('[name=item_partpicker_name]').focus();
-
 
     $.ajax({
       url: 'ajax/order.php?action=getUsersFromGroup&data='+"Werkstatt",
@@ -999,7 +998,7 @@
 
   ns.calcPrice = function() {
 
-    var  calculation = $( ':focus' ).parents().eq( 3 ).find( '[name=sellprice_as_number]' ).val().toString().replace(',', '.' );;
+    var  calculation = $( ':focus' ).closest('tr').find( '[name=sellprice_as_number]' ).val().toString().replace(',', '.' );;
     calculation = calculation.toString().replace(',', '.' );
 
     //console.log(calculation);
@@ -1008,7 +1007,7 @@
     var result = eval( calculation );
 
 
-    $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
+    $( ':focus' ).parents().closest('tr').find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
 
     //console.log( result);
 
@@ -1024,8 +1023,8 @@
     var cachedRowsToUpdate = rowsToUpdate;
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
-      if( $( this ).hasClass( 'instruction' ) ){
-        var linetotal = 0;
+      if( $( this ).hasClass( "instruction" ) ){
+        $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( 0 ).toFixed( 2 ) ) );
       }
       else{
         var rowNumber = parseInt($(this).find("[name=position]:first").html());
