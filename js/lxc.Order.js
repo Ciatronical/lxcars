@@ -985,19 +985,6 @@
     return false;
   });
 
-
-
-  ns.calcPrice = function() { //Macht was. Bite kommentieren
-    var  calculation = $( ':focus' ).closest('tr').find( '[name=sellprice_as_number]' ).val().toString().replace(',', '.' );;
-    calculation = calculation.toString().replace(',', '.' );
-
-    //console.log(calculation);
-    if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
-        var result = eval( calculation );
-        $( ':focus' ).parents().closest('tr').find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
-    }
-  }
-
   ns.recalc = function(){
     var totalprice = 0;
     var totalnetto = 0;
@@ -1007,6 +994,15 @@
     $( 'tbody .listrow' ).each( function(item){
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
       if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1) {
+        
+        //calcPrice
+        var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace(',', '.' );;
+        calculation = calculation.toString().replace(',', '.' );
+        if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
+          var result = eval( calculation );
+          $( this ).find( "[name=sellprice_as_number]:first" ).val( result.toFixed(2).toString().replace( '.',',') );
+        }
+
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
         //console.log(this);
@@ -1486,7 +1482,6 @@
     clearTimeout( timer );
      timer = setTimeout( function(){
         //console.log('recalc');
-        ns.calcPrice();
         ns.recalc();
         ns.updateOrder();
         //console.log('update');
