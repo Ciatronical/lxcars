@@ -129,6 +129,21 @@ function delPosition( $data ){
 
 //function() {
 
+//Funktion zum holen von Metadaten (gleich für alle Aufträge) zum Beseitigen von zu vielen AJAXs
+function getMetadata() {
+    $units = $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
+    $accountingGroups = $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen ORDER BY id = ( SELECT buchungsgruppen_id FROM ( SELECT buchungsgruppen_id, count( buchungsgruppen_id ) AS id FROM parts GROUP BY 1 ORDER BY id DESC LIMIT 1 ) AS nothing ) DESC", true );
+    $customerHourlyRate = $GLOBALS['dbh']->getOne( "SELECT customer_hourly_rate FROM defaults",true );
+    $taxzones = $GLOBALS['dbh']->getALL( "SELECT id, description FROM tax_zones Order by sortkey ASC", true );
+    $output = array(
+        "units" => $units,
+        "accountingGroups" => $accountingGroups,
+        "customerHourlyRate" => $customerHourlyRate,
+        "taxzones" => $taxzones
+    );
+    echo $units;
+}
+
 function getUsersFromGroup( $data ){
     echo json_encode( ERPUsersfromGroup( $data ) );
 }

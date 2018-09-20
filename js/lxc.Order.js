@@ -754,7 +754,7 @@
     var baseUrl = kivi_global.baseurl;
     $('[name=item_partpicker_name]').focus();
 
-    $.ajax({
+    $.ajax({ //KEINE Datenbankabfrage
       url: 'ajax/order.php?action=getUsersFromGroup&data='+"Werkstatt",
       type: 'GET',
       success: function( data ){
@@ -769,7 +769,7 @@
     })
 
 
-     $.ajax({
+     $.ajax({ //META-Funktionalität
       url: 'ajax/order.php?action=getTaxzones',
       type: 'GET',
       success: function( data ){
@@ -787,7 +787,7 @@
     })
 
 
-    $.ajax({
+    $.ajax({ //META-Funktionalität
       url: 'ajax/order.php?action=getCustomer_hourly_rate',
       type: 'GET',
       success: function (data) {
@@ -801,7 +801,7 @@
 
     })
 
-    $.ajax({
+    $.ajax({ //META-Funktionalität
       url: 'ajax/order.php?action=getAccountingGroups',
       type: 'GET',
       success: function( data ){
@@ -812,11 +812,11 @@
       error: function(){
         alert( "Error: getAccountingGroups()!" );
       }
-    }); //end ajax accountingGroups
+    });
 
     var unitsType = new Array;
 
-    $.ajax({
+    $.ajax({ //META-Funktionalität
       url: 'ajax/order.php?action=getUnits',
       type: 'GET',
       success: function( data ){
@@ -830,7 +830,20 @@
         alert( "Error getUnits()!" );
       }
     })
+
+    $.ajax({
+      url: 'ajax/order.php?action=getMetadata',
+      type: 'GET',
+      success: function (data){
+        console.log(data);
+      },
+      error: function (data){
+        console.log("Error "+data);
+      }
+    });
  //Bis hierher sämtliche Ajax-Request zu einem Einzigem zusammenfassen. JOIN ist dein Freund...
+ //JOIN nicht möglich da null Korrelation zwischen geholten Daten. Check: orderphp.getMetadata()
+ //"A JOIN clause is used to combine rows from two or more tables, based on a related column between them." <-- keine 'related column'.
 
   //DateTimePicker
   function AddButton( input ){
