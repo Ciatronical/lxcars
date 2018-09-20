@@ -649,7 +649,7 @@
       }
     });
 
-    $('#newPart_dialog').on('keypress', function(e){
+    $('#newPart_dialog').on('keypress', function(e){ //warum mehrfach selectiert?? Besser Punkt-Operator verwenden. ;)
       if (e.which == 13) {
         $('#btnSaveNewPart').trigger("click");
       }
@@ -830,11 +830,11 @@
         alert( "Error getUnits()!" );
       }
     })
-
+ //Bis hierher sämtliche Ajax-Request zu einem Einzigem zusammenfassen. JOIN ist dein Freund...
 
   //DateTimePicker
   function AddButton( input ){
-    setTimeout( function(){
+    setTimeout( function(){  //ToDo: warum setTimeout
       var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
       var btn = $( '<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>' );
       btn.appendTo( buttonPane );
@@ -930,9 +930,6 @@
   }).css({
     'margin':'5px'
   }).click( function(){
-    //alert( 'Coparts' );
-    //Command: 3 Chars, rest: data
-    //alert( 'lxcars://kba' + c_hsn + c_tsn + '___' + c_ln + '___' + customer_name );
     window.location = 'lxcars://kba' + c_hsn + c_tsn + '___' + c_ln + '___' + customer_name;
       customer_name = data.customer_name;;
     return false;
@@ -988,32 +985,17 @@
     return false;
   });
 
-/*
-  $( document ).on( 'keydown ','.recalc', function(e){
-  if(e.which == 13)
-    ns.calcPrice();
 
-  });
-*/
 
-  ns.calcPrice = function() {
-
+  ns.calcPrice = function() { //Macht was. Bite kommentieren
     var  calculation = $( ':focus' ).closest('tr').find( '[name=sellprice_as_number]' ).val().toString().replace(',', '.' );;
     calculation = calculation.toString().replace(',', '.' );
 
     //console.log(calculation);
     if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
-
-    var result = eval( calculation );
-
-
-    $( ':focus' ).parents().closest('tr').find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
-
-    //console.log( result);
-
+        var result = eval( calculation );
+        $( ':focus' ).parents().closest('tr').find( '[name=sellprice_as_number]' ).val( result.toFixed(2).toString().replace( '.',',') );
     }
-
-
   }
 
   ns.recalc = function(){
@@ -1024,9 +1006,7 @@
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
-      if (cachedRowsToUpdate.indexOf(rowNumber) != -1 ||
-          cachedRowsToUpdate.length < 1)
-      {
+      if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1) {
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
         //console.log(this);
@@ -1036,7 +1016,7 @@
         //console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
-          data: { 'data': $( this ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },
+          data: { 'data': $( this ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },  // Error Name == Partnumber???
           async: false,
           success: function( rsp ){
             rsp = rsp[0];
@@ -1044,9 +1024,9 @@
             getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
             getTaxArray['taxzone_id'] = $('#taxzone_id').val();
             //console.log($('#taxzone_id').val());
-            $.ajax({
+            $.ajax({ //ToDo: Bitte nicht für jede Zeile einen Ajax-Request Benutze JOIN...!!
               url: 'ajax/order.php',
-              data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },
+              data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },//Nono!!
               type: "POST",
               async: false,
               success: function( data ){

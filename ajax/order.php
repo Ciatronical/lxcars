@@ -1,6 +1,6 @@
 <?php
 
-//require_once __DIR__.'/../../inc/stdLib.php'; // for debug
+require_once __DIR__.'/../../inc/stdLib.php'; // for debug
 require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
 
@@ -40,9 +40,7 @@ function getAutocompleteLicensePlates(){
 }
 
 function getAutocompleteCustomer(){
-
     echo $GLOBALS['dbh']->getAll( "SELECT distinct name FROM customer, oe, lxc_cars WHERE customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id",true );
-
 }
 
 function autocompletePart( $term ){
@@ -99,6 +97,7 @@ function getPartCount( $parts_id ){
 function getPositions( $orderID, $json = true ){
     $sql = "SELECT 'true'::BOOL AS instruction,parts.instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type, instructions.longdescription FROM instructions, parts WHERE instructions.trans_id = '".$orderID."'AND parts.id = instructions.parts_id UNION ";
     $sql.= "SELECT 'false'::BOOL AS instruction,parts.instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type, orderitems.longdescription FROM orderitems, parts WHERE orderitems.trans_id = '".$orderID."' AND parts.id = orderitems.parts_id ORDER BY position DESC";
+    writeLog( $sql );
     $rs = $GLOBALS['dbh']->getAll( $sql, $json );
     if( $json ) echo $rs;
     else return $rs;

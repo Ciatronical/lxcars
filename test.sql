@@ -8,3 +8,12 @@ UPDATE event_category SET  label =  'Geburtstage', color = '', cat_order = 3 WHE
 UPDATE event_category SET  label =  'Inter-Data', color = '', cat_order = 4 WHERE  id = 11;
 UPDATE event_category SET  label =  'Büro', color = '', cat_order = 5 WHERE  id = 12;
 COMMIT;
+
+
+(SELECT 'true'::BOOL AS instruction, parts.instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type, instructions.longdescription FROM instructions, parts WHERE instructions.trans_id = '153162'AND parts.id = instructions.parts_id UNION SELECT 'false'::BOOL AS instruction,parts.instruction, orderitems.id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type, orderitems.longdescription FROM orderitems, parts WHERE orderitems.trans_id = '153162' AND parts.id = orderitems.parts_id ORDER BY position DESC );
+--SELECT 'true'::BOOL AS instruction, parts.instruction, instructions.id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type, instructions.longdescription FROM instructions
+select rate from tax join taxkeys on taxkeys.tax_id = tax.id join taxzone_charts on taxzone_charts.income_accno_id = taxkeys.chart_id where taxzone_charts.buchungsgruppen_id = 859 and taxzone_id = 4 order by startdate DESC Limit 1;
+SELECT * FROM orderitems JOIN parts ON ( parts.id = orderitems.parts_id ) JOIN taxzone_charts ON ( parts.buchungsgruppen_id = taxzone_charts.buchungsgruppen_id ) WHERE orderitems.trans_id = '153162';
+
+--SELECT * FROM taxzone_charts;
+--SELECT * FROM orderitems JOIN parts ON (parts.id = orderitems.parts_id) WHERE orderitems.trans_id = '153162';
