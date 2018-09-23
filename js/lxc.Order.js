@@ -23,7 +23,7 @@ namespace( 'kivi.Part', function( ns ){
   var ready = false;
   var timer;
   var updateTime = 1500;
-  var tax = 0;
+  //var tax = 0;
 
   var customer_hourly_rate;
 
@@ -968,9 +968,8 @@ namespace( 'kivi.Part', function( ns ){
     $( 'tbody .listrow' ).each( function(item){
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
       if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
-
         //calcPrice
-        var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace(',', '.' );;
+        var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace( /,/g, '.' ); // "/,/g" == replaceAll()
         //calculation = calculation.toString().replace(',', '.' ); // wird doch schon in  der vorherigen Zeile erledigt
         if ( calculation.includes( '+' ) || calculation.includes( '-' ) || calculation.includes( '*' ) || calculation.includes( '/' ) ) {
           var result = eval( calculation );
