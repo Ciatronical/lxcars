@@ -834,14 +834,14 @@
     $.ajax({
       url: 'ajax/order.php?action=getMetadata',
       type: 'GET',
-      success: function (data){
-        console.log(data);
+      success: function( data ){
+        //console.log(data);
       },
-      error: function (data){
-        console.log("Error "+data);
+      error: function( data ){
+        //console.log( "Error " + data );
       }
     });
- //Bis hierher sämtliche Ajax-Request zu einem Einzigem zusammenfassen. JOIN ist dein Freund...
+
  //JOIN nicht möglich da null Korrelation zwischen geholten Daten. Check: orderphp.getMetadata()
  //"A JOIN clause is used to combine rows from two or more tables, based on a related column between them." <-- keine 'related column'.
 
@@ -999,70 +999,42 @@
   });
 
   ns.recalc = function(){
-    var totalprice = 0;
-    var totalnetto = 0;
-    var totalbrutto = 0;
     var cachedRowsToUpdate = rowsToUpdate;
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
-      if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1) {
-        
+      if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
+
         //calcPrice
         var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace(',', '.' );;
-        calculation = calculation.toString().replace(',', '.' );
-        if ( calculation.includes('+') || calculation.includes('-') || calculation.includes('*') || calculation.includes('/') ) {
+        //calculation = calculation.toString().replace(',', '.' ); // wird doch schon in  der vorherigen Zeile erledigt
+        if ( calculation.includes( '+' ) || calculation.includes( '-' ) || calculation.includes( '*' ) || calculation.includes( '/' ) ) {
           var result = eval( calculation );
-          $( this ).find( "[name=sellprice_as_number]:first" ).val( result.toFixed(2).toString().replace( '.',',') );
+          $( this ).find( "[name=sellprice_as_number]:first" ).val( result.toFixed( 2 ).toString().replace( '.',',' ) );
         }
 
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
         //console.log(this);
-        var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) );
-
-        discount = discount / 100;
-        //console.log($( 'tbody .listrow' ).first().find( '[name = partnumber]' ));
-        $.ajax({
-          url: 'ajax/order.php?action=getPartJSON',
-          data: { 'data': $( this ).first().find( '[name = partnumber]' ).attr( 'part_id' ) },  // Error Name == Partnumber???
-          async: false,
-          success: function( rsp ){
-            rsp = rsp[0];
-            var getTaxArray = {};
-            getTaxArray['accountingGroups_id'] = rsp.buchungsgruppen_id;
-            getTaxArray['taxzone_id'] = $('#taxzone_id').val();
-            //console.log($('#taxzone_id').val());
-            $.ajax({ //ToDo: Bitte nicht für jede Zeile einen Ajax-Request Benutze JOIN...!!
-              url: 'ajax/order.php',
-              data: { action: "getTaxbyAccountingGroupID", data: getTaxArray },//Nono!!
-              type: "POST",
-              async: false,
-              success: function( data ){
-                //console.log(totalprice);
-                tax = data[0].rate;
-                //console.log('tax:');
-                //console.log( tax );
-              },
-              error:  function(){
-                alert( 'getTax fehlgeschlagen' );
-              }
-            })
-          },error: function () {alert( 'getPartJSON fehlgeschlagen' );}
-        })
-      $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
+        var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) ) / 100;
+        $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
       }
     });
-    //add linetotals
-    $( '[name=linetotal]:not(.linetotal_instruction)' ).each(function(item){
-      var linetotal = parseFloat($( this ).text().replace( ',' , '.' ) );
-      totalprice = totalprice + linetotal;
-      totalnetto = totalprice;
-      totalbrutto = totalbrutto + linetotal + linetotal * tax;
+    // linetotals, taxes must be calculated in each line!!!
+    var linetotal = 0;
+    var linetotal_tax = 0; //with tax
+    var linetotal_sum = 0;
+    var linetotal_tax_sum = 0;
+    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){ //ToDo: Hier wird leider die letzte Zeile mit selectiert
+      linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) ); //Wenn die Eltern nicht sortable sind oder mit last
+      linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
+      linetotal_sum += linetotal;
+      linetotal_tax_sum += linetotal_tax;
     });
-    $( '#orderTotalBrutto' ).text( ns.formatNumber( totalbrutto.toFixed( 2 ) ) );
-    $( '#orderTotalNetto' ).text( ns.formatNumber( totalnetto.toFixed( 2 ) ) );
-    //ns.updateOrder();
+    $( '#orderTotalNetto' ).text( ns.formatNumber( linetotal_sum.toFixed( 2 ) ) );
+    $( '#orderTotalBrutto' ).text( ns.formatNumber( linetotal_tax_sum.toFixed( 2 ) ) );
+
+    //ns.updateOrder(); Warum nicht??
   }
 
   $( "label[for = 'instructionCheckbox']" ).text( kivi.t8( 'Instruction' ) );
@@ -1141,13 +1113,9 @@
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data=' + orderID,
           type: 'GET',
-          success: function ( data ) {
-            //console.log(data);
-
-            $.each( data.reverse(), function( index, item ){
-
+          success: function ( data ){
+            $.each( data, function( index, item ){
               $( '.row_entry [name=partnumber]' ).last().text( item.partnumber );
-
               $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( item.part_type ) );
               if (item.instruction) {
                 $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( 'I') );
@@ -1158,35 +1126,30 @@
               $( '.row_entry [name=position]').last().text( item.position );
               $( '.row_entry [name=item_partpicker_name]').last().val( item.description );
               $( '.row_entry [name=mechanics]').last().val( item.u_id );
-              //if(item.unit == 'Std')
-              //$( '.row_entry [name=sellprice_as_number]').last().val(customer_hourly_rate.toFixed(2));
-              //else
-              $( '.row_entry [name=sellprice_as_number]').last().val( ns.formatNumber(item.sellprice.toFixed(2)) );
-
+              $( '.row_entry [name=sellprice_as_number]').last().val( ns.formatNumber( item.sellprice.toFixed( 2 ) ) );
               $( '.row_entry [name=unit]' ).last().val( item.unit ).change();
               $( '.row_entry [name=pos_status]' ).last().val( item.status ).change();
-              $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber(item.qty.toFixed(2)) );
-              $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber((item.discount * 100).toFixed(2) ) );
-
-              $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber((item.qty*item.sellprice-item.qty*item.sellprice*item.discount/100).toFixed( 2 )) );
+              $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber( item.qty.toFixed( 2 ) ) );
+              $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber( ( item.discount * 100 ).toFixed( 0 ) ) );
+              $( '.row_entry [name=linetotal]' ).last().attr( 'data-tax', item.rate );
+              $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber( (item.qty * item.sellprice - item.qty * item.sellprice * item.discount / 100 ).toFixed( 2 ) ) );
               $( '.row_entry [name=longdescription]' ).last().val( item.longdescription ).change();
               $( '.row_entry [class=x]' ).last().show();
               $( '.row_entry [class=edit]' ).last().show();
               $( '.row_entry [class=discount100]' ).last().show();
               //change 100%Discount button value if 100% already set
-              if ($( '.row_entry [name=discount_as_percent]' ).last().val() == "100,00") {
-                $('.row_entry [name=discount100button]').last().val("0%");
-              } else {
-                $('.row_entry [name=discount100button]').last().val("100%");
-              }
+              if( $( '.row_entry [name=discount_as_percent]' ).last().val() == "100,00" )
+                $( '.row_entry [name=discount100button]' ).last().val( "0%" );
+              else
+                $( '.row_entry [name=discount100button]' ).last().val( "100%" );
 
-              if ( item.instruction )
+              if( item.instruction )
                 $( '.row_entry' ).last().addClass( 'instruction' );
 
               $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
               $( '.row_entry' ).last().removeClass( 'instruction' );
               $( '.row_entry [name=linetotal]' ).last().removeClass('linetotal_instruction');
-            });
+            }); //each data
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
             ns.countPos();
             ns.recalc();
@@ -1318,7 +1281,7 @@
   }) //#btnSaveNewPart
 
  ns.newLine = function( dataArray ){
-    console.log("NewLine");
+    //console.log("NewLine");
     if( partID == 0 ){
 
          $.ajax({
