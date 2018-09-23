@@ -1,17 +1,17 @@
-  namespace( 'kivi.Part', function( ns ){
+namespace( 'kivi.Part', function( ns ){
   'use strict';
 
-   $.urlParam = function( name ){
-      var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
-      if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
-      else return decodeURIComponent( results[1] || 0 );
-    }
+  ns.urlParam = function( name ){
+    var results = new RegExp( '[\?&]' + name + '=([^&#]*)' ).exec( window.location.href );
+    if( results == null );// alert( 'Parameter: "' + name + '" does not exist in "' + window.location.href + '"!' );
+    else return decodeURIComponent( results[1] || 0 );
+  }
 
-  var id = $.urlParam( 'id' );
-  var owner = $.urlParam( 'owner' );
-  var c_id = $.urlParam( 'c_id' );
-  var previous = $.urlParam( 'previous' );
-  var newOrder = $.urlParam( 'newOrder' );
+  var id = ns.urlParam( 'id' );
+  var owner = ns.urlParam( 'owner' );
+  var c_id = ns.urlParam( 'c_id' );
+  var previous = ns.urlParam( 'previous' );
+  var newOrder = ns.urlParam( 'newOrder' );
   var c_hsn;
   var c_tsn;
   var c_ln;
@@ -63,12 +63,10 @@
     this.last_dummy         = this.$dummy.val();
     this.timer              = undefined;
     this.dialog             = undefined;
-
     this.init();
   };
 
   ns.Picker.prototype = {
-
     CLASSES: {
       PICKED:       'partpicker-picked',
       UNDEFINED:    'partpicker-undefined',
@@ -110,27 +108,24 @@
       this.$real.trigger('change');
 
       //console.log(item.id);
-      if (this.o.fat_set_item && item.id) {
+      if( this.o.fat_set_item && item.id ){
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
           data: { 'data': item.id },
           success: function( rsp ){
             self.$real.trigger( 'set_item:PartPicker', rsp );
-
             //nach autocomplete erzeugt neue Position und füllt die aktuell fokussierte Position
             rsp = rsp[0];
             var newPosArray = {};
             if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
 
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).text( rsp.partnumber );
-
             $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).attr( 'part_id',rsp.id );
 
-            if(rsp.unit == 'Std') //ToDo
+            if( rsp.unit == 'Std' ) //ToDo
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( customer_hourly_rate ).toFixed( 2 ) ) );
             else
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
-
 
             var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ) .val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text( kivi.t8( rsp.part_type ) );
@@ -139,110 +134,79 @@
               $( '.row_entry:last [name = partclassification]' ).text( kivi.t8("I") );
             }
 
-            $( ':focus' ).parents().eq(3).find( '[name=unit]').val( rsp.unit );
-            $( ':focus' ).parents().eq(3).find( '[name=linetotal]').text(ns.formatNumber( parseFloat( rsp.sellprice*number ).toFixed( 2 )) );
-            $( ':focus' ).parents().eq(3).find( '[name=item_partpicker_name]' ).val( rsp.description );
-
-            //console.log($( ':focus' ).parents().eq(3));
-
-            $( ':focus' ).parents().eq(3).find( '[class=x]' ).show();
-            $( ':focus' ).parents().eq(3).find( '[class=edit]' ).show();
-            $( ':focus ').parents().eq(3).find( '[class=discount100]' ).show();
-            //$('.autocomplete').removeClass('part_autocomplete');
-
-            //console.log($(':focus').parent());
-            ns.getQtybyDescription(item.description);
-            newPosArray['position'] = $( ':focus' ).parents().eq(3).find( '[name=position]' ).text();
-            newPosArray['parts_id'] =  $( ':focus' ).parents().eq(3).find( '[name=partnumber]' ).attr( 'part_id' );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=unit]').val( rsp.unit );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]').text(ns.formatNumber( parseFloat( rsp.sellprice*number ).toFixed( 2 )) );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=item_partpicker_name]' ).val( rsp.description );
+            $( ':focus' ).parents().eq( 3 ).find( '[class=x]' ).show();
+            $( ':focus' ).parents().eq( 3 ).find( '[class=edit]' ).show();
+            $( ':focus ').parents().eq( 3 ).find( '[class=discount100]' ).show();
+            ns.getQtybyDescription( item.description );
+            newPosArray['position'] = $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text();
+            newPosArray['parts_id'] =  $( ':focus' ).parents().eq( 3 ).find( '[name=partnumber]' ).attr( 'part_id' );
             newPosArray['order_id'] = orderID;
             newPosArray['description'] = rsp.description;
             newPosArray['sellprice'] = rsp.sellprice;
             newPosArray['ordnumber'] = $( '#ordernumber' ).text();
             newPosArray['qty'] = number;
-            newPosArray['unit'] = $(':focus').parents().eq(3).find('[name=unit]').val();
-            newPosArray['status'] = $(':focus').parents().eq(3).find('[name=pos_status]').val();
-
-            var discount;
-            if($(':focus').parents().eq(3).find('[name=discount_as_percent]').text()== "" )
-            discount='0';
-            else
-            discount=$(':focus').parents().eq(3).find('[name=discount_as_percent]').text();
-
-            newPosArray['discount'] = discount;
-            newPosArray['linetotal'] = rsp.sellprice*number;
-
-            //console.log(newPosArray);
-
-            //console.log(rsp.id);
-
+            newPosArray['unit'] = $( ':focus' ).parents().eq( 3 ).find( '[name=unit]' ).val();
+            newPosArray['status'] = $( ':focus' ).parents().eq( 3 ).find( '[name=pos_status]' ).val();
+            //var discount = $( ':focus' ).parents().eq( 3 ).find( '[name=discount_as_percent]' ).text(); //Wenn eine neue Posotion eingefügt ist diese
+            //newPosArray['discount'] = discount == "" ? 0 : discount;                                    //niemals rabatiert. Oder??
+            newPosArray['discount'] = 0;
+            newPosArray['linetotal'] = rsp.sellprice * number;
             newPosArray['instruction'] = rsp.instruction;
-            if (rsp.instruction) {
-              $( ':focus' ).parents().eq(3).addClass( 'instruction' );
-            }
+            if( rsp.instruction )
+              $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
 
-            $.ajax({
-                 url: 'ajax/order.php',
-                 type: 'POST',
-                 async:false,
-                 data: { action: "insertRow", data: newPosArray },
-                 success: function ( data ) {
-                    //console.log( data );
-                    $( ':focus' ).parents().eq(3).attr( 'id',data );
-
-                 },
-                 error: function () {
-                    alert( 'Error: new Pos not saved' )
-                 }
-
-            });
-
-
-            if( rsp.description.includes( 'Hauptuntersuchung' ) || rsp.description.includes( 'HU/AU' ) ){
+            $.ajax({ //new position in table orderitems
+              url: 'ajax/order.php',
+              type: 'POST',
+              async: false,
+              data: { action: "insertRow", data: newPosArray },
+              success: function( data ){
+                //console.log( data );
+                $( ':focus' ).parents().eq( 3 ).attr( 'id', data );
+              },
+              error: function(){
+                alert( 'Error: new posion not saved' )
+              }
+            }); // end ajax
+            // is 'Hauptuntersuchung in order position NOT in intructions change HU date in car
+            if( ( rsp.description.includes( 'Hauptuntersuchung' ) || rsp.description.includes( 'HU/AU' ) ) && !rsp.instruction ){
               $.ajax({
                 url: 'ajax/order.php?action=setHuAuDate&data=' + c_id,
                 type: 'GET'
-
               });
-
             }
-
-            //erzeugt neue Position
             //console.log( $(':focus').parents().eq(3).is( :first)) );
-            $( ':focus' ).parents().eq(3).find( '[name=position]' ).text();
+            $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text(); //Macht was??
 
-            if($( ':focus' ).parents().eq(3).is( ':last-child' ) )
-            $( ':focus' ).parents().eq(3).clone().appendTo( '#row_table_id' );
-
+            // new row in table
+            if( $( ':focus' ).parents().eq( 3 ).is( ':last-child' ) )
+              $( ':focus' ).parents().eq( 3 ).clone().appendTo( '#row_table_id' );
 
             //console.log($('.listrow').filter(':last'));
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show(); //dont show sortable < 3 rows
-            ns.countPos();//nummeriert die positionen
-            ns.init();
+            ns.countPos();// Numbers the positions
+            //ns.init();
             ns.recalc();
-
-            ns.init();//Initialisiert alle partpicker für die autocomplete function nachdem eine neue Position hinzugefügt wurde
-            $('.listrow').filter(':last').find('[name=item_partpicker_name]').focus();
-            $('.listrow').filter(':last').removeClass('instruction');
+            ns.init(); // Initializes all partpicker for the autocomplete function after adding a new position
+            $( '.listrow' ).filter( ':last' ).find( '[name=item_partpicker_name]' ).focus();
+            $( '.listrow' ).filter( ':last' ).removeClass('instruction');
             //sortable update
-            $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); //letzte Position ist nicht Sortable
-
-            //insertRow(rsp);//insert Position oder Instruction
-            //alert( "Siehe da! Partnumber: " + rsp.partnumber + " Description: " + rsp.description );
-
-
+            $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); // last position is not sortable
             ns.updateOrder();
-
-          },
+          }, // function success
         });
-      } else {
-        this.$real.trigger('set_item:PartPicker', item);
-
+      } //if
+      else {
+        this.$real.trigger( 'set_item:PartPicker', item );
       }
       this.annotate_state();
     },
     set_multi_items: function(data) {
-      this.run_action(this.o.action.set_multi_items, [ data ]);
-    },
+      this.run_action( this.o.action.set_multi_items, [ data ] );
+    }, // my Brake
     make_defined_state: function() {
       if (this.state == this.STATES.PICKED) {
         this.annotate_state();
