@@ -101,7 +101,8 @@ function getPositions( $orderID, $json = true ){
     $sql.= "UNION SELECT  parts.instruction, parts.buchungsgruppen_id, orderitems.id AS item_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type, orderitems.longdescription FROM orderitems INNER JOIN parts ON ( parts.id = orderitems.parts_id ) WHERE orderitems.trans_id = '".$orderID."' ";
     $sql.= "ORDER BY position ) AS mysubquery  JOIN taxzone_charts ON ( mysubquery.buchungsgruppen_id = taxzone_charts.buchungsgruppen_id ) JOIN taxkeys ON ( taxzone_charts.income_accno_id = taxkeys.chart_id ) JOIN tax ON (taxkeys.tax_id = tax.id ) WHERE taxzone_id = ".$taxzone_id."  GROUP BY item_id, parts_id, position, instruction, qty, description, unit, sellprice, marge_total, discount, u_id, partnumber, part_type, longdescription, status, rate ORDER BY position ASC";
     //writeLog( $sql );
-    $rs = $GLOBALS['dbh']->getAll( $sql, true );
+    $rs = $GLOBALS['dbh']->getAll( $sql, $json );
+    writeLog( $rs );
     if( $json ) echo $rs;
     else return $rs; // for printOrder()!!!
 }
@@ -113,8 +114,7 @@ function insertRow( $data ){
         echo $GLOBALS['dbh']->insert( 'orderitems', array( 'position', 'trans_id', 'description', 'sellprice', 'discount', 'marge_total','qty','ordnumber','unit', 'status', 'parts_id'), array( $data['position'], $data['order_id'], $data['description'], $data['sellprice'], $data['discount'], $data['linetotal'],$data['qty'],$data['ordernumber'],$data['unit'], $data['status'], $data['parts_id']), 'id', 'orderitemsid');
 }
 
-function updatePositions( $data){
-
+function updatePositions( $data ){
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
       //writeLog($value);
@@ -209,14 +209,6 @@ function newOrder( $data ){
 
     $GLOBALS['dbh']->update( 'oe', array( 'car_manuf', 'car_type' ), array( $carData[0][1], $carData[0][2]." ".$carData[0][3] ), 'id = '.$id );
     echo $id;
-}
-
-function getTaxbyAccountingGroupID( $data ){
-  //writeLog( $data );
-  $sql = "select rate from tax join taxkeys on taxkeys.tax_id = tax.id join taxzone_charts on taxzone_charts.income_accno_id = taxkeys.chart_id where taxzone_charts.buchungsgruppen_id = ".$data['accountingGroups_id']." and taxzone_id = ".$data['taxzone_id']." order by startdate DESC Limit 1";
-
-  echo $GLOBALS['dbh']->getAll( $sql, true );
-
 }
 
 function printOrder( $data ){
@@ -394,7 +386,7 @@ function printOrder( $data ){
 
 
 
-    foreach( array_reverse( $positions ) as $index => $element ){
+    foreach( $positions as $index => $element ){
         //writeLog( $element['description'] );
         $height = $height + 8;
         $pdf->SetTextColor( 255, 0, 0 );
@@ -420,11 +412,11 @@ function printOrder( $data ){
         }
 
         if( trim( $element['longdescription'] ) != '' ){
-           $height = $height + 6;
-           $pdf->SetFont( 'Helvetica', '', '8' );
-           $pdf->SetTextColor( 0, 0, 0 );
-           $longdescription = $element['longdescription'];
-           $arrayLongdescription = explode( "\n", $longdescription );
+            $height = $height + 6;
+            $pdf->SetFont( 'Helvetica', '', '8' );
+            $pdf->SetTextColor( 0, 0, 0 );
+            $longdescription = $element['longdescription'];
+            $arrayLongdescription = explode( "\n", $longdescription );
 
            foreach( $arrayLongdescription as $index => $element ){
 
