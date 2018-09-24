@@ -1428,7 +1428,6 @@ namespace( 'kivi.Part', function( ns ){
     //set flag: is not new row, because is not the last ("new position") row
     //used by: part picker function
     isNewRow = false;
-    console.log("call " + isNewRow);
     //DON'T update order, if editing of part is still in progress
     //determined by: input field has focus OR enter is not pressed
     if ($( this ).isFocused = false){
