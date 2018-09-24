@@ -1418,11 +1418,15 @@ namespace( 'kivi.Part', function( ns ){
     percentfield.trigger("keyup");
   });
 
-  $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(){
-    clearTimeout( timer );
-    timer = setTimeout( function(){
-      ns.updateOrder();
-    }, updateTime );
+  $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(e){
+    //DON'T update order, if editing of part is still in progress
+    //determined by: input field has focus OR enter is not pressed
+    if ($( this ).isFocused = false || e.which == KEY.ENTER){
+      clearTimeout( timer );
+      timer = setTimeout( function(){
+        ns.updateOrder();
+      }, updateTime );
+    }
   });
 
   ns.removeOrder = function() {
