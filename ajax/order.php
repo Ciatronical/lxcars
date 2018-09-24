@@ -125,11 +125,6 @@ function delPosition( $data ){
     echo $GLOBALS['dbh']->query( "DELETE FROM ".( $data['instruction'] == 'true' ? 'instructions' : 'orderitems' )." WHERE id = ".$data['id'] );
 }
 
-//ToDo Init-Funktion schreiben
-/* Diese holt beim Aufruf des Dokuments die Einheiten, Benutzer, Stundensatz und gibt diese als mehrdimensionales Array zurück*/
-
-//function() {
-
 //function to get metadata (= the same for ALL orders) to reduce AJAX requests on page load
 function getMetadata(){
     $sql = "SELECT json_agg (outputJSON) FROM ("

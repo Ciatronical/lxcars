@@ -930,10 +930,9 @@ namespace( 'kivi.Part', function( ns ){
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
-      //if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
+      if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
         //calcPrice
         var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace( /,/g, '.' ); // "/,/g" == replaceAll()
-        //calculation = calculation.toString().replace(',', '.' ); // wird doch schon in  der vorherigen Zeile erledigt
         if ( calculation.includes( '+' ) || calculation.includes( '-' ) || calculation.includes( '*' ) || calculation.includes( '/' ) ) {
           var result = eval( calculation );
           $( this ).find( "[name=sellprice_as_number]:first" ).val( result.toFixed( 2 ).toString().replace( '.',',' ) );
@@ -944,7 +943,7 @@ namespace( 'kivi.Part', function( ns ){
         //console.log(this);
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) ) / 100;
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
-      //}
+      }
     });
     // linetotals, taxes must be calculated in each line!!!
     var linetotal = 0;
@@ -960,8 +959,6 @@ namespace( 'kivi.Part', function( ns ){
     });
     $( '#orderTotalNetto' ).text( ns.formatNumber( linetotal_sum.toFixed( 2 ) ) );
     $( '#orderTotalBrutto' ).text( ns.formatNumber( linetotal_tax_sum.toFixed( 2 ) ) );
-
-    //ns.updateOrder(); Warum nicht??
   }
 
   $( "label[for = 'instructionCheckbox']" ).text( kivi.t8( 'Instruction' ) );
