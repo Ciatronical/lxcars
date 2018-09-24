@@ -130,39 +130,20 @@ function delPosition( $data ){
 
 //function() {
 
-//Funktion zum holen von Metadaten (gleich für alle Aufträge) zum Beseitigen von zu vielen AJAXs
-function getMetadata() {
-    $units = $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
-    $accountingGroups = $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen ORDER BY id = ( SELECT buchungsgruppen_id FROM ( SELECT buchungsgruppen_id, count( buchungsgruppen_id ) AS id FROM parts GROUP BY 1 ORDER BY id DESC LIMIT 1 ) AS nothing ) DESC", true );
-    $customerHourlyRate = $GLOBALS['dbh']->getOne( "SELECT customer_hourly_rate FROM defaults",true );
-    $taxzones = $GLOBALS['dbh']->getALL( "SELECT id, description FROM tax_zones Order by sortkey ASC", true );
-    $output = array(
-        "units" => $units,
-        "accountingGroups" => $accountingGroups,
-        "customerHourlyRate" => $customerHourlyRate,
-        "taxzones" => $taxzones
-    );
-    echo $units;
+//function to get metadata (= the same for ALL orders) to reduce AJAX requests on page load
+function getMetadata(){
+    $sql = "SELECT json_agg (outputJSON) FROM ("
+           ."SELECT row_to_json(x) as outputJSON FROM (SELECT json_agg(i) as units FROM (SELECT name,type FROM units) i) x UNION all "
+           ."SELECT row_to_json(x) FROM (SELECT json_agg(i) as taxzones FROM (SELECT id,description FROM tax_zones ORDER BY sortkey ASC) i) x UNION all "
+           ."SELECT row_to_json(x) FROM (SELECT json_agg(i) as accountingGroups FROM (SELECT id, description FROM buchungsgruppen ORDER BY id = "
+             ."( SELECT buchungsgruppen_id FROM ( SELECT buchungsgruppen_id, count( buchungsgruppen_id ) "
+             ."AS id FROM parts GROUP BY 1 ORDER BY id DESC LIMIT 1 ) AS nothing ) DESC) i) x UNION all  "
+           ."SELECT row_to_json(x) FROM (SELECT json_agg(i) as customerHourlyRate FROM (SELECT customer_Hourly_Rate FROM defaults) i) x) output";
+     echo $GLOBALS['dbh']->getOne( $sql )['json_agg'];
 }
 
 function getUsersFromGroup( $data ){
     echo json_encode( ERPUsersfromGroup( $data ) );
-}
-
-function getUnits(){
-    echo $GLOBALS['dbh']->getAll( "SELECT name,type FROM units", true );
-}
-
-//get accounting groups and order by most in parts
-function getAccountingGroups(){
-    echo $GLOBALS['dbh']->getAll( "SELECT id, description FROM buchungsgruppen ORDER BY id = ( SELECT buchungsgruppen_id FROM ( SELECT buchungsgruppen_id, count( buchungsgruppen_id ) AS id FROM parts GROUP BY 1 ORDER BY id DESC LIMIT 1 ) AS nothing ) DESC", true );
-}
-
-function getCustomer_hourly_rate() {
-  // writeLog('getCustomer_hourly_rate');
-  $rs = $GLOBALS['dbh']->getOne( "SELECT customer_hourly_rate FROM defaults",true );
-   //writeLog($rs);
-  echo $rs;
 }
 
 function newPart( $data ){
@@ -231,14 +212,6 @@ function newOrder( $data ){
 
     $GLOBALS['dbh']->update( 'oe', array( 'car_manuf', 'car_type' ), array( $carData[0][1], $carData[0][2]." ".$carData[0][3] ), 'id = '.$id );
     echo $id;
-}
-
-
-function getTaxzones(){
-
-  $sql = "SELECT id, description FROM tax_zones Order by sortkey ASC";
-  echo $GLOBALS['dbh']->getALL( $sql, true );
-
 }
 
 function getTaxbyAccountingGroupID( $data ){

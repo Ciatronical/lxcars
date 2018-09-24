@@ -718,7 +718,7 @@ namespace( 'kivi.Part', function( ns ){
     var baseUrl = kivi_global.baseurl;
     $('[name=item_partpicker_name]').focus();
 
-    $.ajax({ //KEINE Datenbankabfrage
+    $.ajax({ //no DB query in order.php
       url: 'ajax/order.php?action=getUsersFromGroup&data='+"Werkstatt",
       type: 'GET',
       success: function( data ){
@@ -732,82 +732,45 @@ namespace( 'kivi.Part', function( ns ){
       }
     })
 
-
-     $.ajax({ //META-Funktionalität
-      url: 'ajax/order.php?action=getTaxzones',
-      type: 'GET',
-      success: function( data ){
-        $.each( data, function( index, item ){
-        //console.log(item);
-        if (index == 0)
-          $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" selected = "true">' + item.description + '</option>' ) );
-        else
-          $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" >' + item.description + '</option>' ) );
-        })
-      },
-      error:  function(){
-        alert( "Ajaxerror getTaxzones()!" );
-      }
-    })
-
-
-    $.ajax({ //META-Funktionalität
-      url: 'ajax/order.php?action=getCustomer_hourly_rate',
-      type: 'GET',
-      success: function (data) {
-              //console.log(data);
-        customer_hourly_rate = data['customer_hourly_rate'];
-
-      },
-      error: function() {
-        alert('Error: getCustomer_hourly_rate');
-      }
-
-    })
-
-    $.ajax({ //META-Funktionalität
-      url: 'ajax/order.php?action=getAccountingGroups',
-      type: 'GET',
-      success: function( data ){
-        $.each( data, function( index, item ){
-          $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
-        })
-      },
-      error: function(){
-        alert( "Error: getAccountingGroups()!" );
-      }
-    });
-
     var unitsType = new Array;
-
-    $.ajax({ //META-Funktionalität
-      url: 'ajax/order.php?action=getUnits',
-      type: 'GET',
-      success: function( data ){
-        $.each( data, function( index, item ){
-
-          unitsType[item.name] = item.type;
-          $( '[name = unit]' ).append($( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' ) );
-        })
-      },
-      error:  function(){
-        alert( "Error getUnits()!" );
-      }
-    })
-
+    //get metadata (= the same for ALL orders) -> return is 3dim-Array of objects in JSON
     $.ajax({
       url: 'ajax/order.php?action=getMetadata',
       type: 'GET',
       success: function( data ){
-        //console.log(data);
+        //split data into 4 arrays -> iteration without splitting would be possible but has no performance gains and is less maintanable and readable
+        var units = data[0]['units'];
+        var taxzones = data[1]['taxzones'];
+        var accountinggroups = data[2]['accountinggroups'];
+        var customerhourlyrate = data[3]['customerhourlyrate'];
+
+        //processing of getUnits
+        $.each( units, function( index,item ){
+          unitsType[item.name] = item.type;
+          $( '[name=unit]' ).append( '<option class="opt unit__' + item.name + '" value="' + item.name + '">' + item.name + '</option>' );
+        });
+
+        //processing of getTaxzones
+        $.each( taxzones, function( index, item ){
+          //console.log(item);
+          if (index == 0)
+            $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" selected = "true">' + item.description + '</option>' ) );
+          else
+            $( '[name = taxzones]' ).append( $( '<option value = "' + item.id + '" >' + item.description + '</option>' ) );
+          });
+
+        //processing of getAccountingGroups
+        $.each( accountinggroups, function( index, item ){
+          $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
+        });
+        
+        //processing of Stundensatz
+        customer_hourly_rate = customerhourlyrate[0]['customer_hourly_rate'];
       },
-      error: function( data ){
-        //console.log( "Error " + data );
+      error: function (data){
+        console.log( "Error getMetadata: "+data );
       }
     });
-
- //JOIN nicht möglich da null Korrelation zwischen geholten Daten. Check: orderphp.getMetadata()
- //"A JOIN clause is used to combine rows from two or more tables, based on a related column between them." <-- keine 'related column'.
 
   //DateTimePicker
   function AddButton( input ){
@@ -967,7 +930,7 @@ namespace( 'kivi.Part', function( ns ){
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
-      if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
+      //if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
         //calcPrice
         var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace( /,/g, '.' ); // "/,/g" == replaceAll()
         //calculation = calculation.toString().replace(',', '.' ); // wird doch schon in  der vorherigen Zeile erledigt
@@ -981,7 +944,7 @@ namespace( 'kivi.Part', function( ns ){
         //console.log(this);
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) ) / 100;
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
-      }
+      //}
     });
     // linetotals, taxes must be calculated in each line!!!
     var linetotal = 0;
@@ -993,6 +956,7 @@ namespace( 'kivi.Part', function( ns ){
       linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
       linetotal_sum += linetotal;
       linetotal_tax_sum += linetotal_tax;
+      console.log(linetotal);
     });
     $( '#orderTotalNetto' ).text( ns.formatNumber( linetotal_sum.toFixed( 2 ) ) );
     $( '#orderTotalBrutto' ).text( ns.formatNumber( linetotal_tax_sum.toFixed( 2 ) ) );
