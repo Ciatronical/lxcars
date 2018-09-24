@@ -158,8 +158,7 @@ namespace( 'kivi.Part', function( ns ){
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
 
-            //save as new position if flag set
-            console.log(isNewRow);
+            //save as new position if flag set 
             if ( isNewRow ){
               $.ajax({ //new position in table orderitems
                 url: 'ajax/order.php',
