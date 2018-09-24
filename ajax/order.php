@@ -94,14 +94,16 @@ function getPartCount( $parts_id ){
     echo $count;
 }
 
-function getPositions( $orderID ){
+function getPositions( $orderID, $json = true ){
     $taxzone_id = 4; //ToDo:    hand over getPosionen(), use array
     $sql = "SELECT  item_id as id, parts_id, position, instruction, qty, description, unit, sellprice, marge_total, discount, u_id, partnumber, part_type, longdescription, status, rate ";
     $sql.= "FROM ( SELECT parts.instruction, parts.buchungsgruppen_id, instructions.id AS item_id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type, instructions.longdescription FROM instructions INNER JOIN  parts  ON ( parts.id = instructions.parts_id ) WHERE instructions.trans_id = '".$orderID."' ";
     $sql.= "UNION SELECT  parts.instruction, parts.buchungsgruppen_id, orderitems.id AS item_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type, orderitems.longdescription FROM orderitems INNER JOIN parts ON ( parts.id = orderitems.parts_id ) WHERE orderitems.trans_id = '".$orderID."' ";
     $sql.= "ORDER BY position ) AS mysubquery  JOIN taxzone_charts ON ( mysubquery.buchungsgruppen_id = taxzone_charts.buchungsgruppen_id ) JOIN taxkeys ON ( taxzone_charts.income_accno_id = taxkeys.chart_id ) JOIN tax ON (taxkeys.tax_id = tax.id ) WHERE taxzone_id = ".$taxzone_id."  GROUP BY item_id, parts_id, position, instruction, qty, description, unit, sellprice, marge_total, discount, u_id, partnumber, part_type, longdescription, status, rate ORDER BY position ASC";
     //writeLog( $sql );
-    echo $GLOBALS['dbh']->getAll( $sql, true );
+    $rs = $GLOBALS['dbh']->getAll( $sql, true );
+    if( $json ) echo $rs;
+    else return $rs; // for printOrder()!!!
 }
 
 function insertRow( $data ){
