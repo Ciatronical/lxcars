@@ -17,6 +17,7 @@ namespace( 'kivi.Part', function( ns ){
   var c_ln;
   var customer_name;
   var rowsToUpdate = [];
+  var isNewRow = true;
 
   var orderID;
   var partID = 0;
@@ -107,8 +108,7 @@ namespace( 'kivi.Part', function( ns ){
       this.last_dummy = this.$dummy.val();
       this.$real.trigger('change');
 
-      //console.log(item.id);
-      if( this.o.fat_set_item && item.id ){
+      if( this.o.fat_set_item && item.id){
         $.ajax({
           url: 'ajax/order.php?action=getPartJSON',
           data: { 'data': item.id },
@@ -158,19 +158,24 @@ namespace( 'kivi.Part', function( ns ){
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
 
-            $.ajax({ //new position in table orderitems
-              url: 'ajax/order.php',
-              type: 'POST',
-              async: false,
-              data: { action: "insertRow", data: newPosArray },
-              success: function( data ){
-                //console.log( data );
-                $( ':focus' ).parents().eq( 3 ).attr( 'id', data );
-              },
-              error: function(){
-                alert( 'Error: new posion not saved' )
-              }
-            }); // end ajax
+            //save as new position if flag set
+            console.log(isNewRow);
+            if ( isNewRow ){
+              $.ajax({ //new position in table orderitems
+                url: 'ajax/order.php',
+                type: 'POST',
+                async: false,
+                data: { action: "insertRow", data: newPosArray },
+                success: function( data ){
+                  //console.log( data );
+                  $( ':focus' ).parents().eq( 3 ).attr( 'id', data );
+                },
+                error: function(){
+                  alert( 'Error: new posion not saved' )
+                }
+              }); // end ajax
+            }
+            
             // is 'Hauptuntersuchung in order position NOT in intructions change HU date in car
             if( ( rsp.description.includes( 'Hauptuntersuchung' ) || rsp.description.includes( 'HU/AU' ) ) && !rsp.instruction ){
               $.ajax({
@@ -196,6 +201,9 @@ namespace( 'kivi.Part', function( ns ){
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); // last position is not sortable
             ns.updateOrder();
+
+            //set flag new row for next call
+            isNewRow = true;
           }, // function success
         });
       } //if
@@ -955,7 +963,6 @@ namespace( 'kivi.Part', function( ns ){
       linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
       linetotal_sum += linetotal;
       linetotal_tax_sum += linetotal_tax;
-      console.log(linetotal);
     });
     $( '#orderTotalNetto' ).text( ns.formatNumber( linetotal_sum.toFixed( 2 ) ) );
     $( '#orderTotalBrutto' ).text( ns.formatNumber( linetotal_tax_sum.toFixed( 2 ) ) );
@@ -1419,14 +1426,21 @@ namespace( 'kivi.Part', function( ns ){
   });
 
   $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(e){
+    //set flag: is not new row, because is not the last ("new position") row
+    //used by: part picker function
+    isNewRow = false;
+    console.log("call " + isNewRow);
     //DON'T update order, if editing of part is still in progress
     //determined by: input field has focus OR enter is not pressed
-    if ($( this ).isFocused = false || e.which == KEY.ENTER){
+    if ($( this ).isFocused = false){
       clearTimeout( timer );
       timer = setTimeout( function(){
         ns.updateOrder();
       }, updateTime );
     }
+    //if enter is pressed: don't wait, update immediately
+    if (e.which == KEY.ENTER)
+      ns.updateOrder();
   });
 
   ns.removeOrder = function() {
