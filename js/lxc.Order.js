@@ -158,7 +158,7 @@ namespace( 'kivi.Part', function( ns ){
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
 
-            //save as new position if flag set 
+            //save as new position if flag set
             if ( isNewRow ){
               $.ajax({ //new position in table orderitems
                 url: 'ajax/order.php',
@@ -174,7 +174,7 @@ namespace( 'kivi.Part', function( ns ){
                 }
               }); // end ajax
             }
-            
+
             // is 'Hauptuntersuchung in order position NOT in intructions change HU date in car
             if( ( rsp.description.includes( 'Hauptuntersuchung' ) || rsp.description.includes( 'HU/AU' ) ) && !rsp.instruction ){
               $.ajax({
@@ -770,7 +770,7 @@ namespace( 'kivi.Part', function( ns ){
         $.each( accountinggroups, function( index, item ){
           $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
         });
-        
+
         //processing of Stundensatz
         customer_hourly_rate = customerhourlyrate[0]['customer_hourly_rate'];
       },
@@ -1204,47 +1204,39 @@ namespace( 'kivi.Part', function( ns ){
          error: function () {
             alert( 'Error: new Part not saved' )
          }
-
       });
-
     }
   }) //#btnSaveNewPart
 
- ns.newLine = function( dataArray ){
+  ns.newLine = function( dataArray ){
     //console.log("NewLine");
     if( partID == 0 ){
+      $.ajax({
+        url: 'ajax/order.php',
+        type: 'POST',
+        async:false,
+        data: { action: "insertRow", data: dataArray },
+        success: function (data) {
+          //console.log(data);
+          $( '.row_entry' ).last().attr( 'id',data );
+        },
+        error: function(){
+          alert( 'Error: new Pos not saved' )
+        }
+      });
 
-         $.ajax({
-              url: 'ajax/order.php',
-              type: 'POST',
-              async:false,
-              data: { action: "insertRow", data: dataArray },
-              success: function (data) {
-                //console.log(data);
-                $( '.row_entry' ).last().attr( 'id',data );
+      if( dataArray.instruction )
+        $( '.row_entry' ).last().addClass( 'instruction' );
+      $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
+      $( '.row_entry' ).last().removeClass( 'instruction' );
+      $( '.row_entry' ).last().find('[name=item_partpicker_name]').focus();
 
-             },
-             error: function(){
-                alert( 'Error: new Pos not saved' )
-             }
-
-            });
-
-            if( dataArray.instruction )
-              $( '.row_entry' ).last().addClass( 'instruction' );
-
-            $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
-            $( '.row_entry' ).last().removeClass( 'instruction' );
-            $( '.row_entry' ).last().find('[name=item_partpicker_name]').focus();
-
-            clearTimeout( timer );
-            timer = setTimeout( function(){
-              ns.updateOrder();
-            }, updateTime );
-
+      clearTimeout( timer );
+      timer = setTimeout( function(){
+        ns.updateOrder();
+      }, updateTime );
     }
-
- }
+  }
 
   ns.getQtybyDescription = function ( description ) {
 
@@ -1259,15 +1251,12 @@ namespace( 'kivi.Part', function( ns ){
        error: function () {
           alert( 'Error: getQty' )
        }
-
    });
-
-
   }
+
   //ToDo FORMATIEREN!!!!!
   ns.updateOrder = function(){
     ns.updatePosition();
-
     var updateDataJSON = new Array;
     updateDataJSON.push({
         "id": orderID,
@@ -1280,8 +1269,7 @@ namespace( 'kivi.Part', function( ns ){
         "internalorder": ($('.isInternalOrder').is(':checked'))
       });
 
-       //console.log(updateDataJSON);
-       $.ajax({
+      $.ajax({
         url: 'ajax/order.php',
         async: true,
         data: { action: "updateOrder", data: updateDataJSON },
@@ -1291,19 +1279,14 @@ namespace( 'kivi.Part', function( ns ){
         error:  function(){
           alert( 'Update des Auftrages fehlgeschlagen' );
         }
-
-       });
-
-
+      });
   }
-
 
   //Ändert die Artikelnummer bei Artikeltypauswahl
   $( '#dialogPart_typ' ).change( function(){
     var unit;
     var part_type = $( '#dialogPart_typ' ).val();
         if( part_type == 'dimension' ){
-
             unit='Stck';
         }
         else{
@@ -1311,38 +1294,28 @@ namespace( 'kivi.Part', function( ns ){
             $( '#dialogSellPrice' ).val(ns.formatNumber( parseFloat( customer_hourly_rate ).toFixed( 2 )) );
         }
 
-
-
-
     $( '#dialogSelectUnits' ).val( unit ).change();
     $.ajax({
         url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
         type: 'GET',
         success: function ( data ) {
-
-        var partnumber = $( '#dialogNewArticleNumber' ).val( data.newnumber );
-
+          var partnumber = $( '#dialogNewArticleNumber' ).val( data.newnumber );
         },
         error: function(){
            alert( 'Error: getArticleNumber' )
         }
-
      });
   });
 
   //Ändert den Artikeltyp bei Einheitenauswahl
   $( '#dialogSelectUnits' ).change( function(){
-      var unit = $( '#dialogSelectUnits' ).val();
-
-      $.ajax({
-        url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
-        type: 'GET',
-        success: function ( data ) {
-          $( '#dialogNewArticleNumber' ).val( data.newnumber );
-          var partnumber= data.newnumber;
-
-
-
+    var unit = $( '#dialogSelectUnits' ).val();
+    $.ajax({
+      url: 'ajax/order.php?action=getArticleNumber&data=' + unit,
+      type: 'GET',
+      success: function ( data ) {
+        $( '#dialogNewArticleNumber' ).val( data.newnumber );
+        var partnumber= data.newnumber;
           /*
           if(partnumber<2000)
             $( '#dialogPart_typ' ).val('dimension').change();
@@ -1353,23 +1326,19 @@ namespace( 'kivi.Part', function( ns ){
         error: function(){
            alert( 'Error: getArticleNumber' )
         }
-
     });
   });
 
   $( '#instructionCheckbox' ).change( function() {
     if($( '#instructionCheckbox' ).val())
         $( '#dialogPart_typ' ).val( 'service' ).change();
-
-  });
+});
 
 
   $( document ).on( 'change ','select, .hasDatepicker', function(){
     if( ready ){
-
       ns.updateOrder();
     }
-
   });
 
   $( document ).on ( 'focus ','.recalc', function(){
@@ -1377,8 +1346,8 @@ namespace( 'kivi.Part', function( ns ){
   })
 
   $( document ).on( 'keyup ','.recalc', function(){
-    //ARRAY für neu zu berechnende Zeilen
-    //Wenn array leer, dann alle neu berechnen
+    //ARRAY für rows in need of recalculation
+    //if array's empty, recalculate all
     //get row number, add to array if not yet in it
     var rowNumber = parseInt($(this).closest("tr").find("[name=position]:first").html());
     if (rowsToUpdate.indexOf(rowNumber) == -1) {
@@ -1387,10 +1356,8 @@ namespace( 'kivi.Part', function( ns ){
 
     clearTimeout( timer );
      timer = setTimeout( function(){
-        //console.log('recalc');
         ns.recalc();
         ns.updateOrder();
-        //console.log('update');
     },   updateTime );
   });
 
@@ -1420,7 +1387,6 @@ namespace( 'kivi.Part', function( ns ){
       percentfield.val("100");
       $(this).val("0%");
     }
-
     percentfield.trigger("keyup");
   });
 
@@ -1504,7 +1470,4 @@ namespace( 'kivi.Part', function( ns ){
       });
    }
  });
-
-  //Print Order
-
 });
