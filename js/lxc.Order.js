@@ -1437,35 +1437,32 @@ namespace( 'kivi.Part', function( ns ){
       }, updateTime );
     }
     //if enter is pressed: don't wait, update immediately
-    if (e.which == KEY.ENTER)
+    //if selected field is longdescription, prevent new line if SHIFT is not pressed (prevent by removing new line chars)
+    if (e.which == KEY.ENTER) {
+      if ($( this ).attr( "name" ) == "longdescription" &&
+          !e.shiftKey) {
+            $( this ).val( $(this).val().replace(/\r?\n|\r/g, "") );
+          }
       ns.updateOrder();
+    }
   });
 
   ns.removeOrder = function() {
-
     $.ajax({
       url: 'ajax/order.php?action=removeOrder&data=' + orderID,
       typ: 'GET',
       success: function () {},
       error: function () {alert('ERROR: removeOrder')}
     });
-
   }
 
   $( "#allMechanicsID" ).change(function () {
-
     $( "[name=mechanics]" ).val( $("#allMechanicsID").val() ).change();
-
   });
 
   $( "#allStatusID" ).change(function () {
-
     $( "[name=pos_status]" ).val( $( "#allStatusID" ).val() ).change();
-
   });
-
-
-
 
   //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {
