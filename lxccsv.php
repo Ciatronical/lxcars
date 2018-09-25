@@ -8,6 +8,7 @@ include_once("../inc/UserLib.php");
 include_once("../inc/FirmenLib.php");
 
 unlink('./mytmp/daten.csv');
+mkdir ("./mytmp", 0744); //Directory seems to get lost during git updates, this line prevents 404 errors!
 $fp = fopen('./mytmp/daten.csv', 'c');
 // Kopfzeile der CSV Datei
 $kopf_zeile = array('primaer_HU', 'Anrede', 'Name', 'Straße', 'PLZ/Ort', 'Kennzeichen');
