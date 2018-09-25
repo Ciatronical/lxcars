@@ -730,7 +730,6 @@ namespace( 'kivi.Part', function( ns ){
       type: 'GET',
       success: function( data ){
         $.each( data, function( index, item ){
-        //console.log(item);
           $( '[name = mechanics], [name = allMechanics]' ).append( $( '<option class="opt mech__' + item.name + '" value="'+item.name + '">' + item.name + '</option>' ) );
         })
       },
@@ -771,7 +770,7 @@ namespace( 'kivi.Part', function( ns ){
           $( '#accountingGroups' ).append( $( '<option id="' + item.id + '" value="' + item.description + '">' + item.description + '</option>' ) );
         });
 
-        //processing of Stundensatz
+        //processing of customer_hourly_rate
         customer_hourly_rate = customerhourlyrate[0]['customer_hourly_rate'];
       },
       error: function (data){
@@ -781,7 +780,7 @@ namespace( 'kivi.Part', function( ns ){
 
   //DateTimePicker
   function AddButton( input ){
-    setTimeout( function(){  //ToDo: warum setTimeout
+    setTimeout( function(){  //Timeout to force this handler to load after pageLoad for shorter initial loading time
       var buttonPane = $( input ).datepicker( "widget" ).find( ".ui-datepicker-buttonpane" );
       var btn = $( '<button class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" type="button"> Wartet</button>' );
       btn.appendTo( buttonPane );
@@ -844,8 +843,6 @@ namespace( 'kivi.Part', function( ns ){
     window.location = baseUrl + '/crm/lxcars/' + previous + '?owner=' + owner + '&c_id=' + c_id + '&task=3' + '&c_hsn=' + c_hsn + '&c_tsn=' + c_tsn;
     return false;
   });
-
-
 
   $( "#printOrder, #pdfOrder" ).button({
     label:  kivi.t8('Print')
@@ -933,21 +930,21 @@ namespace( 'kivi.Part', function( ns ){
   });
 
   ns.recalc = function(){
+    //cache rowsToUpdate for increased responsiveness
     var cachedRowsToUpdate = rowsToUpdate;
     rowsToUpdate = [];
     $( 'tbody .listrow' ).each( function(item){
+      //find row number
       var rowNumber = parseInt($(this).find("[name=position]:first").html());
+      //calcPrice only if row number in rowsToUpdate[] or if array's empty
       if( cachedRowsToUpdate.indexOf( rowNumber ) != -1 || cachedRowsToUpdate.length < 1 ){
-        //calcPrice
         var  calculation = $( this ).find( "[name=sellprice_as_number]:first" ).val().toString().replace( /,/g, '.' ); // "/,/g" == replaceAll()
         if ( calculation.includes( '+' ) || calculation.includes( '-' ) || calculation.includes( '*' ) || calculation.includes( '/' ) ) {
           var result = eval( calculation );
           $( this ).find( "[name=sellprice_as_number]:first" ).val( result.toFixed( 2 ).toString().replace( '.',',' ) );
         }
-
         var number = parseFloat( $( this ).find( '[name = qty_as_number]' ).val().replace( ',' , '.' ).replace( '' , 0 ) );
         var price = parseFloat( $( this ).find( '[name = sellprice_as_number]' ).val().replace( ',' , '.' ).replace( '', 0) );
-        //console.log(this);
         var discount = parseFloat( $( this ).find( '[name = discount_as_percent]' ).val().replace( '' , 0 ) ) / 100;
         $( this ).find( '[name = linetotal]' ).text( ns.formatNumber( parseFloat( price * number -  price * number * discount ).toFixed( 2 ) ) );
       }
@@ -957,9 +954,9 @@ namespace( 'kivi.Part', function( ns ){
     var linetotal_tax = 0; //with tax
     var linetotal_sum = 0;
     var linetotal_tax_sum = 0;
-    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){ //ToDo: Hier wird leider die letzte Zeile mit selectiert
-      linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) ); //Wenn die Eltern nicht sortable sind oder mit last
-      linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
+    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){   //ToDo: Hier wird leider die letzte Zeile mit selektiert
+      linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) );              //Wenn die Eltern nicht sortable sind oder mit last
+      linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )//Performance-Einfluss extrem gering!
       linetotal_sum += linetotal;
       linetotal_tax_sum += linetotal_tax;
     });
@@ -1003,7 +1000,6 @@ namespace( 'kivi.Part', function( ns ){
     type: 'GET',
     async: false,
     success: function( data ){
-      //console.log(data);
 
       var car = data.c_id;
       if( data.km_stnd == null ){
@@ -1034,12 +1030,10 @@ namespace( 'kivi.Part', function( ns ){
         $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
       else
         $( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
-
       orderID = data.oe_id;
 
-      //Get Position
-      //console.log(data.amount);
-      if( newOrder != 1 ){//data.amount!=null Bei neuen Aufträgen werden die Positionen nicht abgefragt(Wenn Gesamtbetrag null)
+      //Get Positions
+      if( newOrder != 1 ){//= data.amount!=null -> positions are not get on new orders (total = 0)
         $.ajax({
           url: 'ajax/order.php?action=getPositions&data=' + orderID,
           type: 'GET',
@@ -1087,26 +1081,21 @@ namespace( 'kivi.Part', function( ns ){
             ns.init();
             ready = true;
             $( '.listrow' ).filter( ':last' ).find( '[name=item_partpicker_name]' ).focus();
-
             $( '.ui-sortable' ).sortable( {items: '> tbody:not(.pin)'} );
-
-
-            //console.log(data);
           },
           error: function () {
               alert( "error: getPositions fehlgeschlagen" );
-         }
-
+          }
         });
       }
     }
   });
 
   $( '#btnSaveNewPart' ).click( function(){
-    if( $( '#ordernumber' ).text() == '0000' ) ns.newOrder();
+    if( $( '#ordernumber' ).text() == '0000' )
+      ns.newOrder();
 
     if ( $( '#dialogNewArticleNumber' ).val() != '' ){
-
      var dataArray = {};
      dataArray['partnumber'] = $( '#dialogNewArticleNumber' ).val();
      dataArray['description'] = $( '#dialogDescription' ).val();
@@ -1114,14 +1103,11 @@ namespace( 'kivi.Part', function( ns ){
      dataArray['listprice'] = $( '#dialogBuyPrice' ).val();
      dataArray['sellprice'] = $( '#dialogSellPrice' ).val().replace("," , ".");
      dataArray['buchungsgruppen_id'] = $( '#accountingGroups option:selected' ).attr( 'id' );
-     //alert(  );
      dataArray['quantity'] = $( "#quantity" ).val();
 
      var part_type = $( '#dialogPart_typ' ).val();
-     //console.log(part_type);
 
      if(part_type == "instruction"){
-       //console.log("instruction")
        dataArray['instruction'] = true;
      }else{
        dataArray['instruction'] = false;
@@ -1129,7 +1115,6 @@ namespace( 'kivi.Part', function( ns ){
 
      dataArray['order_id'] = orderID;
      dataArray['part_type'] = unitsType[$( '#dialogSelectUnits' ).val()];
-
      if( dataArray['part_type'] == 'dimension' )
        dataArray['part_type'] = 'part';
      if( dataArray['part_type'] == 'instruction' )
@@ -1137,17 +1122,13 @@ namespace( 'kivi.Part', function( ns ){
 
      dataArray['position'] =  $( '.row_entry' ).last().find( '[name=position]' ).text();
      dataArray['partID'] = partID;
-     //console.log( dataArray );
 
      $.ajax({
          url: 'ajax/order.php',
          type: 'POST',
          data: { action: partID == 0 ? "newPart" : "updatePart", data: dataArray },
          success: function( data ){
-            //console.log( dataArray );
-
-            if( partID == 0 ){
-
+            if( partID == 0 ){ //partID 0 means new part
               $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
               $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
               if( dataArray['instruction'] ) {
