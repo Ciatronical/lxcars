@@ -157,7 +157,7 @@ namespace( 'kivi.Part', function( ns ){
             newPosArray['instruction'] = rsp.instruction;
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
-
+            
             //save as new position if flag set
             if ( isNewRow ){
               $.ajax({ //new position in table orderitems
@@ -185,6 +185,7 @@ namespace( 'kivi.Part', function( ns ){
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text(); //Macht was??
 
+            $( ':focus' ).parents().eq( 3 ).find( '[name=unit]' ).trigger("change");
             // new row in table
             if( $( ':focus' ).parents().eq( 3 ).is( ':last-child' ) )
               $( ':focus' ).parents().eq( 3 ).clone().appendTo( '#row_table_id' );
@@ -1054,6 +1055,21 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry [name=unit]' ).last().val( item.unit ).change();
               $( '.row_entry [name=pos_status]' ).last().val( item.status ).change();
               $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber( item.qty.toFixed( 2 ) ) );
+              //change qty_as_number to number field if unit is pieces
+              if ($( '.row_entry [name=unit]' ).last().find( 'option:selected' ).first().text() == "Stck"){
+                var qty_field = $( '.row_entry [name=qty_as_number]' ).last(); //store field for increased performance: not selecting everytime
+                var width = qty_field.width(); //store width because type=number fields are bigger by default
+                var value = qty_field.val(); //value gets deleted on field change
+                qty_field.attr( 'type',  'number');
+                qty_field.width( width ); //restore width
+                if ( value.includes(',') ) //cut decimals ONLY if value contains ',', otherwise whole string is nulled
+                  value = value.substring(0, value.indexOf(','));
+                qty_field.val( value ); //restore value
+                if ( qty_field.val() == 0) //mark in red if value=0 (case: 0,5 hours are changed to pieces: 0,5->0)
+                  qty_field.css( 'color', 'red' );
+                else
+                  qty_field.css( 'color', 'black' ); //undo possible red marking in previous row
+              } else $( '.row_entry [name=qty_as_number]' ).last().css( 'color', 'black' ); //undo possible red marking in previous row
               $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber( ( item.discount * 100 ).toFixed( 0 ) ) );
               $( '.row_entry [name=linetotal]' ).last().attr( 'data-tax', item.rate );
               $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber( (item.qty * item.sellprice - item.qty * item.sellprice * item.discount / 100 ).toFixed( 2 ) ) );
@@ -1369,6 +1385,38 @@ namespace( 'kivi.Part', function( ns ){
       $(this).val("0%");
     }
     percentfield.trigger("keyup");
+  });
+
+  //if unit is selected as 'pieces', only allow whole numbers in quantity
+  $(document).on('change', '.unitselect', function(e){
+    var qty_field = $( this ).closest( 'tr' ).find( '[name=qty_as_number]' ).first(); //store field for increased performance: not selecting everytime
+    var value = qty_field.val(); //value gets deleted on field change
+    var width = qty_field.width(); //store width because type=number fields are bigger by default
+    if ($( this ).find( 'option:selected' ).first().text() == "Stck"){
+      qty_field.attr( 'type',  'number');
+      qty_field.width( width );
+      if ( value.includes(',') ) //cut decimals ONLY if value contains ',', otherwise whole string is nulled
+        value = value.substring(0, value.indexOf(','));
+      qty_field.val( value ); //restore value
+      if ( qty_field.val() == 0)
+        qty_field.css( 'color', 'red' ); //mark in red if value=0 (case: 0,5 hours are changed to pieces: 0,5->0)
+      else
+        qty_field.css( 'color', 'black' ); //undo possible red marking if value no longer 0
+    }
+    else{
+      qty_field.attr( 'type',  'text');
+      qty_field.width( width );
+      qty_field.val( value );
+      qty_field.css( 'color', 'black' ); //undo possible red marking if type no longer pieces
+    }
+  });
+
+  //if quantity is set to 0, mark red; otherwise undo possible red marking
+  $(document).on('change', '[name=qty_as_number]', function(e){
+    if ($( this ).val() == 0)
+      $( this ).css( 'color', 'red' );
+    else
+      $( this ).css( 'color', 'black' );
   });
 
   $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(e){
