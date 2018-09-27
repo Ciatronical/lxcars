@@ -1243,7 +1243,7 @@ namespace( 'kivi.Part', function( ns ){
        async: false,
        success: function ( data ) {
           //console.log(data);
-          $( ':focus' ).parents().eq( 3 ).find( '[name=qty_as_number]' ).val( data );
+          $( ':focus' ).parents().eq( 3 ).find( '[name=qty_as_number]' ).val( ns.formatNumber( parseFloat( data ).toFixed( 2 )));
        },
        error: function () {
           alert( 'Error: getQty' )
