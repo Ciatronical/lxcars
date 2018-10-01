@@ -140,7 +140,6 @@ namespace( 'kivi.Part', function( ns ){
             $( ':focus' ).parents().eq( 3 ).find( '[class=x]' ).show();
             $( ':focus' ).parents().eq( 3 ).find( '[class=edit]' ).show();
             $( ':focus ').parents().eq( 3 ).find( '[class=discount100]' ).show();
-            ns.getQtybyDescription( item.description );
             newPosArray['position'] = $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text();
             newPosArray['parts_id'] =  $( ':focus' ).parents().eq( 3 ).find( '[name=partnumber]' ).attr( 'part_id' );
             newPosArray['order_id'] = orderID;
@@ -149,6 +148,7 @@ namespace( 'kivi.Part', function( ns ){
             newPosArray['ordnumber'] = $( '#ordernumber' ).text();
             newPosArray['qty'] = number;
             newPosArray['unit'] = $( ':focus' ).parents().eq( 3 ).find( '[name=unit]' ).val();
+            ns.getQtybyDescription( item.description );
             newPosArray['status'] = $( ':focus' ).parents().eq( 3 ).find( '[name=pos_status]' ).val();
             //var discount = $( ':focus' ).parents().eq( 3 ).find( '[name=discount_as_percent]' ).text(); //Wenn eine neue Posotion eingefügt ist diese
             //newPosArray['discount'] = discount == "" ? 0 : discount;                                    //niemals rabatiert. Oder??
@@ -157,7 +157,7 @@ namespace( 'kivi.Part', function( ns ){
             newPosArray['instruction'] = rsp.instruction;
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
-            
+
             //save as new position if flag set
             if ( isNewRow ){
               $.ajax({ //new position in table orderitems
@@ -1236,14 +1236,20 @@ namespace( 'kivi.Part', function( ns ){
   }
 
   ns.getQtybyDescription = function ( description ) {
-
    $.ajax({
        url: 'ajax/order.php?action=getQty&data=' + description,
        type: 'GET',
        async: false,
        success: function ( data ) {
           //console.log(data);
-          $( ':focus' ).parents().eq( 3 ).find( '[name=qty_as_number]' ).val( ns.formatNumber( parseFloat( data ).toFixed( 2 )));
+          var qty_field = $( ':focus' ).parents().eq( 3 ).find( '[name=qty_as_number]' );
+          if ( $(':focus').parents().eq( 3 ).find('[name=unit]').find('option:selected').text() == "Stck" ) {
+            qty_field.val( data );
+          } else {
+            qty_field.val( data.toFixed( 2 ) );
+            qty_field.attr( 'type', 'text' );
+            qty_field.val( ns.formatNumber( qty_field.val()) );
+          }
        },
        error: function () {
           alert( 'Error: getQty' )
@@ -1404,9 +1410,11 @@ namespace( 'kivi.Part', function( ns ){
         qty_field.css( 'color', 'black' ); //undo possible red marking if value no longer 0
     }
     else{
-      qty_field.attr( 'type',  'text');
-      qty_field.width( width );
-      qty_field.val( value );
+      if ( qty_field.attr('type') != 'text' ) {
+        qty_field.attr( 'type',  'text');
+        qty_field.width( width );
+        qty_field.val( ns.formatNumber(parseFloat(value).toFixed(2)) );
+      }
       qty_field.css( 'color', 'black' ); //undo possible red marking if type no longer pieces
     }
   });
