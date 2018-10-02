@@ -157,6 +157,10 @@ namespace( 'kivi.Part', function( ns ){
             newPosArray['instruction'] = rsp.instruction;
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
+            //Hier muss Tax mit aus dem getPartJSON kommen, als Attribut eingefügt und die Zeile dann berechnet werden!
+            //$( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]' ).attr( 'data-tax', item.rate );
+            rowsToUpdate.push( parseInt($( ':focus' ).parents().eq( 3 ).find("[name=position]:first").html()) );
+            ns.recalc();
 
             //save as new position if flag set
             if ( isNewRow ){
@@ -194,7 +198,6 @@ namespace( 'kivi.Part', function( ns ){
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show(); //dont show sortable < 3 rows
             ns.countPos();// Numbers the positions
             //ns.init();
-            ns.recalc();
             ns.init(); // Initializes all partpicker for the autocomplete function after adding a new position
             $( '.listrow' ).filter( ':last' ).find( '[name=item_partpicker_name]' ).focus();
             $( '.listrow' ).filter( ':last' ).removeClass('instruction');
