@@ -158,14 +158,15 @@ function updatePart( $data ) {
 
 function getPartJSON( $parts_id ){
     //JOIN with tax information:
-    /*  SELECT parts.*, tax.rate FROM parts
-        INNER JOIN taxzone_charts ON parts.buchungsgruppen_id = taxzone_charts.buchungsgruppen_id
-        INNER JOIN taxkeys ON taxzone_charts.income_accno_id = taxkeys.chart_id
-        INNER JOIN tax ON taxkeys.tax_id = tax.id
-        WHERE parts.id = 143487 AND parts.obsolete = false AND taxzone_charts.taxzone_id = 4
-        GROUP BY parts.id, tax.rate; */
+    $taxzone_id = 4;
+    $sql = "SELECT parts.*, tax.rate FROM parts "
+        ."INNER JOIN taxzone_charts ON parts.buchungsgruppen_id = taxzone_charts.buchungsgruppen_id "
+        ."INNER JOIN taxkeys ON taxzone_charts.income_accno_id = taxkeys.chart_id "
+        ."INNER JOIN tax ON taxkeys.tax_id = tax.id "
+        ."WHERE parts.id = ".$parts_id." AND parts.obsolete = false AND taxzone_charts.taxzone_id = ".$taxzone_id." "
+        ."GROUP BY parts.id, tax.rate";
 
-    echo $GLOBALS['dbh']->getALL( "SELECT * FROM parts WHERE id = ".$parts_id." AND obsolete = false", TRUE );
+    echo $GLOBALS['dbh']->getALL( $sql, TRUE );
 }
 
 function getArticleNumber( $unit ){

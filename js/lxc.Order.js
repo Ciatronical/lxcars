@@ -157,8 +157,7 @@ namespace( 'kivi.Part', function( ns ){
             newPosArray['instruction'] = rsp.instruction;
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
-            //Hier muss Tax mit aus dem getPartJSON kommen, als Attribut eingefügt und die Zeile dann berechnet werden!
-            //$( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]' ).attr( 'data-tax', item.rate );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]' ).attr( 'data-tax', rsp.rate );
             rowsToUpdate.push( parseInt($( ':focus' ).parents().eq( 3 ).find("[name=position]:first").html()) );
 
             //save as new position if flag set
