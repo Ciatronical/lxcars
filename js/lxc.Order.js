@@ -160,7 +160,6 @@ namespace( 'kivi.Part', function( ns ){
             //Hier muss Tax mit aus dem getPartJSON kommen, als Attribut eingefügt und die Zeile dann berechnet werden!
             //$( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]' ).attr( 'data-tax', item.rate );
             rowsToUpdate.push( parseInt($( ':focus' ).parents().eq( 3 ).find("[name=position]:first").html()) );
-            ns.recalc();
 
             //save as new position if flag set
             if ( isNewRow ){
@@ -203,6 +202,8 @@ namespace( 'kivi.Part', function( ns ){
             $( '.listrow' ).filter( ':last' ).removeClass('instruction');
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); // last position is not sortable
+
+            ns.recalc();
             ns.updateOrder();
 
             //set flag new row for next call
@@ -1431,17 +1432,20 @@ namespace( 'kivi.Part', function( ns ){
   });
 
   $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(e){
-    //set flag: is not new row, because is not the last ("new position") row
+    //set flag: is not new row, because row entry has no ID attribute
     //used by: part picker function
-    isNewRow = false;
+    var attrID = $( this ).closest( 'tbody' ).attr( 'id' );
+    if (typeof attrID !== typeof undefined && attrID !== false)
+      isNewRow = false;
     //DON'T update order, if editing of part is still in progress
     //determined by: input field has focus OR enter is not pressed
-    if ($( this ).isFocused = false){
+    
+    //if ($( this ).isFocused = false){       //Wait on focus currently disabled
       clearTimeout( timer );
       timer = setTimeout( function(){
         ns.updateOrder();
       }, updateTime );
-    }
+    //}
     //if enter is pressed: don't wait, update immediately
     //if selected field is longdescription, prevent new line if SHIFT is not pressed (prevent by removing new line chars)
     if (e.which == KEY.ENTER) {
