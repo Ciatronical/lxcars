@@ -1374,7 +1374,7 @@ namespace( 'kivi.Part', function( ns ){
 
   $( document ).on( 'click', '.discount100', function(){
     var percentfield = $( this ).closest( 'tr' ).find( '.discaspercent' );
-    if( percentfield.val() == '100' || percentfield.val() == '100' ){
+    if( percentfield.val() == '100' ){
       percentfield.val( '0' );
       $( this ).val( '100%' );
     }
@@ -1382,7 +1382,7 @@ namespace( 'kivi.Part', function( ns ){
       percentfield.val( '100' );
       $(this).val( '0%' );
     }
-    percentfield.trigger("keyup");
+    percentfield.trigger( 'keyup' );
   });
 
   //if unit is selected as 'pieces', only allow whole numbers in quantity
