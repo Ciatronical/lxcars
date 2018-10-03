@@ -1081,7 +1081,7 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry [class=edit]' ).last().show();
               $( '.row_entry [class=discount100]' ).last().show();
               //change 100%Discount button value if 100% already set
-              if( $( '.row_entry [name=discount_as_percent]' ).last().val() == "100,00" )
+              if( $( '.row_entry [name=discount_as_percent]' ).last().val() == "100" )
                 $( '.row_entry [name=discount100button]' ).last().val( "0%" );
               else
                 $( '.row_entry [name=discount100button]' ).last().val( "100%" );
@@ -1167,7 +1167,7 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [class=edit]' ).show();
               $( '.row_entry:last [class=discount100]' ).show();
               //change 100%Discount button value if 100% already set
-              if ($( '.row_entry:last [class=discaspercent]' ).val() == "100,00") {
+              if ($( '.row_entry:last [class=discaspercent]' ).val() == "100") {
                 $( '.row_entry:last [class=discount100]' ).val("0%");
               }
 
@@ -1367,31 +1367,20 @@ namespace( 'kivi.Part', function( ns ){
     },   updateTime );
   });
 
-  $(document).on('click', 'input, textarea', function(e){
-    if ($(this).hasClass("isInternalOrder")) {
+  $( document ).on( 'click', 'input', function(){
+    if( $( this ).hasClass( 'isInternalOrder' ) )
       ns.updateOrder();
-      //use trigger of orderupdate to use timer
-      //$('.orderupdate').trigger('keyup');
-    } /*else {
-      $(this)
-          .on('mouseup', function(){
-              $(this).select();
-              return false;
-          })
-          .select();
-        }*/
   });
 
-  $(document).on('click', '.discount100', function(e){
-    var percentfield = $(this).closest('tr').find('.discaspercent');
-    if (percentfield.val() == "100" || percentfield.val() == "100,00")
-    {
-      percentfield.val("0,00");
-      $(this).val("100%");
+  $( document ).on( 'click', '.discount100', function(){
+    var percentfield = $( this ).closest( 'tr' ).find( '.discaspercent' );
+    if( percentfield.val() == '100' || percentfield.val() == '100' ){
+      percentfield.val( '0' );
+      $( this ).val( '100%' );
     }
     else{
-      percentfield.val("100");
-      $(this).val("0%");
+      percentfield.val( '100' );
+      $(this).val( '0%' );
     }
     percentfield.trigger("keyup");
   });
@@ -1438,7 +1427,7 @@ namespace( 'kivi.Part', function( ns ){
       isNewRow = false;
     //DON'T update order, if editing of part is still in progress
     //determined by: input field has focus OR enter is not pressed
-    
+
     //if ($( this ).isFocused = false){       //Wait on focus currently disabled
       clearTimeout( timer );
       timer = setTimeout( function(){
