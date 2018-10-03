@@ -130,13 +130,14 @@ namespace( 'kivi.Part', function( ns ){
             var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ) .val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text( kivi.t8( rsp.part_type ) );
 
-            if( rsp.instruction ){
+            if( rsp.instruction )
               $( '.row_entry:last [name = partclassification]' ).text( kivi.t8("I") );
-            }
 
             $( ':focus' ).parents().eq( 3 ).find( '[name=unit]').val( rsp.unit );
             $( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]').text(ns.formatNumber( parseFloat( rsp.sellprice*number ).toFixed( 2 )) );
             $( ':focus' ).parents().eq( 3 ).find( '[name=item_partpicker_name]' ).val( rsp.description );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=discount_as_percent]' ).val( 0 ); //no discount in new positions
+            $( ':focus' ).parents().eq( 3 ).find( '[name=discount100button]' ).last().val( "100%" );
             $( ':focus' ).parents().eq( 3 ).find( '[class=x]' ).show();
             $( ':focus' ).parents().eq( 3 ).find( '[class=edit]' ).show();
             $( ':focus ').parents().eq( 3 ).find( '[class=discount100]' ).show();
@@ -565,10 +566,10 @@ namespace( 'kivi.Part', function( ns ){
 
     var posID=0;
 
-    $( '.listrow' ).each(function () {
+    $( '.listrow' ).each( function(){
       posID++;
-      $(this).find( '[name=position]' ).text(posID);
-      $(this).removeClass('pin');
+      $( this ).find( '[name=position]' ).text( posID );
+      $( this ).removeClass( 'pin' );
     });
 
     var lastRow = $( '.listrow' ).filter( ':last ' );
@@ -579,6 +580,7 @@ namespace( 'kivi.Part', function( ns ){
     lastRow.find( '[name=partclassification]' ).text( '' );
     lastRow.find( '[name=longdescription]' ).val( '' );
     lastRow.find( '[name=qty_as_number]' ).val( '1' );
+    lastRow.find( '[name=discount_as_percent]' ).val( 0 );
     lastRow.removeAttr( 'id' );
     lastRow.find( 'img' ).hide();
     $( '.row_entry' ).last().find( '[class=x]' ).hide();
@@ -1218,7 +1220,7 @@ namespace( 'kivi.Part', function( ns ){
         data: { action: "insertRow", data: dataArray },
         success: function (data) {
           //console.log(data);
-          $( '.row_entry' ).last().attr( 'id',data );
+          $( '.row_entry' ).last().attr( 'id', data );
         },
         error: function(){
           alert( 'Error: new Pos not saved' )
@@ -1227,9 +1229,10 @@ namespace( 'kivi.Part', function( ns ){
 
       if( dataArray.instruction )
         $( '.row_entry' ).last().addClass( 'instruction' );
+
       $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
       $( '.row_entry' ).last().removeClass( 'instruction' );
-      $( '.row_entry' ).last().find('[name=item_partpicker_name]').focus();
+      $( '.row_entry' ).last().find( '[name=item_partpicker_name]' ).focus();
 
       clearTimeout( timer );
       timer = setTimeout( function(){
