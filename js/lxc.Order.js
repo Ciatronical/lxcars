@@ -19,7 +19,7 @@ namespace( 'kivi.Part', function( ns ){
   var rowsToUpdate = [];
   var isNewRow = true;
 
-  var orderID;
+  var orderID = 0;
   var partID = 0;
   var ready = false;
   var timer;
@@ -676,7 +676,7 @@ namespace( 'kivi.Part', function( ns ){
                   type: 'POST',
                   async: false,
                   success: function ( newOrderID ){
-
+                  console.log( 'getOrder() in Zeile 681 wurde mit der id: ' + newOrderID + ' aufgrufen!!!' );
                   $.ajax({
                     url: 'ajax/order.php?action=getOrder&data=' + newOrderID,
                     type: 'GET',
@@ -1000,7 +1000,10 @@ namespace( 'kivi.Part', function( ns ){
 
 
   //Get Order
+  console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
   $.ajax({
+    //console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
+    //console.log( 'test');
     url: 'ajax/order.php?action=getOrder&data=' + id,
     type: 'GET',
     async: false,
@@ -1264,7 +1267,7 @@ namespace( 'kivi.Part', function( ns ){
 
       $.ajax({
         url: 'ajax/order.php',
-        async: true,
+        async: false,
         data: { action: "updateOrder", data: updateDataJSON },
         type: "POST",
         success: function(){
@@ -1417,7 +1420,8 @@ namespace( 'kivi.Part', function( ns ){
 
   //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {
-     var updatePosData = new Array;
+    if( $( '#ordernumber' ).text() == '0000' ) return 0; // no order, no update ToDo: change '0000', use flag
+    var updatePosData = new Array;
 
      $( '.row_entry' ).each(function( index ) {
 
@@ -1445,7 +1449,7 @@ namespace( 'kivi.Part', function( ns ){
       $.ajax({
         url: 'ajax/order.php',
         data: { action: "updatePositions", data: updatePosData },
-        async: true,
+        async: false,
         type: "POST",
         success: function(){
         },
