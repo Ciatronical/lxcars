@@ -676,7 +676,7 @@ namespace( 'kivi.Part', function( ns ){
                   type: 'POST',
                   async: false,
                   success: function ( newOrderID ){
-                  console.log( 'getOrder() in Zeile 681 wurde mit der id: ' + newOrderID + ' aufgrufen!!!' );
+                  //console.log( 'getOrder() in Zeile 681 wurde mit der id: ' + newOrderID + ' aufgrufen!!!' );
                   $.ajax({
                     url: 'ajax/order.php?action=getOrder&data=' + newOrderID,
                     type: 'GET',
@@ -1000,7 +1000,7 @@ namespace( 'kivi.Part', function( ns ){
 
 
   //Get Order
-  console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
+  //console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
   $.ajax({
     //console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
     //console.log( 'test');
@@ -1160,7 +1160,8 @@ namespace( 'kivi.Part', function( ns ){
                 $( '.row_entry:last [class=discount100]' ).val("0%");
               }
 
-              if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
+              if( $( '#row_table_id tr' ).length > 3 )
+                $( '.dragdrop' ).show();
 
               $( '.row_entry [name=item_partpicker_name]' ).last().focus();
 
@@ -1379,8 +1380,11 @@ namespace( 'kivi.Part', function( ns ){
     //set flag: is not new row, because row entry has no ID attribute
     //used by: part picker function
     var attrID = $( this ).closest( 'tbody' ).attr( 'id' );
-    if (typeof attrID !== typeof undefined && attrID !== false)
-      isNewRow = false;
+    console.log(attrID);
+    if (typeof attrID !== typeof undefined && attrID !== false) {
+      isNewRow = false; }
+      else {
+        isNewRow = true; }
     //DON'T update order, if editing of part is still in progress
     //determined by: input field has focus OR enter is not pressed
 
