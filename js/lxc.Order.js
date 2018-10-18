@@ -19,7 +19,7 @@ namespace( 'kivi.Part', function( ns ){
   var rowsToUpdate = [];
   var isNewRow = true;
 
-  var orderID;
+  var orderID = 0;
   var partID = 0;
   var ready = false;
   var timer;
@@ -130,13 +130,14 @@ namespace( 'kivi.Part', function( ns ){
             var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ) .val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text( kivi.t8( rsp.part_type ) );
 
-            if( rsp.instruction ){
+            if( rsp.instruction )
               $( '.row_entry:last [name = partclassification]' ).text( kivi.t8("I") );
-            }
 
             $( ':focus' ).parents().eq( 3 ).find( '[name=unit]').val( rsp.unit );
             $( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]').text(ns.formatNumber( parseFloat( rsp.sellprice*number ).toFixed( 2 )) );
             $( ':focus' ).parents().eq( 3 ).find( '[name=item_partpicker_name]' ).val( rsp.description );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=discount_as_percent]' ).val( 0 ); //no discount in new positions
+            $( ':focus' ).parents().eq( 3 ).find( '[name=discount100button]' ).last().val( "100%" );
             $( ':focus' ).parents().eq( 3 ).find( '[class=x]' ).show();
             $( ':focus' ).parents().eq( 3 ).find( '[class=edit]' ).show();
             $( ':focus ').parents().eq( 3 ).find( '[class=discount100]' ).show();
@@ -157,6 +158,8 @@ namespace( 'kivi.Part', function( ns ){
             newPosArray['instruction'] = rsp.instruction;
             if( rsp.instruction )
               $( ':focus' ).parents().eq( 3 ).addClass( 'instruction' );
+            $( ':focus' ).parents().eq( 3 ).find( '[name=linetotal]' ).attr( 'data-tax', rsp.rate );
+            rowsToUpdate.push( parseInt($( ':focus' ).parents().eq( 3 ).find("[name=position]:first").html()) );
 
             //save as new position if flag set
             if ( isNewRow ){
@@ -185,7 +188,6 @@ namespace( 'kivi.Part', function( ns ){
             //console.log( $(':focus').parents().eq(3).is( :first)) );
             $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text(); //Macht was??
 
-            $( ':focus' ).parents().eq( 3 ).find( '[name=unit]' ).trigger("change");
             // new row in table
             if( $( ':focus' ).parents().eq( 3 ).is( ':last-child' ) )
               $( ':focus' ).parents().eq( 3 ).clone().appendTo( '#row_table_id' );
@@ -194,12 +196,13 @@ namespace( 'kivi.Part', function( ns ){
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show(); //dont show sortable < 3 rows
             ns.countPos();// Numbers the positions
             //ns.init();
-            ns.recalc();
             ns.init(); // Initializes all partpicker for the autocomplete function after adding a new position
             $( '.listrow' ).filter( ':last' ).find( '[name=item_partpicker_name]' ).focus();
             $( '.listrow' ).filter( ':last' ).removeClass('instruction');
             //sortable update
             $('.ui-sortable').sortable({items: '> tbody:not(.pin)'}); // last position is not sortable
+
+            ns.recalc();
             ns.updateOrder();
 
             //set flag new row for next call
@@ -562,10 +565,10 @@ namespace( 'kivi.Part', function( ns ){
 
     var posID=0;
 
-    $( '.listrow' ).each(function () {
+    $( '.listrow' ).each( function(){
       posID++;
-      $(this).find( '[name=position]' ).text(posID);
-      $(this).removeClass('pin');
+      $( this ).find( '[name=position]' ).text( posID );
+      $( this ).removeClass( 'pin' );
     });
 
     var lastRow = $( '.listrow' ).filter( ':last ' );
@@ -576,6 +579,7 @@ namespace( 'kivi.Part', function( ns ){
     lastRow.find( '[name=partclassification]' ).text( '' );
     lastRow.find( '[name=longdescription]' ).val( '' );
     lastRow.find( '[name=qty_as_number]' ).val( '1' );
+    lastRow.find( '[name=discount_as_percent]' ).val( 0 );
     lastRow.removeAttr( 'id' );
     lastRow.find( 'img' ).hide();
     $( '.row_entry' ).last().find( '[class=x]' ).hide();
@@ -672,7 +676,7 @@ namespace( 'kivi.Part', function( ns ){
                   type: 'POST',
                   async: false,
                   success: function ( newOrderID ){
-
+                  //console.log( 'getOrder() in Zeile 681 wurde mit der id: ' + newOrderID + ' aufgrufen!!!' );
                   $.ajax({
                     url: 'ajax/order.php?action=getOrder&data=' + newOrderID,
                     type: 'GET',
@@ -996,7 +1000,10 @@ namespace( 'kivi.Part', function( ns ){
 
 
   //Get Order
+  //console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
   $.ajax({
+    //console.log( 'getOrder() Zeile 1004 wurde mit der id: ' + id + ' wurde aufgerufen!' );
+    //console.log( 'test');
     url: 'ajax/order.php?action=getOrder&data=' + id,
     type: 'GET',
     async: false,
@@ -1055,21 +1062,6 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry [name=unit]' ).last().val( item.unit ).change();
               $( '.row_entry [name=pos_status]' ).last().val( item.status ).change();
               $( '.row_entry [name=qty_as_number]' ).last().val( ns.formatNumber( item.qty.toFixed( 2 ) ) );
-              //change qty_as_number to number field if unit is pieces
-              if ($( '.row_entry [name=unit]' ).last().find( 'option:selected' ).first().text() == "Stck"){
-                var qty_field = $( '.row_entry [name=qty_as_number]' ).last(); //store field for increased performance: not selecting everytime
-                var width = qty_field.width(); //store width because type=number fields are bigger by default
-                var value = qty_field.val(); //value gets deleted on field change
-                qty_field.attr( 'type',  'number');
-                qty_field.width( width ); //restore width
-                if ( value.includes(',') ) //cut decimals ONLY if value contains ',', otherwise whole string is nulled
-                  value = value.substring(0, value.indexOf(','));
-                qty_field.val( value ); //restore value
-                if ( qty_field.val() == 0) //mark in red if value=0 (case: 0,5 hours are changed to pieces: 0,5->0)
-                  qty_field.css( 'color', 'red' );
-                else
-                  qty_field.css( 'color', 'black' ); //undo possible red marking in previous row
-              } else $( '.row_entry [name=qty_as_number]' ).last().css( 'color', 'black' ); //undo possible red marking in previous row
               $( '.row_entry [name=discount_as_percent]' ).last().val( ns.formatNumber( ( item.discount * 100 ).toFixed( 0 ) ) );
               $( '.row_entry [name=linetotal]' ).last().attr( 'data-tax', item.rate );
               $( '.row_entry [name=linetotal]' ).last().text( ns.formatNumber( (item.qty * item.sellprice - item.qty * item.sellprice * item.discount / 100 ).toFixed( 2 ) ) );
@@ -1078,7 +1070,7 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry [class=edit]' ).last().show();
               $( '.row_entry [class=discount100]' ).last().show();
               //change 100%Discount button value if 100% already set
-              if( $( '.row_entry [name=discount_as_percent]' ).last().val() == "100,00" )
+              if( $( '.row_entry [name=discount_as_percent]' ).last().val() == "100" )
                 $( '.row_entry [name=discount100button]' ).last().val( "0%" );
               else
                 $( '.row_entry [name=discount100button]' ).last().val( "100%" );
@@ -1164,11 +1156,12 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [class=edit]' ).show();
               $( '.row_entry:last [class=discount100]' ).show();
               //change 100%Discount button value if 100% already set
-              if ($( '.row_entry:last [class=discaspercent]' ).val() == "100,00") {
+              if ($( '.row_entry:last [class=discaspercent]' ).val() == "100") {
                 $( '.row_entry:last [class=discount100]' ).val("0%");
               }
 
-              if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
+              if( $( '#row_table_id tr' ).length > 3 )
+                $( '.dragdrop' ).show();
 
               $( '.row_entry [name=item_partpicker_name]' ).last().focus();
 
@@ -1215,7 +1208,7 @@ namespace( 'kivi.Part', function( ns ){
         data: { action: "insertRow", data: dataArray },
         success: function (data) {
           //console.log(data);
-          $( '.row_entry' ).last().attr( 'id',data );
+          $( '.row_entry' ).last().attr( 'id', data );
         },
         error: function(){
           alert( 'Error: new Pos not saved' )
@@ -1224,9 +1217,10 @@ namespace( 'kivi.Part', function( ns ){
 
       if( dataArray.instruction )
         $( '.row_entry' ).last().addClass( 'instruction' );
+
       $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
       $( '.row_entry' ).last().removeClass( 'instruction' );
-      $( '.row_entry' ).last().find('[name=item_partpicker_name]').focus();
+      $( '.row_entry' ).last().find( '[name=item_partpicker_name]' ).focus();
 
       clearTimeout( timer );
       timer = setTimeout( function(){
@@ -1274,7 +1268,7 @@ namespace( 'kivi.Part', function( ns ){
 
       $.ajax({
         url: 'ajax/order.php',
-        async: true,
+        async: false,
         data: { action: "updateOrder", data: updateDataJSON },
         type: "POST",
         success: function(){
@@ -1364,81 +1358,42 @@ namespace( 'kivi.Part', function( ns ){
     },   updateTime );
   });
 
-  $(document).on('click', 'input, textarea', function(e){
-    if ($(this).hasClass("isInternalOrder")) {
+  $( document ).on( 'click', 'input', function(){
+    if( $( this ).hasClass( 'isInternalOrder' ) )
       ns.updateOrder();
-      //use trigger of orderupdate to use timer
-      //$('.orderupdate').trigger('keyup');
-    } /*else {
-      $(this)
-          .on('mouseup', function(){
-              $(this).select();
-              return false;
-          })
-          .select();
-        }*/
   });
 
-  $(document).on('click', '.discount100', function(e){
-    var percentfield = $(this).closest('tr').find('.discaspercent');
-    if (percentfield.val() == "100" || percentfield.val() == "100,00")
-    {
-      percentfield.val("0,00");
-      $(this).val("100%");
+  $( document ).on( 'click', '.discount100', function(){
+    var percentfield = $( this ).closest( 'tr' ).find( '.discaspercent' );
+    if( percentfield.val() == '100' ){
+      percentfield.val( '0' );
+      $( this ).val( '100%' );
     }
     else{
-      percentfield.val("100");
-      $(this).val("0%");
+      percentfield.val( '100' );
+      $(this).val( '0%' );
     }
-    percentfield.trigger("keyup");
-  });
-
-  //if unit is selected as 'pieces', only allow whole numbers in quantity
-  $(document).on('change', '.unitselect', function(e){
-    var qty_field = $( this ).closest( 'tr' ).find( '[name=qty_as_number]' ).first(); //store field for increased performance: not selecting everytime
-    var value = qty_field.val(); //value gets deleted on field change
-    var width = qty_field.width(); //store width because type=number fields are bigger by default
-    if ($( this ).find( 'option:selected' ).first().text() == "Stck"){
-      qty_field.attr( 'type',  'number');
-      qty_field.width( width );
-      if ( value.includes(',') ) //cut decimals ONLY if value contains ',', otherwise whole string is nulled
-        value = value.substring(0, value.indexOf(','));
-      qty_field.val( value ); //restore value
-      if ( qty_field.val() == 0)
-        qty_field.css( 'color', 'red' ); //mark in red if value=0 (case: 0,5 hours are changed to pieces: 0,5->0)
-      else
-        qty_field.css( 'color', 'black' ); //undo possible red marking if value no longer 0
-    }
-    else{
-      if ( qty_field.attr('type') != 'text' ) {
-        qty_field.attr( 'type',  'text');
-        qty_field.width( width );
-        qty_field.val( ns.formatNumber(parseFloat(value).toFixed(2)) );
-      }
-      qty_field.css( 'color', 'black' ); //undo possible red marking if type no longer pieces
-    }
-  });
-
-  //if quantity is set to 0, mark red; otherwise undo possible red marking
-  $(document).on('change', '[name=qty_as_number]', function(e){
-    if ($( this ).val() == 0)
-      $( this ).css( 'color', 'red' );
-    else
-      $( this ).css( 'color', 'black' );
+    percentfield.trigger( 'keyup' );
   });
 
   $(document).on('keyup', '.orderupdate, .add_item_input:not(:last)' , function(e){
-    //set flag: is not new row, because is not the last ("new position") row
+    //set flag: is not new row, because row entry has no ID attribute
     //used by: part picker function
-    isNewRow = false;
+    var attrID = $( this ).closest( 'tbody' ).attr( 'id' );
+    console.log(attrID);
+    if (typeof attrID !== typeof undefined && attrID !== false) {
+      isNewRow = false; }
+      else {
+        isNewRow = true; }
     //DON'T update order, if editing of part is still in progress
     //determined by: input field has focus OR enter is not pressed
-    if ($( this ).isFocused = false){
+
+    //if ($( this ).isFocused = false){       //Wait on focus currently disabled
       clearTimeout( timer );
       timer = setTimeout( function(){
         ns.updateOrder();
       }, updateTime );
-    }
+    //}
     //if enter is pressed: don't wait, update immediately
     //if selected field is longdescription, prevent new line if SHIFT is not pressed (prevent by removing new line chars)
     if (e.which == KEY.ENTER) {
@@ -1469,7 +1424,8 @@ namespace( 'kivi.Part', function( ns ){
 
   //ToDo: FORMATIEREN!!!!
   ns.updatePosition = function() {
-     var updatePosData = new Array;
+    if( $( '#ordernumber' ).text() == '0000' ) return 0; // no order, no update ToDo: change '0000', use flag
+    var updatePosData = new Array;
 
      $( '.row_entry' ).each(function( index ) {
 
@@ -1497,7 +1453,7 @@ namespace( 'kivi.Part', function( ns ){
       $.ajax({
         url: 'ajax/order.php',
         data: { action: "updatePositions", data: updatePosData },
-        async: true,
+        async: false,
         type: "POST",
         success: function(){
         },
