@@ -127,7 +127,7 @@ namespace( 'kivi.Part', function( ns ){
             else
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
 
-            var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ) .val() );
+            var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text( kivi.t8( rsp.part_type ) );
 
             if( rsp.instruction )
@@ -142,7 +142,7 @@ namespace( 'kivi.Part', function( ns ){
             $( ':focus' ).parents().eq( 3 ).find( '[class=edit]' ).show();
             $( ':focus ').parents().eq( 3 ).find( '[class=discount100]' ).show();
             newPosArray['position'] = $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text();
-            newPosArray['parts_id'] =  $( ':focus' ).parents().eq( 3 ).find( '[name=partnumber]' ).attr( 'part_id' );
+            newPosArray['parts_id'] = $( ':focus' ).parents().eq( 3 ).find( '[name=partnumber]' ).attr( 'part_id' );
             newPosArray['order_id'] = orderID;
             newPosArray['description'] = rsp.description;
             newPosArray['sellprice'] = rsp.sellprice;
@@ -1150,7 +1150,7 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
               $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
               $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
-              $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
+              $( '.row_entry:last [name=qty_as_number]' ).val( ns.formatNumber( ( dataArray.quantity ).toFixed( 2 ) ) );
               $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed( 2 ) ) );
               $( '.row_entry:last [class=x]' ).show();
               $( '.row_entry:last [class=edit]' ).show();
@@ -1237,13 +1237,13 @@ namespace( 'kivi.Part', function( ns ){
        success: function ( data ) {
           //console.log(data);
           var qty_field = $( ':focus' ).parents().eq( 3 ).find( '[name=qty_as_number]' );
-          if ( $(':focus').parents().eq( 3 ).find('[name=unit]').find('option:selected').text() == "Stck" ) {
+          //if ( $(':focus').parents().eq( 3 ).find('[name=unit]').find('option:selected').text() == "Stck" ) {
             qty_field.val( data );
-          } else {
+          //} else {
             qty_field.val( data.toFixed( 2 ) );
             qty_field.attr( 'type', 'text' );
             qty_field.val( ns.formatNumber( qty_field.val()) );
-          }
+          //}
        },
        error: function () {
           alert( 'Error: getQty' )
@@ -1380,7 +1380,6 @@ namespace( 'kivi.Part', function( ns ){
     //set flag: is not new row, because row entry has no ID attribute
     //used by: part picker function
     var attrID = $( this ).closest( 'tbody' ).attr( 'id' );
-    console.log(attrID);
     if (typeof attrID !== typeof undefined && attrID !== false) {
       isNewRow = false; }
       else {
