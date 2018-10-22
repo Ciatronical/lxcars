@@ -959,11 +959,13 @@ namespace( 'kivi.Part', function( ns ){
     var linetotal_tax = 0; //with tax
     var linetotal_sum = 0;
     var linetotal_tax_sum = 0;
-    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){   //ToDo: Hier wird leider die letzte Zeile mit selektiert
-      linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) );              //Wenn die Eltern nicht sortable sind oder mit last
-      linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )//Performance-Einfluss extrem gering!
-      linetotal_sum += linetotal;
-      linetotal_tax_sum += linetotal_tax;
+    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){
+      if ( !$( this ).closest( 'tbody' ).hasClass( 'instruction' ) ) {
+        linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) );
+        linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
+        linetotal_sum += linetotal;
+        linetotal_tax_sum += linetotal_tax;
+      }
     });
     $( '#orderTotalNetto' ).text( ns.formatNumber( linetotal_sum.toFixed( 2 ) ) );
     $( '#orderTotalBrutto' ).text( ns.formatNumber( linetotal_tax_sum.toFixed( 2 ) ) );
