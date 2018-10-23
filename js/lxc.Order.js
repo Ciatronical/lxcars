@@ -1149,7 +1149,7 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
               $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
               $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
-              $( '.row_entry:last [name=qty_as_number]' ).val( ns.formatNumber( ( dataArray.quantity ).toFixed( 2 ) ) );
+              $( '.row_entry:last [name=qty_as_number]' ).val( ns.formatNumber( parseInt( dataArray.quantity ).toFixed( 2 ) ) );
               $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed( 2 ) ) );
               $( '.row_entry:last [class=x]' ).show();
               $( '.row_entry:last [class=edit]' ).show();
