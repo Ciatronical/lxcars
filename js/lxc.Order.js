@@ -959,7 +959,7 @@ namespace( 'kivi.Part', function( ns ){
     var linetotal_tax = 0; //with tax
     var linetotal_sum = 0;
     var linetotal_tax_sum = 0;
-    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){
+    $( '[name=linetotal]' ).each( function( item ){
       if ( !$( this ).closest( 'tbody' ).hasClass( 'instruction' ) ) {
         linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) );
         linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
@@ -1053,7 +1053,6 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( item.part_type ) );
               if (item.instruction) {
                 $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( 'I') );
-                $( '.row_entry [name=linetotal]' ).last().addClass('linetotal_instruction');
               }
               $( '.row_entry').last().attr( 'id', item.id );
               $( '.row_entry [name=partnumber]').last().attr( 'part_id', item.parts_id );
@@ -1082,7 +1081,6 @@ namespace( 'kivi.Part', function( ns ){
 
               $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
               $( '.row_entry' ).last().removeClass( 'instruction' );
-              $( '.row_entry [name=linetotal]' ).last().removeClass('linetotal_instruction');
             }); //each data
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
             ns.countPos();
@@ -1142,7 +1140,6 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
               $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
               if( dataArray['instruction'] ) {
-                $( '.row_entry:last [name=linetotal]' ).addClass( 'linetotal_instruction' );
                 $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
               }
 
