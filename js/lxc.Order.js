@@ -127,7 +127,7 @@ namespace( 'kivi.Part', function( ns ){
             else
               $( ':focus' ).parents().eq(3).find( '[name=sellprice_as_number]' ).val(ns.formatNumber( parseFloat( rsp.sellprice ).toFixed( 2 ) ) );
 
-            var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ) .val() );
+            var number = parseFloat($( ':focus' ).parents().eq( 2 ).find( '[name=qty_as_number]' ).val() );
             $( ':focus' ).parents().eq(3).find( '[name=partclassification]' ).text( kivi.t8( rsp.part_type ) );
 
             if( rsp.instruction )
@@ -142,7 +142,7 @@ namespace( 'kivi.Part', function( ns ){
             $( ':focus' ).parents().eq( 3 ).find( '[class=edit]' ).show();
             $( ':focus ').parents().eq( 3 ).find( '[class=discount100]' ).show();
             newPosArray['position'] = $( ':focus' ).parents().eq( 3 ).find( '[name=position]' ).text();
-            newPosArray['parts_id'] =  $( ':focus' ).parents().eq( 3 ).find( '[name=partnumber]' ).attr( 'part_id' );
+            newPosArray['parts_id'] = $( ':focus' ).parents().eq( 3 ).find( '[name=partnumber]' ).attr( 'part_id' );
             newPosArray['order_id'] = orderID;
             newPosArray['description'] = rsp.description;
             newPosArray['sellprice'] = rsp.sellprice;
@@ -959,11 +959,13 @@ namespace( 'kivi.Part', function( ns ){
     var linetotal_tax = 0; //with tax
     var linetotal_sum = 0;
     var linetotal_tax_sum = 0;
-    $( '[name=linetotal]:not( .linetotal_instruction )' ).each( function( item ){   //ToDo: Hier wird leider die letzte Zeile mit selektiert
-      linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) );              //Wenn die Eltern nicht sortable sind oder mit last
-      linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )//Performance-Einfluss extrem gering!
-      linetotal_sum += linetotal;
-      linetotal_tax_sum += linetotal_tax;
+    $( '[name=linetotal]' ).each( function( item ){
+      if ( !$( this ).closest( 'tbody' ).hasClass( 'instruction' ) ) {
+        linetotal = parseFloat( $( this ).text().replace( ',' , '.' ) );
+        linetotal_tax = linetotal * ( 1 + parseFloat( $( this ).attr( 'data-tax' ) ) )
+        linetotal_sum += linetotal;
+        linetotal_tax_sum += linetotal_tax;
+      }
     });
     $( '#orderTotalNetto' ).text( ns.formatNumber( linetotal_sum.toFixed( 2 ) ) );
     $( '#orderTotalBrutto' ).text( ns.formatNumber( linetotal_tax_sum.toFixed( 2 ) ) );
@@ -1051,7 +1053,6 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( item.part_type ) );
               if (item.instruction) {
                 $( '.row_entry [name=partclassification]' ).last().text( kivi.t8( 'I') );
-                $( '.row_entry [name=linetotal]' ).last().addClass('linetotal_instruction');
               }
               $( '.row_entry').last().attr( 'id', item.id );
               $( '.row_entry [name=partnumber]').last().attr( 'part_id', item.parts_id );
@@ -1080,7 +1081,6 @@ namespace( 'kivi.Part', function( ns ){
 
               $( '.row_entry' ).last().clone().appendTo( "#row_table_id" );
               $( '.row_entry' ).last().removeClass( 'instruction' );
-              $( '.row_entry [name=linetotal]' ).last().removeClass('linetotal_instruction');
             }); //each data
             if( $( '#row_table_id tr' ).length > 3 ) $( '.dragdrop' ).show();
             ns.countPos();
@@ -1140,7 +1140,6 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [name=partnumber]' ).text( dataArray.partnumber );
               $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( dataArray.part_type ) );
               if( dataArray['instruction'] ) {
-                $( '.row_entry:last [name=linetotal]' ).addClass( 'linetotal_instruction' );
                 $( '.row_entry:last [name=partclassification]' ).text( kivi.t8( "I" ) );
               }
 
@@ -1150,7 +1149,7 @@ namespace( 'kivi.Part', function( ns ){
               $( '.row_entry:last [name=item_partpicker_name]' ).val( dataArray.description );
               $( '.row_entry:last [name=sellprice_as_number]' ).val( ns.formatNumber( dataArray.sellprice ) );
               $( '.row_entry:last [name=unit]').val( dataArray.unit ).change();
-              $( '.row_entry:last [name=qty_as_number]' ).val( dataArray.quantity );
+              $( '.row_entry:last [name=qty_as_number]' ).val( ns.formatNumber( parseInt( dataArray.quantity ).toFixed( 2 ) ) );
               $( '.row_entry:last [name=linetotal]' ).text( ns.formatNumber( ( dataArray.qty*dataArray.sellprice ).toFixed( 2 ) ) );
               $( '.row_entry:last [class=x]' ).show();
               $( '.row_entry:last [class=edit]' ).show();
@@ -1237,13 +1236,13 @@ namespace( 'kivi.Part', function( ns ){
        success: function ( data ) {
           //console.log(data);
           var qty_field = $( ':focus' ).parents().eq( 3 ).find( '[name=qty_as_number]' );
-          if ( $(':focus').parents().eq( 3 ).find('[name=unit]').find('option:selected').text() == "Stck" ) {
+          //if ( $(':focus').parents().eq( 3 ).find('[name=unit]').find('option:selected').text() == "Stck" ) {
             qty_field.val( data );
-          } else {
+          //} else {
             qty_field.val( data.toFixed( 2 ) );
             qty_field.attr( 'type', 'text' );
             qty_field.val( ns.formatNumber( qty_field.val()) );
-          }
+          //}
        },
        error: function () {
           alert( 'Error: getQty' )
@@ -1380,7 +1379,6 @@ namespace( 'kivi.Part', function( ns ){
     //set flag: is not new row, because row entry has no ID attribute
     //used by: part picker function
     var attrID = $( this ).closest( 'tbody' ).attr( 'id' );
-    console.log(attrID);
     if (typeof attrID !== typeof undefined && attrID !== false) {
       isNewRow = false; }
       else {
