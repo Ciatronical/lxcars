@@ -364,10 +364,10 @@ function printOrder( $data ){
 
     //Finish Time
     if( strpos( $orderData['finish_time'], 'wartet' ) ) $pdf->SetTextColor( 255, 0, 0 );
-    $pdf->SetFont( 'Helvetica', 'B', '10' );
+    $pdf->SetFont( 'Helvetica', 'B', '12' );
     $finishTimeHeight = 85;
     $pdf->Text( $textPosX_left, $finishTimeHeight, 'Fertigstellung:' );
-    $pdf->SetFont( 'Helvetica', '', '10' );
+    $pdf->SetFont( 'Helvetica', 'B', '12' );
     $pdf->Text( $textPosX_right, $finishTimeHeight, utf8_decode( $orderData['finish_time'] ) );
     $pdf->SetTextColor( 0, 0, 0 );
 
@@ -422,7 +422,7 @@ function printOrder( $data ){
 
         if( trim( $element['longdescription'] ) != '' ){
             $height = $height + 6;
-            $pdf->SetFont( 'Helvetica', '', '8' );
+            $pdf->SetFont( 'Helvetica', '', '10' );
             $pdf->SetTextColor( 0, 0, 0 );
             $longdescription = $element['longdescription'];
             $arrayLongdescription = explode( "\n", $longdescription );

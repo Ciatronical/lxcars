@@ -18,5 +18,8 @@ namespace( "kivi" ).setupLocale({
 "back":"Zurück",
 "I":"A",
 "invoice":"Rechnung",
-"Print":"Drucken"
+"Print":"Drucken",
+"finish time is empty":"Termin Fertigstellung ist leer!",
+"error finish time":"Fehler Fertigstellung",
+"close":"schließen"
 })

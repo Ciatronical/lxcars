@@ -849,12 +849,33 @@ namespace( 'kivi.Part', function( ns ){
     return false;
   });
 
+
+
   $( "#printOrder, #pdfOrder" ).button({
     label:  kivi.t8('Print')
   }).css({
     'margin':'5px'
   }).click( function(){
     var id = $(this)[0].id;
+    if( !$( '#finish_time' ).val() ){
+      $( "#emptyFinishTimeDialog" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 400,
+        modal: true,
+        title: kivi.t8( 'error finish time' ),
+        open: function() {
+          $( this ).html( kivi.t8( 'finish time is empty' ) );
+        },
+        buttons:[{
+          text: kivi.t8( 'close' ),
+          click: function(){
+            $( this ).dialog( "close" );
+          }
+        }]
+      }); //dialog
+      return false;
+    };
     $.ajax({
       url: 'ajax/order.php?action=printOrder&data=',
       type: 'GET',
