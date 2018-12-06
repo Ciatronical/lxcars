@@ -28,6 +28,10 @@ namespace( 'kivi.Part', function( ns ){
 
   var customer_hourly_rate;
 
+  var cardata = new Object();
+
+
+
   var KEY = {
     TAB:       9,
     ENTER:     13,
@@ -682,7 +686,7 @@ namespace( 'kivi.Part', function( ns ){
                     type: 'GET',
                     async: false,
                     success: function( data ){
-
+                        cardata = data;
                         var car = data.c_id;
                         if( data.km_stnd == null ){
                           data.km_stnd = '0';
@@ -955,6 +959,9 @@ namespace( 'kivi.Part', function( ns ){
     return false;
   });
 
+
+
+
   ns.recalc = function(){
     //cache rowsToUpdate for increased responsiveness
     var cachedRowsToUpdate = rowsToUpdate;
@@ -1031,7 +1038,8 @@ namespace( 'kivi.Part', function( ns ){
     type: 'GET',
     async: false,
     success: function( data ){
-
+      cardata = data;
+      console.log( data );
       var car = data.c_id;
       if( data.km_stnd == null ){
         data.km_stnd = '0';
@@ -1117,6 +1125,34 @@ namespace( 'kivi.Part', function( ns ){
           }
         });
       }
+    }
+  });
+
+  console.log(cardata );
+  $( '#td_labellicenseplate' ).tooltip({
+    items: "td",
+    content: '<table >'
+           + '  <thead style="font-size: large;">'
+           + '    <tr>'
+           + '      <th colspan="3" style="text-align: left; font-weight: bold; ">' + kivi.t8( 'Cardata' ) + '</th>'
+           + '    </tr>'
+           + '  </thead>'
+           + '  <tbody>'
+           + '    <tr> <td>' + kivi.t8( 'Car maker' ) + '</td> <td>' + cardata[1] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Car type' ) + '</td> <td>' + cardata[2] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'HSN' ) + '</td> <td>' + cardata['c_2'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'TSN' ) + '</td> <td>' + cardata['c_3'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'FIN' ) + '</td> <td>' + cardata['c_fin'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Date' ) + '</td> <td>' + cardata['c_d'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Capacity' ) + '</td> <td>' + cardata[4] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Power' ) + '</td> <td>' + cardata[5] + 'kW \/ ' + cardata[6] + 'PS</td> </tr>'
+           + '  </tbody>'
+           + '</table>',
+    position: { my: "left+15 center",  at: "right center" },
+    //show: { effect: "blind", duration: 800 },
+    using: function( position, feedback ) {
+      $( this ).addClass( feedback.vertical )
+          .css( position );
     }
   });
 
