@@ -1129,7 +1129,7 @@ namespace( 'kivi.Part', function( ns ){
   });
 
   console.log(cardata );
-  $( '#td_labellicenseplate' ).tooltip({
+  $( '.td_car' ).tooltip({
     items: "td",
     content: '<table >'
            + '  <thead style="font-size: large;">'
@@ -1146,6 +1146,33 @@ namespace( 'kivi.Part', function( ns ){
            + '    <tr> <td>' + kivi.t8( 'Date' ) + '</td> <td>' + cardata['c_d_de'] + '</td> </tr>'
            + '    <tr> <td>' + kivi.t8( 'Capacity' ) + '</td> <td>' + cardata[4] + '</td> </tr>'
            + '    <tr> <td>' + kivi.t8( 'Power' ) + '</td> <td>' + cardata[4] + 'kW \/ ' + cardata[5] + 'PS</td> </tr>'
+           + '  </tbody>'
+           + '</table>',
+    position: { my: "left+15 center",  at: "right center" },
+    //show: { effect: "blind", duration: 800 },
+    using: function( position, feedback ) {
+      $( this ).addClass( feedback.vertical )
+          .css( position );
+    }
+  });
+
+  $( '.td_customer' ).tooltip({
+    items: "td",
+    content: '<table  style="white-space:nowrap;">'
+           + '  <thead style="font-size: large;">'
+           + '    <tr>'
+           + '      <th colspan="3" style="text-align: left; font-weight: bold; ">' + kivi.t8( 'Customer Data' ) + '</th>'
+           + '    </tr>'
+           + '  </thead>'
+           + '  <tbody>'
+           + '    <tr> <td>' + kivi.t8( 'Customer' ) + '</td> <td>' + cardata['customer_name'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Street' ) + '</td> <td>' + cardata['customer_street'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Zipcode City' ) + '</td> <td>' + cardata['customer_zipcode'] + ' ' + cardata['customer_city'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Fon 1' ) + '</td> <td>' + cardata['customer_phone1'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Fon 2' ) + '</td> <td>' + cardata['customer_phone2'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Email' ) + '</td> <td>' + cardata['customer_email'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Customer since' ) + '</td> <td>' + cardata['customer_itime'] + '</td> </tr>'
+           + '    <tr> <td>' + kivi.t8( 'Notes' ) + '</td> <td style="white-space:normal;">'  + cardata['customer_notes'] + '</td> </tr>'
            + '  </tbody>'
            + '</table>',
     position: { my: "left+15 center",  at: "right center" },
