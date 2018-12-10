@@ -33,7 +33,7 @@
            <p></p>
           <table class="table1">
             <tr>
-              <td class="td_customer"><label id="head03">Auftraggeber:</label></td>
+              <td><label id="head03">Auftraggeber:</label></td>
               <td class="td_customer"><label id="name">Name:</label></br></td>
               <td><label id="head01">Auftragsnummer:</label></td>
               <td><label class="val" id="ordernumber">0000</label></td>
@@ -45,8 +45,8 @@
               <td><label class="val" id="employee"></label></td>
             </tr>
             <tr>
-              <td class="td_car"><label id="labellicenseplate">Amtl.-Kennz.:</label></td>
-              <td class="td_car"><input class="val orderupdate" id="licenseplate" type="text" ></br></td>
+              <td><label id="labellicenseplate">Amtl.-Kennz.:</label></td>
+              <td class="td_car"><label class="val orderupdate" id="licenseplate" type="text" ></br></td>
               <td><label id="head11">bearbeitet am:</label></td>
               <td><label class="val" id="mtime"></label></br></td>
               <td><label id="head13">KfZ Ort:</label></td>
@@ -269,6 +269,8 @@
 
     <div id="confirmDialog">
     <div id="emptyFinishTimeDialog">
+    <div id="customerDialog">
+    <div id="carDialog">
     <?php echo $menu['end_content']; ?>
   </body>
 </html>

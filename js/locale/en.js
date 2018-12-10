@@ -20,5 +20,5 @@ namespace( "kivi" ).setupLocale({
 "invoice":"Invoice",
 "finish time is empty":"Date finish time is empty!",
 "error finish time":"Error Finish Time",
-"close":"close"
+"Customer Info":"Customer Informations",
 })
