@@ -1138,6 +1138,7 @@ namespace( 'kivi.Part', function( ns ){
   var fadeDuration = 650;
   var autoCloseAfterTime = 17e3;
 
+  var timeoutCustomerDialog;
   var customerContent = '<table  style="white-space:nowrap;">'
                       + '  <thead style="font-size: large;">'
                       + '    <tr>'
@@ -1171,10 +1172,10 @@ namespace( 'kivi.Part', function( ns ){
       title: kivi.t8( 'Customer Info' ),
       open: function() {
         $( this ).html( customerContent );
-        setTimeout( "$( '#customerDialog' ).dialog( 'close' )", autoCloseAfterTime );
+        timeoutCustomerDialog = setTimeout( "$( '#customerDialog' ).dialog( 'close' )", autoCloseAfterTime );
       },
       close: function() {
-        clearTimeout( "$( '#customerDialog' ).dialog( 'close' )" );
+        clearTimeout( timeoutCustomerDialog );
       },
       show: { effect: "fadeIn", duration: fadeDuration },
       hide: { effect: "fadeOut", duration: fadeDuration },
@@ -1193,6 +1194,7 @@ namespace( 'kivi.Part', function( ns ){
     }); //dialog
   })
 
+  var timeoutCarDialog;
   var carContent =  '<table >'
                   + '  <thead style="font-size: large;">'
                   + '    <tr>'
@@ -1225,10 +1227,10 @@ namespace( 'kivi.Part', function( ns ){
       title: kivi.t8( 'Car Info' ),
       open: function(){
         $( this ).html( carContent );
-        setTimeout( "$( '#carDialog' ).dialog( 'close' )", autoCloseAfterTime );
+        timeoutCarDialog = setTimeout( "$( '#carDialog' ).dialog( 'close' )", autoCloseAfterTime );
       },
       close: function(){
-        clearTimeout( "$( '#carDialog' ).dialog( 'close' )" );
+        clearTimeout( timeoutCarDialog );
       },
       show: { effect: "fadeIn", duration: fadeDuration },
       hide: { effect: "fadeOut", duration: fadeDuration },
