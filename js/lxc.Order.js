@@ -1158,7 +1158,7 @@ namespace( 'kivi.Part', function( ns ){
   $( '.td_customer' ).tooltip({
     items: "td",
     content: customerContent,
-    position: { my: "right absolute"},
+    position: {  my: "right top", at: "center bottom" },
     show: { effect: "fadeIn", duration: fadeDuration },
     hide: { effect: "fadeOut", duration: fadeDuration }
 
@@ -1213,7 +1213,7 @@ namespace( 'kivi.Part', function( ns ){
   $( '.td_car' ).tooltip({
     items: "td",
     content: carContent,
-    position: { my: "right absolute"},
+    position: {  my: "right top", at: "center bottom" },
     show: { effect: "fadeIn", duration: fadeDuration },
     hide: { effect: "fadeOut", duration: fadeDuration }
   }).click( function(){
