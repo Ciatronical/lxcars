@@ -38,4 +38,5 @@ namespace( "kivi" ).setupLocale({
 "Date":"Datum",
 "Capacity":"Hubraum",
 "Power":"Leistung",
+"map":"Karte"
 })

@@ -1134,9 +1134,9 @@ namespace( 'kivi.Part', function( ns ){
       }
     }
   });
-
+  //console.log( cardata );
   var fadeDuration = 650;
-  var autoCloseAfterTime = 10000;
+  var autoCloseAfterTime = 17e3;
 
   var customerContent = '<table  style="white-space:nowrap;">'
                       + '  <thead style="font-size: large;">'
@@ -1161,7 +1161,7 @@ namespace( 'kivi.Part', function( ns ){
     position: { my: "right absolute"},
     show: { effect: "fadeIn", duration: fadeDuration },
     hide: { effect: "fadeOut", duration: fadeDuration }
-    
+
   }).click( function(){
     $( "#customerDialog" ).dialog({
       resizable: false,
@@ -1173,9 +1173,18 @@ namespace( 'kivi.Part', function( ns ){
         $( this ).html( customerContent );
         setTimeout( "$( '#customerDialog' ).dialog( 'close' )", autoCloseAfterTime );
       },
+      close: function() {
+        clearTimeout( "$( '#customerDialog' ).dialog( 'close' )" );
+      },
       show: { effect: "fadeIn", duration: fadeDuration },
       hide: { effect: "fadeOut", duration: fadeDuration },
       buttons:[{
+        text: kivi.t8( 'map' ),
+        click: function(){
+          window.open( 'https://www.google.com/maps/place/' + cardata['customer_street'] + '+' + cardata['customer_zipcode'] + '+' + cardata['customer_city'], '_blank' );
+        }
+      },
+      {
         text: kivi.t8( 'close' ),
         click: function(){
           $( this ).dialog( "close" );
@@ -1206,7 +1215,7 @@ namespace( 'kivi.Part', function( ns ){
     content: carContent,
     position: { my: "right absolute"},
     show: { effect: "fadeIn", duration: fadeDuration },
-    hide: { effect: "fadeOut", duration: fadeDuration }    
+    hide: { effect: "fadeOut", duration: fadeDuration }
   }).click( function(){
     $( "#carDialog" ).dialog({
       resizable: false,
@@ -1214,9 +1223,12 @@ namespace( 'kivi.Part', function( ns ){
       width: 400,
       modal: true,
       title: kivi.t8( 'Car Info' ),
-      open: function() {
+      open: function(){
         $( this ).html( carContent );
         setTimeout( "$( '#carDialog' ).dialog( 'close' )", autoCloseAfterTime );
+      },
+      close: function(){
+        clearTimeout( "$( '#carDialog' ).dialog( 'close' )" );
       },
       show: { effect: "fadeIn", duration: fadeDuration },
       hide: { effect: "fadeOut", duration: fadeDuration },
@@ -1228,7 +1240,7 @@ namespace( 'kivi.Part', function( ns ){
       }]
     }); //dialog
   });
-  
+
   $( '#btnSaveNewPart' ).click( function(){
     if( $( '#ordernumber' ).text() == '0000' )
       ns.newOrder();
