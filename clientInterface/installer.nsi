@@ -43,14 +43,14 @@ VIAddVersionKey OriginalFilename "LxCarsSetup.exe"
 
 Section ""
   SetOutPath $INSTDIR
-  File "C:\Users\work\Desktop\LxCarsClient\LxCarsClient.exe"
-  File "C:\Users\work\Desktop\LxCarsClient\Tutorial.pdf"
+  File "Z:\inter-data\lxcars\clientInterface\LxCarsClient.exe"
+  File "Z:\inter-data\lxcars\clientInterface\Tutorial.pdf"
   WriteUninstaller $INSTDIR\uninstall.exe
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "DisplayName" "LxCarsClient"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "NoRepair" 1
-  
+
   WriteRegStr HKCR "lxcars" "" "URL:lxcars Protocol"
   WriteRegStr HKCR "lxcars" "URL Protocol" '""'
   WriteRegStr HKCR "lxcars\shell\open\command" "" '"$PROGRAMFILES\LxCarsClient\LxCarsClient.exe" "%1"'
@@ -63,8 +63,6 @@ Section "Uninstall"
   Delete $INSTDIR\uninstall.exe
   Delete $INSTDIR\LxCarsClient.exe
   Delete $INSTDIR\readme.pdf
-  
+
   RMDir $INSTDIR
 SectionEnd
-
-
