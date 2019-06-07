@@ -8,6 +8,8 @@
 //#include <stdlib.h>
 #include <tchar.h>
 #include <unistd.h>
+#include <vector>
+#include <iterator>
 
 #define TOTALBYTES    8192
 #define BYTEINCREMENT 4096
@@ -16,13 +18,14 @@
 using namespace std;
 string windowTitleName;
 
-// g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://kba0710362020945___SRB-DT11___Tina%20Kuzia
+// g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://kba0710362020945___SRB-DT11___Tina%20Kuzia___Gartenstr%2020___15345___Rehfelde
 // %appdata%\DVSE GmbH\COPARTS Online
 // HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname 3 \Control
 // https://support.shotgunsoftware.com/hc/en-us/articles/219031308-Launching-applications-using-custom-browser-protocols
 
 BOOL CALLBACK FindWindowBySubstr( HWND, LPARAM );
 void findAndReplaceAll( string&, string, string );
+vector<string> explode( const string& str, const char& ch );
 
 int main(int argc, char* argv[]){
 
@@ -94,20 +97,31 @@ int main(int argc, char* argv[]){
         string path( ( reinterpret_cast< char const* >( cOutputPath ) ) );
 
         //splitt data to plate and name
-        string kbadata = data.substr( 0, data.find( "___" ) );
-        string tmp = data.substr( data.find( "___" ) + 3 );
-        string plate = tmp.substr( 0, tmp.find( "___" ) );
-        string name  = tmp.substr( tmp.find( "___" ) + 3 );
-        string street = tmp.substr( tmp.find( "___" ) + 3 );
+        //string kbadata = data.substr( 0, data.find( "___" ) );
+        //string tmp = data.substr( data.find( "___" ) + 3 );
+        //string plate = tmp.substr( 0, tmp.find( "___" ) );
+        //string name  = tmp.substr( tmp.find( "___" ) + 3 );
+        //string street = tmp.substr( tmp.find( "___" ) + 3 );
         //name = name.replace( name.find( "%20" ), 3, " " );
-        findAndReplaceAll( name, "%20", " " );
-        findAndReplaceAll( street, "%20", " " );
-        cout << name << endl;
-        cout << street << endl;
+        //findAndReplaceAll( name, "%20", " " );
+        //findAndReplaceAll( street, "%20", " " );
+        //cout << name << endl;
+        //cout << street << endl;
+
+	
+   
+    std::vector<std::string> result = explode(data, '_');
+
+    for (size_t i = 0; i < result.size(); i++) {
+        findAndReplaceAll( result[i], "%20", " " );
+        cout << result[i] << '\t' << i << endl;
+    }
+    
+
 
         ofstream outfile;
         outfile.open( path + "\\Controlfile.cf" );
-        outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << kbadata << "\" /> <Arg Name = \"[KZN]\" Value =\"" << plate << "\" /> <Arg Name = \"[KDName]\" Value =\"" << name << "\" /> </Args></Command></Commands>" << endl;
+        //outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << kbadata << "\" /> <Arg Name = \"[KZN]\" Value =\"" << plate << "\" /> <Arg Name = \"[KDName]\" Value =\"" << name << "\" /> </Args></Command></Commands>" << endl;
         outfile.close();
         Sleep( 100 );
 
@@ -156,4 +170,29 @@ void findAndReplaceAll( string& data, string toSearch, string replaceStr ){
         // Get the next occurrence from the current position
         pos =data.find( toSearch, pos + toSearch.size() );
     }
+}
+
+vector<string> explode( const string& str, const char& ch ){
+    string next;
+    vector<string> result;
+
+    // For each character in the string
+    for( string::const_iterator it = str.begin(); it != str.end(); it++ ){
+        // If we've hit the terminal character
+        if( *it == ch ){
+            // If we have some characters accumulated
+            if( !next.empty() ){
+                // Add them to the result vector
+                result.push_back( next );
+                next.clear();
+            }
+        } 
+        else{
+            // Accumulate the next character into the sequence
+            next += *it;
+        }
+    }
+    if( !next.empty() )
+        result.push_back( next );
+    return result;
 }
