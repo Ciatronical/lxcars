@@ -108,20 +108,21 @@ int main(int argc, char* argv[]){
         //cout << name << endl;
         //cout << street << endl;
 
-	
-   
+
+
     std::vector<std::string> result = explode(data, '_');
 
     for (size_t i = 0; i < result.size(); i++) {
         findAndReplaceAll( result[i], "%20", " " );
         cout << result[i] << '\t' << i << endl;
     }
-    
+
 
 
         ofstream outfile;
         outfile.open( path + "\\Controlfile.cf" );
-        //outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << kbadata << "\" /> <Arg Name = \"[KZN]\" Value =\"" << plate << "\" /> <Arg Name = \"[KDName]\" Value =\"" << name << "\" /> </Args></Command></Commands>" << endl;
+        outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << result[0] << "\" /> <Arg Name = \"[KZN]\" Value =\"" << result[1] << "\" /> <Arg Name = \"[KDName]\" Value =\"" << result[2] << "\" /> <Arg Name = \"[KDAdresse]\" Value =\"" << result[3] << "\" /> </Args></Command></Commands>" << endl;
+        //<Arg Name = „[VIN]“ Value ="" />
         outfile.close();
         Sleep( 100 );
 
@@ -186,7 +187,7 @@ vector<string> explode( const string& str, const char& ch ){
                 result.push_back( next );
                 next.clear();
             }
-        } 
+        }
         else{
             // Accumulate the next character into the sequence
             next += *it;
