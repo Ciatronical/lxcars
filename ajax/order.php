@@ -54,11 +54,9 @@ function autocompletePart( $term ){
 function getOrder( $id ){
     require_once __DIR__.'/../inc/lxcLib.php';
     $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, customer.street AS customer_street, customer.zipcode AS customer_zipcode, customer.city AS customer_city, customer.phone AS customer_phone1, customer.fax AS customer_phone2, customer.email AS customer_email, to_char( customer.itime, 'DD.MM.YYYY') AS customer_itime, customer.notes AS customer_notes, oe.internalorder AS internalorder, lxc_cars.*, to_char( lxc_cars.c_d, 'DD.MM.YYYY') AS c_d_de FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
-    $hsn = $orderData['c_2'];
-    $tsn = substr( $orderData['c_3'], 0, 3 )
-    /*
-    $test = lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) );
 
+    $test = lxc2db( '-c '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) );
+    //writeLog($test);
     //writeLog(json_encode( array_merge( $orderData, $GLOBALS['dbh']->getALL( "SELECT * FROM lxc_mykba WHERE hsn ='".$orderData['c_2']."' AND tsn ='".substr($orderData['c_3'], 0, 3 )."'" )) ));
 
     if( json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) ) == 'null' ){
@@ -67,8 +65,8 @@ function getOrder( $id ){
 
             $data = array_merge( $orderData, $GLOBALS['dbh']->getALL( $sql ) ) ;
 
-            $orderData = array_merge($orderData, $data[0]);
-            writeLog($orderData);
+              $orderData = array_merge($orderData, $data[0]);
+              //writeLog($orderData);
               if($orderData == "") {
                 $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, oe.internalorder AS internalorder, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
                 //writeLog($orderData);
@@ -85,10 +83,7 @@ function getOrder( $id ){
 
         echo json_encode( array_merge( $orderData, lxc2db( '-C '.$orderData['c_2'].' '.substr( $orderData['c_3'], 0, 3 ) )['0'] ) );
      }
-     */
-    $carData = lxc2db( '-C '.$hsn.' '.$tsn ) ?? lxc2db( '-c '.$hsn.' '.$tsn );
 
-    echo json_encode( $orderData );
 }
 
 function getPartCount( $parts_id ){
@@ -105,9 +100,9 @@ function getPositions( $orderID, $json = true ){
     $sql.= "FROM ( SELECT parts.instruction, parts.buchungsgruppen_id, instructions.id AS item_id, instructions.parts_id, instructions.qty, instructions.description, instructions.position, instructions.unit, instructions.sellprice, instructions.marge_total, instructions.discount, instructions.u_id, instructions.status, parts.partnumber, parts.part_type, instructions.longdescription FROM instructions INNER JOIN  parts  ON ( parts.id = instructions.parts_id ) WHERE instructions.trans_id = '".$orderID."' ";
     $sql.= "UNION SELECT  parts.instruction, parts.buchungsgruppen_id, orderitems.id AS item_id, orderitems.parts_id, orderitems.qty, orderitems.description, orderitems.position, orderitems.unit, orderitems.sellprice, orderitems.marge_total, orderitems.discount, orderitems.u_id, orderitems.status, parts.partnumber, parts.part_type, orderitems.longdescription FROM orderitems INNER JOIN parts ON ( parts.id = orderitems.parts_id ) WHERE orderitems.trans_id = '".$orderID."' ";
     $sql.= "ORDER BY position ) AS mysubquery  JOIN taxzone_charts ON ( mysubquery.buchungsgruppen_id = taxzone_charts.buchungsgruppen_id ) JOIN taxkeys ON ( taxzone_charts.income_accno_id = taxkeys.chart_id ) JOIN tax ON (taxkeys.tax_id = tax.id ) WHERE taxzone_id = ".$taxzone_id."  GROUP BY item_id, parts_id, position, instruction, qty, description, unit, sellprice, marge_total, discount, u_id, partnumber, part_type, longdescription, status, rate ORDER BY position ASC";
-    //writeLog( $sql );
+    writeLog( $sql );
     $rs = $GLOBALS['dbh']->getAll( $sql, $json );
-    //writeLog( $rs );
+    writeLog( $rs );
     if( $json ) echo $rs;
     else return $rs; // for printOrder()!!!
 }
@@ -122,7 +117,7 @@ function insertRow( $data ){
 function updatePositions( $data ){
     $GLOBALS['dbh']->begin();
     foreach( $data as $key => $value ){
-        //writeLog($value);
+        writeLog($value);
         $GLOBALS['dbh']->update( $value['pos_instruction'] == 'true' ? 'instructions' : 'orderitems', array( 'position', 'parts_id', 'description', 'unit', 'qty', 'sellprice', 'discount', 'marge_total', 'u_id', 'status', 'longdescription'), array($value['order_nr'], $value['parts_id'], $value['pos_description'], $value['pos_unit'], $value['pos_qty'], $value['pos_price'], $value['pos_discount'], $value['pos_total'], $value['pos_emp'], $value['pos_status'], $value['longdescription']), 'id = '.$value['pos_id'] );
     }
     echo $GLOBALS['dbh']->commit();
@@ -149,7 +144,7 @@ function getUsersFromGroup( $data ){
 }
 
 function newPart( $data ){
-  //writeLog('newPart');
+  writeLog('newPart');
   echo $GLOBALS['dbh']->insert( 'parts', array( 'partnumber', 'description', 'unit', 'listprice', 'sellprice', 'buchungsgruppen_id', 'instruction','part_type'), array( $data['partnumber'], $data['description'], $data['unit'], $data['listprice'], $data['sellprice'], $data['buchungsgruppen_id'], $data['instruction'],$data['part_type']), TRUE, 'id' );
 
 }
