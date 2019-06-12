@@ -9,7 +9,7 @@
 #include <tchar.h>
 #include <unistd.h>
 #include <vector>
-#include <iterator>
+//#include <iterator>
 
 #define TOTALBYTES    8192
 #define BYTEINCREMENT 4096
@@ -18,10 +18,12 @@
 using namespace std;
 string windowTitleName;
 
-// g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://kba0710362020945___SRB-DT11___Tina%20Kuzia___Gartenstr%2020___15345___Rehfelde
+// g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://coparts___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde
 // %appdata%\DVSE GmbH\COPARTS Online
 // HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname 3 \Control
 // https://support.shotgunsoftware.com/hc/en-us/articles/219031308-Launching-applications-using-custom-browser-protocols
+// <Commands>  <Command Name="[PKW]"> <Args> <Arg Name="[KBANR]" Value="0603012OJRO" /> <Arg Name = "[KZN]" Value ="MOL-LX101" /> <Arg Name = "[VIN]" Value ="WV1ZZZ70Z2H071589X" /> <Arg Name = "[KMStand]" Value ="100000" /> <Arg Name = "[AUFTRAGSNR]" Value ="23376" /> <Arg Name = "[KDName]" Value ="Ronny Zimmermann yxz" /> <Arg Name = "[STRASSE]" Value ="Bahnhofstr. 23" /> <Arg Name = "[PLZ]" Value ="15345" /> <Arg Name = "[ORT]" Value ="Rehfelde" /> </Args></Command></Commands>
+
 
 BOOL CALLBACK FindWindowBySubstr( HWND, LPARAM );
 void findAndReplaceAll( string&, string, string );
@@ -30,13 +32,13 @@ vector<string> explode( const string& str, const char& ch );
 int main(int argc, char* argv[]){
 
     DWORD BufferSize = TOTALBYTES;
-    bool debug = TRUE; //todo
+    bool debug = FALSE; //todo
     const size_t size = SIZE;
     string param = argv[1];
-    string comdata = param.substr( 9 ); //Command and Data
-    comdata = comdata.substr( 0, comdata.size() - 1 );
-    string command = comdata.substr( 0, 3 );
-    string data = comdata.substr( 3 );
+    string comdata = param.substr( 9 ); //Command and Data without lxcars://
+
+    findAndReplaceAll( comdata, "%20", " " );
+    std::vector<std::string> dataarray = explode( comdata, '_' );
 
     if( debug ){
         ofstream debugFile;
@@ -49,7 +51,7 @@ int main(int argc, char* argv[]){
         debugFile.close();
     }
 
-    if( command == "kba" ){
+    if( dataarray[0] == "coparts" ){
         HKEY hKey = 0;
         PPERF_DATA_BLOCK dwValueTypeControl =  (PPERF_DATA_BLOCK) malloc( BufferSize );
         DWORD dwValueSizeControl = BufferSize;
@@ -96,33 +98,10 @@ int main(int argc, char* argv[]){
         //convert to string
         string path( ( reinterpret_cast< char const* >( cOutputPath ) ) );
 
-        //splitt data to plate and name
-        //string kbadata = data.substr( 0, data.find( "___" ) );
-        //string tmp = data.substr( data.find( "___" ) + 3 );
-        //string plate = tmp.substr( 0, tmp.find( "___" ) );
-        //string name  = tmp.substr( tmp.find( "___" ) + 3 );
-        //string street = tmp.substr( tmp.find( "___" ) + 3 );
-        //name = name.replace( name.find( "%20" ), 3, " " );
-        //findAndReplaceAll( name, "%20", " " );
-        //findAndReplaceAll( street, "%20", " " );
-        //cout << name << endl;
-        //cout << street << endl;
-
-
-
-    std::vector<std::string> result = explode(data, '_');
-
-    for (size_t i = 0; i < result.size(); i++) {
-        findAndReplaceAll( result[i], "%20", " " );
-        cout << result[i] << '\t' << i << endl;
-    }
-
-
 
         ofstream outfile;
         outfile.open( path + "\\Controlfile.cf" );
-        outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << result[0] << "\" /> <Arg Name = \"[KZN]\" Value =\"" << result[1] << "\" /> <Arg Name = \"[KDName]\" Value =\"" << result[2] << "\" /> <Arg Name = \"[KDAdresse]\" Value =\"" << result[3] << "\" /> </Args></Command></Commands>" << endl;
-        //<Arg Name = „[VIN]“ Value ="" />
+        outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << dataarray[1] << dataarray[2] << "\" /> <Arg Name = \"[KZN]\" Value =\"" << dataarray[3] << "\" /> <Arg Name = \"[VIN]\" Value =\"" << dataarray[4] << "\" /> <Arg Name = \"[KMStand]\" Value =\"" << dataarray[5] << "\" /> <Arg Name = \"[AUFTRAGSNR]\" Value =\"" << dataarray[6]  << "\" /> <Arg Name = \"[KDName]\" Value =\"" << dataarray[7] << "\" /> <Arg Name = \"[STRASSE]\" Value =\"" << dataarray[8]  << "\" /> <Arg Name = \"[PLZ]\" Value =\"" << dataarray[9]  << "\" /> <Arg Name = \"[ORT]\" Value =\"" << dataarray[10]  << "\" /> </Args></Command></Commands>" << endl;
         outfile.close();
         Sleep( 100 );
 
@@ -169,7 +148,7 @@ void findAndReplaceAll( string& data, string toSearch, string replaceStr ){
         // Replace this occurrence of Sub String
         data.replace( pos, toSearch.size(), replaceStr );
         // Get the next occurrence from the current position
-        pos =data.find( toSearch, pos + toSearch.size() );
+        pos = data.find( toSearch, pos + toSearch.size() );
     }
 }
 
