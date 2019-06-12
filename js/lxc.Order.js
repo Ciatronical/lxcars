@@ -12,10 +12,17 @@ namespace( 'kivi.Part', function( ns ){
   var c_id = ns.urlParam( 'c_id' );
   var previous = ns.urlParam( 'previous' );
   var newOrder = ns.urlParam( 'newOrder' );
+  var ordnumber;
   var c_hsn;
   var c_tsn;
   var c_ln;
+  var c_fin;
+  var c_text;
+  var km_stnd;
   var customer_name;
+  var customer_street;
+  var customer_zipcode;
+  var customer_city;
   var rowsToUpdate = [];
   var isNewRow = true;
 
@@ -687,6 +694,7 @@ namespace( 'kivi.Part', function( ns ){
                     async: false,
                     success: function( data ){
                         cardata = data;
+                        //console.log( data );
                         //replace null to ''
                         $.each( data, function( key, value ){
                           if( value == null ) data[key] = '';
@@ -710,11 +718,17 @@ namespace( 'kivi.Part', function( ns ){
                         $( '#orderstatus' ).val( data.order_status ).change();
                         $( '#car_status' ).val( data.car_status ).change();
                         $( '#mtime' ).text(data.mtime);
+                        ordnumber = data.ordnumber;
                         c_ln = data.c_ln;
-                        customer_name = data.customer_name;
                         c_hsn = data.c_2;
                         c_tsn = data.c_3;
-                        //$( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
+                        c_fin = data.c_fin;
+                        c_text = data.c_text;
+                        km_stnd = data.km_stnd;
+                        customer_name = data.customer_name;
+                        customer_street = data.customer_street;
+                        customer_zipcode = data.customer_zipcode;
+                        customer_city = data.customer_city;
 
                         if( data[1] == undefined )
                           $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
@@ -747,7 +761,7 @@ namespace( 'kivi.Part', function( ns ){
         })
       },
       error:  function(){
-        alert( "Ajaxerror getMechnics()!" );
+        alert( "Ajaxerror getUsersFromGroup()!" );
       }
     })
 
@@ -908,8 +922,8 @@ namespace( 'kivi.Part', function( ns ){
   }).css({
     'margin':'5px'
   }).click( function(){
-    window.location = 'lxcars://kba' + c_hsn + c_tsn + '___' + c_ln + '___' + customer_name;
-      customer_name = data.customer_name;;
+    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city );
+    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city;
     return false;
   });
 
@@ -1043,6 +1057,7 @@ namespace( 'kivi.Part', function( ns ){
     async: false,
     success: function( data ){
       cardata = data;
+      //console.log( data );
       //replace null to ''
       $.each( data, function( key, value ){
         if( value == null ) data[key] = '';
@@ -1067,10 +1082,17 @@ namespace( 'kivi.Part', function( ns ){
       $( '#car_status' ).val( data.car_status ).change();
       $( '.isInternalOrder').prop('checked', data.internalorder);
       $( '#mtime' ).text(data.mtime);
+      ordnumber = data.ordnumber;
       c_ln = data.c_ln;
-      customer_name = data.customer_name;
       c_hsn = data.c_2;
       c_tsn = data.c_3;
+      c_fin = data.c_fin;
+      c_text = data.c_text;
+      km_stnd = data.km_stnd;
+      customer_name = data.customer_name;
+      customer_street = data.customer_street;
+      customer_zipcode = data.customer_zipcode;
+      customer_city = data.customer_city;
 
       if( data[1] == undefined )
         $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
