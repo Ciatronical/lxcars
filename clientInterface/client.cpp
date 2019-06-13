@@ -18,7 +18,7 @@
 using namespace std;
 string windowTitleName;
 
-// g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://coparts___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde
+// g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://coparts___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___debug
 // %appdata%\DVSE GmbH\COPARTS Online
 // HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname 3 \Control
 // https://support.shotgunsoftware.com/hc/en-us/articles/219031308-Launching-applications-using-custom-browser-protocols
@@ -39,17 +39,20 @@ int main( int argc, char* argv[] ){
     string controlfile;
     string param = argv[1];
     string comdata = param.substr( 9 ); //Command and Data without lxcars://
-    if( argv[2] ) debug = TRUE;
+    
     findAndReplaceAll( comdata, "%20", " " );
     std::vector<std::string> dataarray = explode( comdata, '_' );
-
+    
+    if( dataarray[11] == "debug" || dataarray[11] == "debug/" ) 
+        debug = TRUE;
+    
     ofstream debugFile;
     char str[MAX_PATH];
     GetModuleFileNameA( NULL, str, MAX_PATH );
     string path = str;
     path = path.substr( 0, path.find( argv[0] ) );
+    
     if( debug ){
-
         debugFile.open( path + "debug.txt" );
         debugFile << "Commandline Parameter: " << argv[1] << endl;
         cout << string(50, '\n');
