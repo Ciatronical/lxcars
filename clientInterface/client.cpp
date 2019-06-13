@@ -29,26 +29,31 @@ BOOL CALLBACK FindWindowBySubstr( HWND, LPARAM );
 void findAndReplaceAll( string&, string, string );
 vector<string> explode( const string& str, const char& ch );
 
-int main(int argc, char* argv[]){
+int main( int argc, char* argv[] ){
 
     DWORD BufferSize = TOTALBYTES;
+    string xmloutput;
     bool debug = FALSE; //todo
     const size_t size = SIZE;
+    string pathcontrolfile;
+    string controlfile;
     string param = argv[1];
     string comdata = param.substr( 9 ); //Command and Data without lxcars://
-
+    if( argv[2] ) debug = TRUE;
     findAndReplaceAll( comdata, "%20", " " );
     std::vector<std::string> dataarray = explode( comdata, '_' );
 
+    ofstream debugFile;
+    char str[MAX_PATH];
+    GetModuleFileNameA( NULL, str, MAX_PATH );
+    string path = str;
+    path = path.substr( 0, path.find( argv[0] ) );
     if( debug ){
-        ofstream debugFile;
-        char str[MAX_PATH];
-        GetModuleFileNameA( NULL, str, MAX_PATH );
-        string path = str;
-        path = path.substr( 0, path.find( argv[0] ) );
+
         debugFile.open( path + "debug.txt" );
-        debugFile << argv[1] << endl;
-        debugFile.close();
+        debugFile << "Commandline Parameter: " << argv[1] << endl;
+        cout << string(50, '\n');
+        cout << "!!! ***** LxCars Client Debug Mode ***** !!!" << endl << endl;
     }
 
     if( dataarray[0] == "coparts" ){
@@ -96,14 +101,16 @@ int main(int argc, char* argv[]){
         ExpandEnvironmentStrings( ( LPSTR )&byteValueControl, ( LPSTR )&cOutputPath,  size );
 
         //convert to string
-        string path( ( reinterpret_cast< char const* >( cOutputPath ) ) );
-
+        pathcontrolfile = reinterpret_cast< char const* >( cOutputPath );
 
         ofstream outfile;
-        outfile.open( path + "\\Controlfile.cf" );
-        outfile << "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" << dataarray[1] << dataarray[2] << "\" /> <Arg Name = \"[KZN]\" Value =\"" << dataarray[3] << "\" /> <Arg Name = \"[VIN]\" Value =\"" << dataarray[4] << "\" /> <Arg Name = \"[KMStand]\" Value =\"" << dataarray[5] << "\" /> <Arg Name = \"[AUFTRAGSNR]\" Value =\"" << dataarray[6]  << "\" /> <Arg Name = \"[KDName]\" Value =\"" << dataarray[7] << "\" /> <Arg Name = \"[STRASSE]\" Value =\"" << dataarray[8]  << "\" /> <Arg Name = \"[PLZ]\" Value =\"" << dataarray[9]  << "\" /> <Arg Name = \"[ORT]\" Value =\"" << dataarray[10]  << "\" /> </Args></Command></Commands>" << endl;
+        controlfile = pathcontrolfile + "\\Controlfile.cf";
+        outfile.open( controlfile );
+        xmloutput = "<Commands>  <Command Name=\"[PKW]\"> <Args> <Arg Name=\"[KBANR]\" Value=\"" + dataarray[1] + dataarray[2] + "\" /> <Arg Name = \"[KZN]\" Value =\"" + dataarray[3] + "\" /> <Arg Name = \"[VIN]\" Value =\"" + dataarray[4] + "\" /> <Arg Name = \"[KMStand]\" Value =\"" + dataarray[5] + "\" /> <Arg Name = \"[AUFTRAGSNR]\" Value =\"" + dataarray[6]  + "\" /> <Arg Name = \"[KDName]\" Value =\"" + dataarray[7] + "\" /> <Arg Name = \"[STRASSE]\" Value =\"" + dataarray[8]  + "\" /> <Arg Name = \"[PLZ]\" Value =\"" + dataarray[9]  + "\" /> <Arg Name = \"[ORT]\" Value =\"" + dataarray[10]  + "\" /> </Args></Command></Commands>";
+        outfile << xmloutput << endl;
         outfile.close();
-        Sleep( 100 );
+
+        Sleep( 150 );
 
         // for window in foreground
         EnumWindows( FindWindowBySubstr, ( LPARAM )SUBSTRING );
@@ -118,6 +125,23 @@ int main(int argc, char* argv[]){
             WinExec( coparts.str().c_str(), 1 );
         }
 
+
+
+    }
+
+    if( debug ){
+        debugFile << "Path: " << path << endl << endl;
+        debugFile << "Commandline Parameter EINS: " << argv[1] << endl << endl;
+        debugFile << "Controlfile: " << controlfile << endl << endl;
+        debugFile << "XML-Output: " << xmloutput << endl;
+        debugFile.close();
+
+        cout << "Path: " << path << endl << endl;
+        cout << "Commandline Parameter EINS: " << argv[1] << endl << endl;
+        cout << "Controlfile: " << controlfile << endl << endl;
+        cout << "XML-Output: " << xmloutput << endl << endl << endl;
+        cout << "Press any key to close..." << endl;
+        getche();
     }
 
     return 0;

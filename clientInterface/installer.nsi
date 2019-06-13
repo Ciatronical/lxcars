@@ -1,6 +1,6 @@
 !include "MUI.nsh"
-Name "LxCars Client"
-!define INSTALLATIONNAME "LxCarsClient"
+Name "LxCars Client 1.3"
+!define INSTALLATIONNAME "LxCarsClient 1.3"
 
 
 Function LaunchLink
@@ -16,8 +16,8 @@ FunctionEnd
 OutFile "LxCarsClientInstall.exe"
 InstallDir $PROGRAMFILES\LxCarsClient
 
-VIProductVersion                 "1.1.0.0"
-VIAddVersionKey ProductName      "LxCars"
+VIProductVersion                 "1.3.0.0"
+VIAddVersionKey ProductName      "LxCars 1.3"
 VIAddVersionKey Comments         "Client for Windows"
 VIAddVersionKey CompanyName      "Inter-Data"
 VIAddVersionKey LegalCopyright   "Inter-Data"
@@ -43,8 +43,8 @@ VIAddVersionKey OriginalFilename "LxCarsSetup.exe"
 
 Section ""
   SetOutPath $INSTDIR
-  File "Z:\inter-data\lxcars\clientInterface\LxCarsClient.exe"
-  File "Z:\inter-data\lxcars\clientInterface\Tutorial.pdf"
+  File "\\VBOXSVR\ronny\inter-data\lxcars\clientInterface\LxCarsClient.exe"
+  File "\\VBOXSVR\ronny\inter-data\lxcars\clientInterface\Tutorial.pdf"
   WriteUninstaller $INSTDIR\uninstall.exe
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "DisplayName" "LxCarsClient"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
