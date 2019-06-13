@@ -1,6 +1,6 @@
 !include "MUI.nsh"
 Name "LxCars Client 1.3"
-!define INSTALLATIONNAME "LxCarsClient 1.3"
+!define INSTALLATIONNAME "LxCarsClient"
 
 
 Function LaunchLink
@@ -17,7 +17,7 @@ OutFile "LxCarsClientInstall.exe"
 InstallDir $PROGRAMFILES\LxCarsClient
 
 VIProductVersion                 "1.3.0.0"
-VIAddVersionKey ProductName      "LxCars 1.3"
+VIAddVersionKey ProductName      "LxCars"
 VIAddVersionKey Comments         "Client for Windows"
 VIAddVersionKey CompanyName      "Inter-Data"
 VIAddVersionKey LegalCopyright   "Inter-Data"
