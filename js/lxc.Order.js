@@ -927,6 +927,16 @@ namespace( 'kivi.Part', function( ns ){
     return false;
   });
 
+  $( "#kbaToCopartsDebug" ).button({
+    label: 'Coparts Debug'
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city );
+    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + ' debug';
+    return false;
+  });
+
 
   $( '#invoice' ).button({
     label: kivi.t8( 'invoice' )
