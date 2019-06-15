@@ -922,8 +922,8 @@ namespace( 'kivi.Part', function( ns ){
   }).css({
     'margin':'5px'
   }).click( function(){
-    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city );
-    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city;
+    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___nodebug' );
+    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___nodebug';
     return false;
   });
 
@@ -932,8 +932,8 @@ namespace( 'kivi.Part', function( ns ){
   }).css({
     'margin':'5px'
   }).click( function(){
-    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city );
-    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_text + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + ' debug';
+    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___debug' );
+    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___'  + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___debug';
     return false;
   });
 
