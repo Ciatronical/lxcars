@@ -1,0 +1,8 @@
+Commandline Parameter: lxcars://copartsnumber___W712___debug
+Path: E:\inter-data\lxcars\clientInterface\
+
+Commandline Parameter EINS: lxcars://copartsnumber___W712___debug
+
+Controlfile: C:\Users\admin\AppData\Roaming\DVSE GmbH\COPARTS Online\\Controlfile.cf
+
+XML-Output: <Commands><Command Name="[ARTIKEL]"><Args><Arg Name ="[ARTIKELNR]" Value ="W712" /></Args></Command></Commands>
