@@ -948,7 +948,7 @@ namespace( 'kivi.Part', function( ns ){
 
   $( "#partnumber" ).bind('paste', function(event) {
     setTimeout( function(){
-      window.location ='lxcars://copartsnumber___' + this.value + '___nodebug';
+      window.location ='lxcars://copartsnumber___' + $( "#partnumber" ).val() + '___nodebug';
     }, 100 );
   });
 
