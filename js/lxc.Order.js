@@ -19,6 +19,8 @@ namespace( 'kivi.Part', function( ns ){
   var c_fin;
   var c_text;
   var km_stnd;
+  var c_d_de;
+  var c_mkb;
   var customer_name;
   var customer_street;
   var customer_zipcode;
@@ -725,6 +727,8 @@ namespace( 'kivi.Part', function( ns ){
                         c_fin = data.c_fin;
                         c_text = data.c_text;
                         km_stnd = data.km_stnd;
+                        c_d_de = data.c_d_de;
+                        c_mkb = data.c_mkb;
                         customer_name = data.customer_name;
                         customer_street = data.customer_street;
                         customer_zipcode = data.customer_zipcode;
@@ -921,9 +925,9 @@ namespace( 'kivi.Part', function( ns ){
     label: 'Coparts'
   }).css({
     'margin':'5px'
-  }).click( function(){
-    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___nodebug' );
-    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___nodebug';
+  }).click( function(){ //lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
+    //console.log( 'lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug' );
+    window.location ='lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug';
     return false;
   });
 
@@ -932,11 +936,21 @@ namespace( 'kivi.Part', function( ns ){
   }).css({
     'margin':'5px'
   }).click( function(){
-    //console.log( 'lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___debug' );
-    window.location ='lxcars://coparts___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___'  + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___debug';
+    //console.log( 'lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___'  + c_d_de + '___' + c_mkb + '___'+ km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___debug' );
+    window.location ='lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___'  + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___debug';
     return false;
+  }).hide();
+
+  $( "#partnumber" ).keypress( function( e ){
+    if( e.keyCode == 13 )
+      window.location ='lxcars://copartsnumber___' + this.value + '___nodebug';
   });
 
+  $( "#partnumber" ).bind('paste', function(event) {
+    setTimeout( function(){
+      window.location ='lxcars://copartsnumber___' + this.value + '___nodebug';
+    }, 100 );
+  });
 
   $( '#invoice' ).button({
     label: kivi.t8( 'invoice' )
@@ -946,7 +960,7 @@ namespace( 'kivi.Part', function( ns ){
     alert( 'currently not implemented' );
     //window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
     return false;
-  });
+  }).hide();
 
   $( '#deleteOrder' ).button({
     label: kivi.t8( 'delete Order' )
@@ -1099,6 +1113,8 @@ namespace( 'kivi.Part', function( ns ){
       c_fin = data.c_fin;
       c_text = data.c_text;
       km_stnd = data.km_stnd;
+      c_d_de = data.c_d_de;
+      c_mkb = data.c_mkb;
       customer_name = data.customer_name;
       customer_street = data.customer_street;
       customer_zipcode = data.customer_zipcode;

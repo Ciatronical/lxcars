@@ -68,7 +68,7 @@ function getOrder( $id ){
               $orderData = array_merge($orderData, $data[0]);
               //writeLog($orderData);
               if($orderData == "") {
-                $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, customer.street AS customer_street, customer.zipcode AS customer_zipcode, customer.city AS customer_city, oe.internalorder AS internalorder, lxc_cars.* FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
+                $orderData = $GLOBALS['dbh']->getOne( "SELECT oe.amount, oe.netamount, oe.ordnumber AS ordnumber, oe.id AS oe_id,  to_char(oe.transdate, 'DD.MM.YYYY') AS transdate, to_char( oe.reqdate, 'DD.MM.YYYY') AS reqdate, to_char( oe.mtime, 'DD.MM.YYYY') AS mtime,  oe.finish_time AS finish_time, oe.km_stnd, oe.c_id, oe.status AS order_status, oe.customer_id AS customer_id, oe.car_status, customer.name AS customer_name, customer.street AS customer_street, customer.zipcode AS customer_zipcode, customer.city AS customer_city, oe.internalorder AS internalorder, lxc_cars.*, to_char( lxc_cars.c_d, 'DD.MM.YYYY') AS c_d_de FROM oe, customer, lxc_cars WHERE oe.id = '".$id."' AND customer.id = oe.customer_id AND oe.c_id = lxc_cars.c_id" );
                 //writeLog($orderData);
                 echo json_encode($orderData);
               }else
