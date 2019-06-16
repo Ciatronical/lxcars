@@ -1,7 +1,7 @@
 /********************************************************** Begin MEMO ***********************************************************
 
-g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
-g++ -static-libgcc -static-libstdc++  -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://copartsnumber___W712___debug
+g++ -static-libgcc -static-libstdc++ -mwindows -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
+g++ -static-libgcc -static-libstdc++ -mwindows -o LxCarsClient.exe client.cpp && LxCarsClient.exe lxcars://copartsnumber___W712___debug
 %appdata%\DVSE GmbH\COPARTS Online
 HKEY_LOCAL_MACHINE\SOFTWARE\DVSE GmbH\CatClient\Systemname 3 \Control
 https://support.shotgunsoftware.com/hc/en-us/articles/219031308-Launching-applications-using-custom-browser-protocols
@@ -111,7 +111,7 @@ int main( int argc, char* argv[] ){
         pathcontrolfile = reinterpret_cast< char const* >( cOutputPath );
 
         ofstream outfile;
-        controlfile = pathcontrolfile + "\\Controlfile.cf";
+        controlfile = pathcontrolfile + "Controlfile.cf";
         outfile.open( controlfile );
         if( dataarray[0] == "copartskba" )
             xmloutput = "<Commands><Command Name=\"[PKW]\"><Args><Arg Name=\"[KBANR]\" Value=\"" + dataarray[1] + dataarray[2] + "\" /><Arg Name = \"[KZN]\" Value =\"" + dataarray[3] + "\" /><Arg Name = \"[VIN]\" Value =\"" + dataarray[4] + "\" /><Arg Name = \"[EZ]\" Value =\"" + dataarray[5] + "\" /><Arg Name = \"[MCODE]\" Value =\"" + dataarray[6] + "\" /><Arg Name = \"[KMStand]\" Value =\"" + dataarray[7] + "\" /><Arg Name = \"[AUFTRAGSNR]\" Value =\"" + dataarray[8]  + "\" /><Arg Name = \"[KDName]\" Value =\"" + dataarray[9] + "\" /><Arg Name = \"[STRASSE]\" Value =\"" + dataarray[10]  + "\" /><Arg Name = \"[PLZ]\" Value =\"" + dataarray[11]  + "\" /><Arg Name = \"[ORT]\" Value =\"" + dataarray[12]  + "\" /><Arg Name = \"[GENARTNR]\" Value =\"" + dataarray[13] + "\" /></Args></Command></Commands>";
