@@ -733,7 +733,7 @@ namespace( 'kivi.Part', function( ns ){
                         customer_street = data.customer_street;
                         customer_zipcode = data.customer_zipcode;
                         customer_city = data.customer_city;
-
+                        $( '#title' ).text( c_ln.substr( c_ln.indexOf( '-' ) + 1 ) + ' ' + customer_name );
                         if( data[1] == undefined )
                           $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
                         else
@@ -1120,6 +1120,7 @@ namespace( 'kivi.Part', function( ns ){
       customer_zipcode = data.customer_zipcode;
       customer_city = data.customer_city;
 
+      $( '#title' ).text( c_ln.substr( c_ln.indexOf( '-' ) + 1 ) + ' ' + customer_name );
       if( data[1] == undefined )
         $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
       else
