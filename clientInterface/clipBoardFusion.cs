@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public static class ClipboardFusionHelper{
     public static string ProcessText( string text ){
         text = text.Replace( " ", "" );
+        BFS.Clipboard.PasteText( text );
         return text;
     }
 }
