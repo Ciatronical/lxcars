@@ -1,0 +1,8 @@
+Commandline Parameter: lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
+Path: E:\inter-data\lxcars\clientInterface\
+
+Commandline Parameter EINS: lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
+
+Controlfile: C:\Users\admin\AppData\Roaming\DVSE GmbH\COPARTS Online\Controlfile.cf
+
+XML-Output: <Commands><Command Name="[PKW]"><Args><Arg Name="[KBANR]" Value="0603012OJRO" /><Arg Name = "[KZN]" Value ="MOL-LX101" /><Arg Name = "[VIN]" Value ="WV1ZZZ70Z2H071589" /><Arg Name = "[EZ]" Value ="01.03.2001" /><Arg Name = "[MCODE]" Value ="AUF" /><Arg Name = "[KMStand]" Value ="110000" /><Arg Name = "[AUFTRAGSNR]" Value ="23376" /><Arg Name = "[KDName]" Value ="Ronny Zimmermann yxz" /><Arg Name = "[STRASSE]" Value ="Bahnhofstr. 23" /><Arg Name = "[PLZ]" Value ="15345" /><Arg Name = "[ORT]" Value ="Rehfelde" /><Arg Name = "[GENARTNR]" Value ="7" /></Args></Command></Commands>

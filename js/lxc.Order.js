@@ -12,10 +12,19 @@ namespace( 'kivi.Part', function( ns ){
   var c_id = ns.urlParam( 'c_id' );
   var previous = ns.urlParam( 'previous' );
   var newOrder = ns.urlParam( 'newOrder' );
+  var ordnumber;
   var c_hsn;
   var c_tsn;
   var c_ln;
+  var c_fin;
+  var c_text;
+  var km_stnd;
+  var c_d_de;
+  var c_mkb;
   var customer_name;
+  var customer_street;
+  var customer_zipcode;
+  var customer_city;
   var rowsToUpdate = [];
   var isNewRow = true;
 
@@ -687,6 +696,7 @@ namespace( 'kivi.Part', function( ns ){
                     async: false,
                     success: function( data ){
                         cardata = data;
+                        //console.log( data );
                         //replace null to ''
                         $.each( data, function( key, value ){
                           if( value == null ) data[key] = '';
@@ -710,12 +720,20 @@ namespace( 'kivi.Part', function( ns ){
                         $( '#orderstatus' ).val( data.order_status ).change();
                         $( '#car_status' ).val( data.car_status ).change();
                         $( '#mtime' ).text(data.mtime);
+                        ordnumber = data.ordnumber;
                         c_ln = data.c_ln;
-                        customer_name = data.customer_name;
                         c_hsn = data.c_2;
                         c_tsn = data.c_3;
-                        //$( '#headline' ).html( '<b>Auftrag ' + data[1] + ' ' + data[2] + ' ' + data[3] + ' von ' + data.customer_name + '</b>' );
-
+                        c_fin = data.c_fin;
+                        c_text = data.c_text;
+                        km_stnd = data.km_stnd;
+                        c_d_de = data.c_d_de;
+                        c_mkb = data.c_mkb;
+                        customer_name = data.customer_name;
+                        customer_street = data.customer_street;
+                        customer_zipcode = data.customer_zipcode;
+                        customer_city = data.customer_city;
+                        $( '#title' ).text( c_ln.substr( c_ln.indexOf( '-' ) + 1 ) + ' ' + customer_name );
                         if( data[1] == undefined )
                           $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
                         else
@@ -747,7 +765,7 @@ namespace( 'kivi.Part', function( ns ){
         })
       },
       error:  function(){
-        alert( "Ajaxerror getMechnics()!" );
+        alert( "Ajaxerror getUsersFromGroup()!" );
       }
     })
 
@@ -907,12 +925,32 @@ namespace( 'kivi.Part', function( ns ){
     label: 'Coparts'
   }).css({
     'margin':'5px'
-  }).click( function(){
-    window.location = 'lxcars://kba' + c_hsn + c_tsn + '___' + c_ln + '___' + customer_name;
-      customer_name = data.customer_name;;
+  }).click( function(){ //lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
+    //console.log( 'lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug' );
+    window.location ='lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug';
     return false;
   });
 
+  $( "#kbaToCopartsDebug" ).button({
+    label: 'Coparts Debug'
+  }).css({
+    'margin':'5px'
+  }).click( function(){
+    //console.log( 'lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___'  + c_d_de + '___' + c_mkb + '___'+ km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___debug' );
+    window.location ='lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___'  + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___debug';
+    return false;
+  }).hide();
+
+  $( "#partnumber" ).keypress( function( e ){
+    if( e.keyCode == 13 )
+      window.location ='lxcars://copartsnumber___' + this.value + '___nodebug';
+  });
+
+  $( "#partnumber" ).bind('paste', function(event) {
+    setTimeout( function(){
+      window.location ='lxcars://copartsnumber___' + $( "#partnumber" ).val() + '___nodebug';
+    }, 100 );
+  });
 
   $( '#invoice' ).button({
     label: kivi.t8( 'invoice' )
@@ -922,7 +960,7 @@ namespace( 'kivi.Part', function( ns ){
     alert( 'currently not implemented' );
     //window.location = baseUrl + '/crm/lxcars/' + previous + '?c_id=' + c_id + '&task=3';
     return false;
-  });
+  }).hide();
 
   $( '#deleteOrder' ).button({
     label: kivi.t8( 'delete Order' )
@@ -1043,6 +1081,7 @@ namespace( 'kivi.Part', function( ns ){
     async: false,
     success: function( data ){
       cardata = data;
+      //console.log( data );
       //replace null to ''
       $.each( data, function( key, value ){
         if( value == null ) data[key] = '';
@@ -1067,11 +1106,21 @@ namespace( 'kivi.Part', function( ns ){
       $( '#car_status' ).val( data.car_status ).change();
       $( '.isInternalOrder').prop('checked', data.internalorder);
       $( '#mtime' ).text(data.mtime);
+      ordnumber = data.ordnumber;
       c_ln = data.c_ln;
-      customer_name = data.customer_name;
       c_hsn = data.c_2;
       c_tsn = data.c_3;
+      c_fin = data.c_fin;
+      c_text = data.c_text;
+      km_stnd = data.km_stnd;
+      c_d_de = data.c_d_de;
+      c_mkb = data.c_mkb;
+      customer_name = data.customer_name;
+      customer_street = data.customer_street;
+      customer_zipcode = data.customer_zipcode;
+      customer_city = data.customer_city;
 
+      $( '#title' ).text( c_ln.substr( c_ln.indexOf( '-' ) + 1 ) + ' ' + customer_name );
       if( data[1] == undefined )
         $( '#headline' ).html( '<b>Auftrag ' + data.c_ln + ' von ' + data.customer_name + '</b>' );
       else

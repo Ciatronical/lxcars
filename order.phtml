@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title id="title"></title>
 
     <?php
         require_once( __DIR__."/../inc/stdLib.php" );
@@ -39,9 +39,10 @@
               <td><label id="head05">Fertigstellung:</label></td>
               <td><input class="val orderupdate" id="finish_time" type="text"></td>
               <td><label id="head07">KM-Stand:</label></td>
-              <td><input class="val orderupdate" id="milage" type="text" ></br></td>
+              <td><input class="val orderupdate" id="milage" type="text" ></td>
               <td><label id="head09">bearbeitet von:</label></td>
               <td><label class="val" id="employee"></label></td>
+              <td><input class="" id="partnumber" type="text" placeholder="beliebige Teilenummer" ></td>
             </tr>
             <tr>
               <td><label id="labellicenseplate">Amtl.-Kennz.:</label></td>
@@ -217,6 +218,7 @@
         <button id="invoice" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
         <button id="deleteOrder" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
         <button id="kbaToCoparts" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="kbaToCopartsDebug" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
       </div>
     </div>
 
