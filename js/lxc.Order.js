@@ -754,6 +754,7 @@ namespace( 'kivi.Part', function( ns ){
 
     var kivi_global = jQuery.parseJSON( kivi.myconfig.global_conf );
     var baseUrl = kivi_global.baseurl;
+    $.getScript( "./js/locale/" +  kivi.myconfig.countrycode + ".js" ); //T8
     $('[name=item_partpicker_name]').focus();
 
     $.ajax({ //no DB query in order.php
