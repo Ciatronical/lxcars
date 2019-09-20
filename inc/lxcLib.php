@@ -101,101 +101,7 @@ function CheckLxCars ( ) {
     }
 }
 CheckLxCars ( );
-function NeuerAuftrag ( $c_id ) {
-    //erzeugt einen neuen Auftrag,eine neuePosition und gibt die AuftragsID zuruck
-    global $tbauf;
-    global $tbpos;
-    $sql="insert into $tbauf (lxc_a_c_id, lxc_a_text)  values ($c_id, 'Bemerkungen zum Auftrag')";
-    $rc=$GLOBALS['dbh']->query ( $sql );
-    $sql="select MAX(lxc_a_id) from ".$tbauf;
-    //die letzte Auftrags_id auswählen
-    //ToDo!! kann das insert gleich zurückgeben!!!
-    $rsid=$GLOBALS['dbh']->getall ( $sql );
-    $a_id=$rsid[0]['max'];
-    $sql="insert into $tbpos (lxc_a_pos_aid, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts)  values ($a_id, 'Arbeitstext', 'Antworttext Werkstatt', 'Ersatzteile')";
-    $rc=$GLOBALS['dbh']->query ( $sql );
-    return $a_id;
-}
-function NeuePosition ( $a_id ) {
-    global $tbpos;
-    $sql="insert into $tbpos (lxc_a_pos_aid)  values ($a_id )";
-    $rc=$GLOBALS['dbh']->query ( $sql );
-    return;
-}
-function HoleAuftraege ( $c_id ) {
-    //sucht alle Auftrage zum Fhz mit der CarID und gibt die AuftragsID,... zuruck;
-    global $tbauf;
-    global $tbpos;
-    $sql="select lxc_a_id, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)),lxc_a_status, lxc_a_km from $tbauf where lxc_a_c_id = $c_id ORDER BY lxc_a_id";
-    $rs=$GLOBALS['dbh']->getall ( $sql );
-    foreach ( $rs as $key => $value ) {
-        $sql="select lxc_a_pos_todo from ".$tbpos." where lxc_a_pos_aid = ".$rs[$key]['lxc_a_id']." ORDER BY lxc_a_pos_id ";
-        $rspos=$GLOBALS['dbh']->getall ( $sql );
-        if ( $rspos[0] ) {
-            $rs[$key]+=$rspos[0];
-        }
-        $rs[$key]['to_char']=ts2gerdate ( $rs[$key]['date_part'] );
-    }
-    //$rs['to_char'] =     ts2gerdate( $rs['lxc_a_init_time'] );
-    return $rs;
-}
-function HoleAuftragsDaten ( $a_id ) {
-    //Gibt alle Daten des Auftrags mit der a_id zuruck
-    global $tbauf;
-    global $tbpos;
-    $selectstring="lxc_a_c_id,EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_init_time)), lxc_a_finish_time, lxc_a_modified_from, lxc_a_km, lxc_a_status, lxc_a_text, lxc_a_car_status, EXTRACT(EPOCH FROM TIMESTAMPTZ(lxc_a_modified_on))AS modified_time";
-    $sql="select $selectstring from $tbauf where lxc_a_id = $a_id ORDER BY lxc_a_id ";
-    $rs=$GLOBALS['dbh']->getall ( $sql );
-    $rs[0]['lxc_a_modified_on']=ts2gerdate ( $rs[0]['modified_time'] );
-    $rs[0]['lxc_a_init_time']=ts2gerdate ( $rs[0]['date_part'] );
-    return $rs;
-}
-function HoleAuftragsPositionen ( $a_id ) {
-    //
-    global $tbauf;
-    global $tbpos;
-    $selectstring="lxc_a_pos_id, lxc_a_pos_todo, lxc_a_pos_doing, lxc_a_pos_parts, lxc_a_pos_time, lxc_a_pos_ctime, lxc_a_pos_emp, lxc_a_pos_status";
-    $sql="select $selectstring from $tbpos where lxc_a_pos_aid = $a_id ORDER BY lxc_a_pos_id ";
-    $rspos=$GLOBALS['dbh']->getall ( $sql );
-    foreach ( $rspos as $key => $value ) {
-        $rspos[$key]['lxc_a_pos_time']=DB2Float ( $rspos[$key]['lxc_a_pos_time'] );
-        $rspos[$key]['lxc_a_pos_ctime']=DB2Float ( $rspos[$key]['lxc_a_pos_ctime'] );
-    }
-    return $rspos;
-}
-function UpdateAuftragsDaten ( $a_id, $a_data ) {
-    global $tbauf;
-    $a_dbarray=array(
-        'lxc_a_finish_time',
-        'lxc_a_km',
-        'lxc_a_modified_from',
-        'lxc_a_modified_on',
-        'lxc_a_status',
-        'lxc_a_text',
-        'lxc_a_car_status',
-    );
-    $wherestring="lxc_a_id = $a_id";
-    $rs=$GLOBALS['dbh']->update ( $tbauf, $a_dbarray, $a_data, $wherestring );
-}
-function UpdatePosition ( $pos_id, $posdata ) {
-    global $tbpos;
-    $posdata[4]=Float2DB ( $posdata[4] );
-    $posdata[6]=Float2DB ( $posdata[6] );
-    $tmp=array_shift ( $posdata );
-    array_unshift ( $posdata, $tmp );
-    // Index muss mit 0 beginnen
-    $p_dbarray=array(
-        'lxc_a_pos_todo',
-        'lxc_a_pos_doing',
-        'lxc_a_pos_parts',
-        'lxc_a_pos_ctime',
-        'lxc_a_pos_status',
-        'lxc_a_pos_time',
-        'lxc_a_pos_emp',
-    );
-    $wherestring="lxc_a_pos_id = $pos_id";
-    $rs=$GLOBALS['dbh']->update ( $tbpos, $p_dbarray, $posdata, $wherestring );
-}
+
 function lxc2db ( $parastr ) {
     $rsdata = array();
     $ret = -10;
@@ -242,14 +148,9 @@ function NeuesAuto ( $cardata ) {
     }
     if ( $cardata["c_fin"]=="" )
         unset ( $cardata["c_fin"] );
-    $fields=array_keys ( $cardata );
-    $values=array_values ( $cardata );
-    $rc = $GLOBALS['dbh']->insert( $tbname, $fields, $values, 'c_id' );
-    //Kann insert gleich zurückgeben
-    $sql="select MAX(c_id) from $tbname ";
-    //die letzte id auswählen
-    $rsid=$GLOBALS['dbh']->getall ( $sql );
-    return $rsid[0]['max'];
+    $fields = array_keys ( $cardata );
+    $values = array_values ( $cardata );
+    return $GLOBALS['dbh']->insert( $tbname, $fields, $values, TRUE, 'lxc_cars_c_id_seq' );
 }
 function UpdateCar ( $c_id, $u ) {
     //Total neu schreiben

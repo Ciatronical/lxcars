@@ -15,12 +15,6 @@
   access: crm_other
   module: crm/lxcars/lxcmainSuche.php
 - parent: lxcars
-  id: lx3
-  name: AuftragSuchen
-  order: 300
-  access: crm_other
-  module: crm/lxcars/lxcaufSuche.php
-- parent: lxcars
   id: lx4
   name: MotorSuchen
   order: 400
@@ -28,7 +22,7 @@
   module: crm/lxcars/lxcmotSuche.php
 - parent: lxcars
   id: lx5
-  name: AuftragSuchenNeu
+  name: AuftragSuchen
   order: 500
   access: crm_other
   module: crm/lxcars/orderSearch.phtml
@@ -38,4 +32,3 @@
   order: 600
   access: crm_other
   module: crm/lxcars/performance.phtml
-
