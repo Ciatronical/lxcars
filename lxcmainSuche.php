@@ -1,7 +1,8 @@
 <?php
 /* ++++++++++++++++ LxC Suche +++++++++++++++++++
-+++++ Sucht Fahrzeuge bzw. deren Besitzer +++++ 
-+++++ begonnen Ende Juli 2010 Ronny Kumke +++++ */
++++++ Sucht Fahrzeuge bzw. deren Besitzer +++++
++++++ begonnen Juli 2010 Ronny Zimmermann +++++ */
+//besser example.phtml oder Symfony
 /************************************************/
 include_once("../inc/template.inc");
 require_once("./inc/lxcLib.php");
@@ -28,7 +29,7 @@ $formdata['ERPCSS'] = $_SESSION["stylesheet"];
 //print_r($was);
 $formdata['Q'] = "C";// kann weg??
 $t = new Template($base);
-$menu =  $_SESSION['menu']; 
+$menu =  $_SESSION['menu'];
 doHeader($t);
 /*
 $t->set_var( array(
@@ -49,11 +50,11 @@ $t->set_block("tpl-file","Liste","Block");
 
 if($_POST["suche"]) {
 
-	$rs = sucheCars( $was ); 
-	
+	$rs = sucheCars( $was );
+
 	if($_POST["filter"]){
 		//echo "filter wurde gepostet";
-		
+
 		foreach($rs as $zeile){
 			//zu2 zu3 ermitteln
 			//print_r($zeile);
@@ -61,7 +62,7 @@ if($_POST["suche"]) {
 			$zu3 = $zeile[z3];
 			//echo "zu2 ".$zu2."</b>";
 			//echo "zu3 ".$zu3."</b>";
-			// Snoopy erzeugen 
+			// Snoopy erzeugen
 			$snoopy = new Snoopy;
 			$snoopy->agent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)";
 			$snoopy->referer = "http://www.jonasjohn.de/";
@@ -75,53 +76,53 @@ if($_POST["suche"]) {
 			//echo $snoopyresult;
 			$davor = "<nobr><b>";
 			$danach = "</b></nobr>";
-			
-					
+
+
 			$wasL = 'title="Luftfilter"';
-			$wasK = 'title="Kraftstoff"';  
+			$wasK = 'title="Kraftstoff"';
 			$wasI = 'class="finav" title="Innenraumluftfilter / Kabinenluftfilter';
 			$wasO = 'title="Schmier';
-		
+
 			$filter += Lies($sr, $wasL, $davor, $danach);
 			$filter += Lies($sr, $wasK, $davor, $danach);
 			$filter += Lies($sr, $wasI	, $davor, $danach);
 			$davor = 'class="finav"><b>';
 			$danach = '</b></a>';
 			$filter += Lies($sr, $wasO	, 'class="finav"><b>', '</b></a>');
-			
+
 			// Resultat auswerten und in einem Array speichern
-		
-		
+
+
 		// Aus dem Array eine DAteierzeugen
 		}//foreach
 		ksort($filter);
 		//print_r($filter);
 		$text = "";
-		
+
 		foreach($filter as $nummer => $anzahl){
 			//echo $nummer[0];
 			if( ($nummer[0] == "H") || ($nummer[0] == "C") || ($nummer[0] == "W") || ($nummer[0] == "P")){
-				$text = $text.$nummer.((strlen($nummer) < 8)?("\t"):("\t")).$anzahl.(($anzahl > 15)?("\t2"):("\t1"))."\n";	
+				$text = $text.$nummer.((strlen($nummer) < 8)?("\t"):("\t")).$anzahl.(($anzahl > 15)?("\t2"):("\t1"))."\n";
 			}
 		}
 		//echo $text;
-		
+
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");    // Datum aus Vergangenheit
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		header("Cache-Control: no-store, no-cache, must-revalidate");  // HTTP/1.1
 		header("Cache-Control: post-check=0, pre-check=0", false);
-		header("Pragma: no-cache");    
+		header("Pragma: no-cache");
 		header("Content-type: application/octetstream");//octetstream
 		header('Content-Disposition: attachment; filename="filter.csv"');
 		header("Content-Disposition: filename=filter.csv");
-		
+
 		print $text;
 	}
 }
 if ($_POST["felder"]) {
 		$rc=doReport($_POST,$Q);
 		$t->set_file(array("fa1" => "firmen1.tpl"));
-		if ($rc) { 
+		if ($rc) {
 			$tmp="<div style='width:300px'>[<a href='tmp/report_".$_SESSION["loginCRM"].".csv'>download Report</a>]</div>";
 		} else {
 			$tmp="Sorry, not found";
@@ -131,13 +132,13 @@ if ($_POST["felder"]) {
 
 $i = 0;
 if ($rs && ($i < $_SESSION['listLimit'])){//
-	
+
 	foreach ($rs as $zeile){
 		$tst = getFirmenStamm($zeile[c_ow]);
 		if(!$tst){
 			echo "Kunde ".$zeile[c_ow]." zum Kennzeichen ".$zeile[c_ln]." existiert nicht!  Datenbank prüfen!";
 		}
-		else { 
+		else {
 			$zeile += $tst;
 		}
 		$t->set_var(array(Q 			=> $Q,
@@ -157,7 +158,7 @@ if ($rs && ($i < $_SESSION['listLimit'])){//
                         CarTyp 	=> $zeile["c_t"]));// end set_var
  		$t->parse("Block","Liste",true);
      	$i++;
-     	
+
 	}
 }
 
