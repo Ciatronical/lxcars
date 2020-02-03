@@ -11,29 +11,78 @@
     echo $head['JQTABLE'];
     echo $head['THEME'];
 ?>
-
+<style>
+.letter {
+  margin: 1em;
+}
+</style>
 
 <script>
   $( document ).ready( function(){
-    const today = new Date();
-    const index = today.getMonth() == 12 ? 0 : today.getMonth() + 1 ;
+    mydate = new Date();
+    mydate.setMonth( mydate.getMonth() + 1 );
+    const month = mydate.getMonth();
+    const year = mydate.getFullYear();
+    //alert( 'month: ' + month + ' year: ' + year )
 
+    var getData = function( month, year ){
+      $.ajax({
+        url: 'ajax/seriesletter.php',
+        type: 'POST',
+        data: { action: "getData", data: { 'month': month, 'year': year }},
+        success: function( data ){
+
+          //console.log( data );
+
+          $( ".var" ).detach();
+          $.each( data, function( i, item ){
+            var bgcolor = i % 2 ? "#ddddff" : "#ddffdd"; // Zebra
+            $('<tr class="var"  bgcolor="' + bgcolor + '">').append(
+            '<td><input type="checkbox" id="' + item.c_id + '" checked="true"></td>',
+            '<td>' + item.c_ln + '</td>',
+            '<td>' + item.name + '</td>',
+            '<td>' + item.street + '</td>',
+            '<td>' + item.zipcode + '</td>',
+            '<td>' + item.city + '</td>' ).appendTo( '#mytable' );
+          });
+        },
+        error: function(){
+          alert( 'Error in function getData() !' )
+        }
+      });
+
+    }
 
     //$( '#headline' ).html( kivi.t8( 'Headline' ) );
-    $( '#month' ).prop( 'selectedIndex', index );
-    $( '#generate').button().click( function() {
-      alert( $( '#month' )[0].selectedIndex + 1 );
+    $( '#month' ).prop( 'selectedIndex', month ).prop('complete', function(){
+      getData( $( '#month' )[0].selectedIndex, year );
+    }).change( function(){
+      getData( $( '#month' )[0].selectedIndex, year );
+    })
+    $( '#generate').button().click( function(){
+      //var params = $( "#mytable :input" ).serialize();
+      const selectedArray = $('input[type=checkbox]:checked').map( function(){ return  this.id }).get();
+      console.log( selectedArray );
+      $.ajax({
+        url: 'ajax/seriesletter.php',
+        type: 'POST',
+        data: { action: "generatePdf", data: selectedArray },
+        success: function( data ){
+          console.log( data );
+        },
+        error: function(){
+          alert( 'Error in function generatePdf() !' )
+        }
+      });
+
+      //alert( 'generate: ' + params  );
     })
 
   });
 
 </script>
 
-<style>
 
-
-
-</style>
 </head>
 
 <body>
@@ -43,11 +92,11 @@
 ?>
 
   <p id="headline" class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;">Serienbrief Hauptuntersuchung</p>
-  <div id="example" style="position:absolute">
-    <form id="monthSelect" style="margin : 1em;">
+  <div style="position:absolute">
+    <form id="monthSelect" class="letter">
       <select id="month">
-        <option id="0">Januar</option>
-        <option id=>Februar</option>
+        <option>Januar</option>
+        <option>Februar</option>
         <option>März</option>
         <option>April</option>
         <option>Mai</option>
@@ -57,11 +106,24 @@
         <option>September</option>
         <option>Oktober</option>
         <option>November</option>
-        <option>Deuember</option>
+        <option>Dezember</option>
       </select>
     </form>
 
-    <button style="margin : 1em;" id="generate">generieren</button>
+
+
+    <table id="mytable" class="letter">
+      <tr>
+        <th>Auswahl</th>
+        <th>Kennzeichen</th>
+        <th>Name</th>
+        <th>Straße</th>
+        <th>PLZ</th>
+        <th>Ort</th>
+      </tr>
+    </table>
+
+    <button class="letter" id="generate">generieren</button>
   </div>
 
 
