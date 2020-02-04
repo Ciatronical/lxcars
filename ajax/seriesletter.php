@@ -12,7 +12,7 @@ function getData( $data ){
 function generatePdf( $data ){
 
   require_once( "fpdf.php" );
-  require_once( __DIR__.'/../fpdi/src/autoload.php' );
+  
   $sql = "SELECT * FROM lxc_cars WHERE c_id IN( ".implode( ',', $data )." )";
   //writeLog( $sql );
   $result = $GLOBALS['dbh']->getALL( $sql );
