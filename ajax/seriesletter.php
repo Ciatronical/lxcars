@@ -10,24 +10,68 @@ function getData( $data ){
 }
 
 function generatePdf( $data ){
+  $debug = 1;
+
+  file_exists( __DIR__.'/../custom/data.php' ) ? require_once( __DIR__.'/../custom/data.php' ) : require_once( __DIR__.'/../default/data.php' );
 
   require_once( "fpdf.php" );
-  
-  $sql = "SELECT * FROM lxc_cars WHERE c_id IN( ".implode( ',', $data )." )";
+
+  //$sql = "SELECT * FROM lxc_cars WHERE c_id IN( ".implode( ',', $data )." )";
+  $sql = "SELECT c_id, c_hu, c_ln, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE c_id IN( ".implode( ',', $data )." )";
   //writeLog( $sql );
   $result = $GLOBALS['dbh']->getALL( $sql );
 
-  $pdf = new FPDI( 'P','mm','A4' );
-  $pdf->SetFont('Arial','B',16);
-  $pdf->addPage();
-  $pdf->setSourceFile( __DIR__.'/../serieslettertemplate.pdf' );
-  $pdf->Cell(40,10,'Hallo Welt!');
-  //$pdf->Output();
-  $imp = $pdf->ImportPage(1);
-  $pdf->useTemplate( $imp, 1, 1 );
 
-  $pdf->OutPut( __DIR__.'/../test.pdf', 'F' );
 
+  //Mem Cell
+
+  class PDF extends FPDF{
+    public $debug = 1;
+    public $left = 20;
+    public $head_margin_top = 15;
+    public $mydata;
+    public $test = 'gsgsgg';
+    //foreach( $data as $name => $value ) public { $name } = $value;
+    function Header(){ //Head
+
+      //$head_margin_top = 15;
+      $logo = file_exists( __DIR__.'/../custom/logo.png' ) ? __DIR__.'/../custom/logo.png' : __DIR__.'/../default/LxCars-Logo.png';
+
+      $this->Image( $logo, $this->left, $this->head_margin_top, 70 );
+
+      $this->SetFont( 'Arial', '', 10 );
+      $this->setXY( 160, $this->head_margin_top );
+      $this->SetLineWidth( 0 );
+      $this->MultiCell( 50, 4, $this->mydata['headright'], $this->debug, 'L' );
+      $this->MultiCell( 50, 4, $this->test, $this->debug, 'L' );
+    }
+
+    // Fusszeile
+    function Footer(){
+      $this->SetFont('Arial','I',8);
+      $this->SetY(-15);
+      // Arial kursiv 8
+
+      // Seitenzahl
+      $this->Cell(0,10,'Seite ');
+    }
+  }
+
+  $pdf = new PDF();
+  $pdf->mydata = $externaldata;
+  //$pdf->AddPage();
+  $pdf->test = "tetsttst";
+
+  writeLog( $pdf->mydata );
+
+  foreach( $result as $customer ){
+    //writelog( $customer );
+    $pdf->AddPage();
+    $pdf->setXY( $pdf->left, 40 );
+    $pdf->SetFont( 'Arial', '', 7 );
+    $pdf->Cell( 20, 10, $customer['name'] );
+  }
+  $pdf->Output( __DIR__.'/../seriesletter.pdf',"F" );
 
   echo 1;
 }
