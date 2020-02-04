@@ -27,7 +27,7 @@ echo "************************************************"
 VERSION=$(uname -i) 
 case "$VERSION" in
     x86_64) echo "64Bit-Version wird installiert"
-            ln -sf $DIR_LxCars/lxc2db-x86_64 $DIR_LxCars/lxc2db
+            ln -sf $DIR_LxCars/lxc2db-x86_64-libpqxx-4.1 $DIR_LxCars/lxc2db
     ;;
     i386)   echo "32Bit-Version wird installiert"
             ln -sf $DIR_LxCars/lxc2db-i386 $DIR_LxCars/lxc2db
