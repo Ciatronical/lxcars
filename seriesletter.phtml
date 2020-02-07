@@ -67,8 +67,8 @@
         url: 'ajax/seriesletter.php',
         type: 'POST',
         data: { action: "generatePdf", data: selectedArray },
-        success: function( data ){
-          console.log( data );
+        success: function( result ){
+          if( result ) window.open( 'seriesletter.pdf', 'name' );
         },
         error: function(){
           alert( 'Error in function generatePdf() !' )

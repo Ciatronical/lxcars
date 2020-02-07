@@ -10,14 +10,14 @@ function getData( $data ){
 }
 
 function generatePdf( $data ){
-  $debug = 1;
+  //$debug = 1;
 
   file_exists( __DIR__.'/../custom/data.php' ) ? require_once( __DIR__.'/../custom/data.php' ) : require_once( __DIR__.'/../default/data.php' );
 
   require_once( "fpdf.php" );
 
   //$sql = "SELECT * FROM lxc_cars WHERE c_id IN( ".implode( ',', $data )." )";
-  $sql = "SELECT c_id, c_hu, c_ln, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE c_id IN( ".implode( ',', $data )." )";
+  $sql = "SELECT c_id, c_hu, c_ln, greeting, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE c_id IN( ".implode( ',', $data )." )";
   //writeLog( $sql );
   $result = $GLOBALS['dbh']->getALL( $sql );
 
@@ -26,53 +26,59 @@ function generatePdf( $data ){
   //Mem Cell
 
   class PDF extends FPDF{
-    public $debug = 1;
+    public $debug = 0;
     public $left = 20;
-    public $head_margin_top = 15;
+    public $head_margin_top = 20;
+    public $footer = 260;
     public $mydata;
-    public $test = 'gsgsgg';
-    //foreach( $data as $name => $value ) public { $name } = $value;
+
     function Header(){ //Head
-
-      //$head_margin_top = 15;
       $logo = file_exists( __DIR__.'/../custom/logo.png' ) ? __DIR__.'/../custom/logo.png' : __DIR__.'/../default/LxCars-Logo.png';
-
       $this->Image( $logo, $this->left, $this->head_margin_top, 70 );
-
       $this->SetFont( 'Arial', '', 10 );
       $this->setXY( 160, $this->head_margin_top );
-      $this->SetLineWidth( 0 );
       $this->MultiCell( 50, 4, $this->mydata['headright'], $this->debug, 'L' );
-      $this->MultiCell( 50, 4, $this->test, $this->debug, 'L' );
+      $this->SetFont( 'Arial', '', 5 );
+      $this->setXY( $this->left, 60 );
+      $this->Cell( 80, 3, $this->mydata['retur'], $this->debug, 'L' );
     }
 
-    // Fusszeile
+
     function Footer(){
       $this->SetFont('Arial','I',8);
-      $this->SetY(-15);
-      // Arial kursiv 8
-
-      // Seitenzahl
-      $this->Cell(0,10,'Seite ');
+      $this->setXY( $this->left, $this->footer );
+      $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footerleft'] ), $this->debug, 'L' );
+      $this->setXY( $this->left + 60, $this->footer );
+      $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footermiddle'] ), $this->debug, 'L' );
+      $this->setXY( $this->left + 120, $this->footer );
+      $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footerright'] ), $this->debug, 'L' );
     }
   }
 
   $pdf = new PDF();
   $pdf->mydata = $externaldata;
-  //$pdf->AddPage();
-  $pdf->test = "tetsttst";
-
-  writeLog( $pdf->mydata );
-
   foreach( $result as $customer ){
-    //writelog( $customer );
+    switch( $customer['greeting'] ){
+      case 'Herr' :  $salutation = $externaldata['male'];
+        break;
+      case 'Frau' : $salutation = $externaldata['female'];
+        break;
+      default : $salutation = $externaldata['other'];
+    }
     $pdf->AddPage();
-    $pdf->setXY( $pdf->left, 40 );
-    $pdf->SetFont( 'Arial', '', 7 );
-    $pdf->Cell( 20, 10, $customer['name'] );
+    $pdf->setXY( $pdf->left, 65 );
+    $pdf->SetFont( 'Arial', '', 11 );
+    $pdf->MultiCell( 170, 5, utf8_decode( $customer['name']."\n".$customer['street']."\n".$customer['zipcode']." ".$customer['city'] ), $pdf->debug, 'L' );
+    $pdf->setXY( $pdf->left, 100 );
+    $pdf-> Cell( 170, 5, utf8_decode( $externaldata['subject'].$customer['c_ln']   ), $pdf->debug, 'L' );
+    $pdf->setXY( $pdf->left, 113 );
+    $pdf-> Cell( 170, 5, utf8_decode( $salutation.$customer['name'].',' ), $pdf->debug, 'L' );
+    $pdf->setXY( $pdf->left, 120 );
+    $pdf-> MultiCell( 170, 5.6, utf8_decode( $externaldata['text0'].$customer['c_ln'].$externaldata['text1'] ), $pdf->debug, 'L' );
+    $pdf->setXY( $pdf->left, 160 );
+    $pdf-> MultiCell( 170, 5, utf8_decode( $externaldata['goodbye']."\n".$_SESSION['userConfig']['name'] ), $pdf->debug, 'L' );
   }
   $pdf->Output( __DIR__.'/../seriesletter.pdf',"F" );
-
   echo 1;
 }
 
