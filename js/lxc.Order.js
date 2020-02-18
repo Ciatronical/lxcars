@@ -1307,6 +1307,7 @@ namespace( 'kivi.Part', function( ns ){
       $( '#discount100all' ).val( '100%' );
       $( '.discaspercent' ).val( '0' );
     }
+    ns.recalc();
   })
 
   $( '#btnSaveNewPart' ).click( function(){
