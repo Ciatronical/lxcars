@@ -1297,7 +1297,7 @@ namespace( 'kivi.Part', function( ns ){
 
   //discount100all
   $( '#discount100all' ).click( function(){
-      if( this.value  == '100%' ){
+    if( this.value  == '100%' ){
       $( '.discount100' ).val( '0%' );
       $( '#discount100all' ).val( '0%' );
       $( '.discaspercent' ).val( '100' );
