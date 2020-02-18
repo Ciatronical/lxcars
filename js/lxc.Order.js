@@ -1,4 +1,5 @@
 namespace( 'kivi.Part', function( ns ){
+
   'use strict';
 
   ns.urlParam = function( name ){
@@ -1244,6 +1245,7 @@ namespace( 'kivi.Part', function( ns ){
     }); //dialog
   })
 
+
   var timeoutCarDialog;
   var carContent =  '<table >'
                   + '  <thead style="font-size: large;">'
@@ -1292,6 +1294,20 @@ namespace( 'kivi.Part', function( ns ){
       }]
     }); //dialog
   });
+
+  //discount100all
+  $( '#discount100all' ).click( function(){
+      if( this.value  == '100%' ){
+      $( '.discount100' ).val( '0%' );
+      $( '#discount100all' ).val( '0%' );
+      $( '.discaspercent' ).val( '100' );
+    }
+    else{
+      $( '.discount100' ).val( '100%' );
+      $( '#discount100all' ).val( '100%' );
+      $( '.discaspercent' ).val( '0' );
+    }
+  })
 
   $( '#btnSaveNewPart' ).click( function(){
     if( $( '#ordernumber' ).text() == '0000' )

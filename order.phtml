@@ -18,6 +18,16 @@
     <script type="text/javascript" src="js/locale/de.js"></script>
 
   </head>
+
+  <style>
+  .line:hover {
+    background-color: #FFE933;
+  }
+  input {
+    background: transparent;
+  }
+  </style>
+
   <body>
 
     <?php
@@ -100,7 +110,7 @@
                     <th class="listheading" nowrap width="5" >Einheit </th>
                     <th id="sellprice_header_id"   class="listheading" nowrap width="2" ><a href='#' onClick='javascript:kivi.Order.reorder_items("sellprice")'> Preis</a></th>
                     <th id="discount_header_id"    class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  Rabatt in %</a></th>
-                    <th id="discount_header_100_id"    class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  100%</a></th>
+                    <th id="discount_header_100_id"    class="listheading" nowrap width="5" ><input value="100%" type="button" id="discount100all" style="width: 3em;" ></th>
                     <th class="listheading" nowrap width="10">Gesamt </th>
                     <th class="listheading" nowrap width="2" >Mechaniker </th>
                     <th class="listheading" nowrap width="2" >Status </th>
@@ -108,7 +118,7 @@
                 </thead>
 
                 <tbody class="row_entry listrow listrow">
-                  <tr style="width: 1533px;">
+                  <tr style="width: 1533px;" class="line">
                     <td>
                       <div class = "numeric" name = "position">1</div>
                     </td>
@@ -150,11 +160,11 @@
                     </td>
                     <td>
                       <span>
-                        <input value="0.00" class="recalc reformat_number numeric pos1 discaspercent" style="text-align: right;" name="discount_as_percent" size="5" type="text">
+                        <input value="0.00" class="recalc reformat_number numeric pos1 discaspercent" style="text-align: right;" name="discount_as_percent" size="5" type="text" style="display: none;">
                       </span>
                     </td>
                     <td align = "center">
-                       <input value="100%" type="button" class="discount100" name="discount100button" style="display: none;">
+                       <input value="100%" type="button" class="discount100" name="discount100button" style="display: none; width: 3em;">
                     </td>
                     <td align="center">
                       <span>
