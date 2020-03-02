@@ -9,21 +9,22 @@ function getData( $data ){
   echo $GLOBALS['dbh']->getALL( $sql, true );
 }
 
+function updateNotSelectedCars(){
+  echo '1';
+  //return 1;
+}
+
 function generatePdf( $data ){
-  //$debug = 1;
-
+  $date   = array_pop( $data );
+  $button = array_pop( $data );
+  $fileName = $date.'.pdf';
+  unlink( __DIR__.'/../seriesLetter/'.$fileName );
   file_exists( __DIR__.'/../custom/data.php' ) ? require_once( __DIR__.'/../custom/data.php' ) : require_once( __DIR__.'/../default/data.php' );
-
   require_once( "fpdf.php" );
+  require_once( __DIR__.'/../../inc/ftpClient.php' );
 
-  //$sql = "SELECT * FROM lxc_cars WHERE c_id IN( ".implode( ',', $data )." )";
   $sql = "SELECT c_id, c_hu, c_ln, greeting, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE c_id IN( ".implode( ',', $data )." )";
-  //writeLog( $sql );
   $result = $GLOBALS['dbh']->getALL( $sql );
-
-
-
-  //Mem Cell
 
   class PDF extends FPDF{
     public $debug = 0;
@@ -31,7 +32,6 @@ function generatePdf( $data ){
     public $head_margin_top = 20;
     public $footer = 260;
     public $mydata;
-
     function Header(){ //Head
       $logo = file_exists( __DIR__.'/../custom/logo.png' ) ? __DIR__.'/../custom/logo.png' : __DIR__.'/../default/LxCars-Logo.png';
       $this->Image( $logo, $this->left, $this->head_margin_top, 70 );
@@ -39,13 +39,11 @@ function generatePdf( $data ){
       $this->setXY( 160, $this->head_margin_top );
       $this->MultiCell( 50, 4, $this->mydata['headright'], $this->debug, 'L' );
       $this->SetFont( 'Arial', '', 5 );
-      $this->setXY( $this->left, 60 );
+      $this->setXY( $this->left, 62 ); //height address retur
       $this->Cell( 80, 3, $this->mydata['retur'], $this->debug, 'L' );
     }
-
-
     function Footer(){
-      $this->SetFont('Arial','I',8);
+      $this->SetFont( 'Arial','I', 8 );
       $this->setXY( $this->left, $this->footer );
       $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footerleft'] ), $this->debug, 'L' );
       $this->setXY( $this->left + 60, $this->footer );
@@ -66,7 +64,7 @@ function generatePdf( $data ){
       default : $salutation = $externaldata['other'];
     }
     $pdf->AddPage();
-    $pdf->setXY( $pdf->left, 65 );
+    $pdf->setXY( $pdf->left, 67 ); //height address block
     $pdf->SetFont( 'Arial', '', 11 );
     $pdf->MultiCell( 170, 5, utf8_decode( $customer['name']."\n".$customer['street']."\n".$customer['zipcode']." ".$customer['city'] ), $pdf->debug, 'L' );
     $pdf->setXY( $pdf->left, 100 );
@@ -77,8 +75,21 @@ function generatePdf( $data ){
     $pdf-> MultiCell( 170, 5.6, utf8_decode( $externaldata['text0'].$customer['c_ln'].$externaldata['text1'] ), $pdf->debug, 'L' );
     $pdf->setXY( $pdf->left, 160 );
     $pdf-> MultiCell( 170, 5, utf8_decode( $externaldata['goodbye']."\n".$_SESSION['userConfig']['name'] ), $pdf->debug, 'L' );
+    //update timestamp in lxc_cars
   }
-  $pdf->Output( __DIR__.'/../seriesletter.pdf',"F" );
+
+  $pdf->Output( __DIR__.'/../seriesLetter/'.$fileName, "F" );
+  $pdf->Output( __DIR__.'/../custom/seriesletter_'.date( 'F_Y' ).'.pdf',"F" );
+  if( $button == 'sendPIN' ){
+    $ftpDefaults = getDefaultsByArray( array( 'eletter_hostname', 'eletter_username', 'eletter_folder', 'eletter_passwd') );
+    $ftp = new implicitFtp( $ftpDefaults['eletter_hostname'], $ftpDefaults['eletter_username'], $ftpDefaults['eletter_passwd'] );
+    //comment to test
+    $ftp->upload( __DIR__.'/../seriesLetter/'.$fileName, $ftpDefaults['eletter_folder'] );
+
+    //$ftp->upload( __DIR__.'/../testFile.txt', $ftpDefaults['eletter_folder'] );
+    writeLog( $ftp->list( $ftpDefaults['eletter_folder'] ) );
+  }
+
   echo 1;
 }
 

@@ -95,6 +95,8 @@
 <tr><td>LO Winterreifen</td><td><input tabindex="17" type="text" name="c_wt_l" size="22" maxlength="22" value="{c_wt_l}" title="z.B. B4D1"></td></tr>
 <tr><td>Zustand Sommerreifen</td><td><input tabindex="18" type="text" name="c_st_z" size="22" maxlength="22" value="{c_st_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td></tr>
 <tr><td>Zustand Winterreifen</td><td><input tabindex="19" type="text" name="c_wt_z" size="22" maxlength="22" value="{c_wt_w}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td></tr>
+<tr><td>HU Benachrichtigung</td><td><input tabindex="20" type="checkbox" name="c_hub" size="22" maxlength="22" value="c_hub" title="gut, mittel, schlecht oder Profiltiefe angeben" checked></td></tr>
+
 </table>
 <br>
 <h4>Interne Bemerkungen</h4>

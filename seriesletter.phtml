@@ -59,23 +59,44 @@
     }).change( function(){
       getData( $( '#month' )[0].selectedIndex, year );
     })
-    $( '#generate').button().click( function(){
+    $( '#generate, #sendPIN' ).button().click( function(){
+      //var id = $(this)[0].id;
       //var params = $( "#mytable :input" ).serialize();
-      const selectedArray = $('input[type=checkbox]:checked').map( function(){ return  this.id }).get();
-      console.log( selectedArray );
+      var selectedArray = $('input[type=checkbox]:checked').map( function(){ return  this.id }).get();
+      var notSelectedArray = $('input[type=checkbox]:not(:checked)').map( function(){ return  this.id }).get();
+      selectedArray.push( $(this)[0].id );
+      selectedArray.push( $( '#month :selected' ).text() + '_' + year );
       $.ajax({
         url: 'ajax/seriesletter.php',
         type: 'POST',
         data: { action: "generatePdf", data: selectedArray },
         success: function( result ){
-          if( result ) window.open( 'seriesletter.pdf', 'name' );
+          //console.log( result );
+          alert( result );
+          if( result ) window.open( 'seriesLetter/' + $( '#month :selected' ).text() + '_' + year + '.pdf', 'name' );
         },
-        error: function(){
-          alert( 'Error in function generatePdf() !' )
+        error: function( result ){
+          //console.log( result );
+          alert( 'Error in function generatePdf() !' + result.responseText );
         }
-      });
+      }).done( function(){ //update not selectec cars in lxc_cars
+        if( notSelectedArray.length === 0 ){
+          console.log( notSelectedArray );
+          $.ajax({
+            url: 'ajax/seriesletter.php',
+            type: 'POST',
+            data: { action: "updateNotSelectedCars", data: notSelectedArray },
+            success: function( result ){
+              console.log( result );
 
-      //alert( 'generate: ' + params  );
+            },
+            error: function( result ){
+              //console.log( result );
+              alert( 'Error in function updateNotSelectedCars() !' + result.responseText );
+            }
+          })//ajax
+        }//if
+      })
     })
 
   });
@@ -112,18 +133,21 @@
 
 
 
-    <table id="mytable" class="letter">
-      <tr>
-        <th>Auswahl</th>
-        <th>Kennzeichen</th>
-        <th>Name</th>
-        <th>Straße</th>
-        <th>PLZ</th>
-        <th>Ort</th>
-      </tr>
+    <table id="mytable" class="letter ui-widget">
+      <thead class="ui-widget-header">
+        <tr>
+          <th>Auswahl</th>
+          <th>Kennzeichen</th>
+          <th>Name</th>
+          <th>Straße</th>
+          <th>PLZ</th>
+          <th>Ort</th>
+        </tr>
+      </thead>
     </table>
 
     <button class="letter" id="generate">generieren</button>
+    <button class="letter" id="sendPIN">mit PIN versenden</button>
   </div>
 
 

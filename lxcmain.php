@@ -1,7 +1,7 @@
 <?php
 /***********************************************************************************************
 ***                        +++ LxCars - Werkstattsoftware +++                                ***
-***             geschrieben von Ronny Kumke ronny@lxcars.de Artistic License 2               ***
+***             geschrieben von Ronny Zimmermann ronny@lxcars.de GPL                         ***
 ***********************************************************************************************/
 ob_start();
 
@@ -73,10 +73,17 @@ $cardata = array(  "owner" => $owner,
                     "c_hubr"    => $_POST['c_hubr'],
                     "c_leist"   => $_POST['c_leist'],
                     "c_bauj"    => $_POST['c_bauj'],
-                    "c_mt"      => $mytimestamp, "c_e_id" => $e_name,
-                    "chk_c_ln"  => $chk_c_ln, "chk_c_2" => $chk_c_2,
-                    "chk_c_3"   => $chk_c_3, "chk_c_em" => $chk_c_em,
-                    "chk_c_hu"  => $chk_c_hu, "chk_fin" => $chk_fin,
+                    "c_mt"      => $mytimestamp,
+                    "c_e_id"    => $e_name,
+                    "chk_c_ln"  => $chk_c_ln,
+                    "chk_c_2"   => $chk_c_2,
+                    "chk_c_3"   => $chk_c_3,
+                    "chk_c_em"  => $chk_c_em,
+                    "chk_c_hu"  => $chk_c_hu,
+                    "chk_fin"   => $chk_fin,
+                    "c_free"    => (isset($_POST['c_free'])) ? $_POST['c_free']:'',
+                    "c_hubd"    => (isset($_POST['c_hubd'])) ? $_POST['c_hubd']:'',
+                    "c_hub"    => (isset($_POST['c_hub'])) ? $_POST['c_hub']:'',
                     );
 
 $cardata_anlegen = array( "c_ow"     => $owner,
@@ -104,8 +111,8 @@ $cardata_anlegen = array( "c_ow"     => $owner,
                             "chk_c_3"  => $chk_c_3,
                             "chk_c_em" => $chk_c_em,
                             "chk_c_hu" => $chk_c_hu,
-
-                            "chk_fin"  => $chk_fin);
+                            "chk_fin"  => $chk_fin
+                          );
 
 //Benutzer in Gruppe Spezial ?
 $tempass = ERPUsersfromGroup("Spezial");

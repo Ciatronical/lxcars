@@ -1,7 +1,7 @@
 <?php
 /******************************************************************************************
 **** lxcLib.php     Library for LxCars                                                  ***
-**** erdacht und geschrieben von Ronny Kumke ronny@lxcars.de                            ***
+**** erdacht und geschrieben von Ronny Zimmermann ronny@lxcars.de                       ***
 **** Lizenz     GPL, Artistic License                                                   ***
 ******************************************************************************************/
 require_once ( __DIR__."/../../inc/stdLib.php" );
@@ -100,7 +100,7 @@ function CheckLxCars ( ) {
         }
     }
 }
-CheckLxCars ( );
+CheckLxCars();
 
 function lxc2db ( $parastr ) {
     $rsdata = array();

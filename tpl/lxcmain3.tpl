@@ -145,7 +145,8 @@
 <tr><td>Zustand Winterreifen</td><td><input tabindex="18" type="text" name="c_wt_z" size="12" value="{c_wt_z}" title="gut, mittel, schlecht oder Profiltiefe angeben"></td><td>Nächster ZR-Wechsel bei KM:</td><td><input type="text" id="c_zrk" name="c_zrk" size="29" maxlength="10" value="{c_zrk}" title="" ></td></tr>
 <tr><td>Flexrohrgröße:</td><td><input tabindex="19" type="text" id="c_flx" name="c_flx" size="12" value="{c_flx}" title="Druchmesser/Länge"></td><td>Nächster Bremsflüssigkeitsw.:</td><td><input type="text" id="c_bf" name="c_bf" size="29" maxlength="29" value="{c_bf}" title="" ></td></tr>
 <tr><td>bearbeitet am:</td><td><input tabindex="-1" type="text" size="20" value="{mdate}" title="Datum und Zeit" readonly="readonly"></td><td>Nächster Wartungsdienst:</td><td><input type="text" id="c_wd" name="c_wd" size="29" maxlength="29" value="{c_wd}" title="" ></td></tr>
-<tr><td>bearbeitet von:</td><td><input tabindex="-1" type="text" size="20" value="{c_e_string}" title="dein Name" readonly="readonly"></td><td></td><td></td></tr>
+<tr><td>Freifeld:</td><td><input tabindex="20" type="text" id="c_free" name="c_free" size="20" value="{c_free}" title="Freifeld" ></td><td>HU Benachrichtigung am:</td><td><input type="text" id="c_hubd" name="c_hubd" size="29" maxlength="29" value="{c_hubd}" title="HU Benachrichtigung Datum" ></td></tr>
+<tr><td>HU Benachrichtigung ja/nein</td><td><input tabindex="-1" type="checkbox" name="c_hub" value="true" {c_hub}  title="HU Benachrichtigung"></td><td>bearbeitet von:</td><td><input tabindex="-1" type="text" size="20" value="{c_e_string}" title="Wer hat den Datenstz des Fahrzeuges zuletzt bearbeitet?" readonly="readonly"></td></tr>
 </table>
 <h4>Interne Bemerkungen</h4>
 <table summary="Interne Bemerkungen">

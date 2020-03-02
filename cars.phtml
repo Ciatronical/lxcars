@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+<?php
+    require_once __DIR__.'/../inc/stdLib.php';
+    $menu = $_SESSION['menu'];
+    echo $menu['stylesheets'];
+    echo $menu['javascripts'];
+    echo $head['JQTABLE'];
+    echo $head['THEME'];
+
+
+    /*****************************************************************************************************************************
+    Grundsätze: Content wird via Ajax im Json-Format geholt und an die entsprechenden Container verteilt
+                Daten werden ohne Reload einfach via Ajax gespeichert.
+                Fürs Holen und Schreiben von Daten befindet sich unter ajax eine gleichnamige Datei mit der Extension ".php"
+                Auf das Benutzen der Variable $_SESSION sollte weitestgehend verzichtet werden.
+                Statt JS einzusetzen sollte auf die jQuery-Methoden zurückgegriffen werden.
+                Url-Parameter werden als hash gefolgt von einem JSON übergeben.
+                Vorteil: Browserhistory funktioniert, F5 funktioniert,
+                Test1: http://localhost/kivitendo/crm/example.phtml
+                Test2: http://localhost/kivitendo/crm/example.phtml#{"name":"Widukind","age":30,"cars":{"Ford":3,"BMW":6,"Fiat":19}}
+    ******************************************************************************************************************************/
+
+?>
+
+
+<script>
+  $( document ).ready( function(){
+
+    //URL-Parameter lesen
+
+
+    $( '#headline' ).html( 'Cars') );
+  });
+
+</script>
+
+<style>
+
+
+
+</style>
+</head>
+
+<body>
+<?php
+    echo $menu['pre_content'];
+    echo $menu['start_content'];
+?>
+
+  <p id="headline" class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;"></p>
+  <div id="example" style="position:absolute"></div>
+
+<?php echo $menu['end_content']; ?>
+
+</html>
