@@ -73,7 +73,7 @@ function generatePdf( $data ){
     $pdf-> Cell( 170, 5, utf8_decode( $salutation.$customer['name'].',' ), $pdf->debug, 'L' );
     $pdf->setXY( $pdf->left, 120 );
     $pdf-> MultiCell( 170, 5.6, utf8_decode( $externaldata['text0'].$customer['c_ln'].$externaldata['text1'] ), $pdf->debug, 'L' );
-    $pdf->setXY( $pdf->left, 160 );
+    $pdf->setXY( $pdf->left, 180 );
     $pdf-> MultiCell( 170, 5, utf8_decode( $externaldata['goodbye']."\n".$_SESSION['userConfig']['name'] ), $pdf->debug, 'L' );
     //update timestamp in lxc_cars
   }
