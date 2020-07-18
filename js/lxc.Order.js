@@ -829,11 +829,12 @@ namespace( 'kivi.Part', function( ns ){
     },
     onChangeMonthYear: function( year, month, inst ){
       AddButton( inst.input );
+      ns.updateOrder();
     },
     stepMinute: 5,
-    hour: 1,
-    hourMin: 6,
-    hourMax: 19,
+    hour: 16,
+    hourMin: 8,
+    hourMax: 17,
     timeSuffix: kivi.t8( ' clock' ),
     timeText: kivi.t8(' Time'),
     hourText: 'Stunde',
