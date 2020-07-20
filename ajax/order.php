@@ -396,17 +396,40 @@ function printOrder( $data ){
 
 
     foreach( $positions as $index => $element ){
-        //writeLog( $element['description'] );
-        $height = $height + 8;
-        $pdf->SetTextColor( 255, 0, 0 );
-        $pdf->SetLineWidth( 0.1 );
-
-        $pdf->Rect( '10', $height - 5, '170', '7' );
         if( $element['instruction'] ){
+            //writeLog( $element );
+            $height = $height + 8;
+            $pdf->SetTextColor( 255, 0, 0 );
+            $pdf->SetLineWidth( 0.1 );
+            $pdf->Rect( '10', $height - 5, '190', '7' );
             $pdf->SetFont('Helvetica','B','12');
-            $pdf->SetTextColor(100, 100, 100);
+            $pdf->SetTextColor( 100, 100, 100 );
             $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
+            //Longdescriptions
+            if( trim( $element['longdescription'] ) != '' ){
+                $height = $height + 2;
+                $pdf->SetFont( 'Helvetica', '', '10' );
+                $pdf->SetTextColor( 0, 0, 0 );
+                //writeLog( strlen( $element['longdescription'] ) );//  intdiv
+                $words = explode( ' ', $element['longdescription'] );
+                $i = 0;
+                $lineArray = array();
+                foreach( $words as $value ){
+                    if( strlen( $lineArray[$i].$value.' ' ) > 113 ) $i++;
+                    $lineArray[$i] .= $value.' ';
+                }
+                //writeLog( $lineArray );
+                foreach( $lineArray as $line ){
+                    $height = $height + 4;
+                    $pdf->Text( '16', $height, utf8_decode( $line ) );
+                }
+
+                //$height = $height + 1;
+
+            }
         }
+
+        /*
         else{
             $pdf->SetFont( 'Helvetica', '', '10' );
             $pdf->SetTextColor( 0, 0, 0 );
@@ -419,34 +442,18 @@ function printOrder( $data ){
                 $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
             }
         }
+        */
 
-        if( trim( $element['longdescription'] ) != '' ){
-            $height = $height + 6;
-            $pdf->SetFont( 'Helvetica', '', '10' );
-            $pdf->SetTextColor( 0, 0, 0 );
-            $longdescription = $element['longdescription'];
-            $arrayLongdescription = explode( "\n", $longdescription );
-
-           foreach( $arrayLongdescription as $index => $element ){
-
-              if( strlen( $element ) < 125 ) {
-                $pdf->Text( '16',$height, utf8_decode( $element ) );
-                $height = $height + 4;
-              }else{
-
-                $arrayLong = str_split( $element, 125 );
-                foreach( $arrayLong as $i => $item ){
-                    $pdf->Text( '16',$height, utf8_decode( $item ) );
-                    $height = $height + 4;
-                 }
-
-              }
-
-           }
-
-
-        }
     }
+
+    //writeLog( $height );
+    while( $height < 250 ){
+        $height = $height + 10;
+        $pdf->Rect( '10', $height - 5, '190', '7' );
+    }
+
+
+    //Footer
     $pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '10' );
     $pdf->Text( '22', '270', 'Datum:' );
@@ -458,6 +465,35 @@ function printOrder( $data ){
     $pdf->SetFont( 'Helvetica', '', '08' );
     $pdf->Text( '75', '290', 'Powered by lxcars.de - Freie Kfz-Werkstatt Software' );
 
+
+    //Backside
+    $pdf->AddPage();
+    $height = 30;
+    $pdf->SetFont( 'Helvetica', '', '10' );
+    foreach( $positions as $index => $element ){
+        writeLog( $element);
+        if( $element['part_type']  == 'part' ){
+            writeLog( 'part' );
+            //$pdf->line( 10, )
+            $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) ); //   ".$element['description']
+            $pdf->Text( '26', $height, utf8_decode( $element['description'] ) );
+            $height = $height + 6;
+        }
+    }
+    $height = $height + 20;
+    foreach( $positions as $index => $element ){
+        writeLog( $element);
+        if( $element['part_type']  == 'service' ){
+            writeLog( 'service' );
+            $pdf->Rect( '10', $height - 5, '190', '6' );
+            $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) ); //   ".$element['description']
+            $pdf->Text( '26', $height, utf8_decode( $element['description'] ) );
+            $height = $height + 6;
+        }
+    }
+
+
+    $pdf->Text( '105','270','test' );
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
 
