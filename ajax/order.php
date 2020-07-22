@@ -382,7 +382,6 @@ function printOrder( $data ){
     $pdf->SetFont( 'Helvetica', '', '8' );
     $height = '85';
 
-
     $pdf->SetLineWidth(0.4);
 
     //draw first Line x1, y1, x2, y2
@@ -393,15 +392,13 @@ function printOrder( $data ){
     $lineHeight = 78;
     $pdf->Line( $textPosX_left, $lineHeight, $textPosX_left + $lineWidth , $lineHeight );
 
-
-
     foreach( $positions as $index => $element ){
         if( $element['instruction'] ){
             //writeLog( $element );
             $height = $height + 8;
             $pdf->SetTextColor( 255, 0, 0 );
             $pdf->SetLineWidth( 0.1 );
-            $pdf->Rect( '10', $height - 5, '190', '7' );
+            $pdf->Line( 10, $height + 1.6 , 190, $height + 1.6 );
             $pdf->SetFont('Helvetica','B','12');
             $pdf->SetTextColor( 100, 100, 100 );
             $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
@@ -423,33 +420,14 @@ function printOrder( $data ){
                     $height = $height + 4;
                     $pdf->Text( '16', $height, utf8_decode( $line ) );
                 }
-
-                //$height = $height + 1;
-
             }
         }
-
-        /*
-        else{
-            $pdf->SetFont( 'Helvetica', '', '10' );
-            $pdf->SetTextColor( 0, 0, 0 );
-            if( strlen( $element['description'] ) > 60 ){ //split long text
-                $pdf->SetFont( 'Helvetica', '', '10' );
-                $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
-            }
-            else{
-                $pdf->SetFont('Helvetica','','10');
-                $pdf->Text( '12',$height, utf8_decode( $element['qty']." ".$element['unit']."   ".$element['description'] ) );
-            }
-        }
-        */
-
     }
 
     //writeLog( $height );
     while( $height < 250 ){
         $height = $height + 10;
-        $pdf->Rect( '10', $height - 5, '190', '7' );
+        $pdf->Line( 10, $height + 1.6, 190, $height + 1.6 );
     }
 
 
@@ -467,26 +445,28 @@ function printOrder( $data ){
 
 
     //Backside
-    $pdf->AddPage();
+    //EPSON Printer print must rotate secound page
+    $rotate = 180; //Degree --Only for Epson
+    $pdf->AddPage( 'P', 'A4', $rotate );
     $pdf->SetFont( 'Helvetica', 'B', '16' );
     $pdf->Text( 10, 20, utf8_decode( 'Verbaute Ersazteile' ) );
     $height = 30;
     $pdf->SetFont( 'Helvetica', '', '10' );
-    $pdf->line( 10, $height - 4.4,  200, $height - 4.4 );
+    $pdf->line( 10, $height - 4.4,  190, $height - 4.4 );
     $totalLines = 22;
     foreach( $positions as $index => $element ){
         //writeLog( $element);
         if( $element['part_type']  == 'part' ){
             $totalLines--;
             //writeLog( 'part' );
-            $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
-            $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) ); //   ".$element['description']
+            $pdf->line( 10, $height + 1.6,  190, $height + 1.6 );
+            $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) );
             $pdf->Text( '26', $height, utf8_decode( $element['description'] ) );
             $height = $height + 6;
         }
     }
     while( $totalLines-- ){
-        $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
+        $pdf->line( 10, $height + 1.6, 190, $height + 1.6 );
         $height = $height + 6;
     }
 
@@ -496,23 +476,23 @@ function printOrder( $data ){
     $height = $height + 20;
     $pdf->SetFont( 'Helvetica', '', '10' );
     $totalLines = 16;
-    $pdf->line( 10, $height - 4.4,  200, $height - 4.4 );
+    $pdf->line( 10, $height - 4.4,  190, $height - 4.4 );
     foreach( $positions as $index => $element ){
         writeLog( $element);
         if( $element['part_type']  == 'service' ){
             $totalLines--;
-            $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
-            $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) ); //   ".$element['description']
+            $pdf->line( 10, $height + 1.6,  190, $height + 1.6 );
+            $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) );
             $pdf->Text( '26', $height, utf8_decode( $element['description'] ) );
             $height = $height + 6;
         }
     }
     while( $totalLines-- ){
-        $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
+        $pdf->line( 10, $height + 1.6,  190, $height + 1.6 );
         $height = $height + 6;
     }
 
-    $pdf->Text( '10','290', utf8_decode( 'Ich habe sämtliche Ersazteile und ausgeführte Arbeiten i.d. obigen Liste notiert. Unterschrift: _______________________' ) );
+    $pdf->Text( '10','290', utf8_decode( 'Ich habe sämtliche Ersazteile und ausgeführte Arbeiten i.d. obigen Liste notiert. Unterschrift: __________________' ) );
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
 
