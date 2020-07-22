@@ -468,32 +468,51 @@ function printOrder( $data ){
 
     //Backside
     $pdf->AddPage();
+    $pdf->SetFont( 'Helvetica', 'B', '16' );
+    $pdf->Text( 10, 20, utf8_decode( 'Verbaute Ersazteile' ) );
     $height = 30;
     $pdf->SetFont( 'Helvetica', '', '10' );
+    $pdf->line( 10, $height - 4.4,  200, $height - 4.4 );
+    $totalLines = 22;
     foreach( $positions as $index => $element ){
-        writeLog( $element);
+        //writeLog( $element);
         if( $element['part_type']  == 'part' ){
-            writeLog( 'part' );
-            //$pdf->line( 10, )
+            $totalLines--;
+            //writeLog( 'part' );
+            $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
             $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) ); //   ".$element['description']
             $pdf->Text( '26', $height, utf8_decode( $element['description'] ) );
             $height = $height + 6;
         }
     }
+    while( $totalLines-- ){
+        $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
+        $height = $height + 6;
+    }
+
+
+    $pdf->SetFont( 'Helvetica', 'B', '16' );
+    $pdf->Text( 10, $height + 10, utf8_decode( 'Ausgeführte Arbeiten' ) );
     $height = $height + 20;
+    $pdf->SetFont( 'Helvetica', '', '10' );
+    $totalLines = 16;
+    $pdf->line( 10, $height - 4.4,  200, $height - 4.4 );
     foreach( $positions as $index => $element ){
         writeLog( $element);
         if( $element['part_type']  == 'service' ){
-            writeLog( 'service' );
-            $pdf->Rect( '10', $height - 5, '190', '6' );
+            $totalLines--;
+            $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
             $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) ); //   ".$element['description']
             $pdf->Text( '26', $height, utf8_decode( $element['description'] ) );
             $height = $height + 6;
         }
     }
+    while( $totalLines-- ){
+        $pdf->line( 10, $height + 1.6,  200, $height + 1.6 );
+        $height = $height + 6;
+    }
 
-
-    $pdf->Text( '105','270','test' );
+    $pdf->Text( '10','290', utf8_decode( 'Ich habe sämtliche Ersazteile und ausgeführte Arbeiten i.d. obigen Liste notiert. Unterschrift: _______________________' ) );
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
 
