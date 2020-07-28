@@ -396,17 +396,17 @@ function printOrder( $data ){
         if( $element['instruction'] ){
             //writeLog( $element );
             $height = $height + 8;
-            $pdf->SetTextColor( 255, 0, 0 );
+            //$pdf->SetTextColor( 255, 0, 0 );
             $pdf->SetLineWidth( 0.1 );
             $pdf->Line( 10, $height + 1.6 , 190, $height + 1.6 );
             $pdf->SetFont('Helvetica','B','12');
-            $pdf->SetTextColor( 100, 100, 100 );
+            //$pdf->SetTextColor( 100, 100, 100 );
             $pdf->Text( '12',$height, utf8_decode( $element['description'] ) );
             //Longdescriptions
             if( trim( $element['longdescription'] ) != '' ){
                 $height = $height + 2;
                 $pdf->SetFont( 'Helvetica', '', '10' );
-                $pdf->SetTextColor( 0, 0, 0 );
+                //$pdf->SetTextColor( 0, 0, 0 );
                 //writeLog( strlen( $element['longdescription'] ) );//  intdiv
                 $words = explode( ' ', $element['longdescription'] );
                 $i = 0;
@@ -432,14 +432,14 @@ function printOrder( $data ){
 
 
     //Footer
-    $pdf->SetTextColor( 0, 0, 0 );
+    //$pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '10' );
     $pdf->Text( '22', '270', 'Datum:' );
     $pdf->Text( '45', '270', date( 'd.m.Y' ) );
     $pdf->Text( '105','270','Kundenunterschrift: __________________' );
    // $pdf->SetTextColor( 255, 0, 0 );
     $pdf->Text( '22', '280', utf8_decode( 'Endkontrolle UND Probefahrt durchgeführt von: __________________' ) );
-    $pdf->SetTextColor( 0, 0, 0 );
+    //$pdf->SetTextColor( 0, 0, 0 );
     $pdf->SetFont( 'Helvetica', '', '08' );
     $pdf->Text( '75', '290', 'Powered by lxcars.de - Freie Kfz-Werkstatt Software' );
 
@@ -456,7 +456,7 @@ function printOrder( $data ){
     $totalLines = 22;
     foreach( $positions as $index => $element ){
         //writeLog( $element);
-        if( $element['part_type']  == 'part' ){
+        if( ( $element['part_type']  == 'part' ) && !$element['instruction'] ){
             $totalLines--;
             //writeLog( 'part' );
             $pdf->line( 10, $height + 1.6,  190, $height + 1.6 );
@@ -479,7 +479,7 @@ function printOrder( $data ){
     $pdf->line( 10, $height - 4.4,  190, $height - 4.4 );
     foreach( $positions as $index => $element ){
         writeLog( $element);
-        if( $element['part_type']  == 'service' ){
+        if( ( $element['part_type']  == 'service' ) && !$element['instruction'] ){
             $totalLines--;
             $pdf->line( 10, $height + 1.6,  190, $height + 1.6 );
             $pdf->Text( '12', $height, utf8_decode( $element['qty']." ".$element['unit'] ) );
