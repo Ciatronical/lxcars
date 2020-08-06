@@ -446,7 +446,7 @@ function printOrder( $data ){
 
     //Backside
     //EPSON Printer print must rotate secound page
-    $rotate = 180; //Degree --Only for Epson
+    $rotate = 0; //Degree --Only for Epson
     $pdf->AddPage( 'P', 'A4', $rotate );
     $pdf->SetFont( 'Helvetica', 'B', '16' );
     $pdf->Text( 10, 20, utf8_decode( 'Verbaute Ersazteile' ) );
@@ -497,7 +497,8 @@ function printOrder( $data ){
 
 
     if( $data['print'] ){
-      system('lpr '.__DIR__.'/../out.pdf' );
+      //system('lpr -P test '.__DIR__.'/../out.pdf' );
+      system('lpr -P auftrag '.__DIR__.'/../out.pdf' );
       if( !$orderData['printed'] )
         $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
     }
@@ -518,7 +519,7 @@ function getQtyNewPart( $description ){
 
 function getQty( $description ){
     //Method 1: most popular
-    $sql ="SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = '$description' GROUP BY 1 ORDER BY ct DESC LIMIT 1";
+    $sql ="SELECT qty, count( qty ) AS ct FROM orderitems WHERE description ILIKE '%$description% ' GROUP BY 1 ORDER BY ct DESC LIMIT 1";
     //writeLog( $sql );
     $rs =  $GLOBALS['dbh']->getOne( $sql )['qty'];
 
