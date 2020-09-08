@@ -519,7 +519,7 @@ function getQtyNewPart( $description ){
 
 function getQty( $description ){
     //Method 1: most popular
-    $sql ="SELECT qty, count( qty ) AS ct FROM orderitems WHERE description ILIKE '%$description% ' GROUP BY 1 ORDER BY ct DESC LIMIT 1";
+    $sql ="SELECT qty, count( qty ) AS ct FROM orderitems WHERE description = TRIM( '$description' ) GROUP BY 1 ORDER BY ct DESC LIMIT 1";
     //writeLog( $sql );
     $rs =  $GLOBALS['dbh']->getOne( $sql )['qty'];
 
