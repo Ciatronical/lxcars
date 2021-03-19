@@ -136,7 +136,8 @@ function getMetadata(){
              ."( SELECT buchungsgruppen_id FROM ( SELECT buchungsgruppen_id, count( buchungsgruppen_id ) "
              ."AS id FROM parts GROUP BY 1 ORDER BY id DESC LIMIT 1 ) AS nothing ) DESC) i) x UNION all  "
            ."SELECT row_to_json(x) FROM (SELECT json_agg(i) as customerHourlyRate FROM (SELECT customer_Hourly_Rate FROM defaults) i) x) output";
-     echo $GLOBALS['dbh']->getOne( $sql )['json_agg'];
+    //writeLog( $sql );
+    echo $GLOBALS['dbh']->getOne( $sql )['json_agg'];
 }
 
 function getUsersFromGroup( $data ){
@@ -164,8 +165,9 @@ function getPartJSON( $parts_id ){
         ."INNER JOIN taxkeys ON taxzone_charts.income_accno_id = taxkeys.chart_id "
         ."INNER JOIN tax ON taxkeys.tax_id = tax.id "
         ."WHERE parts.id = ".$parts_id." AND parts.obsolete = false AND taxzone_charts.taxzone_id = ".$taxzone_id." "
-        ."GROUP BY parts.id, tax.rate";
-
+        ."GROUP BY parts.id, tax.rate ORDER BY tax.rate DESC";
+    //writeLog( $sql );
+    //quick and dirty!! Es darf hier eigentlich nur eine Zeile mit dem aktuellem Steuersatz zurückgegeben werden! Dabei ist das Startdatum und Enddatum zu beachten!
     echo $GLOBALS['dbh']->getALL( $sql, TRUE );
 }
 
