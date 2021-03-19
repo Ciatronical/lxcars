@@ -125,7 +125,7 @@ switch( $mode ){
         $rsC = getAllFirmen($suchwort,true,"C");
         $rsV = getAllFirmen($suchwort,true,"V");
         $rsK = getAllPerson($suchwort);
-        $sql = "SELECT c_ln, c_id, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%'";
+        $sql = "SELECT c_ln, c_id, name FROM lxc_cars JOIN customer ON c_ow = id WHERE c_ln ilike '%".$_GET['term']."%' AND obsolete = false";
         $rsFhz = $GLOBALS['dbh']->getAll( $sql );
         $rs = array();
         if ( $rsC ) foreach ( $rsC as $key => $value ) {
