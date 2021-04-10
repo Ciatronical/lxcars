@@ -497,9 +497,15 @@ function printOrder( $data ){
     $pdf->OutPut( __DIR__.'/../out.pdf', 'F' );
 
 
-    if( $data['print'] ){
+    if( $data['print'] == 'printOrder1' ){
       //system('lpr -P test '.__DIR__.'/../out.pdf' );
       system('lpr -P auftrag '.__DIR__.'/../out.pdf' );
+      if( !$orderData['printed'] )
+        $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
+    }
+    if( $data['print'] == 'printOrder2' ){
+      //system('lpr -P test '.__DIR__.'/../out.pdf' );
+      system('lpr -P HP_LASER '.__DIR__.'/../out.pdf' );
       if( !$orderData['printed'] )
         $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
     }

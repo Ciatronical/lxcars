@@ -880,8 +880,8 @@ namespace( 'kivi.Part', function( ns ){
 
 
 
-  $( "#printOrder, #pdfOrder" ).button({
-    label:  kivi.t8('Print')
+  $( "#printOrder1, #printOrder2, #pdfOrder" ).button({
+    //label:  kivi.t8('Print1')
   }).css({
     'margin':'5px'
   }).click( function(){
@@ -909,7 +909,7 @@ namespace( 'kivi.Part', function( ns ){
       url: 'ajax/order.php?action=printOrder&data=',
       type: 'GET',
       async: false,
-      data: { data: { 'orderId': orderID, 'print': id == 'printOrder' ? 1 : 0 } },
+      data: { data: { 'orderId': orderID, 'print': id } },
       success: function ( data ) {
         if( id == 'pdfOrder' ) window.open( 'out.pdf' );
       },
@@ -922,6 +922,12 @@ namespace( 'kivi.Part', function( ns ){
 
   $( "#pdfOrder" ).button({
     label: 'Pdf'
+  })
+  $( "#printOrder1" ).button({
+    label: 'Drucker 1'
+  })
+  $( "#printOrder2" ).button({
+    label: 'Drucker 2'
   })
 
   $( "#kbaToCoparts" ).button({
