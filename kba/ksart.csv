@@ -1,0 +1,37 @@
+Benzin |0001
+Diesel |0002
+Vielstoff |0003
+Elektro |0004
+Flüssiggas |0005
+Benzin/Flüssiggas |0006
+Benzin/komp.Erdgas |0007 
+Hybr.Benzin/E |0008
+Erdgas NG |0009 
+Hybr.Diesel/E |0010
+Wasserstoff |0011
+Hybr.Wasserst./E |0012
+Wasserstoff/Benzin |0013
+Wasserst./Benzin/E |0014
+BZ/Wasserstoff |0015 
+BZ/Benzin |0016
+BZ/Methanol |0017
+BZ/Ethanol |0018
+Hybr.Vielstoff/E |0019
+Hybr.Erdgas/E |0022
+Benzin/Ethanol |0023
+Hybr.Flüssiggas/E |0024
+Hybr.B/E ext.aufl. |0025
+Hybr.D/E ext.aufl. |0026
+Hybr.LPG/E ext.aufl. |0027
+Hybr.W/E ext.aufl. |0028
+Hybr.V/E ext.aufl. |0029
+Hybr.NG/E ext.aufl. |0030
+Hybr.Wod.B/Eext.aufl |0031
+Wasserstoff/NG |0032
+Hybr.W/NG/E ext.aufl |0033
+Ethanol |0034 
+Hybr.BZ/W/E |0035 
+Hybr.BZ/W/E ext. aufl. |0036 
+Zweistoff LNG/Diesel |0037 
+Verflüssigtes Erdgas (LNG) |0038
+Andere |9999
