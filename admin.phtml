@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+
+<?php
+    require_once __DIR__.'/../inc/stdLib.php';
+    $menu = $_SESSION['menu'];
+    echo $menu['stylesheets'];
+    echo $menu['javascripts'];
+    echo $head['JQTABLE'];
+    echo $head['THEME'];
+?>
+
+
+<script>
+  $( document ).ready( function(){
+    $( '#headline' ).html( 'Administration für LxCars - darf nur vom Profi benutzt werden.' );
+    $( '#getKBA').button().click( function(){
+      $.ajax({
+        url: 'ajax/order.php?',
+        data: { 'data': item.id },
+        success: function( rsp ){
+    });
+
+
+  });
+
+</script>
+
+
+</head>
+
+<body>
+<?php
+    echo $menu['pre_content'];
+    echo $menu['start_content'];
+?>
+
+  <p id="headline" class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;"></p>
+  <div><button id="getKBA">Hole neue KBA-Daten</button></div>
+
+
+<?php echo $menu['end_content']; ?>
+
+</html>

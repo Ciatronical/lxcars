@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <?php
+        require_once( __DIR__."/../inc/stdLib.php" );
+        echo $menu['stylesheets'];
+        echo $menu['javascripts'];
+        echo $head['THEME'];
+    ?>
+
+    <script type="text/javascript" src="jQueryAddOns/date-time-picker.js"></script>
+    <script type="text/javascript" src="jQueryAddOns/german-date-time-picker.js"></script>
+    <link rel="stylesheet" href="css/lxc.Order.css" type="text/css" title="Stylesheet">
+    <script type="text/javascript" src="js/lxcOrder2.js"></script>
+
+    <script type="text/javascript" src="js/locale/de.js"></script>
+
+  </head>
+  <body>
+
+    <?php
+        echo $menu['pre_content'];
+        echo $menu['start_content'];
+    ?>
+
+    <p id='headline' class="ui-state-highlight ui-corner-all too1,00ls" style="background-color: #light-yellow;margin-top: 10px; height: 15px;  padding: 0.4em;"></p>
+
+    <div class="ui-widget-content">
+      <div>
+           <p></p>
+          <table class="table1">
+            <tr>
+              <td><label id="head01">Auftragsnummer:</label></td>
+              <td><label class="val" id="ordernumber">0000</label></td>
+              <td><label id="head03">Auftraggeber:</label></td>
+              <td><label id="name">Name:</label></br></td>
+              <td><label id="head05">Fertigstellung:</label></td>
+              <td><input class="val orderupdate" id="finish_time" type="text"></td>
+              <td><label id="head07">KM-Stand:</label></td>
+              <td><input class="val orderupdate" id="milage" type="text" ></br></td>
+              <td><label id="head09">bearbeitet von:</label></td>
+              <td><label class="val" id="employee"></label></td>
+            </tr>
+            <tr>
+              <td><label id="labellicenseplate">Amtl.-Kennz.:</label></td>
+              <td><input class="val orderupdate" id="licenseplate" type="text" ></br></td>
+              <td><label id="head11">bearbeitet am:</label></td>
+              <td><label class="val" id="mtime"></label></br></td>
+              <td><label id="head13">KfZ Ort:</label></td>
+              <td>
+                  <select class="val orderupdate" id="car_status" type="text">
+                  <option>Auto nicht hier</option>
+                  <option selected="selected">Auto hier</option>
+                  <option>Sonstiges zur Reparatur gebracht</option>
+                  <option>Bestellung</option>
+                </select></br>
+              </td>
+              <td><label id="head15">erstellt am:</label></td>
+              <td><label class="val" id="date"></label></td>
+              <td><label id="head17">Status:</label></td>
+              <td>
+                <select class="val orderupdate" id="orderstatus" type="text">
+                  <option>angenommen</option>
+                  <option>bearbeitet</option>
+                  <option selected="selected">abgerechnet</option>
+                </select>
+              </td>
+              <td><label id="head19">Interner Auftrag:</label></td>
+              <td>
+                <input class="orderupdate isInternalOrder" type="checkbox">
+              </td>
+            </tr>
+
+
+          </table>
+
+       <p></p>
+      </div>
+
+      <table width="100%">
+        <tr>
+          <td>
+            <div id="row_table_scroll_id" style="overflow-y: auto; height: 68vh">
+              <table id="row_table_id"  class='ui-sortable' width="100%">
+                <thead>
+                  <tr class="listheading pin">
+                    <th class="listheading" nowrap width="25px" >Pos.</th>
+                    <th class="listheading" style='text-align:center' nowrap width="1"><img src="../../image/updown.png" alt="umsortieren"></th>
+                    <th class="listheading" style='text-align:center' nowrap width="1"><img src="../../image/close.png" alt="löschen"></th>
+                    <th class="listheading" style='text-align:center' nowrap width="1"><img alt="E"></th>
+                    <th id="partnumber_header_id"  class="listheading" nowrap width="2"><a href='#' onClick='javascript:kivi.Order.reorder_items("partnumber")'> ArtNr.</a></th>
+                    <th id="partclass_header_id"   class="listheading" nowrap width="2">Typ</th>
+                    <th id="description_header_id" class="listheading" nowrap  width="10"><a href='#' onClick='javascript:kivi.Order.reorder_items("description")'>Beschreibung</a></th>
+                    <th id="longdescription_header_id" class="listheading" nowrap><a href='#' onClick='javascript:kivi.Order.reorder_items("description")'>Langtext</a></th>
+
+                    <th id="qty_header_id"         class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("qty")'>        Menge</a></th>
+                    <th class="listheading" nowrap width="5" >Einheit </th>
+                    <th id="sellprice_header_id"   class="listheading" nowrap width="2" ><a href='#' onClick='javascript:kivi.Order.reorder_items("sellprice")'> Preis</a></th>
+                    <th id="discount_header_id"    class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  Rabatt in %</a></th>
+                    <th id="discount_header_100_id"    class="listheading" nowrap width="5" ><a href='#' onClick='javascript:kivi.Order.reorder_items("discount")'>  100%</a></th>
+                    <th class="listheading" nowrap width="10">Gesamt </th>
+                    <th class="listheading" nowrap width="2" >Mechaniker </th>
+                    <th class="listheading" nowrap width="2" >Status </th>
+                  </tr>
+                </thead>
+
+                <tbody class="row_entry listrow listrow">
+                  <tr style="width: 1533px;">
+                    <td>
+                      <div class = "numeric" name = "position">1</div>
+                    </td>
+                    <td align = "center">
+                      <img src="../../image/updown.png" alt="Eintrag umsortieren" class="dragdrop" style="display: none;">
+                    </td>
+                    <td align="center"> <!--onclick entfernt die selektierte Position außer Position 1-->
+                      <input value="x" onclick="kivi.Part.delete_order_item_row(this)" type="button" style="display: none;" class="x">
+                    </td>
+                    <td align = "center">
+                       <input value="E" onclick="kivi.Part.editPart(this)" type="button" style="display: none;" class="edit">
+                    </td>
+                    <td>
+                      <div name="partnumber"></div>
+                    </td>
+                    <td>
+                      <div name="partclassification"></div>
+                    </td>
+                    <td>
+                      <span class="part_picker"><input type="hidden" class="autocomplete add_item_input part_autocomplete" name="add_item.parts_id" value="" data-part-picker-data="{&quot;fat_set_item&quot;:1,&quot;class&quot;:&quot;add_item_input&quot;,&quot;style&quot;:&quot;width: 100px&quot;}"><input type="text" fat_set_item="1" style="width: 480px" class="add_item_input orderupdate" name="item_partpicker_name" value=""></span>
+                    </td>
+                    <td>
+                      <span>
+                        <textarea rows="1" cols="70" class="orderupdate" name="longdescription"> </textarea>
+                      </span>
+                    </td>
+                    <td>
+                      <span>
+                        <input size="5" name="qty_as_number" class="recalc reformat_number numeric" style="text-align: right;" value="1.00" type="text">
+                      </span>
+                    </td>
+                    <td nowrap="">
+                      <select class="unitselect" name="unit" ></select>
+                    </td>
+                    <td>
+                      <span>
+                        <input class="recalc reformat_number numeric pos1" style="text-align: right;" value=""  size="3" name="sellprice_as_number" type="text">
+                      </span>
+                    </td>
+                    <td>
+                      <span>
+                        <input value="0.00" class="recalc reformat_number numeric pos1 discaspercent" style="text-align: right;" name="discount_as_percent" size="5" type="text">
+                      </span>
+                    </td>
+                    <td align = "center">
+                       <input value="100%" type="button" class="discount100" name="discount100button" style="display: none;">
+                    </td>
+                    <td align="center">
+                      <span>
+                        <div name="linetotal" style="text-align: right;" data-tax="0" >0.00</div>
+                      </span>
+                    </td>
+                    <td nowrap="">
+                      <select class="unitselect" name="mechanics" > <option value="0"></option></select>
+                    </td>
+                    <td nowrap="">
+                      <select name="pos_status" class="unitselect">
+                        <option value="gelesen">gelesen</option>
+                        <option value="Bearbeitung">Bearbeitung</option>
+                        <option value="erledigt">erledigt</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br>
+
+              <table class="sumTable">
+              <tr>
+               <td> <label id="netto">Netto:</label> </td>
+               <td> <label name="pos_orderTotalNetto"  type="text" id="orderTotalNetto" class="recalc reformat_number numeric">0</label></td>
+               <td> <label id="brutto">Brutto:</label> </td>
+               <td> <label name="pos_orderTotalBrutto"  type="text" id="orderTotalBrutto" class="recalc reformat_number numeric">0</label> </td>
+               <td> <label>Alle Positionen Mechaniker:</label> </td>
+               <td> <span id="all_mechanics">  <select  name="allMechanics" value="0" type="text" id="allMechanicsID" ></span> </td>
+               <td><label>Alle Positionen Status:</label></td>
+               <td>
+                  <span id="all_status">
+                      <select  name="allStatus" value="0" type="text" id="allStatusID" >
+                        <option value="gelesen">gelesen</option>
+                        <option value="Bearbeitung">Bearbeitung</option>
+                        <option value="erledigt">erledigt</option>
+                      </select>
+                  </span>
+               </td>
+               <td> <label>Steuersatz:</label> </td>
+               <td> <span id="taxzones">
+                      <select  name="taxzones" value="0" type="text" id="taxzone_id" class="unitselect"> </select>
+                    </span>
+               </td>
+              </tr>
+
+         </table>
+
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div>
+
+        <button id="crm" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="orderList" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="car" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="back" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="printOrder" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="pdfOrder" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="invoice" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="deleteOrder" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+        <button id="kbaToCoparts" class="ui-button ui-corner-all ui-widget" style="margin: 5px;"></button>
+      </div>
+    </div>
+
+    <dialog id="newPart_dialog">
+      <table>
+        <tr>
+          <td>Artikel-Nr.:</td>
+          <td><input type="text" id="dialogNewArticleNumber"></td>
+        </tr>
+        <tr>
+          <td>Beschreibung:</td>
+          <td><input type="text" id="dialogDescription" style="width: 400px">
+
+          </td>
+        </tr>
+        <tr>
+         <td>Artikeltyp:</td><td><select type="text" id="dialogPart_typ" class="editable"><option value="instruction">Anweisung</option><option value="dimension">Ware</option><option value="service">Dienstleistung</option> </select></td>
+        </tr>
+        <tr>
+         <td>Quantity:</td><td><input type="text" id="quantity" class="editable" value="1"></td>
+        </tr>
+        <tr>
+          <td>Einheit:</td>
+          <td>
+            <select id="dialogSelectUnits" name="unit" type="text" class="ui-widget-content ui-corner-all editable"autocomplete="off">
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Einkaufspreis:</td>
+          <td><input type="text" id="dialogBuyPrice" value="0"></td>
+        </tr>
+        <tr>
+          <td>Verkaufspreis:</td>
+          <td><input type="text" id="dialogSellPrice" value="0"></td>
+        </tr>
+        <tr>
+          <td>Buchungsgruppe:</td>
+          <td>
+            <select id="accountingGroups" name="accountingGroups" type="text" class="ui-widget-content ui-corner-all editable" autocomplete="off" ></select>
+          </td>
+        </tr>
+        <tr>
+          <td><button id="btnSaveNewPart" class="ui-button ui-corner-all ui-widget" style="margin: 5px;" value="Speichern">Speichern</button></td>
+        </tr>
+      </table>
+    </dialog>
+
+
+    <div id="confirmDialog">
+    <?php echo $menu['end_content']; ?>
+  </body>
+</html>
