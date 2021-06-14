@@ -18,12 +18,16 @@
     $( '#headline' ).html( 'Administration für LxCars - darf nur vom Profi benutzt werden.' );
     $( '#getKBA').button().click( function(){
       $.ajax({
-        url: 'ajax/order.php?',
-        data: { 'data': item.id },
+        url: 'kba/getKBA.php',
+        data: { 'action': 'getKBACars' },
         success: function( rsp ){
-    });
-
-
+          alert( 'getAllKBA Success!' );
+        },
+        error: function( rsp ){
+          alert( 'Error getAllKBA!' );
+        }
+      })
+    })
   });
 
 </script>
