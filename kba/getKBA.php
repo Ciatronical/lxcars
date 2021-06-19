@@ -71,9 +71,9 @@
         writeLog( 'getKBACars ausgeführt');
 
         //// test with SELECT * FROM carskba WHERE klasse ILIKE '%11%';
-        $sql = 'DROP TABLE IF EXISTS carskba';
+        $sql = 'DROP TABLE IF EXISTS carskbatmp';
         echo $GLOBALS['dbh']->query( $sql );
-        $sql = 'CREATE TABLE carskba(
+        $sql = 'CREATE TABLE carskbatmp(
             hsn TEXT,
             tsn TEXT,
             hersteller TEXT,
@@ -92,16 +92,32 @@
         )';
         echo $GLOBALS['dbh']->query( $sql );
 
-        $sql = "COPY carskba( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
+        $sql = "COPY carskbatmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
                 FROM '/var/www/kivitendo-crm/lxcars/kba/carskba.csv' DELIMITER '|' CSV";
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'DROP TABLE IF EXISTS carskba';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'CREATE TABLE carskba AS TABLE carskbatmp WITH NO DATA';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'INSERT INTO carskba SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM carskba';
         echo $GLOBALS['dbh']->query( $sql );
     }//funntion getKBA
 
-/*DROP TABLE IF EXISTS test;
-CREATE TABLE test AS TABLE carskba WITH NO DATA;
-INSERT INTO test SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM carskba;
-*/
+    function getKBAtrailer(){
+        writeLog( __FUNCTION__ );
+        echo 1;
+    }
 
+    function getKBAbike(){
+        writeLog( __FUNCTION__, false );
+        echo 1;
+    }
 
-
+    function getKBAtruck(){
+        writeLog( __FUNCTION__ );
+        echo 1;
+    }
 ?>

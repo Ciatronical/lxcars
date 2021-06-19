@@ -16,18 +16,21 @@
 <script>
   $( document ).ready( function(){
     $( '#headline' ).html( 'Administration für LxCars - darf nur vom Profi benutzt werden.' );
-    $( '#getKBA').button().click( function(){
+
+    $( '#getKBAcars, #getKBAtrailer, #getKBAbike, #getKBAtruck').button().click( function(){
+      var name = $(this).attr('id');
       $.ajax({
         url: 'kba/getKBA.php',
-        data: { 'action': 'getKBACars' },
+        data: { 'action': name },
         success: function( rsp ){
-          alert( 'getAllKBA Success!' );
+          alert( name + ' Success!' );
         },
         error: function( rsp ){
-          alert( 'Error getAllKBA!' );
+          alert( 'Error ' + name + '!' );
         }
       })
-    })
+    });
+
   });
 
 </script>
@@ -42,7 +45,11 @@
 ?>
 
   <p id="headline" class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;"></p>
-  <div><button id="getKBA">Hole neue KBA-Daten</button></div>
+  <div><button id="getKBAcars">Hole Auto KBA-Daten</button></div>
+  <div><button id="getKBAtrailer">Hole Anhänger KBA-Daten</button></div>
+  <div><button id="getKBAbike">Hole Motorad KBA-Daten</button></div>
+  <div><button id="getKBAtruck">Hole Lkw KBA-Daten</button></div>
+
 
 
 <?php echo $menu['end_content']; ?>
