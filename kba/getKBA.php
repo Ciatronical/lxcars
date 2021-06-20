@@ -1,13 +1,8 @@
 <?php
-    require_once __DIR__.'/../../inc/stdLib.php'; // for debug
-    require_once __DIR__.'/../../inc/crmLib.php';
     require_once __DIR__.'/../inc/ajax2function.php';
 
-
-
-
-
     $debug = true;
+    $dl = 2; //download
 
     function strposArray( $haystack, $needle, $offset = 0 ){
       if( !is_array( $needle) ) return false;
@@ -17,8 +12,6 @@
       }
       return false;
     }
-
-
 
     function getKBACars(){
         $carTypesArray = array( 'BEETLE', 'CALIFORNIA', 'CADDY', 'Club', 'Crafter', 'GOLF', 'EOS', 'FOX', 'Hymer', 'JETTA', 'KOMBI', 'PASSAT', 'PHAETON', 'POLO', 'SCIROCCO', 'SHARAN', 'TIGUAN', 'TOUAREG', 'TOURAN', 'VWUP!', 'XL1', 'CC' );
@@ -108,11 +101,39 @@
 
     function getKBAtrailer(){
         writeLog( __FUNCTION__ );
+
+        //system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv45_pdf.pdf?__blob=publicationFile&v=23' -O sv45.pdf" );
+        system( 'pdftotext -layout sv45.pdf' );
+        $allLines = file( 'sv45.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+
+        foreach( $allLines as $key => $value ){
+            $goodLine = TRUE;
+            if( !ctype_digit( substr( $value, 0, 4) ) ) $goodLine = FALSE;  //// Prüfen ob die ersten vier Zeichen numerisch sind
+            if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
+            if( !$goodLine ) unset( $allLines[$key] );
+        }
+
+        $posSeperator = array( 13, 24, 54, 87, 123, 151, 170, 179, 198, 203 );
+        foreach( $allLines as $key => $value ){
+            foreach( $posSeperator as $posKey => $posValue ){
+                $value = substr_replace( $value, '|', $posValue, 0 );
+            }
+
+            $allLines[$key] = $value;
+        }
+        file_put_contents( 'kbatrailer.csv', implode( PHP_EOL, $allLines ) );
+
+
         echo 1;
     }
 
-    function getKBAbike(){
-        writeLog( __FUNCTION__, false );
+    function getKBAbike( $data ){
+        writeLog( __FUNCTION__ );
+        global $dl;
+        global $debug;
+        writeLog( $dl );
+        writeLog( $debug );
+        writeLog( $data );
         echo 1;
     }
 
