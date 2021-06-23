@@ -340,6 +340,66 @@
 
     function getKBATractor(){
         writeLog( __FUNCTION__ );
+        //system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv44_pdf.pdf?__blob=publicationFile&v=24' -O sv44.pdf" );
+        system( 'pdftotext -layout sv44.pdf' );
+        $allLines = file( 'sv44.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+        foreach( $allLines as $key => $value ){
+            $goodLine = TRUE;
+            if( !ctype_digit( substr( $value, 0, 4) ) ) $goodLine = FALSE;  //// Prüfen ob die ersten vier Zeichen numerisch sind
+            if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
+            if( !$goodLine ) unset( $allLines[$key] );
+        }
+
+        $posSeperator = array( 13, 24, 54, 87, 123, 151, 170, 179, 191, 199, 217, 226, 240, 248 );
+        foreach( $allLines as $key => $value ){
+            foreach( $posSeperator as $posKey => $posValue ){
+                $value = substr_replace( $value, '|', $posValue, 0 );
+            }
+
+            $allLines[$key] = $value;
+        }
+
+        file_put_contents( 'kbatractors.csv', implode( PHP_EOL, $allLines ) );
+
+        $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+        $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE kbatractorstmp(
+            hsn TEXT,
+            tsn TEXT,
+            hersteller TEXT,
+            marke TEXT,
+            name TEXT,
+            datum TEXT,
+            klasse TEXT,
+            aufbau TEXT,
+            kraftstoff TEXT,
+            leistung TEXT,
+            hubraum TEXT,
+            achsen TEXT,
+            antrieb TEXT,
+            sitze TEXT,
+            masse TEXT
+        )';
+        echo $GLOBALS['dbh']->query( $sql );
+        $sql = "COPY kbatractorstmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
+                FROM '".__DIR__."/kbatractors.csv' DELIMITER '|' CSV";
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'DROP TABLE IF EXISTS kbatractors';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'CREATE TABLE kbatractors AS TABLE kbatractorstmp WITH NO DATA';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'INSERT INTO kbatractors SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbatractorstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+
+
         echo 1;
     }
 ?>
