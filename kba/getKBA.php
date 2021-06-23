@@ -207,7 +207,7 @@
             $allLines[$key] = $value;
         }
 
-        file_put_contents( 'kbabike.csv', implode( PHP_EOL, $allLines ) );
+        file_put_contents( 'kbabikes.csv', implode( PHP_EOL, $allLines ) );
 
 
         $sql = 'DROP TABLE IF EXISTS kbabikestmp';
@@ -231,7 +231,7 @@
         )';
         echo $GLOBALS['dbh']->query( $sql );
         $sql = "COPY kbabikestmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
-                FROM '".__DIR__."/carskba.csv' DELIMITER '|' CSV";
+                FROM '".__DIR__."/kbabikes.csv' DELIMITER '|' CSV";
         echo $GLOBALS['dbh']->query( $sql );
 
         $sql = 'DROP TABLE IF EXISTS kbabikes';
@@ -240,7 +240,7 @@
         $sql = 'CREATE TABLE kbabikes AS TABLE kbabikestmp WITH NO DATA';
         echo $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'INSERT INTO kbabikes SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM carskba';
+        $sql = 'INSERT INTO kbabikes SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbabikestmp';
         echo $GLOBALS['dbh']->query( $sql );
 
         $sql = 'DROP TABLE IF EXISTS kbabikestmp';
@@ -251,6 +251,94 @@
     }
 
     function getKBAtruck(){
+        writeLog( __FUNCTION__ );
+        $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO' );
+        //system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv43_pdf.pdf?__blob=publicationFile&v=24' -O sv43.pdf" );
+        system( 'pdftotext -layout sv43.pdf' );
+        $allLines = file( 'sv43.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+
+        foreach( $allLines as $key => $value ){
+            $goodLine = TRUE;
+            if( !ctype_digit( substr( $value, 0, 4) ) ) $goodLine = FALSE;  //// Prüfen ob die ersten vier Zeichen numerisch sind
+            if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
+            if( !$goodLine ) unset( $allLines[$key] );
+        }
+
+        //Pipes entfernen
+        foreach( $allLines as $key => $value ){
+            $allLines[$key] = str_replace(  '|', '', $value );
+        }
+
+        foreach( $allLines as $key => $value ){
+            if( substr( $value, 74, 12 ) && !ctype_space( substr( $value, 74, 8 ) ) ){ //sind Kfz-Typen zu weit nach lins verschoben?
+                $posBegin = strposArray( $value, $truckTypesArray, 74 );
+                if( $posBegin === false || $posBegin >= 84 ) continue;
+                $posEnd = strpos( $value, '   ', $posBegin );
+                $length = $posEnd - $posBegin;
+                $stringToShift = substr( $value, $posBegin, $length );
+                $replaceStr = str_repeat( ' ', $length );
+                $value = substr_replace( $value, $replaceStr, $posBegin, $length );
+                $value = substr_replace( $value, $stringToShift, 85, $length );//85 ist die Pos wo sie hingeschoben werden
+                //if( $debug ) $formatedLines[$key] = substr( $value, 52, 58 );
+                $allLines[$key] = $value;
+                //if( $debug ) echo "posBegin: ".$posBegin." PosEnd: ".$posEnd." String: ".$stringToShift." \n";
+            }
+        }
+
+        $posSeperator = array( 13, 24, 54, 88, 124, 151, 170, 179, 191, 199, 217, 226, 240, 248 );
+        foreach( $allLines as $key => $value ){
+            foreach( $posSeperator as $posKey => $posValue ){
+                $value = substr_replace( $value, '|', $posValue, 0 );
+            }
+
+            $allLines[$key] = $value;
+        }
+
+        file_put_contents( 'kbatrucks.csv', implode( PHP_EOL, $allLines ) );
+
+        $sql = 'DROP TABLE IF EXISTS kbatruckstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+        $sql = 'DROP TABLE IF EXISTS kbatruckstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE kbatruckstmp(
+            hsn TEXT,
+            tsn TEXT,
+            hersteller TEXT,
+            marke TEXT,
+            name TEXT,
+            datum TEXT,
+            klasse TEXT,
+            aufbau TEXT,
+            kraftstoff TEXT,
+            leistung TEXT,
+            hubraum TEXT,
+            achsen TEXT,
+            antrieb TEXT,
+            sitze TEXT,
+            masse TEXT
+        )';
+        echo $GLOBALS['dbh']->query( $sql );
+        $sql = "COPY kbatruckstmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
+                FROM '".__DIR__."/kbatrucks.csv' DELIMITER '|' CSV";
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'DROP TABLE IF EXISTS kbatrucks';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'CREATE TABLE kbatrucks AS TABLE kbatruckstmp WITH NO DATA';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'INSERT INTO kbatrucks SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbatruckstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+
+        $sql = 'DROP TABLE IF EXISTS kbatruckstmp';
+        echo $GLOBALS['dbh']->query( $sql );
+
+
+        echo 1;
+    }
+
+    function getKBATractor(){
         writeLog( __FUNCTION__ );
         echo 1;
     }
