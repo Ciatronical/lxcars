@@ -49,7 +49,10 @@ int main( int argc, char* argv[] ){
         debug = TRUE;
     if(  dataarray[0] == "copartsnumber" && ( dataarray[2] == "debug" || dataarray[2] == "debug/" ) )
         debug = TRUE;
-
+    if(  dataarray[0] == "AAGOnlinekba" && ( dataarray[14] == "debug" || dataarray[14] == "debug/" ) )
+        debug = TRUE;
+    if(  dataarray[0] == "AAGOnlinenumber" && ( dataarray[2] == "debug" || dataarray[2] == "debug/" ) )
+        debug = TRUE;
     ofstream debugFile;
     char str[MAX_PATH];
     GetModuleFileNameA( NULL, str, MAX_PATH );
@@ -63,7 +66,7 @@ int main( int argc, char* argv[] ){
         cout << "!!! ***** LxCars Client Debug Mode ***** !!!" << endl << endl;
     }
 
-    if( dataarray[0] == "copartskba" || dataarray[0] == "copartsnumber" ){
+    if( dataarray[0] == "copartskba" || dataarray[0] == "copartsnumber" || dataarray[0] == "AAGOnlinekba" || dataarray[0] == "AAGOnlinenumber"){
         HKEY hKey = 0;
         PPERF_DATA_BLOCK dwValueTypeControl =  (PPERF_DATA_BLOCK) malloc( BufferSize );
         DWORD dwValueSizeControl = BufferSize;
@@ -71,8 +74,14 @@ int main( int argc, char* argv[] ){
         DWORD dwValueSizePath = BufferSize;
         PPERF_DATA_BLOCK dwValueTypeAppName = (PPERF_DATA_BLOCK) malloc( BufferSize );;
         DWORD  dwValueSizeAppName = BufferSize;
-
-        LPCTSTR strKeyRegPath = TEXT( "SOFTWARE\\DVSE GmbH\\CatClient\\COPARTS Online" );
+        LPCTSTR strKeyRegPath;
+        if(dataarray[0] == "copartskba" || dataarray[0] == "copartsnumber"){
+          strKeyRegPath = TEXT( "SOFTWARE\\DVSE GmbH\\CatClient\\COPARTS Online" ); //    
+        }
+        if(dataarray[0] == "AAGOnlinekba" || dataarray[0] == "AAGOnlinenumber"){
+          strKeyRegPath = TEXT( "SOFTWARE\\DVSE GmbH\\CatClient\\AAG-Online" );//in diesem Sch[ssel steht fer pfad  des controlfiles]
+        }
+        
         LPCTSTR strKeyControl = TEXT( "Control" );
         LPCTSTR strKeyPath = TEXT( "Path" );
         LPCTSTR strKeyApp = TEXT( "AppName" );
@@ -117,6 +126,10 @@ int main( int argc, char* argv[] ){
             xmloutput = "<Commands><Command Name=\"[PKW]\"><Args><Arg Name=\"[KBANR]\" Value=\"" + dataarray[1] + dataarray[2] + "\" /><Arg Name = \"[KZN]\" Value =\"" + dataarray[3] + "\" /><Arg Name = \"[VIN]\" Value =\"" + dataarray[4] + "\" /><Arg Name = \"[EZ]\" Value =\"" + dataarray[5] + "\" /><Arg Name = \"[MCODE]\" Value =\"" + dataarray[6] + "\" /><Arg Name = \"[KMStand]\" Value =\"" + dataarray[7] + "\" /><Arg Name = \"[AUFTRAGSART]\" Value =\"Auftragsnummer\" /><Arg Name = \"[AUFTRAGSNR]\" Value =\"" + dataarray[8]  + "\" /><Arg Name = \"[KDName]\" Value =\"" + dataarray[9] + "\" /><Arg Name = \"[STRASSE]\" Value =\"" + dataarray[10]  + "\" /><Arg Name = \"[PLZ]\" Value =\"" + dataarray[11]  + "\" /><Arg Name = \"[ORT]\" Value =\"" + dataarray[12]  + "\" /><Arg Name = \"[GENARTNR]\" Value =\"" + dataarray[13] + "\" /></Args></Command></Commands>";
         if( dataarray[0] == "copartsnumber" )
             xmloutput = "<Commands><Command Name=\"[ARTIKEL]\"><Args><Arg Name =\"[ARTIKELNR]\" Value =\"" + dataarray[1] + "\" /></Args></Command></Commands>";
+        if( dataarray[0] == "AAGOnlinekba" )
+            xmloutput = "<Commands><Command Name=\"[PKW]\"><Args><Arg Name=\"[KBANR]\" Value=\"" + dataarray[1] + dataarray[2] + "\" /><Arg Name = \"[KZN]\" Value =\"" + dataarray[3] + "\" /><Arg Name = \"[VIN]\" Value =\"" + dataarray[4] + "\" /><Arg Name = \"[EZ]\" Value =\"" + dataarray[5] + "\" /><Arg Name = \"[MCODE]\" Value =\"" + dataarray[6] + "\" /><Arg Name = \"[KMStand]\" Value =\"" + dataarray[7] + "\" /><Arg Name = \"[AUFTRAGSART]\" Value =\"Auftragsnummer\" /><Arg Name = \"[AUFTRAGSNR]\" Value =\"" + dataarray[8]  + "\" /><Arg Name = \"[KDName]\" Value =\"" + dataarray[9] + "\" /><Arg Name = \"[STRASSE]\" Value =\"" + dataarray[10]  + "\" /><Arg Name = \"[PLZ]\" Value =\"" + dataarray[11]  + "\" /><Arg Name = \"[ORT]\" Value =\"" + dataarray[12]  + "\" /><Arg Name = \"[GENARTNR]\" Value =\"" + dataarray[13] + "\" /></Args></Command></Commands>";
+        if( dataarray[0] == "AAGOnlinenumber" )
+            xmloutput = "<Commands><Command Name=\"[ARTIKEL]\"><Args><Arg Name =\"[ARTIKELNR]\" Value =\"" + dataarray[1] + "\" /></Args></Command></Commands>";
         //<Command Name="[ARTIKEL]"><Arg Name = „[ARTIKELNR]“ Value ="" />
         outfile << xmloutput << endl;
         outfile.close();
@@ -133,13 +146,14 @@ int main( int argc, char* argv[] ){
         else{
             stringstream coparts;
             coparts << "\"" << byteValuePath << "\\" << byteValueAppName << "\"";
-            if( debug ) cout << "Starte Coparts: ";// << coparts << endl;
+            if( debug ) cout << "Starte program: ";// << coparts << endl;
             WinExec( coparts.str().c_str(), 1 );
         }
 
 
-
     }
+
+
 
     if( debug ){
         debugFile << "Path: " << path << endl << endl;

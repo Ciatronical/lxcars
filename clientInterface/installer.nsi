@@ -43,8 +43,8 @@ VIAddVersionKey OriginalFilename "LxCarsSetup.exe"
 
 Section ""
   SetOutPath $INSTDIR
-  File "\\VBOXSVR\ronny\inter-data\lxcars\clientInterface\LxCarsClient.exe"
-  File "\\VBOXSVR\ronny\inter-data\lxcars\clientInterface\Tutorial.pdf"
+  File "Z:\lxcars\clientInterface\LxCarsClient.exe" 
+  File "Z:\lxcars\clientInterface\Tutorial.pdf"
   WriteUninstaller $INSTDIR\uninstall.exe
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "DisplayName" "LxCarsClient"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTALLATIONNAME}" "UninstallString" '"$INSTDIR\uninstall.exe"'
