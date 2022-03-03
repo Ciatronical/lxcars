@@ -499,7 +499,7 @@ function printOrder( $data ){
 
     if( $data['print'] == 'printOrder1' ){
       //system('lpr -P test '.__DIR__.'/../out.pdf' );
-      system('lpr -P auftrag '.__DIR__.'/../out.pdf' );
+      system('lpr -P Buro1 '.__DIR__.'/../out.pdf' );
       if( !$orderData['printed'] )
         $GLOBALS['dbh']->update( 'oe', array( 'printed' ), array( 'TRUE' ), 'id = '.$data['orderId'] );
     }
