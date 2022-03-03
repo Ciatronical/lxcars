@@ -936,7 +936,10 @@ namespace( 'kivi.Part', function( ns ){
     'margin':'5px'
   }).click( function(){ //lxcars://copartskba___0603___012OJRO___MOL-LX101___WV1ZZZ70Z2H071589X___01.03.2001___AUF___110000___23376___Ronny%20Zimmermann%20yxz___Bahnhofstr.%2023___15345___Rehfelde___7___debug
     //console.log( 'lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin +  '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug' );
-    window.location ='lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug';
+    /***     for Coparts *****/
+    //window.location ='lxcars://copartskba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug';
+    /*** for AAG Onöline ***/
+    window.location ='lxcars://AAGOnlinekba___' + c_hsn + '___' + c_tsn + '___' + c_ln + '___' + c_fin + '___' + c_d_de + '___' + c_mkb + '___' + km_stnd + '___' + ordnumber + '___' + customer_name + '___' + customer_street + '___' + customer_zipcode + '___' + customer_city + '___7___nodebug';
     return false;
   });
 
