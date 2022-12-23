@@ -158,6 +158,7 @@
 <button tabindex="23" type="button" name="auftrag" onClick="lxc_auf(document.car.c_id.value, document.car.owner.value,1);">Auftrag alt</button>&nbsp;&nbsp;&nbsp;
 <button id="auftragNew">Auftrag</button>&nbsp;&nbsp;&nbsp;
 <button tabindex="24" type="button" name="auftrag" onClick="FhzTyp(document.car.c_id.value,document.car.owner.value,'{c_2}','{c_3}');"  style="visibility:{FhzTypVis}">KBA DB bearbeiten</button>&nbsp;
+<button tabindex="25" type="button" name="auftrag" onClick="carreg(document.car.c_id.value,document.car.owner.value, 3);">Zulassen / Umschreiben ...</button>&nbsp;
 
 {SPECIAL}
 </form>
