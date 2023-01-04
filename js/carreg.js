@@ -60,6 +60,39 @@ function validateForm()
 			return false;
 		}
 	}
+	if(document.getElementById('ersatz').checked)
+	{
+		if(!validateEidstattChbx()) return false;
+		if(document.getElementById('erklaerung').value.length == 0)
+		{
+			response.innerHTML = "Bitte geben Sie eine Erklärung ein.";
+			return false;
+		}
+	}
+	return true;
+}
+
+function validateEidstattChbx()
+{
+	let eidstattItems = document.getElementsByClassName('eidstatt-chbx');
+	let checked = false;
+	for(element of eidstattItems)
+	{
+		checked = checked || element.checked;
+	}
+	if(!checked)
+	{
+		response.innerHTML = "Bitte wählen Sie das/die Dokument(e) die abhandengekommen sind.";
+		return false;
+	}
+	if(document.getElementById('sonstiges').checked)
+	{
+		if(document.getElementById('sonstiges-text').value.length == 0)
+		{
+			response.innerHTML = "Bitte fühlen Sie das Textfeld für Sontiges aus.";
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -67,6 +100,7 @@ function auswahlAuftrag()
 {
 	sepaMandatNeeded();
 	evbNummerNeeded();
+	eidstattNeeded();
 }
 
 function sepaMandatNeeded()
@@ -97,6 +131,19 @@ function evbNummerNeeded()
 	{
 		div.style.display = "none";
 		evbNummer.className = ""
+	}
+}
+
+function eidstattNeeded()
+{
+	const div = document.getElementById('eidstatt-div');
+	if(document.getElementById('ersatz').checked)
+	{
+		div.style.display = "";
+	}
+	else
+	{
+		div.style.display = "none";
 	}
 }
 
@@ -194,7 +241,6 @@ function checkEVB()
 					}
 					else
 					{
-					console.log('test2 ' + httpRequest.responseText);
 						response.innerHTML = 'Die eVB-Nummer ist ungültig!';
 					}
 				}
@@ -215,5 +261,32 @@ function checkEVB()
 	formData.append('evbsearch', evbnummer);
 	httpRequest.open('POST', "evbsearch.php");
 	httpRequest.send(formData);
+}
+
+function textVorlage()
+{
+	if(!validateEidstattChbx()) return;
+	document.getElementById('response').innerHTML = '';
+	
+	let text = '';
+	let checked = 0;
+	let eidstattItems = document.getElementsByClassName('eidstatt-chbx');
+	for(element of eidstattItems)
+	{
+		if(element.checked)
+		{
+			if(text.length > 0) text += ', ';
+			if(element.id != 'sonstiges') text += element.getAttribute('aria-label');
+			else text += document.getElementById('sonstiges-text').value;
+			checked++;
+		}
+	}
+	const date = new Date(Date.now() - 1.814e9);
+	text += (checked <= 1)? ' wurde ' : ' wurden ';
+	text += ' am ' + date.toLocaleDateString('de') + ' bei mir Zuhause (';
+	text += document.getElementById('strasse').value + ' ' + document.getElementById('hsnr').value;
+	text += ', ' + document.getElementById('plz').value + ' ' + document.getElementById('ort').value;
+	text += ') vermutlich mit dem Altzeitungsstapel in der blauen Tonne ensorgt.';
+	document.getElementById('erklaerung').value = text;
 }
 

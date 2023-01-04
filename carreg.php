@@ -230,7 +230,52 @@ input:read-only { background-color: #d0cfc9; }
         </table>
     </div>
 
-    <div id="sepa-mandat-div">
+    <div id="eidstatt-div" style="display:none">
+        <h2>Versicherung an Eides Statt</h2>
+		<div style="font-size: 16px;">Welches Dokument ist Ihnen abhandengekommen?</div>
+		<table>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="fahrzeugschein" name="fahrzeugschein" value="true" aria-label="Zulassungsbescheinigung Teil I / Fahrzeugschein" /></td>
+			<td><label for="fahrzeugschein">Zulassungsbescheinigung Teil I / Fahrzeugschein</label></td>
+		</tr>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="fahrzeugbrief" name="fahrzeugbrief" value="true" aria-label="Zulassungsbescheinigung Teil II / Fahrzeugbrief" /></td>
+			<td><label for="fahrzeugbrief">Zulassungsbescheinigung Teil II / Fahrzeugbrief</label></td>
+		</tr>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="amtlicheskenn" name="amtlicheskenn" value="true" aria-label="Amtliches, abgestempeltes Kennzeichen" /></td>
+			<td><label for="amtlicheskenn">Amtliches, abgestempeltes Kennzeichen</label></td>
+		</tr>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="roterschein" name="roterschein" value="true" aria-label="Das rote Fahrzeugscheinheft" /></td>
+			<td><label for="roterschein">Das rote Fahrzeugscheinheft</label></td>
+		</tr>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="fuehrerschein" name="fuehrerschein" value="true" aria-label="Führerschein" /></td>
+			<td><label for="fuehrerschein">Führerschein</label></td>
+		</tr>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="betriebserlaubnis" name="betriebserlaubnis" value="true" aria-label="Betriebserlaubnis" /></td>
+			<td><label for="betriebserlaubnis">Betriebserlaubnis</label></td>
+		</tr>
+		<tr>
+			<td><input class="eidstatt-chbx" type="checkbox" id="sonstiges" name="sonstiges" value="true" aria-label="Sonstiges" /></td>
+			<td><label for="sonstiges">Sonstiges:</label> <input type="text" id="sonstiges-text" name="sonstiges-text" aria-label="Sonstiges" ></td>
+		</tr>
+		<tr>
+			<td><label for="erklaerung">Erklärung:</label></td>
+			<td>
+				<textarea id="erklaerung" name="erklaerung" rows="9" cols="60" maxlength="200" aria-label="Erklärung zur Versicherung an Eides Statt" ></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+		    <td><a href="#" onclick="textVorlage()" class="ui-button ui-corner-all ui-widget" style="font-size: 12px;">Textvorlage</a></td>
+		</tr>
+		</table>
+		</div>
+
+     <div id="sepa-mandat-div">
         <h2>SEPA-Lastschriftmandat zum Einzug der Kraftfahrzeugsteuer</h2>
         <table>
         <tr>
