@@ -50,6 +50,7 @@ if(!empty($mandatsort))
 {
     $pdf->Rect(86, $height - 175, 113, 5, 'F');
     $pdf->Text(85, $height - 171, $mandatsort);
+    $pdf->Text(34, $height - 111, $mandatsort);
 }
 if(isset($_POST['mandats-land']) && !empty($_POST['mandats-land']))
 {
@@ -69,6 +70,9 @@ if(isset($_POST['mandats-bank']) && !empty($_POST['mandats-bank']))
 {
     $pdf->Text(94, $height - 131, utf8_decode($_POST['mandats-bank']));
 }
+
+$pdf->Rect(94, $height - 115, 38, 5, 'F');
+$pdf->Text(94, $height - 111, date('d.m.Y'));
 
 $haltername = '';
 if(isset($_POST['vorname']) && !empty($_POST['vorname'])) $haltername .= utf8_decode($_POST['vorname']) . ' ';
