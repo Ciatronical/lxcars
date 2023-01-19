@@ -11,37 +11,55 @@
     //echo $head['JQTABLE'];
     echo $head['THEME'];
     echo $head['T8'];// Übersetzung mit kivi.t8
+  ?>
+<style>
 
-    /*****************************************************************************************************************************
-    Grundsätze: Content wird via Ajax im Json-Format geholt und an die entsprechenden Container verteilt
-                Daten werden ohne Reload einfach via Ajax gespeichert.
-                Fürs Holen und Schreiben von Daten befindet sich unter ajax eine gleichnamige Datei mit der Extension ".php"
-                Auf das Benutzen der Variable $_SESSION sollte weitestgehend verzichtet werden.
-                Statt JS einzusetzen sollte auf die jQuery-Methoden zurückgegriffen werden.
-                Url-Parameter werden als hash gefolgt von einem JSON übergeben.
-                Vorteil: Browserhistory funktioniert, F5 funktioniert,
-                Test1: http://localhost/kivitendo/crm/example.phtml
-                Test2: http://localhost/kivitendo/crm/example.phtml#{"name":"Widukind","age":30,"cars":{"Ford":3,"BMW":6,"Fiat":19}}
-    ******************************************************************************************************************************/
+.amounthead{
+  width:80px;
+}
+#input_amount, #input_amount_search{
+  width:70px;
+}
+.customerhead{
+  width:250px;
+}
+#ac_customer, #ac_customer_search{
+  width:240px;
+}
+.descriptionhead, #input_description, #input_description_search{
+  width:450px
+}
+#input_from_search, #input_to_search{
+  width:80px;
+}
 
-?>
+.table1 td, .table1 th {
+  padding: 2px;
+  }
+.table1 tr:nth-child(even) {
+  background-color: #D0CFC9;
+}
+.headline{
+  font-weight: bold;
+}
 
+</style>
 
 <script>
   $( document ).ready( function(){
     $( '#headline' ).html( kivi.t8( 'Fahrzeugschein-Scanner' ) );
-
+    let fsmax = 16; //Wieviele Fahrzeugscheine sollen geholt werden
     $.ajax({
         url: 'ajax/fsscan.php',
-        data: { action: 'getScans' },
+        data: { action: 'getScans', data:{ 'fsmax': fsmax } },
         type: "POST",
         success: function( data ){
           console.log( data );
-          //var tableContent = '';
-          //data.forEach( function( item ){
-            //tableContent += '<tr class="line"><td style="text-align: right; padding-right: 15px;">' + item.amount.toString().replace('.', ',') + '</td><td>' + item.name + '</td><td>' + item.description + '</td><td>' + item.posttime + '</td><td style="text-align: right; padding-right: 5px;">' + item.balance.toString().replace('.', ',') + '</td></tr>';
-          //});
-          //$("#tbody").empty().append( tableContent );
+          var tableContent = '';
+          data.forEach( function( item ){
+            tableContent += '<tr class="line"><td style="text-align: right; padding-right: 15px;">' + item.dateFormatted + '</td><td>' + item.registrationNumber + '</td>';
+          });
+          $("#tbody").empty().append( tableContent );
         },
         error: function(){
           alert( 'getScans() Error');
@@ -66,8 +84,19 @@
 ?>
 
   <p id="headline" class="ui-state-highlight ui-corner-all tools" style="margin-top: 20px; padding: 0.6em;"></p>
-  <div id="example" style="position:absolute"></div>
+  <table id="dataTable" class="table1" >
+    <col class="amounthead">
+    <thead>
+      <tr class="listheading">
+        <th class="xlistheading" id="date">Datum</th>
+        <th class="xlistheading" id="licenseplate">Kennzeichen</th>
+      </tr>
+    </thead>
+    <tbody id="tbody" class="row_entry listrow listrow">
+    </tbody>
+  </table>
 
 <?php echo $menu['end_content']; ?>
+
 
 </html>
