@@ -14,34 +14,41 @@
   ?>
 <style>
 
-.amounthead{
-  width:80px;
-}
-#input_amount, #input_amount_search{
-  width:70px;
-}
-.customerhead{
-  width:250px;
-}
-#ac_customer, #ac_customer_search{
-  width:240px;
-}
-.descriptionhead, #input_description, #input_description_search{
-  width:450px
-}
-#input_from_search, #input_to_search{
-  width:80px;
-}
 
-.table1 td, .table1 th {
-  padding: 2px;
-  }
-.table1 tr:nth-child(even) {
-  background-color: #D0CFC9;
-}
-.headline{
-  font-weight: bold;
-}
+
+
+
+
+     td{
+      border-bottom-style: solid;
+      border-bottom-color: #ffffff;
+      border-bottom-width: 2px;
+
+    }
+
+    table .table1 {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .table1 td, .table1 th {
+      text-align: left;
+      padding: 2px;
+      font-weight: bold;
+      background-color: #eeeeee;
+    }
+
+    .table1 td:nth-child(even) {
+      font-weight: normal;
+      background-color: #ffffff;
+    }
+
+    table .sumTable {
+      font-size: 14px;
+      font-weight: bold;
+      height: 40px;
+    }
+
 
 </style>
 
@@ -50,31 +57,41 @@
     $( '#headline' ).html( kivi.t8( 'Fahrzeugschein-Scanner' ) );
     let fsmax = 16; //Wieviele Fahrzeugscheine sollen geholt werden
     $.ajax({
-        url: 'ajax/fsscan.php',
-        data: { action: 'getScans', data:{ 'fsmax': fsmax } },
-        type: "POST",
-        success: function( data ){
-          console.log( data );
-          var tableContent = '';
-          data.forEach( function( item ){
-            tableContent += '<tr class="line"><td style="text-align: right; padding-right: 15px;">' + item.dateFormatted + '</td><td>' + item.registrationNumber + '</td>';
-          });
-          $("#tbody").empty().append( tableContent );
-        },
-        error: function(){
-          alert( 'getScans() Error');
-          //$("#tbody").empty();
-        }
-      })
+      url: 'ajax/fsscan.php',
+      data: { action: 'getScans', data:{ 'fsmax': fsmax } },
+      type: "POST",
+      success: function( data ){
+        console.log( data );
+        var tableContent = '';
+        data.forEach( function( item ){
+          tableContent += '<tr class="line" id="' + item.id + '"><td style="text-align: right; padding-right: 15px;">' + item.dateFormatted + '</td><td>' + item.registrationNumber + '</td>';
+        });
+        $( '#tbody' ).empty().append( tableContent );
+        //auf eine Zeile klicken und Daten des FS holen
+        $( '#tbody tr' ).click( function(){
+          //alert( this.id );
+          $.ajax({
+            url: 'ajax/fsscan.php',
+            data: { action: 'getFsData', data:{ 'id': this.id  } },
+            type: "POST",
+            success: function( data ){
+              console.log( data );
+              alert( 'VIN: ' + data.vin + '\nHSN: ' + data.hsn + '\nTSN: ' + data.tsn );
+            },
+            error: function(){
+              alert( 'getScans() Error');
+            }
+          })
+        })//tr click
+      },
+      error: function(){
+        alert( 'getFsData() Error');
+      }
+    })
   });
 
 </script>
 
-<style>
-
-
-
-</style>
 </head>
 
 <body>
@@ -92,7 +109,7 @@
         <th class="xlistheading" id="licenseplate">Kennzeichen</th>
       </tr>
     </thead>
-    <tbody id="tbody" class="row_entry listrow listrow">
+    <tbody id="tbody" class="listrow">
     </tbody>
   </table>
 
