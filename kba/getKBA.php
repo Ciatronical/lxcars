@@ -94,7 +94,7 @@
         $sql = 'CREATE TABLE carskba AS TABLE carskbatmp WITH NO DATA';
         echo $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'INSERT INTO carskba SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM carskba';
+        $sql = 'INSERT INTO carskba SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM carskbatmp';
         echo $GLOBALS['dbh']->query( $sql );
 
         $sql = 'DROP TABLE IF EXISTS carskbatmp';
