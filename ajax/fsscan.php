@@ -14,17 +14,13 @@
 
     function getDocument( $data ){
         $apiKeyArray = getDefaultsByArray( array( 'lxcarsapi') );
-        writeLog( 'https://fahrzeugschein-scanner.de/api/Scans/Document/'.$apiKeyArray['lxcarsapi'].'/'.$data['id'] );
-        //echo file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/ScanDetails/'.$apiKeyArray['lxcarsapi'].'/'.$data['id'].'/true' );
-        /*
-            if (file_put_contents($file_name, file_get_contents($url)))
-    {
-        echo "File downloaded successfully";
-    }
-    else
-    {
-        echo "File downloading failed.";
-    }*/
+        $fileName = "testFile.jpg";
+        if( file_put_contents( $fileName, file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/Document/'.$apiKeyArray['lxcarsapi'].'/'.$data['id'] ) ) ){
+           echo json_encode( "File successfully saved" );
+        }
+        else{
+            echo json_encode( "Error save file." );
+        }
     }
 
 ?>
