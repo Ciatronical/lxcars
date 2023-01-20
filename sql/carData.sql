@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS cars; 
+--DROP TABLE IF EXISTS cars; 
 CREATE TABLE cars(
 	itime 				timestamp NOT NULL DEFAULT NOW(),
 	mtime 				timestamp,
@@ -20,317 +20,69 @@ CREATE TABLE cars(
 	address2			TEXT,
 	j					TEXT,
 	field_4				TEXT,
-	field_3				TEXT
-	
-	
-
+	field_3				TEXT,
+	d1					TEXT,
+	d2_1				TEXT,
+	d2_2				TEXT,
+	d2_3				TEXT,
+	d2_4				TEXT,
+	field_2				TEXT,
+	field_5_1			TEXT,
+	field_5_2			TEXT,
+	v9					TEXT,
+	field_14			TEXT,
+	p3					TEXT,
+	field_10			TEXT,
+	field_14_1			TEXT,
+	p1					TEXT,
+	l					TEXT,
+	field_9				TEXT,
+	p2_p4				TEXT,
+	t					TEXT,
+	field_18			TEXT,
+	field_19			TEXT,
+	field_20			TEXT,
+	g					TEXT,
+	field_12			TEXT,
+	field_13			TEXT,
+	q					TEXT,
+	v7					TEXT,
+	f1					TEXT,
+	f2					TEXT,
+	field_7_1			TEXT,
+	field_7_2			TEXT,
+	field_7_3			TEXT,
+	field_8_1			TEXT,
+	field_8_2			TEXT,
+	field_8_3			TEXT,
+	u1					TEXT,
+	u2					TEXT,
+	u3					TEXT,
+	o1					TEXT,
+	o2					TEXT,
+	s1					TEXT,
+	s2					TEXT,
+	field_15_1			TEXT,
+	field_15_2			TEXT,
+	field_15_3			TEXT,
+	r					TEXT,
+	field_11			TEXT,
+	k					TEXT,
+	field_6				TEXT,
+	field_17			TEXT,
+	field_16			TEXT,
+	field_21			TEXT,
+	field_22			TEXT,
+	hu					TEXT,
+	creation_date		TEXT,
+	creation_city		TEXT,
+	document_id			TEXT,
+	maker				TEXT,
+	model				TEXT,
+	powerKw				TEXT,
+	powerHpKw			TEXT,
+	ccm					TEXT,
+	fuel				TEXT,
+	fuelCode			TEXT,
+	filename			TEXT
 );
-
-
-
-{
-scan_detail_id	string($uuid)
-scan_id	string($uuid)
-ez	string
-nullable: true
-ez_string	string
-nullable: true
-ez_img	string
-nullable: true
-hsn	string
-nullable: true
-hsn_img	string
-nullable: true
-tsn	string
-nullable: true
-vsn	string
-nullable: true
-field_2_2	string
-nullable: true
-field_2_2_img	string
-nullable: true
-vin	string
-nullable: true
-vin_img	string
-nullable: true
-d3	string
-nullable: true
-d3_img	string
-nullable: true
-registrationNumber	string
-nullable: true
-registrationNumber_img	string
-nullable: true
-name1	string
-nullable: true
-name1_img	string
-nullable: true
-name2	string
-nullable: true
-name2_img	string
-nullable: true
-firstname	string
-nullable: true
-firstname_img	string
-nullable: true
-address1	string
-nullable: true
-address1_img	string
-nullable: true
-address2	string
-nullable: true
-address2_img	string
-nullable: true
-j	string
-nullable: true
-j_img	string
-nullable: true
-field_4	string
-nullable: true
-field_4_img	string
-nullable: true
-field_3	string
-nullable: true
-field_3_img	string
-nullable: true
-d1	string
-nullable: true
-d1_img	string
-nullable: true
-d2_1	string
-nullable: true
-d2_1_img	string
-nullable: true
-d2_2	string
-nullable: true
-d2_2_img	string
-nullable: true
-d2_3	string
-nullable: true
-d2_3_img	string
-nullable: true
-d2_4	string
-nullable: true
-d2_4_img	string
-nullable: true
-field_2	string
-nullable: true
-field_2_img	string
-nullable: true
-field_5_1	string
-nullable: true
-field_5_1_img	string
-nullable: true
-field_5_2	string
-nullable: true
-field_5_2_img	string
-nullable: true
-v9	string
-nullable: true
-v9_img	string
-nullable: true
-field_14	string
-nullable: true
-field_14_img	string
-nullable: true
-p3	string
-nullable: true
-p3_img	string
-nullable: true
-field_10	string
-nullable: true
-field_10_img	string
-nullable: true
-field_14_1	string
-nullable: true
-field_14_1_img	string
-nullable: true
-p1	string
-nullable: true
-p1_img	string
-nullable: true
-l	string
-nullable: true
-l_img	string
-nullable: true
-field_9	string
-nullable: true
-field_9_img	string
-nullable: true
-p2_p4	string
-nullable: true
-p2_p4_img	string
-nullable: true
-t	string
-nullable: true
-t_img	string
-nullable: true
-field_18	string
-nullable: true
-field_18_img	string
-nullable: true
-field_19	string
-nullable: true
-field_19_img	string
-nullable: true
-field_20	string
-nullable: true
-field_20_img	string
-nullable: true
-g	string
-nullable: true
-g_img	string
-nullable: true
-field_12	string
-nullable: true
-field_12_img	string
-nullable: true
-field_13	string
-nullable: true
-field_13_img	string
-nullable: true
-q	string
-nullable: true
-q_img	string
-nullable: true
-v7	string
-nullable: true
-v7_img	string
-nullable: true
-f1	string
-nullable: true
-f1_img	string
-nullable: true
-f2	string
-nullable: true
-f2_img	string
-nullable: true
-field_7_1	string
-nullable: true
-field_7_1_img	string
-nullable: true
-field_7_2	string
-nullable: true
-field_7_2_img	string
-nullable: true
-field_7_3	string
-nullable: true
-field_7_3_img	string
-nullable: true
-field_8_1	string
-nullable: true
-field_8_1_img	string
-nullable: true
-field_8_2	string
-nullable: true
-field_8_2_img	string
-nullable: true
-field_8_3	string
-nullable: true
-field_8_3_img	string
-nullable: true
-u1	string
-nullable: true
-u1_img	string
-nullable: true
-u2	string
-nullable: true
-u2_img	string
-nullable: true
-u3	string
-nullable: true
-u3_img	string
-nullable: true
-o1	string
-nullable: true
-o1_img	string
-nullable: true
-o2	string
-nullable: true
-o2_img	string
-nullable: true
-s1	string
-nullable: true
-s1_img	string
-nullable: true
-s2	string
-nullable: true
-s2_img	string
-nullable: true
-field_15_1	string
-nullable: true
-field_15_1_img	string
-nullable: true
-field_15_2	string
-nullable: true
-field_15_2_img	string
-nullable: true
-field_15_3	string
-nullable: true
-field_15_3_img	string
-nullable: true
-r	string
-nullable: true
-r_img	string
-nullable: true
-field_11	string
-nullable: true
-field_11_img	string
-nullable: true
-k	string
-nullable: true
-k_img	string
-nullable: true
-field_6	string
-nullable: true
-field_6_img	string
-nullable: true
-field_17	string
-nullable: true
-field_17_img	string
-nullable: true
-field_16	string
-nullable: true
-field_16_img	string
-nullable: true
-field_21	string
-nullable: true
-field_21_img	string
-nullable: true
-field_22	string
-nullable: true
-field_22_img	string
-nullable: true
-hu	string
-nullable: true
-hu_img	string
-nullable: true
-creation_date	string
-nullable: true
-creation_date_img	string
-nullable: true
-creation_city	string
-nullable: true
-creation_city_img	string
-nullable: true
-document_id	string
-nullable: true
-document_id_img	string
-nullable: true
-maker	string
-nullable: true
-model	string
-nullable: true
-powerKw	string
-nullable: true
-powerHpKw	string
-nullable: true
-ccm	string
-nullable: true
-fuel	string
-nullable: true
-fuelCode	string
-nullable: true
-filename	string
-nullable: true
-}
