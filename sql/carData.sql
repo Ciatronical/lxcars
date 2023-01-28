@@ -1,5 +1,5 @@
---DROP TABLE IF EXISTS cars; 
-CREATE TABLE cars(
+--DROP TABLE IF EXISTS lxc_fs_scans; 
+CREATE TABLE lxc_fs_scans(
 	itime 				timestamp NOT NULL DEFAULT NOW(),
 	mtime 				timestamp,
 	scan_detail_id 		TEXT UNIQUE,
