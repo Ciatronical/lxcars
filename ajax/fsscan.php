@@ -24,17 +24,16 @@
         $rs = file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/GetScans/'.$apiKeyArray['lxcarsapi'].'/?take='.$data['fsmax'] );
         $rsArray = json_decode( $rs, TRUE ); //JSON to Array
         
-        foreach( $rsArray AS $key => $value ){
+        foreach( $rsArray AS $key => $value ){ // Timestamp from scanner is always a iso 8601 timestamp!!!
             //writeLog( 'scanTime: '.strtotime( $value['timestamp'] ) );
-            //WriteLog( 'dbTime: '.$lastTimeDB );
-            //WriteLog( 'Diff: '.($lastTimeDB - (int) strtotime( $value['timestamp'] ) ) );
+            //writeLog( 'scanTime: '.$value['timestamp'] );
+            //writeLog( 'dbTime: '.$lastTimeDB );
+            //writeLog( 'Diff: '.($lastTimeDB - (int) strtotime( $value['timestamp'] ) ) );
             if( $lastTimeDB < (int) strtotime( $value['timestamp'] ) ){
                 //writeLog( ' we get a scan with id' );
                 $rsFsData = file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/ScanDetails/'.$apiKeyArray['lxcarsapi'].'/'.$value['id'].'/false' );
                 $rsFsDataArray = json_decode( $rsFsData, TRUE ); //JSON to Array
-                foreach( $rsFsDataArray AS $key => $value ){
-                    if( strpos( $key, 'img')) unset( $rsFsDataArray[$key]); // remove *_img data
-                }
+                foreach( $rsFsDataArray AS $key => $value ) if( strpos( $key, 'img' ) ) unset( $rsFsDataArray[$key] ); // remove *_img data
                 $GLOBALS['dbh']->insert( 'lxc_fs_scans', $colArray, array_values( $rsFsDataArray ) );
             }
         }
@@ -50,12 +49,8 @@
     function getDocument( $data ){
         $apiKeyArray = getDefaultsByArray( array( 'lxcarsapi') );
         $fileName = "testFile.jpg";
-        if( file_put_contents( $fileName, file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/Document/'.$apiKeyArray['lxcarsapi'].'/'.$data['id'] ) ) ){
-           echo json_encode( "File successfully saved" );
-        }
-        else{
-            echo json_encode( "Error save file." );
-        }
+        if( file_put_contents( $fileName, file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/Document/'.$apiKeyArray['lxcarsapi'].'/'.$data['id'] ) ) ) echo json_encode( "File successfully saved" );
+        else echo json_encode( "Error save file." );
     }
 ?>
     

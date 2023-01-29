@@ -2,7 +2,7 @@
 DROP TABLE IF EXISTS lxc_fs_scans; 
 
 CREATE TABLE lxc_fs_scans(
-	itime 				TIMESTAMP NOT NULL DEFAULT NOW(),
+	itime 				TIMESTAMP WITHOUT TIME ZONE DEFAULT ( NOW() AT TIME ZONE 'utc'),
 	scan_detail_id 		TEXT UNIQUE,
 	scan_id 			TEXT UNIQUE,
 	ez 					TEXT,
@@ -87,9 +87,10 @@ CREATE TABLE lxc_fs_scans(
 	fuelCode			TEXT,
 	filename			TEXT
 );
-INSERT INTO  lxc_fs_scans  ( scan_detail_id, itime  )  VALUES ( 'jfoies488390', '2023-01-19 10:23:54'::TIMESTAMP );
+--INSERT INTO  lxc_fs_scans  ( scan_detail_id, itime  )  VALUES ( 'jfoies488390', '2023-01-19 10:23:54'::TIMESTAMP );
 --INSERT INTO  lxc_fs_scans  ( scan_detail_id, itime )  VALUES ( '646278337424468', '2023-01-20 08:53:24'::TIMESTAMP );
 
 */
 --DELETE FROM lxc_fs_scans WHERE ez = '23.04.2001';
 SELECT * FROM lxc_fs_scans;
+--SELECT itime FROM lxc_fs_scans ORDER BY itime DESC;
