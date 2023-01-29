@@ -5,7 +5,8 @@
 
     function getScans( $data ){
         /***********************************************************************************************************************************************************
-         ********* follow lines gerate the $colArray ***************************************************************************************************************
+        ********** follow lines generate the $colArray *************************************************************************************************************
+        ************************************************************************************************************************************************************
         $rsFsData = file_get_contents( 'https://fahrzeugschein-scanner.de/api/Scans/ScanDetails/'.$apiKeyArray['lxcarsapi'].'/b7ef0bdf-0063-41f4-be05-8d9d5f0809ca/false' );
         $rsFsDataArray = json_decode( $rsFsData, TRUE ); //JSON to Array
         foreach( $rsFsDataArray AS $key => $value ) if( strpos( $key, 'img')) unset( $rsFsDataArray[$key]); // remove *_img
@@ -37,7 +38,12 @@
                 $GLOBALS['dbh']->insert( 'lxc_fs_scans', $colArray, array_values( $rsFsDataArray ) );
             }
         }
-        echo $rs;
+        
+        //getNames from DB
+        $allDbScans = $GLOBALS['dbh']->getAll( 'SELECT * FROM lxc_fs_scans ORDER BY itime ASC LIMIT '.$data['fsmax'] );
+        $rsArray = json_decode( $rs, TRUE );
+        foreach( $rsArray AS $key => $value ) $rsArray[$key] += $allDbScans[$key];
+        echo json_encode( $rsArray );
     }
 
     function getFsData( $data ){
@@ -53,5 +59,3 @@
         else echo json_encode( "Error save file." );
     }
 ?>
-    
-
