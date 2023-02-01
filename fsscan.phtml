@@ -71,7 +71,7 @@
             type: "POST",
             success: function( data ){
               console.log( data );
-              alert( 'VIN: ' + data.vin + '\nHSN: ' + data.hsn + '\nTSN: ' + data.tsn );
+              alert( 'Name: ' + data.firstname + ' ' + data.name1 + '\nStrasse: ' + data.address1 + '\nPLZ/Ort: ' + data.address2 + '\n\nKZ: ' + data.registrationNumber + '\nHSN: ' + data.hsn + '\nTSN: ' + data.field_2_2 + '\nEZ: ' + data.ez + '\nHU: ' + data.hu + '\nVIN: ' + data.vin );
             },
             error: function(){
               alert( 'getScans() Error');
