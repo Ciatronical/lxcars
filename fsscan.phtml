@@ -49,7 +49,7 @@
 <script>
   $( document ).ready( function(){
     $( '#headline' ).html( kivi.t8( 'Fahrzeugschein-Scanner' ) );
-    let fsmax = 16; //Wieviele Fahrzeugscheine sollen geholt werden
+    let fsmax = 1110; //Wieviele Fahrzeugscheine sollen geholt werden
     //new car or new car and new customer
     $.ajax({
       url: 'ajax/fsscan.php',
@@ -71,7 +71,7 @@
             type: "POST",
             success: function( data ){
               console.log( data );
-              alert( 'Name: ' + data.firstname + ' ' + data.name1 + '\nStrasse: ' + data.address1 + '\nPLZ/Ort: ' + data.address2 + '\n\nKZ: ' + data.registrationNumber + '\nHSN: ' + data.hsn + '\nTSN: ' + data.field_2_2 + '\nEZ: ' + data.ez + '\nHU: ' + data.hu + '\nVIN: ' + data.vin );
+              alert( 'Name: ' + data.firstname + ' ' + data.name1 + '\nStrasse: ' + data.address1 + '\nPLZ/Ort: ' + data.address2 + '\n\nKZ: ' + data.registrationNumber + '\nHSN: ' + data.hsn + '\nTSN: ' + data.field_2_2 + '\nEZ: ' + data.ez + '\nHU: ' + data.hu + '\nVIN: ' + data.vin + ' ' + data.field_3 );
             },
             error: function(){
               alert( 'getScans() Error');
