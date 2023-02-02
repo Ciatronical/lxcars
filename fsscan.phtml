@@ -49,7 +49,7 @@
 <script>
   $( document ).ready( function(){
     $( '#headline' ).html( kivi.t8( 'Fahrzeugschein-Scanner' ) );
-    let fsmax = 1110; //Wieviele Fahrzeugscheine sollen geholt werden
+    let fsmax = 24; // only for show
     //new car or new car and new customer
     $.ajax({
       url: 'ajax/fsscan.php',
@@ -59,10 +59,9 @@
         console.log( data );
         var tableContent = '';
         data.forEach( function( item ){
-          tableContent += '<tr class="line" id="' + item.id + '"><td style="text-align: right; padding-right: 15px;">' + item.dateFormatted + '</td><td>' + item.firstname + '</td><td>' + item.name1 + '</td><td>' + item.registrationNumber + '</td>';
+          tableContent += '<tr class="line" id="' + item.scan_id + '"><td style="text-align: right; padding-right: 15px;">' + item.myts + '</td><td>' + item.firstname + '</td><td>' + item.name1 + '</td><td>' + item.registrationnumber + '</td>';
         });
         $( '#tbody' ).empty().append( tableContent );
-        //auf eine Zeile klicken und Daten des FS holen
         $( '#tbody tr' ).click( function(){
           //alert( this.id );
           $.ajax({
