@@ -70,7 +70,7 @@
             type: "POST",
             success: function( data ){
               console.log( data );
-              alert( 'Name: ' + data.firstname + ' ' + data.name1 + '\nStrasse: ' + data.address1 + '\nPLZ/Ort: ' + data.address2 + '\n\nKZ: ' + data.registrationNumber + '\nHSN: ' + data.hsn + '\nTSN: ' + data.field_2_2 + '\nEZ: ' + data.ez + '\nHU: ' + data.hu + '\nVIN: ' + data.vin + ' ' + data.field_3 );
+              alert(  data.firstname + ' ' + data.name1 + '\n' + data.address1 + '\n' + data.address2 + '\n\n' + data.registrationNumber + '\n' + data.hsn + '\n' + data.field_2_2 + '\n' + data.field_14_1 + '\n' + data.ez + '\n' + data.hu + '\n' + data.vin + ' ' + data.field_3 );
             },
             error: function(){
               alert( 'getScans() Error');
