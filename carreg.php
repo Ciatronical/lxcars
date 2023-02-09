@@ -146,7 +146,7 @@ input:read-only { background-color: #d0cfc9; }
     </tr>
     <tr>
         <td><label for="gebname">Geburtsname:</label></td>
-        <td><input class="required" type="text" id="gebname" name="gebname" aria-label="Geb.-Name" value="<?=$vorname?> <?=$name?>"/></td>
+        <td><input type="text" id="gebname" name="gebname" aria-label="Geb.-Name" value="<?=$vorname?> <?=$name?>"/></td>
     </tr>
     <tr>
         <td><label for="gebdatum">Geburtsdatum*:</label></td>
