@@ -323,6 +323,8 @@ input:read-only { background-color: #d0cfc9; }
         </table>
     </div>
 
+	<p><input type="checkbox" id="print-template" name="print-template" value="true" aria-label="Als Vorlage drucken" /><label for="print-template"> Als Vorlage drucken</label></p>
+
     <div id="response" style="font-weight: bold; font-size: 16px; color: red; padding: 0.5em;" ></div>
     <button type="submit" class="ui-button ui-corner-all ui-widget">PDF herunterladen</button>
     <a href="../firmen3.php?Q=C&id=<?=$owner?>&edit=1" target="_blank" class="ui-button ui-corner-all ui-widget">Kunde bearbeiten</a>

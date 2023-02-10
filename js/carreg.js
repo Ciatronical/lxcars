@@ -6,6 +6,8 @@ function emptyElementMessage(view, element)
 
 function validateForm()
 {
+	if(document.getElementById('print-template').checked) return true;
+
 	const response = document.getElementById('response');
 	let elements = document.getElementsByTagName('input');
 	response.className = 'text-danger';
