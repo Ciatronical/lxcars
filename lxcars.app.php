@@ -1,260 +1,79 @@
+<?php
+	session_start();
+    $baseUrl = isset( $_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http';
+    $baseUrl.= '://'.$_SERVER['SERVER_NAME'].preg_replace( "^crm/.*^", "", $_SERVER['REQUEST_URI'] );
+    $url = $baseUrl.'/controller.pl?action=Layout/empty&format=json';
+    $ch = curl_init();
+    curl_setopt( $ch, CURLOPT_URL, $url );
+    curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt( $ch, CURLOPT_TIMEOUT, 1 );
+    curl_setopt( $ch, CURLOPT_ENCODING, 'gzip,deflate' );
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, array (
+                "Connection: keep-alive",
+                "Cookie: ".$_SESSION["cookie"]."=".$_SESSION['sessid']."; ".$_SESSION["cookie"]."_api_token=".$_SESSION["token"]['api_token']
+                ));
+    $result = curl_exec( $ch );
+
+    if( $result === false || curl_errno( $ch )){
+        die( 'Curl-Error: ' .curl_error($ch).' </br> $ERP_BASE_URL in "inc/conf.php" richtig gesetzt??' );
+    }
+    curl_close( $ch );
+
+    $objResult = json_decode( $result );
+    $vars = get_object_vars( $objResult );
+
+	//var_dump($vars);
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset='utf-8' />
 
-<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
 <?php
-    require_once '../inc/stdLib.php';
-    $menu = $_SESSION['menu'];
-    echo $menu['stylesheets'];
-    echo $menu['javascripts'];
-    echo $head['IBAN'];
-    echo $head['JQTABLE'];
-    echo $head['THEME'];
-    echo $head['T8'];// Übersetzung mit kivi.t8
+	foreach($objResult->{'stylesheets'} as $style) echo '<link rel="stylesheet" href="'.$baseUrl.$style.'" type="text/css">'."\n";
 ?>
-
-<style>
-	.bs {
-		z-index: 1;
-	}
-	.form-control {
-		font-size: 14px;
-	}
-	.nav-item {
-		font-size: 14px;
-	}
-	.ui-autocomplete-category {
-		font-weight: bold;
-	}
-	.lxc-fs-normal {
-		font-size: 14px;
-	}
-</style>
 
 </head>
 
 <body>
+
 <?php
-    echo $menu['pre_content'];
-    echo $menu['start_content'];
+	$suche = '^([/a-zA-Z_0-9]+)\.(pl|php|phtml)^';
+	$ersetze = $baseUrl.'${1}.${2}';
+	$tmp = preg_replace($suche, $ersetze, $objResult->{'pre_content'} );
+	$tmp = str_replace( 'itemIcon="', 'itemIcon="'.$baseUrl, $tmp );
+	echo str_replace( 'src="', 'src="'.$baseUrl, $tmp );
+	echo $objResult->{'start_content'};
 ?>
-
-<main>
-
-<nav class="navbar navbar-expand-lg pt-2"  style="background-color: #d0cfc9;" aria-label="Eighth navbar example">
-<div class="container-fluid">
-	<span class="navbar-brand">Lxcars</span>
-	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="navbarsExample07">
-		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-			<li class="nav-item">
-				<a class="nav-link active" aria-current="page" href="#">Firmenstammdaten</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Ansprechpartner</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="#">Umsätze</a>
-			</li>
-   			<li class="nav-item">
-				<a class="nav-link" href="#">Dokumente</a>
-			</li>
-	     </ul>
-		<form role="search">
-			<input class="form-control" id="lxc-id-fast-search" type="search" placeholder="Schnellsuche" aria-label="Search">
-		</form>
+<ul width="11"></ul></li></ul></li></ul><div class="layout-actionbar"><div class="layout-actionbar-combobox" id="action2753260"><div class="layout-actionbar-combobox-head"><div class="layout-actionbar-action layout-actionbar-submit" id="action2753258">Speichern</div><span></span></div><div class="layout-actionbar-combobox-list"><div class="layout-actionbar-action layout-actionbar-submit" id="action2753259">Speichern und schließen</div></div></div><div id="action2753266" class="layout-actionbar-combobox"><div class="layout-actionbar-combobox-head"><div class="layout-actionbar-action layout-actionbar-submit" id="action2753261">Workflow</div><span></span></div><div class="layout-actionbar-combobox-list"><div class="layout-actionbar-action layout-actionbar-submit" id="action2753262">Speichern und Debitorenbuchung erfassen</div><div id="action2753263" class="layout-actionbar-action layout-actionbar-submit">Speichern und Rechnung erfassen</div><div id="action2753264" class="layout-actionbar-action layout-actionbar-submit">Speichern und Auftrag erfassen</div><div id="action2753265" class="layout-actionbar-action layout-actionbar-submit">Speichern und Angebot</div></div></div><div class="layout-actionbar-action layout-actionbar-submit" id="action2753267">Löschen</div><div class="layout-actionbar-separator"></div><div id="action2753268" class="layout-actionbar-action layout-actionbar-submit">Historie</div></div><div id='content'>
+<h1>Kunde erfassen </h1>
+<div class="layout-actionbar">
+	<div class="layout-actionbar-combobox" id="action2753260"><div class="layout-actionbar-combobox-head">
+		<div class="layout-actionbar-action layout-actionbar-submit" id="action2753258">Speichern</div>
+		<span></span>
+	</div>
+	<div class="layout-actionbar-combobox-list">
+		<div class="layout-actionbar-action layout-actionbar-submit" id="action2753259">Speichern und schließen</div>
+	</div>
 	</div>
 </div>
-</nav>
+<main id="#lxcars-app">
 
-<div class="container-fluid">
-
-<div id="lxc-id-title" class="pe-2 pt-3 lxc-fs-normal">
-	<strong>Detailansicht <span id="lxc-id-title-typ">Kunde</span></strong>
-</div>
-<hr />
-
-<div id="lxc-id-base-data" class="row lxc-fs-normal">
-	<div id="lxc-id-hq-view" class="col-lg-2 pt-4">
-		<div><strong><span id="lxc-id-name">Maria Mustermann</span></strong></div>
-		<div class="pt-1"><span id="lxc-id-street">Bahnhofsstrasse 23</span></div>
-		<div><span id="lxc-id-place">D-15345 Rehfelde</span></div>
-		<div class="pt-4"><strong>Kontakt</strong></div>
-		<div class="pt-2"><span id="lxc-id-contact-person">Maria Mustermann</span></div>
-		<div class="pt-2">
-			Telefon: <button id="lxc-id-tel1">+49175-1234567</botton>
-			<button id="lxc-id-tel1-t">T</botton>
-			<button id="lxc-id-tel1-c">C</botton>
-			<button id="lxc-id-tel1-w">W</botton>
-		</div>
-		<div class="pt-2">
-			Telefon: <button id="lxc-id-tel2">033433-123456</button>
-			<button id="lxc-id-tel2-t">T</botton>
-			<button id="lxc-id-tel2-c">C</botton>
-			<button id="lxc-id-tel2-w">W</botton>
-		</div>
-		<div class="pt-2">E-Mail: <button>example@googlemail.com</button></div>
-	</div>
-	<div id="lxc-id-contact-view" class="col-lg-6 pt-4">
-		<ul class="nav nav-tabs">
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Kontakte</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link active" aria-current="page" href="#">Angebote</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Aufträge</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Lieferscheine</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Rechnungen</a>
-			</li>
-		</ul>
-		<table class="table table-striped">
-			<thead>
-			<tr>
-				<th scope="col">Datum</th>
-				<th scope="col">Erste Position</th>
-				<th scope="col">Betrag</th>
-				<th scope="col">Nummer</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			<tr>
-				<th scope="row">11.11.2011</th>
-				<td>Langer Text wie zum Beispiel: Fehlerdiagnose, Gasanlag instandsetzen</td>
-				<td>5000,00 EUR</td>
-				<td>11111</td>
-			</tr>
-			</tbody>
-		</table>
-		<div id="lxc-id-subview" class="pt-4">
-			<strong>Subview</strong>
-		</div>
-	</div>
-	<div id="lxc-id-contact-view" class="col-lg-4 ps-5 pt-4">
-		<ul class="nav nav-tabs">
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Lieferanschrift</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link active" aria-current="page" href="#">Notizen</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Variablen</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">Finanzinfos</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" aria-current="page" href="#">zusätzliche Infos</a>
-			</li>
-		</ul>
-		<div class="pt-2">
-			<textarea rows="10" cols="80">
-				Hier stehen dann die vielen wichtigen Notizen.
-				Zeile 2
-			</textarea>
-		</div>
-	</div>
-</div>
-
-</div>
 </main>
 
-<?php echo $menu['end_content']; ?>
-<script src="js/bootstrap/bootstrap.bundle.min.js"></script>
+<?php
+	foreach($objResult->{'javascripts'} as $js) echo '<script type="text/javascript" src="'.$baseUrl.$js.'"></script>'."\n";
+?>
 <script src="js/lxcars.app.js"></script>
+<script>
+<?php
+	foreach($objResult->{'javascripts_inline'} as $js) echo $js."\n";
+?>
+</script>
+
 </body>
 </html>
