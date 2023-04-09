@@ -337,6 +337,7 @@
 
     function getKBATractor(){
         writeLog( __FUNCTION__ );
+        system( 'rm sv44.*');
         system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv44_pdf.pdf?__blob=publicationFile' -O sv44.pdf" );
         system( 'pdftotext -layout sv44.pdf' );
         $allLines = file( 'sv44.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
@@ -356,12 +357,12 @@
             $allLines[$key] = $value;
         }
 
-        file_put_contents( 'kbatractors.csv', implode( PHP_EOL, $allLines ) );
+        file_put_contents( 'sv44.csv', implode( PHP_EOL, $allLines ) );
 
         $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
         $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
         $sql = 'CREATE TABLE kbatractorstmp(
             hsn TEXT,
             tsn TEXT,
@@ -379,24 +380,31 @@
             sitze TEXT,
             masse TEXT
         )';
-        echo $GLOBALS['dbh']->query( $sql );
+
+        //Das geht besser !!!!
+        /******************
+         UPDATE customer SET
+          first_name = TRIM (first_name),
+          last_name = TRIM (last_name);
+         */
+        $GLOBALS['dbh']->query( $sql );
         $sql = "COPY kbatractorstmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
-                FROM '".__DIR__."/kbatractors.csv' DELIMITER '|' CSV";
-        echo $GLOBALS['dbh']->query( $sql );
+                FROM '".__DIR__."/sv44.csv' DELIMITER '|' CSV";
+        $GLOBALS['dbh']->query( $sql );
 
         $sql = 'DROP TABLE IF EXISTS kbatractors';
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
         $sql = 'CREATE TABLE kbatractors AS TABLE kbatractorstmp WITH NO DATA';
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
         $sql = 'INSERT INTO kbatractors SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbatractorstmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
         $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
-
-        echo 1;
+        //writeLog( file_get_contents( __DIR__.'/kbatractors.pdf' ) );
+        echo file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
     }
 ?>
