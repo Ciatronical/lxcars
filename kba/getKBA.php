@@ -15,8 +15,7 @@
 
     function getKBACars(){
         $carTypesArray = array( 'BEETLE', 'CALIFORNIA', 'CADDY', 'Club', 'Crafter', 'GOLF', 'EOS', 'FOX', 'Hymer', 'JETTA', 'KOMBI', 'PASSAT', 'PHAETON', 'POLO', 'SCIROCCO', 'SHARAN', 'TIGUAN', 'TOUAREG', 'TOURAN', 'VWUP!', 'XL1', 'CC' );
-        system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv42_pdf.pdf?__blob=publicationFile&v=21' -O sv42.pdf" );
-
+        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv42_pdf.pdf?__blob=publicationFile' -O sv42.pdf" );
         system( 'pdftotext -layout sv42.pdf' );
         //// Alternativ: python3 /usr/local/bin/pdf2txt.py   sv42.pdf > test.txt
         $allLines = file( 'sv42.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
@@ -104,7 +103,7 @@
     function getKBAtrailer(){
         //writeLog( __FUNCTION__ );
 
-        //system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv45_pdf.pdf?__blob=publicationFile&v=23' -O sv45.pdf" );
+        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv45_pdf.pdf?__blob=publicationFile' -O sv45.pdf" );
         system( 'pdftotext -layout sv45.pdf' );
         $allLines = file( 'sv45.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
@@ -167,7 +166,7 @@
     function getKBAbike(){
         writeLog( __FUNCTION__ );
         $bikeTypesArray = array( 'KREIDLER FLORETT 50 XL;SM', 'SMC', 'KAESA SKY-5', 'RAM', 'KASEA SKY-5', 'F KART', 'CITY ATV', 'G KART', 'REX 50 SILVERSTAR,SILVERS', 'FLORETT 50', 'FLORETT 25', 'REXY 25', 'FLORY 25', 'SCOOTER,MK,CAPRIOLO,CLIPP', 'REXY 50', 'FLORY 50', 'SILVERSTAR,SILVERSTREET', 'M Kart', 'Quadzilla', 'SKY,BLAST,SL', 'City ATV', 'F Kart'  );
-        system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv41_pdf.pdf?__blob=publicationFile&v=25' -O sv41.pdf" );
+        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv41_pdf.pdf?__blob=publicationFile' -O sv41.pdf" );
         system( 'pdftotext -layout sv41.pdf' );
         $allLines = file( 'sv41.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
@@ -245,15 +244,13 @@
 
         $sql = 'DROP TABLE IF EXISTS kbabikestmp';
         echo $GLOBALS['dbh']->query( $sql );
-
-
         echo 1;
     }
 
     function getKBAtruck(){
-        writeLog( __FUNCTION__ );
+        //writeLog( __FUNCTION__ );
         $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO' );
-        //system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv43_pdf.pdf?__blob=publicationFile&v=24' -O sv43.pdf" );
+        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv43_pdf.pdf?__blob=publicationFile' -O sv43.pdf" );
         system( 'pdftotext -layout sv43.pdf' );
         $allLines = file( 'sv43.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
@@ -340,7 +337,7 @@
 
     function getKBATractor(){
         writeLog( __FUNCTION__ );
-        //system( "wget 'https://www.kba.de/SharedDocs/Publikationen/DE/Fahrzeugtechnik/SV/sv44_pdf.pdf?__blob=publicationFile&v=24' -O sv44.pdf" );
+        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv44_pdf.pdf?__blob=publicationFile' -O sv44.pdf" );
         system( 'pdftotext -layout sv44.pdf' );
         $allLines = file( 'sv44.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
         foreach( $allLines as $key => $value ){
