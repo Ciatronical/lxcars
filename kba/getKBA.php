@@ -15,6 +15,7 @@
 
     function getKBACars(){
         $carTypesArray = array( 'BEETLE', 'CALIFORNIA', 'CADDY', 'Club', 'Crafter', 'GOLF', 'EOS', 'FOX', 'Hymer', 'JETTA', 'KOMBI', 'PASSAT', 'PHAETON', 'POLO', 'SCIROCCO', 'SHARAN', 'TIGUAN', 'TOUAREG', 'TOURAN', 'VWUP!', 'XL1', 'CC' );
+        system( 'rm sv42.*' );
         system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv42_pdf.pdf?__blob=publicationFile' -O sv42.pdf" );
         system( 'pdftotext -layout sv42.pdf' );
         //// Alternativ: python3 /usr/local/bin/pdf2txt.py   sv42.pdf > test.txt
@@ -56,16 +57,16 @@
 
             $allLines[$key] = $value;
         }
-        file_put_contents( 'carskba.csv', implode( PHP_EOL, $allLines ) );
+        file_put_contents( 'kbacars.csv', implode( PHP_EOL, $allLines ) );
         if( $debug ) file_put_contents('formatedLines.txt', implode( PHP_EOL, $formatedLines ) );
 
         //Datenbank anlegen
         //writeLog( 'getKBACars ausgeführt');
 
         //// test with SELECT * FROM carskba WHERE klasse ILIKE '%11%';
-        $sql = 'DROP TABLE IF EXISTS carskbatmp';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = 'CREATE TABLE carskbatmp(
+        $sql = 'DROP TABLE IF EXISTS kbacars';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE kbacars(
             hsn TEXT,
             tsn TEXT,
             hersteller TEXT,
@@ -82,27 +83,26 @@
             sitze TEXT,
             masse TEXT
         )';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = "COPY carskbatmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
-                FROM '".__DIR__."/carskba.csv' DELIMITER '|' CSV";
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
+        $sql = "COPY kbacars( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/carskba.csv' DELIMITER '|' CSV";
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'DROP TABLE IF EXISTS carskba';
-        echo $GLOBALS['dbh']->query( $sql );
+        //Prepare statement for UPDATE with btrim(), UPDATE kbatrailer SET * btrim( * );
+        $sql = "SELECT 'UPDATE kbacars SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbacars'";
+        //writeLog( $sql );
+        $rs = $GLOBALS['dbh']->getOne( $sql );
+        //writeLog( $rs );
 
-        $sql = 'CREATE TABLE carskba AS TABLE carskbatmp WITH NO DATA';
-        echo $GLOBALS['dbh']->query( $sql );
+        /*********************** btrim() for all columns ******************************/
+        $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        $sql = 'INSERT INTO carskba SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM carskbatmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        echo file_get_contents( __DIR__.'/kbacars.csv' ) ? 1 : false;
 
-        $sql = 'DROP TABLE IF EXISTS carskbatmp';
-        echo $GLOBALS['dbh']->query( $sql );
-    }//funntion getKBA
+    }//function getKBA
 
     function getKBAtrailer(){
         //writeLog( __FUNCTION__ );
-
+        system( 'rm sv45*' );
         system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv45_pdf.pdf?__blob=publicationFile' -O sv45.pdf" );
         system( 'pdftotext -layout sv45.pdf' );
         $allLines = file( 'sv45.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
@@ -129,10 +129,10 @@
         }
         file_put_contents( 'kbatrailer.csv', implode( PHP_EOL, $allLines ) );
 
-        $sql = 'DROP TABLE IF EXISTS kbatrailertmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        $sql = 'DROP TABLE IF EXISTS kbatrailer';
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = "CREATE TABLE kbatrailertmp(
+        $sql = "CREATE TABLE kbatrailer(
             hsn TEXT,
             tsn TEXT,
             hersteller TEXT,
@@ -143,28 +143,27 @@
             aufbau TEXT,
             achsen TEXT,
             masse TEXT )";
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = "COPY kbatrailertmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, achsen, masse ) FROM '".__DIR__."/kbatrailer.csv' DELIMITER '|' CSV";
-        echo $GLOBALS['dbh']->query( $sql );
+        $sql = "COPY kbatrailer( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, achsen, masse ) FROM '".__DIR__."/kbatrailer.csv' DELIMITER '|' CSV";
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'DROP TABLE IF EXISTS kbatrailer';
-        echo $GLOBALS['dbh']->query( $sql );
+        //Prepare statement for UPDATE with btrim(), UPDATE kbatrailer SET * btrim( * );
+        $sql = "SELECT 'UPDATE kbatrailer SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbatrailer'";
+        writeLog( $sql );
+        $rs = $GLOBALS['dbh']->getOne( $sql );
+        //writeLog( $rs );
 
-        $sql = 'CREATE TABLE kbatrailer AS TABLE kbatrailertmp WITH NO DATA';
-        echo $GLOBALS['dbh']->query( $sql );
+        /*********************** btrim() for all columns ******************************/
+        $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        $sql = 'INSERT INTO kbatrailer SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM( hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( achsen ), BTRIM( masse ) FROM kbatrailertmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        echo file_get_contents( __DIR__.'/kbatrailer.csv' ) ? 1 : false;
 
-        $sql = 'DROP TABLE IF EXISTS kbatrailertmp';
-        echo $GLOBALS['dbh']->query( $sql );
-
-        echo 1;
     }
 
     function getKBAbike(){
-        writeLog( __FUNCTION__ );
+        //writeLog( __FUNCTION__ );
+        system( 'rm sv41.*' );
         $bikeTypesArray = array( 'KREIDLER FLORETT 50 XL;SM', 'SMC', 'KAESA SKY-5', 'RAM', 'KASEA SKY-5', 'F KART', 'CITY ATV', 'G KART', 'REX 50 SILVERSTAR,SILVERS', 'FLORETT 50', 'FLORETT 25', 'REXY 25', 'FLORY 25', 'SCOOTER,MK,CAPRIOLO,CLIPP', 'REXY 50', 'FLORY 50', 'SILVERSTAR,SILVERSTREET', 'M Kart', 'Quadzilla', 'SKY,BLAST,SL', 'City ATV', 'F Kart'  );
         system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv41_pdf.pdf?__blob=publicationFile' -O sv41.pdf" );
         system( 'pdftotext -layout sv41.pdf' );
@@ -193,9 +192,6 @@
             }
         }
 
-
-
-
         //DELIMITER einfügen
         $posSeperator = array( 13, 24, 56, 91, 129, 151, 170, 181, 192, 206 , 217, 230, 240, 253 );
         foreach( $allLines as $key => $value ){
@@ -208,10 +204,9 @@
 
         file_put_contents( 'kbabikes.csv', implode( PHP_EOL, $allLines ) );
 
-
-        $sql = 'DROP TABLE IF EXISTS kbabikestmp';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = 'CREATE TABLE kbabikestmp(
+        $sql = 'DROP TABLE IF EXISTS kbabikes';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE kbabikes(
             hsn TEXT,
             tsn TEXT,
             hersteller TEXT,
@@ -228,28 +223,27 @@
             sitze TEXT,
             masse TEXT
         )';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = "COPY kbabikestmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
-                FROM '".__DIR__."/kbabikes.csv' DELIMITER '|' CSV";
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'DROP TABLE IF EXISTS kbabikes';
-        echo $GLOBALS['dbh']->query( $sql );
+        $sql = "COPY kbabikes( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/kbabikes.csv' DELIMITER '|' CSV";
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'CREATE TABLE kbabikes AS TABLE kbabikestmp WITH NO DATA';
-        echo $GLOBALS['dbh']->query( $sql );
+        //Prepare statement for UPDATE with btrim(), UPDATE kbatractors SET * btrim( * );
+        $sql = "SELECT 'UPDATE kbabikes SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbabikes'";
+        $rs = $GLOBALS['dbh']->getOne( $sql );
+        //writeLog( $rs );
 
-        $sql = 'INSERT INTO kbabikes SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbabikestmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        /*********************** btrim() for all columns ******************************/
+        $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        $sql = 'DROP TABLE IF EXISTS kbabikestmp';
-        echo $GLOBALS['dbh']->query( $sql );
-        echo 1;
+        echo file_get_contents( __DIR__.'/kbabikes.csv' ) ? 1 : false;
+
     }
 
     function getKBAtruck(){
         //writeLog( __FUNCTION__ );
         $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO' );
+        system( 'rm sv43.*' );
         system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv43_pdf.pdf?__blob=publicationFile' -O sv43.pdf" );
         system( 'pdftotext -layout sv43.pdf' );
         $allLines = file( 'sv43.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
@@ -267,7 +261,7 @@
         }
 
         foreach( $allLines as $key => $value ){
-            if( substr( $value, 74, 12 ) && !ctype_space( substr( $value, 74, 8 ) ) ){ //sind Kfz-Typen zu weit nach lins verschoben?
+            if( substr( $value, 74, 12 ) && !ctype_space( substr( $value, 74, 8 ) ) ){ //sind Kfz-Typen zu weit nach links verschoben?
                 $posBegin = strposArray( $value, $truckTypesArray, 74 );
                 if( $posBegin === false || $posBegin >= 84 ) continue;
                 $posEnd = strpos( $value, '   ', $posBegin );
@@ -293,11 +287,11 @@
 
         file_put_contents( 'kbatrucks.csv', implode( PHP_EOL, $allLines ) );
 
-        $sql = 'DROP TABLE IF EXISTS kbatruckstmp';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = 'DROP TABLE IF EXISTS kbatruckstmp';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = 'CREATE TABLE kbatruckstmp(
+        $sql = 'DROP TABLE IF EXISTS kbatrucks';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'DROP TABLE IF EXISTS kbatrucks';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE kbatrucks(
             hsn TEXT,
             tsn TEXT,
             hersteller TEXT,
@@ -314,30 +308,25 @@
             sitze TEXT,
             masse TEXT
         )';
-        echo $GLOBALS['dbh']->query( $sql );
-        $sql = "COPY kbatruckstmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
-                FROM '".__DIR__."/kbatrucks.csv' DELIMITER '|' CSV";
-        echo $GLOBALS['dbh']->query( $sql );
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'DROP TABLE IF EXISTS kbatrucks';
-        echo $GLOBALS['dbh']->query( $sql );
+        $sql = "COPY kbatrucks( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/kbatrucks.csv' DELIMITER '|' CSV";
+        $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'CREATE TABLE kbatrucks AS TABLE kbatruckstmp WITH NO DATA';
-        echo $GLOBALS['dbh']->query( $sql );
+        //Prepare statement for UPDATE with btrim(), UPDATE kbatractors SET * btrim( * );
+        $sql = "SELECT 'UPDATE kbatrucks SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbatrucks'";
+        $rs = $GLOBALS['dbh']->getOne( $sql );
+        //writeLog( $rs );
 
-        $sql = 'INSERT INTO kbatrucks SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbatruckstmp';
-        echo $GLOBALS['dbh']->query( $sql );
+        /*********************** btrim() for all columns ******************************/
+        $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        $sql = 'DROP TABLE IF EXISTS kbatruckstmp';
-        echo $GLOBALS['dbh']->query( $sql );
-
-
-        echo 1;
+        echo file_get_contents( __DIR__.'/kbatrucks.csv' ) ? 1 : false;
     }
 
     function getKBATractor(){
-        writeLog( __FUNCTION__ );
-        system( 'rm sv44.*');
+        //writeLog( __FUNCTION__ );
+        system( 'rm sv44.*' );
         system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv44_pdf.pdf?__blob=publicationFile' -O sv44.pdf" );
         system( 'pdftotext -layout sv44.pdf' );
         $allLines = file( 'sv44.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
@@ -359,11 +348,11 @@
 
         file_put_contents( 'sv44.csv', implode( PHP_EOL, $allLines ) );
 
-        $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
+        $sql = 'DROP TABLE IF EXISTS kbatractors';
         $GLOBALS['dbh']->query( $sql );
-        $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
+        $sql = 'DROP TABLE IF EXISTS kbatractors';
         $GLOBALS['dbh']->query( $sql );
-        $sql = 'CREATE TABLE kbatractorstmp(
+        $sql = 'CREATE TABLE kbatractors(
             hsn TEXT,
             tsn TEXT,
             hersteller TEXT,
@@ -380,31 +369,18 @@
             sitze TEXT,
             masse TEXT
         )';
-
-        //Das geht besser !!!!
-        /******************
-         UPDATE customer SET
-          first_name = TRIM (first_name),
-          last_name = TRIM (last_name);
-         */
-        $GLOBALS['dbh']->query( $sql );
-        $sql = "COPY kbatractorstmp( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse )
-                FROM '".__DIR__."/sv44.csv' DELIMITER '|' CSV";
         $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'DROP TABLE IF EXISTS kbatractors';
+        $sql = "COPY kbatractors( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/sv44.csv' DELIMITER '|' CSV";
         $GLOBALS['dbh']->query( $sql );
 
-        $sql = 'CREATE TABLE kbatractors AS TABLE kbatractorstmp WITH NO DATA';
-        $GLOBALS['dbh']->query( $sql );
+        //Prepare statement for UPDATE with btrim(), UPDATE kbatractors SET * btrim( * );
+        $sql = "SELECT 'UPDATE kbatractors SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbatractors'";
+        $rs = $GLOBALS['dbh']->getOne( $sql );
+        //writeLog( $rs );
+        /*********************** btrim() for all columns ******************************/
+        $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        $sql = 'INSERT INTO kbatractors SELECT BTRIM( hsn ), BTRIM( tsn ), BTRIM(hersteller ), BTRIM( marke ), BTRIM( name ), BTRIM( datum ), BTRIM( klasse ), BTRIM( aufbau ), BTRIM( kraftstoff ), BTRIM( leistung ), BTRIM( hubraum ), BTRIM( achsen ), BTRIM( antrieb ), BTRIM( sitze ), BTRIM( masse ) FROM kbatractorstmp';
-        $GLOBALS['dbh']->query( $sql );
-
-        $sql = 'DROP TABLE IF EXISTS kbatractorstmp';
-        $GLOBALS['dbh']->query( $sql );
-
-        //writeLog( file_get_contents( __DIR__.'/kbatractors.pdf' ) );
         echo file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
     }
 ?>
