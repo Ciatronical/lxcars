@@ -17,7 +17,7 @@
   $( document ).ready( function(){
     $( '#headline' ).html( 'Administration für LxCars - darf nur vom Profi benutzt werden.' );
 
-    $( '#getKBAcars, #getKBAtrailer, #getKBAbike, #getKBAtruck, #getKBAtractor' ).button().click( function(){
+    $( '#getKBAcars, #getKBAtrailer, #getKBAbike, #getKBAtruck, #getKBAtractor, #firstnameToGender' ).button().click( function(){
       var name = $(this).attr('id');
       $.ajax({
         url: 'kba/getKBA.php',
@@ -50,6 +50,7 @@
   <div><button id="getKBAbike">Hole Motorad KBA-Daten</button></div>
   <div><button id="getKBAtruck">Hole Lkw KBA-Daten</button></div>
   <div><button id="getKBAtractor">Hole Zugmaschinen KBA-Daten</button></div>
+  <div><button id="firstnameToGender">firstnameToGender</button></div>
 
 
 

@@ -1483,7 +1483,8 @@ namespace( 'kivi.Part', function( ns ){
         "status": $( '#orderstatus' ).val(),
         "finish_time": $( '#finish_time' ).val(),
         "car_status": $( '#car_status' ).val(),
-        "internalorder": ($('.isInternalOrder').is(':checked'))
+        "internalorder": ($('.isInternalOrder').is(':checked')),
+        "c_ln": c_ln
       });
 
       $.ajax({

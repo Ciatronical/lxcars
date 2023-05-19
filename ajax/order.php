@@ -190,8 +190,9 @@ function saveLastArticleNumber( $data ){
     else echo $GLOBALS['dbh']->update( 'defaults', array( 'articlenumber' ), array( $data['artNr'] ), 'id = '.$data['id'] );
 }
 
-function updateOrder( $data) {
-    echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time', 'internalorder' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'], $data[0]['internalorder'] ), 'id = '.$data[0]['id'] );
+function updateOrder( $data){
+    writeLog( $data );
+    echo $GLOBALS['dbh']->update( 'oe', array( 'km_stnd', 'status', 'netamount', 'amount', 'car_status', 'finish_time', 'internalorder', 'shippingpoint', 'shipvia' ), array( $data[0]['km_stnd'], $data[0]['status'], $data[0]['netamount'], $data[0]['amount'], $data[0]['car_status'], $data[0]['finish_time'], $data[0]['internalorder'], $data[0]['c_ln'], $data[0]['km_stnd'] ), 'id = '.$data[0]['id'] );
 }
 
 function getCar( $c_id ){
