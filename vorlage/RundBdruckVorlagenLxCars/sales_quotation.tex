@@ -1,0 +1,184 @@
+\input{inheaders.tex}
+
+
+% Variablen, die in settings verwendet werden
+\newcommand{\lxlangcode} {<%template_meta.language.template_code%>}
+\newcommand{\lxmedia} {<%media%>}
+\newcommand{\lxcurrency} {<%currency%>}
+\newcommand{\kivicompany} {<%employee_company%>}
+
+% settings: Einstellungen, Logo, Briefpapier, Kopfzeile, Fusszeile
+\input{insettings.tex}
+
+
+% laufende Kopfzeile:
+\ourhead{\kundennummer}{<%customernumber%>}{\angebot}{<%quonumber%>}{<%transdate%>}
+
+
+\begin{document}
+
+\ourfont
+\begin{minipage}[t]{8cm}
+  \scriptsize
+
+  {\color{gray}\underline{\firma\ $\cdot$ \strasse\ $\cdot$ \ort}}
+  \normalsize
+
+  \vspace*{0.3cm}
+
+  \textbf{<%name%>}
+
+  <%cp_givenname%> <%cp_name%>
+
+  <%street%>
+
+  ~
+
+  \textbf{<%country%>-<%zipcode%> <%city%>}
+  
+
+\end{minipage}
+ 
+\begin{picture}(0,0)
+  \put(344,155){           % Position 
+    \begin{minipage}[t]{60mm}
+      \small{
+        Tel.:  \telefon \\
+        Mobil: \mobil\\ 
+        Web: \homepages\\
+        Email: \emails
+      }
+    \end{minipage}
+  }%Ende put
+  \put(0,-578){\rule[-3mm]{180mm}{0.8pt}} % Linie über dem Footer   
+\end{picture}
+
+\hfill
+\begin{minipage}[t]{6.0cm}
+  
+  \vspace*{-2.9cm}
+
+  \textbf{Angebotsnummer:}\hfill <%quonumber%>
+  
+  \textbf{\datum:}\hfill <%transdate%>
+
+  \textbf{\kundennummer:}\hfill <%customernumber%>
+
+  \textbf{\ansprechpartner:}\hfill <%employee_name%>
+
+  <%if shipvia%>Stand des Wegstreckenzählers:\hfill  <%shipvia%><%end if%>
+
+  <%if shippingpoint%>Amtliches Kennzeichen:\hfill  <%shippingpoint%><%end if%>
+
+\end{minipage}
+
+\vspace*{1.5cm}
+
+\LARGE\textbf{Angebot}
+
+~
+
+\normalsize 
+
+%\hfill
+
+% Bei Kontaktperson Anrede nach Geschlecht unterscheiden.
+% Bei natürlichen Personen persönliche Anrede, sonst allgemeine Anrede.
+\ifthenelse{\equal{<%cp_name%>}{}}{
+  <%if natural_person%><%greeting%> <%name%>,<%else%>\anrede<%end if%>}{
+  \ifthenelse{\equal{<%cp_gender%>}{f}}
+    {\anredefrau}{\anredeherr} <%cp_title%> <%cp_name%>,}\\
+\angebotsformel\\
+
+\vspace{0.5cm}
+
+
+\setlength\LTleft\parindent     % Tabelle beginnt am linken Textrand
+\setlength\LTright{0pt}         % Tabelle endet am rechten Textrand
+\begin{longtable}{@{}rrp{7cm}@{\extracolsep{\fill}}rrr@{}}
+% Tabellenkopf
+\hline
+\textbf{\position} & \textbf{\artikelnummer} & \textbf{\bezeichnung} & \textbf{\menge} & \textbf{\einzelpreis} & \textbf{\gesamtpreis} \\
+\hline\\
+\endhead
+
+% Tabellenkopf erste Seite
+\hline
+\textbf{\position} & \textbf{\artikelnummer} & \textbf{\bezeichnung} & \textbf{\menge} & \textbf{\einzelpreis} & \textbf{\gesamtpreis} \\
+\hline\\[-0.5em]
+\endfirsthead
+
+% Tabellenende
+\\
+\multicolumn{6}{@{}r@{}}{\weiteraufnaechsterseite}
+\endfoot
+
+% Tabellenende letzte Seite
+\hline\\
+\multicolumn{5}{@{}l}{\nettobetrag} & <%subtotal%> \currency\\
+<%foreach tax%>
+\multicolumn{5}{@{}l}{<%taxdescription%>} & <%tax%> \currency\\
+<%end tax%>
+\multicolumn{5}{@{}l}{\textbf{\schlussbetrag}} &  \textbf{<%ordtotal%>} \currency\\
+\hline\hline\\
+\endlastfoot
+
+% eigentliche Tabelle
+<%foreach number%>
+  <%runningnumber%> &
+  <%number%> &
+  \textbf{<%description%>} &
+  \raggedleft <%qty%> <%unit%> &
+  <%sellprice%> \currency &
+  \ifthenelse{\equal{<%p_discount%>}{0}}{}{\sffamily\scriptsize{(-<%p_discount%> \%)}}
+  \ourfont{<%linetotal%> \currency} \\*  % kein Umbruch nach der ersten Zeile, damit Beschreibung und Langtext nicht getrennt werden
+
+  <%if longdescription%> && \scriptsize <%longdescription%>\\<%end longdescription%>
+  <%if serialnumber%> && \scriptsize \seriennummer: <%serialnumber%>\\<%end serialnumber%>
+  <%if ean%> && \scriptsize \ean: <%ean%>\\<%end ean%>
+  <%if projectnumber%> && \scriptsize \projektnummer: <%projectnumber%>\\<%end projectnumber%>
+  <%if optional%> && \scriptsize \optional \\<%end%>
+  <%if customer_make%>
+    <%foreach customer_make%>
+      \ifthenelse{\equal{<%customer_make%>}{<%name%>}}{&& \kundenartnr: <%customer_model%>\\}{}
+    <%end foreach%>
+  <%end if%>
+  \\[-0.8em]
+<%end number%>
+
+\end{longtable}
+\textbf{Hauptuntersuchungen (TÜV, DEKRA) finden täglich bei uns im Hause statt.}
+
+<%if notes%>
+ \vspace{5mm}
+  <%notes%>
+  \vspace{5mm}
+<%end if%>
+
+<%if delivery_term%>
+  \lieferung ~<%delivery_term.description_long%>\\
+<%end delivery_term%>
+
+\angebotdanke\\
+<%if reqdate%>
+\angebotgueltig~<%reqdate%>.
+<%end if%>
+\angebotfragen
+
+~\\
+
+\angebotagb \\ \\
+
+\gruesse \\ \\ \\
+<%employee_company%>
+
+<%salesman_name%>\\\\
+
+\parbox[t]{175mm}{
+
+  \auftragerteilt\\\\
+  \nurort:\uline{\hspace*{8cm}}\ ,\den\ \uline{\hspace*{5cm}}\\\\\\\\\\
+
+  \unterschrift / \stempel:\uline{\hspace*{6cm}}
+}
+\end{document}
