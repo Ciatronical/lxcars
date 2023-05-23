@@ -4,6 +4,8 @@
     $debug = true;
     $dl = 2; //download
 
+
+
     function strposArray( $haystack, $needle, $offset = 0 ){
       if( !is_array( $needle) ) return false;
       foreach( $needle as $query ){
@@ -382,5 +384,68 @@
         $GLOBALS['dbh']->query( $rs['updatequery'] );
 
         echo file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
+    }
+
+    function firstnameToGender(){
+        writeLog( __FUNCTION__ );
+
+
+
+        $allLines = file( 'firstnameToGender.test', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+        foreach( $allLines as $key => $value ){
+            $allLines[$key] = substr( $value, 0, 24 );
+            $goodLine = TRUE;
+            //writeLog( $value );
+            $goodLine = ( strpos( $value, '#' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine && !ctype_alpha( $value );
+            $goodLine = $goodLine &&  ( strpos( $value, ',' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '<' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '+' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '?' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '=' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  strcmp( mb_detect_encoding( $value  ),  'ASCII' ) === 0;
+            //writeLog( mb_detect_encoding( $value ) );
+            //if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  ////
+
+            if( !$goodLine ) unset( $allLines[$key] );
+
+        }
+        writeLog( '1' );
+        //insert seperators
+        $posSeperator = array( 1 );
+        foreach( $allLines as $key => $value ){
+            foreach( $posSeperator as $posKey => $posValue ){
+                $value = substr_replace( $value, '|', $posValue, 0 );
+            }
+
+            $allLines[$key] = $value;
+        }
+
+        writeLog( '2' );
+
+        //file_put_contents( 'firstnameToGender.csv', implode( PHP_EOL, $allLines ) );
+
+
+        $sql = 'DROP TABLE IF EXISTS firstnameToGender';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'DROP TABLE IF EXISTS firstnameToGender';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE firstnameToGender( gender CHAR(1), firstname TEXT UNIQUE PRIMARY KEY )';
+        $GLOBALS['dbh']->query( $sql );
+        writeLog( '3' );
+        $sql = "COPY firstnameToGender( gender, firstname  ) FROM '".__DIR__."/firstnameToGender.csv' DELIMITER '|' CSV";
+        writeLog( $sql );
+        $GLOBALS['dbh']->query( $sql );
+        writeLog( '4' );
+        //We trim
+        $sql = 'UPDATE firstnameToGender SET firstname =  btrim( firstname )';
+        writeLog( '5' );
+        writeLog( $sql );
+        $rs = $GLOBALS['dbh']->query( $sql );
+        //writeLog( $rs );
+        /*********************** btrim() for all columns ******************************/
+
+
+        echo 1; //file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
     }
 ?>
