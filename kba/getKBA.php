@@ -86,7 +86,7 @@
             masse TEXT
         )';
         $GLOBALS['dbh']->query( $sql );
-        $sql = "COPY kbacars( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/carskba.csv' DELIMITER '|' CSV";
+        $sql = "COPY kbacars( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/kbacars.csv' DELIMITER '|' CSV";
         $GLOBALS['dbh']->query( $sql );
 
         //Prepare statement for UPDATE with btrim(), UPDATE kbatrailer SET * btrim( * );
@@ -348,7 +348,7 @@
             $allLines[$key] = $value;
         }
 
-        file_put_contents( 'sv44.csv', implode( PHP_EOL, $allLines ) );
+        file_put_contents( 'kbatractors.csv', implode( PHP_EOL, $allLines ) );
 
         $sql = 'DROP TABLE IF EXISTS kbatractors';
         $GLOBALS['dbh']->query( $sql );
@@ -373,7 +373,7 @@
         )';
         $GLOBALS['dbh']->query( $sql );
 
-        $sql = "COPY kbatractors( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/sv44.csv' DELIMITER '|' CSV";
+        $sql = "COPY kbatractors( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/kbatractors.csv' DELIMITER '|' CSV";
         $GLOBALS['dbh']->query( $sql );
 
         //Prepare statement for UPDATE with btrim(), UPDATE kbatractors SET * btrim( * );
@@ -383,7 +383,7 @@
         /*********************** btrim() for all columns ******************************/
         $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        echo file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
+        echo file_get_contents( __DIR__.'/kbatractors.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
     }
 
     function firstnameToGender(){
