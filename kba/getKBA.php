@@ -152,7 +152,7 @@
 
         //Prepare statement for UPDATE with btrim(), UPDATE kbatrailer SET * btrim( * );
         $sql = "SELECT 'UPDATE kbatrailer SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbatrailer'";
-        writeLog( $sql );
+        //writeLog( $sql );
         $rs = $GLOBALS['dbh']->getOne( $sql );
         //writeLog( $rs );
 
@@ -244,16 +244,16 @@
 
     function getKBAtruck(){
         //writeLog( __FUNCTION__ );
-        $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO' );
-        system( 'rm sv43.*' );
-        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv43_pdf.pdf?__blob=publicationFile' -O sv43.pdf" );
+        $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO', 'CADDY', 'TRANSPORTER', 'Sonstige', 'MKD-L/-E,C,N,U', 'ABT e-Caddy', 'ID. BUZZ CARGO 150 KW', 'CRAFTER', 'ABT e-  Transporter 6.1' );//ABT e-  Transporter 6.1 funktioniert nicht
+        //system( 'rm sv43.*' );
+        //system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv43_pdf.pdf?__blob=publicationFile' -O sv43.pdf" );
         system( 'pdftotext -layout sv43.pdf' );
         $allLines = file( 'sv43.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
         foreach( $allLines as $key => $value ){
             $goodLine = TRUE;
             if( !ctype_digit( substr( $value, 0, 4) ) ) $goodLine = FALSE;  //// Prüfen ob die ersten vier Zeichen numerisch sind
-            if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
+            if( !ctype_space( substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
             if( !$goodLine ) unset( $allLines[$key] );
         }
 
@@ -410,7 +410,6 @@
             if( !$goodLine ) unset( $allLines[$key] );
 
         }
-        writeLog( '1' );
         //insert seperators
         $posSeperator = array( 1 );
         foreach( $allLines as $key => $value ){
@@ -421,7 +420,6 @@
             $allLines[$key] = $value;
         }
 
-        writeLog( '2' );
 
         //file_put_contents( 'firstnameToGender.csv', implode( PHP_EOL, $allLines ) );
 
