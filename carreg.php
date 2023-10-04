@@ -134,7 +134,7 @@ input:read-only { background-color: #d0cfc9; }
     <table>
     <tr>
         <td><label for"kennzeichen">Kennzeichen:<label></td>
-        <td><input  type="text" id="kennzeichen" name="kennzeichen" aria-label="Kennzeichen" placeholder="z.B. SRB-AB123" value="<?=$c_ln?>" readonly /></td>
+        <td><input  type="text" id="kennzeichen" name="kennzeichen" aria-label="Kennzeichen" placeholder="z.B. SRB-AB123" value="<?=$c_ln?>" /></td>
     </tr>
     <tr>
         <td><label for="vorname">Vorname*:</label></td>
@@ -158,7 +158,7 @@ input:read-only { background-color: #d0cfc9; }
     </tr>
     <tr>
         <td><label for="strasse">Straße*:</label></td>
-        <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" readonly /></td>
+        <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" redonly /></td>
     </tr>
     <tr>
         <td><label for="hsnr">Hausnummer*:</label></td>
