@@ -134,15 +134,15 @@ input:read-only { background-color: #d0cfc9; }
     <table>
     <tr>
         <td><label for"kennzeichen">Kennzeichen:<label></td>
-        <td><input  type="text" id="kennzeichen" name="kennzeichen" aria-label="Kennzeichen" placeholder="z.B. SRB-AB123" value="<?=$c_ln?>" readonly /></td>
+        <td><input  type="text" id="kennzeichen" name="kennzeichen" aria-label="Kennzeichen" placeholder="z.B. SRB-AB123" value="<?=$c_ln?>" /></td>
     </tr>
     <tr>
         <td><label for="vorname">Vorname*:</label></td>
-        <td><input class="required" type="text" id="vorname" name="vorname" aria-label="Vorname" value="<?=$vorname?>" readonly /></td>
+        <td><input class="required" type="text" id="vorname" name="vorname" aria-label="Vorname" value="<?=$vorname?>" /></td>
     </tr>
     <tr>
         <td><label for="name">Name*:</label></td>
-        <td><input class="required" type="text" id="name" name="name" aria-label="Name" value="<?=$name?>" readonly /></td>
+        <td><input class="required" type="text" id="name" name="name" aria-label="Name" value="<?=$name?>" /></td>
     </tr>
     <tr>
         <td><label for="gebname">Geburtsname:</label></td>
@@ -158,23 +158,23 @@ input:read-only { background-color: #d0cfc9; }
     </tr>
     <tr>
         <td><label for="strasse">Straße*:</label></td>
-        <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" readonly /></td>
+        <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" /></td>
     </tr>
     <tr>
         <td><label for="hsnr">Hausnummer*:</label></td>
-        <td><input class="required" type="text" id="hsnr" name="hsnr" aria-label="Hausnummer" value="<?=$house_nr?>" readonly /></td>
+        <td><input class="required" type="text" id="hsnr" name="hsnr" aria-label="Hausnummer" value="<?=$house_nr?>" /></td>
     </tr>
     <tr>
         <td><label for="plz">PLZ*:</label></td>
-        <td><input class="required" type="text" id="plz" name="plz" aria-label="PLZ" value="<?=$zipcode?>" readonly /></td>
+        <td><input class="required" type="text" id="plz" name="plz" aria-label="PLZ" value="<?=$zipcode?>" /></td>
     </tr>
     <tr>
         <td><label for="ort">Ort*:</label></td>
-        <td><input class="required" type="text" id="ort" name="ort" aria-label="Ort" value="<?=$city?>" readonly /></td>
+        <td><input class="required" type="text" id="ort" name="ort" aria-label="Ort" value="<?=$city?>" /></td>
     </tr>
     <tr>
         <td><label for="fahrzeug-id">Fahrzeugidentifikationsnummer*:</label></td>
-        <td><input class="required" type="text" id="fahrzeug-id" name="fahrzeug-id" onkeyup="toUpperCase('fahrzeug-id')" aria-label="Fahrzeugidentifikationsnummer" value="<?=$c_fin?>" readonly /></td>
+        <td><input class="required" type="text" id="fahrzeug-id" name="fahrzeug-id" onkeyup="toUpperCase('fahrzeug-id')" aria-label="Fahrzeugidentifikationsnummer" value="<?=$c_fin?>" /></td>
     </tr>
     </table>
 
@@ -232,48 +232,48 @@ input:read-only { background-color: #d0cfc9; }
 
     <div id="eidstatt-div" style="display:none">
         <h2>Versicherung an Eides Statt</h2>
-		<div style="font-size: 16px;">Welches Dokument ist Ihnen abhandengekommen?</div>
-		<table>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="fahrzeugschein" name="fahrzeugschein" value="true" aria-label="Zulassungsbescheinigung Teil I / Fahrzeugschein" /></td>
-			<td><label for="fahrzeugschein">Zulassungsbescheinigung Teil I / Fahrzeugschein</label></td>
-		</tr>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="fahrzeugbrief" name="fahrzeugbrief" value="true" aria-label="Zulassungsbescheinigung Teil II / Fahrzeugbrief" /></td>
-			<td><label for="fahrzeugbrief">Zulassungsbescheinigung Teil II / Fahrzeugbrief</label></td>
-		</tr>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="amtlicheskenn" name="amtlicheskenn" value="true" aria-label="Amtliches, abgestempeltes Kennzeichen" /></td>
-			<td><label for="amtlicheskenn">Amtliches, abgestempeltes Kennzeichen</label></td>
-		</tr>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="roterschein" name="roterschein" value="true" aria-label="Das rote Fahrzeugscheinheft" /></td>
-			<td><label for="roterschein">Das rote Fahrzeugscheinheft</label></td>
-		</tr>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="fuehrerschein" name="fuehrerschein" value="true" aria-label="Führerschein" /></td>
-			<td><label for="fuehrerschein">Führerschein</label></td>
-		</tr>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="betriebserlaubnis" name="betriebserlaubnis" value="true" aria-label="Betriebserlaubnis" /></td>
-			<td><label for="betriebserlaubnis">Betriebserlaubnis</label></td>
-		</tr>
-		<tr>
-			<td><input class="eidstatt-chbx" type="checkbox" id="sonstiges" name="sonstiges" value="true" aria-label="Sonstiges" /></td>
-			<td><label for="sonstiges">Sonstiges:</label> <input type="text" id="sonstiges-text" name="sonstiges-text" aria-label="Sonstiges" ></td>
-		</tr>
-		<tr>
-			<td><label for="erklaerung">Erklärung:</label></td>
-			<td>
-				<textarea id="erklaerung" name="erklaerung" rows="9" cols="60" maxlength="200" aria-label="Erklärung zur Versicherung an Eides Statt" ></textarea>
-			</td>
-		</tr>
-		<tr>
-			<td></td>
-		    <td><a href="#" onclick="textVorlage()" class="ui-button ui-corner-all ui-widget" style="font-size: 12px;">Textvorlage</a></td>
-		</tr>
-		</table>
-		</div>
+        <div style="font-size: 16px;">Welches Dokument ist Ihnen abhandengekommen?</div>
+        <table>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="fahrzeugschein" name="fahrzeugschein" value="true" aria-label="Zulassungsbescheinigung Teil I / Fahrzeugschein" /></td>
+            <td><label for="fahrzeugschein">Zulassungsbescheinigung Teil I / Fahrzeugschein</label></td>
+        </tr>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="fahrzeugbrief" name="fahrzeugbrief" value="true" aria-label="Zulassungsbescheinigung Teil II / Fahrzeugbrief" /></td>
+            <td><label for="fahrzeugbrief">Zulassungsbescheinigung Teil II / Fahrzeugbrief</label></td>
+        </tr>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="amtlicheskenn" name="amtlicheskenn" value="true" aria-label="Amtliches, abgestempeltes Kennzeichen" /></td>
+            <td><label for="amtlicheskenn">Amtliches, abgestempeltes Kennzeichen</label></td>
+        </tr>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="roterschein" name="roterschein" value="true" aria-label="Das rote Fahrzeugscheinheft" /></td>
+            <td><label for="roterschein">Das rote Fahrzeugscheinheft</label></td>
+        </tr>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="fuehrerschein" name="fuehrerschein" value="true" aria-label="Führerschein" /></td>
+            <td><label for="fuehrerschein">Führerschein</label></td>
+        </tr>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="betriebserlaubnis" name="betriebserlaubnis" value="true" aria-label="Betriebserlaubnis" /></td>
+            <td><label for="betriebserlaubnis">Betriebserlaubnis</label></td>
+        </tr>
+        <tr>
+            <td><input class="eidstatt-chbx" type="checkbox" id="sonstiges" name="sonstiges" value="true" aria-label="Sonstiges" /></td>
+            <td><label for="sonstiges">Sonstiges:</label> <input type="text" id="sonstiges-text" name="sonstiges-text" aria-label="Sonstiges" ></td>
+        </tr>
+        <tr>
+            <td><label for="erklaerung">Erklärung:</label></td>
+            <td>
+                <textarea id="erklaerung" name="erklaerung" rows="9" cols="60" maxlength="200" aria-label="Erklärung zur Versicherung an Eides Statt" ></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><a href="#" onclick="textVorlage()" class="ui-button ui-corner-all ui-widget" style="font-size: 12px;">Textvorlage</a></td>
+        </tr>
+        </table>
+        </div>
 
      <div id="sepa-mandat-div">
         <h2>SEPA-Lastschriftmandat zum Einzug der Kraftfahrzeugsteuer</h2>
@@ -323,7 +323,7 @@ input:read-only { background-color: #d0cfc9; }
         </table>
     </div>
 
-	<p><input type="checkbox" id="print-template" name="print-template" value="true" aria-label="Als Vorlage drucken" /><label for="print-template"> Als Vorlage drucken</label></p>
+    <p><input type="checkbox" id="print-template" name="print-template" value="true" aria-label="Als Vorlage drucken" /><label for="print-template"> Als Vorlage drucken</label></p>
 
     <div id="response" style="font-weight: bold; font-size: 16px; color: red; padding: 0.5em;" ></div>
     <button type="submit" class="ui-button ui-corner-all ui-widget">PDF herunterladen</button>
