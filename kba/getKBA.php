@@ -4,6 +4,8 @@
     $debug = true;
     $dl = 2; //download
 
+
+
     function strposArray( $haystack, $needle, $offset = 0 ){
       if( !is_array( $needle) ) return false;
       foreach( $needle as $query ){
@@ -84,7 +86,7 @@
             masse TEXT
         )';
         $GLOBALS['dbh']->query( $sql );
-        $sql = "COPY kbacars( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/carskba.csv' DELIMITER '|' CSV";
+        $sql = "COPY kbacars( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/kbacars.csv' DELIMITER '|' CSV";
         $GLOBALS['dbh']->query( $sql );
 
         //Prepare statement for UPDATE with btrim(), UPDATE kbatrailer SET * btrim( * );
@@ -150,7 +152,7 @@
 
         //Prepare statement for UPDATE with btrim(), UPDATE kbatrailer SET * btrim( * );
         $sql = "SELECT 'UPDATE kbatrailer SET '||string_agg( concat( c.column_name, ' = btrim( ', c.column_name, ' ) '), ', ') AS updatequery FROM information_schema.columns c WHERE table_name = 'kbatrailer'";
-        writeLog( $sql );
+        //writeLog( $sql );
         $rs = $GLOBALS['dbh']->getOne( $sql );
         //writeLog( $rs );
 
@@ -242,16 +244,16 @@
 
     function getKBAtruck(){
         //writeLog( __FUNCTION__ );
-        $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO' );
-        system( 'rm sv43.*' );
-        system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv43_pdf.pdf?__blob=publicationFile' -O sv43.pdf" );
+        $truckTypesArray = array( 'Algema/Crafter Blitzlader', 'Fitzel Speeder T5, 46-20', 'PanelVAN', 'AMAROK', 'TIGUAN', 'PASSAT', 'VWUP!', 'Crafter', 'SHARAN', 'TOURAN', 'Transporter', 'POLO', 'CADDY', 'TRANSPORTER', 'Sonstige', 'MKD-L/-E,C,N,U', 'ABT e-Caddy', 'ID. BUZZ CARGO 150 KW', 'CRAFTER', 'ABT e-  Transporter 6.1' );//ABT e-  Transporter 6.1 funktioniert nicht
+        //system( 'rm sv43.*' );
+        //system( "wget 'https://www.kba.de/SharedDocs/Downloads/DE/SV/sv43_pdf.pdf?__blob=publicationFile' -O sv43.pdf" );
         system( 'pdftotext -layout sv43.pdf' );
         $allLines = file( 'sv43.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
 
         foreach( $allLines as $key => $value ){
             $goodLine = TRUE;
             if( !ctype_digit( substr( $value, 0, 4) ) ) $goodLine = FALSE;  //// Prüfen ob die ersten vier Zeichen numerisch sind
-            if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
+            if( !ctype_space( substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  //// Prüft ob 5 Zeichen ein Leerzeichen ist
             if( !$goodLine ) unset( $allLines[$key] );
         }
 
@@ -346,7 +348,7 @@
             $allLines[$key] = $value;
         }
 
-        file_put_contents( 'sv44.csv', implode( PHP_EOL, $allLines ) );
+        file_put_contents( 'kbatractors.csv', implode( PHP_EOL, $allLines ) );
 
         $sql = 'DROP TABLE IF EXISTS kbatractors';
         $GLOBALS['dbh']->query( $sql );
@@ -371,7 +373,7 @@
         )';
         $GLOBALS['dbh']->query( $sql );
 
-        $sql = "COPY kbatractors( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/sv44.csv' DELIMITER '|' CSV";
+        $sql = "COPY kbatractors( hsn, tsn, hersteller, marke, name, datum, klasse, aufbau, kraftstoff, leistung, hubraum, achsen, antrieb, sitze, masse ) FROM '".__DIR__."/kbatractors.csv' DELIMITER '|' CSV";
         $GLOBALS['dbh']->query( $sql );
 
         //Prepare statement for UPDATE with btrim(), UPDATE kbatractors SET * btrim( * );
@@ -381,6 +383,67 @@
         /*********************** btrim() for all columns ******************************/
         $GLOBALS['dbh']->query( $rs['updatequery'] );
 
-        echo file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
+        echo file_get_contents( __DIR__.'/kbatractors.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
+    }
+
+    function firstnameToGender(){
+        writeLog( __FUNCTION__ );
+
+
+
+        $allLines = file( 'firstnameToGender.test', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES );
+        foreach( $allLines as $key => $value ){
+            $allLines[$key] = substr( $value, 0, 24 );
+            $goodLine = TRUE;
+            //writeLog( $value );
+            $goodLine = ( strpos( $value, '#' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine && !ctype_alpha( $value );
+            $goodLine = $goodLine &&  ( strpos( $value, ',' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '<' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '+' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '?' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  ( strpos( $value, '=' ) === FALSE ) ? TRUE : FALSE;
+            $goodLine = $goodLine &&  strcmp( mb_detect_encoding( $value  ),  'ASCII' ) === 0;
+            //writeLog( mb_detect_encoding( $value ) );
+            //if( !ctype_space(substr( $value, 4, 5 ) ) ) $goodLine = FALSE;  ////
+
+            if( !$goodLine ) unset( $allLines[$key] );
+
+        }
+        //insert seperators
+        $posSeperator = array( 1 );
+        foreach( $allLines as $key => $value ){
+            foreach( $posSeperator as $posKey => $posValue ){
+                $value = substr_replace( $value, '|', $posValue, 0 );
+            }
+
+            $allLines[$key] = $value;
+        }
+
+
+        //file_put_contents( 'firstnameToGender.csv', implode( PHP_EOL, $allLines ) );
+
+
+        $sql = 'DROP TABLE IF EXISTS firstnameToGender';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'DROP TABLE IF EXISTS firstnameToGender';
+        $GLOBALS['dbh']->query( $sql );
+        $sql = 'CREATE TABLE firstnameToGender( gender CHAR(1), firstname TEXT UNIQUE PRIMARY KEY )';
+        $GLOBALS['dbh']->query( $sql );
+        writeLog( '3' );
+        $sql = "COPY firstnameToGender( gender, firstname  ) FROM '".__DIR__."/firstnameToGender.csv' DELIMITER '|' CSV";
+        writeLog( $sql );
+        $GLOBALS['dbh']->query( $sql );
+        writeLog( '4' );
+        //We trim
+        $sql = 'UPDATE firstnameToGender SET firstname =  btrim( firstname )';
+        writeLog( '5' );
+        writeLog( $sql );
+        $rs = $GLOBALS['dbh']->query( $sql );
+        //writeLog( $rs );
+        /*********************** btrim() for all columns ******************************/
+
+
+        echo 1; //file_get_contents( __DIR__.'/sv44.csv' ) ? 1 : false; //Vielleicht sollte man hier zusätlich noch prüfen ob es mindestens n Datensätze in der Tabelle gibt
     }
 ?>

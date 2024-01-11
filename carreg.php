@@ -99,7 +99,7 @@ input:read-only { background-color: #d0cfc9; }
             $street_parts = array_reverse($street_parts);
             $house_nr = $street_parts[0];
             $street = "";
-            for($i = 1; $i < count($street_parts); $i++) $street .= $street_parts[$i] .' ';
+            for($i = count($street_parts); $i > 0; $i--) $street .= $street_parts[$i] .' ';
         }
         $zipcode = (array_key_exists('zipcode', $data[0]) && $data[0]['zipcode'] != NULL)? $data[0]['zipcode'] : "";
         $city = (array_key_exists('city', $data[0]) && $data[0]['city'] != NULL)? $data[0]['city'] : "";
@@ -159,6 +159,7 @@ input:read-only { background-color: #d0cfc9; }
     <tr>
         <td><label for="strasse">Straße*:</label></td>
         <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" /></td>
+
     </tr>
     <tr>
         <td><label for="hsnr">Hausnummer*:</label></td>

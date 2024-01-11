@@ -21,7 +21,7 @@ function generatePdf( $data ){
   unlink( __DIR__.'/../seriesLetter/'.$fileName );
   file_exists( __DIR__.'/../custom/data.php' ) ? require_once( __DIR__.'/../custom/data.php' ) : require_once( __DIR__.'/../default/data.php' );
   require_once( "fpdf.php" );
-  require_once( __DIR__.'/../../inc/ftpClient.php' );
+  //require_once( __DIR__.'/../../inc/ftpClient.php' );
 
   $sql = "SELECT c_id, c_hu, c_ln, greeting, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE c_id IN( ".implode( ',', $data )." )";
   $result = $GLOBALS['dbh']->getALL( $sql );
@@ -82,13 +82,19 @@ function generatePdf( $data ){
   $pdf->Output( __DIR__.'/../custom/seriesletter_'.date( 'F_Y' ).'.pdf',"F" );
   if( $button == 'sendPIN' ){
     $ftpDefaults = getDefaultsByArray( array( 'eletter_hostname', 'eletter_username', 'eletter_folder', 'eletter_passwd') );
-    $ftp = new implicitFtp( $ftpDefaults['eletter_hostname'], $ftpDefaults['eletter_username'], $ftpDefaults['eletter_passwd'] );
-    //comment to test
-    $ftp->upload( __DIR__.'/../seriesLetter/'.$fileName, $ftpDefaults['eletter_folder'] );
+    require_once( __DIR__.'/../../inc/sftpClient.php' );
 
-    //$ftp->upload( __DIR__.'/../testFile.txt', $ftpDefaults['eletter_folder'] );
-    writeLog( $ftp->list( $ftpDefaults['eletter_folder'] ) );
-  }
+    try{
+      $sftp = new SFTPConnection( $ftpDefaults['eletter_hostname'], 22 );
+      $sftp->login( $ftpDefaults['eletter_username'], $ftpDefaults['eletter_passwd'] );
+      //$sftp->uploadFile( __DIR__.'/../testFile.txt', $ftpDefaults['eletter_folder'] );
+      $sftp->uploadFile( __DIR__.'/../seriesLetter/'.$fileName, $ftpDefaults['eletter_folder'].'/'.$fileName );
+    }
+    catch( Exception $e ){
+        writeLog( $e->getMessage() );
+    }
+
+  }//if
 
   echo 1;
 }
