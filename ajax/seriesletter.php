@@ -88,7 +88,11 @@ function generatePdf( $data ){
       $sftp = new SFTPConnection( $ftpDefaults['eletter_hostname'], 22 );
       $sftp->login( $ftpDefaults['eletter_username'], $ftpDefaults['eletter_passwd'] );
       //$sftp->uploadFile( __DIR__.'/../testFile.txt', $ftpDefaults['eletter_folder'] );
-      $sftp->uploadFile( __DIR__.'/../seriesLetter/'.$fileName, $ftpDefaults['eletter_folder'].'/'.$fileName );
+      $srcFile = __DIR__.'/../seriesLetter/'.$fileName;
+      $dstFile = '/'.$ftpDefaults['eletter_folder'].'/'.$fileName;
+      //writeLogR( 'Src: '.$srcFile );
+      //writeLogR( 'Dst: '.$dstFile );
+      $sftp->uploadFile( $srcFile,  $dstFile );
     }
     catch( Exception $e ){
         writeLog( $e->getMessage() );
