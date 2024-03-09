@@ -138,11 +138,11 @@ input:read-only { background-color: #d0cfc9; }
     </tr>
     <tr>
         <td><label for="vorname">Vorname*:</label></td>
-        <td><input class="required" type="text" id="vorname" name="vorname" aria-label="Vorname" value="<?=$vorname?>" readonly /></td>
+        <td><input class="required" type="text" id="vorname" name="vorname" aria-label="Vorname" value="<?=$vorname?>" /></td>
     </tr>
     <tr>
         <td><label for="name">Name*:</label></td>
-        <td><input class="required" type="text" id="name" name="name" aria-label="Name" value="<?=$name?>" readonly /></td>
+        <td><input class="required" type="text" id="name" name="name" aria-label="Name" value="<?=$name?>" /></td>
     </tr>
     <tr>
         <td><label for="gebname">Geburtsname:</label></td>
@@ -158,23 +158,24 @@ input:read-only { background-color: #d0cfc9; }
     </tr>
     <tr>
         <td><label for="strasse">Straße*:</label></td>
-        <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" redonly /></td>
+        <td><input class="required" type="text" id="strasse" name="strasse" aria-label="Straße" value="<?=$street?>" /></td>
+
     </tr>
     <tr>
         <td><label for="hsnr">Hausnummer*:</label></td>
-        <td><input class="required" type="text" id="hsnr" name="hsnr" aria-label="Hausnummer" value="<?=$house_nr?>" readonly /></td>
+        <td><input class="required" type="text" id="hsnr" name="hsnr" aria-label="Hausnummer" value="<?=$house_nr?>" /></td>
     </tr>
     <tr>
         <td><label for="plz">PLZ*:</label></td>
-        <td><input class="required" type="text" id="plz" name="plz" aria-label="PLZ" value="<?=$zipcode?>" readonly /></td>
+        <td><input class="required" type="text" id="plz" name="plz" aria-label="PLZ" value="<?=$zipcode?>" /></td>
     </tr>
     <tr>
         <td><label for="ort">Ort*:</label></td>
-        <td><input class="required" type="text" id="ort" name="ort" aria-label="Ort" value="<?=$city?>" readonly /></td>
+        <td><input class="required" type="text" id="ort" name="ort" aria-label="Ort" value="<?=$city?>" /></td>
     </tr>
     <tr>
         <td><label for="fahrzeug-id">Fahrzeugidentifikationsnummer*:</label></td>
-        <td><input class="required" type="text" id="fahrzeug-id" name="fahrzeug-id" onkeyup="toUpperCase('fahrzeug-id')" aria-label="Fahrzeugidentifikationsnummer" value="<?=$c_fin?>" readonly /></td>
+        <td><input class="required" type="text" id="fahrzeug-id" name="fahrzeug-id" onkeyup="toUpperCase('fahrzeug-id')" aria-label="Fahrzeugidentifikationsnummer" value="<?=$c_fin?>" /></td>
     </tr>
     </table>
 
