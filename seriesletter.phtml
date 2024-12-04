@@ -72,7 +72,7 @@
         data: { action: "generatePdf", data: selectedArray },
         success: function( result ){
           //console.log( result );
-          alert( result );
+          if( result !== 1 ) alert( result );
           if( result ) window.open( 'seriesLetter/' + $( '#month :selected' ).text() + '_' + year + '.pdf', 'name' );
         },
         error: function( result ){

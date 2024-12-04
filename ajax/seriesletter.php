@@ -52,7 +52,7 @@ function generatePdf( $data ){
       $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footerright'] ), $this->debug, 'L' );
     }
   }
-
+  
   $pdf = new PDF();
   $pdf->mydata = $externaldata;
   foreach( $result as $customer ){
@@ -66,15 +66,60 @@ function generatePdf( $data ){
     $pdf->AddPage();
     $pdf->setXY( $pdf->left, 67 ); //height address block
     $pdf->SetFont( 'Arial', '', 11 );
-    $pdf->MultiCell( 170, 5, utf8_decode( $customer['name']."\n".$customer['street']."\n".$customer['zipcode']." ".$customer['city'] ), $pdf->debug, 'L' );
-    $pdf->setXY( $pdf->left, 100 );
-    $pdf-> Cell( 170, 5, utf8_decode( $externaldata['subject'].$customer['c_ln']   ), $pdf->debug, 'L' );
+    $pdf->MultiCell( 170, 5, $customer['name']."\n".$customer['street']."\n".$customer['zipcode']." ".$customer['city'], $pdf->debug, 'L' );
+    // Betreff
+    $pdf->SetXY( $pdf->left, 100 );
+    $pdf->SetFont( 'Arial', 'B', 11 );
+    $pdf->Cell( 0, 5, utf8_decode( $externaldata['subject0'].$customer['c_ln'].$externaldata['subject1'] ), 0, 1, 'L' );
+
+    //Anrede
+    $pdf->SetFont( 'Arial', '', 10 );
     $pdf->setXY( $pdf->left, 113 );
     $pdf-> Cell( 170, 5, utf8_decode( $salutation.$customer['name'].',' ), $pdf->debug, 'L' );
+    
+    //Text1
     $pdf->setXY( $pdf->left, 120 );
-    $pdf-> MultiCell( 170, 5.6, utf8_decode( $externaldata['text0'].$customer['c_ln'].$externaldata['text1'] ), $pdf->debug, 'L' );
-    $pdf->setXY( $pdf->left, 180 );
-    $pdf-> MultiCell( 170, 5, utf8_decode( $externaldata['goodbye']."\n".$_SESSION['userConfig']['name'] ), $pdf->debug, 'L' );
+    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text0'].$customer['c_ln'].$externaldata['text1'] ), $pdf->debug, 'L' );
+
+    //Angebot fett
+    $pdf->SetFont( 'Arial', 'B', 10 );
+    $pdf->setXY( $pdf->left, 140 );
+    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text_fett'] ), $pdf->debug, 'L' );
+
+    //text2
+    $pdf->SetFont( 'Arial', '', 10 );
+    $pdf->setXY( $pdf->left, 149 );
+    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text2'] ), $pdf->debug, 'L' );
+
+    //text3
+    $pdf->setXY( $pdf->left, 162 );
+    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text3'] ), $pdf->debug, 'L' );
+
+
+
+    //text_klein
+    $pdf->SetFont( 'Arial', '', 5 );
+    $pdf->setXY( $pdf->left, 190 );
+    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text_klein'] ), $pdf->debug, 'L' );
+
+            //text_url
+    $pdf->SetFont( 'Arial', '', 8 );
+    $pdf->setXY( $pdf->left + 112, 232 );
+    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text_url'] ), $pdf->debug, 'L' );
+
+
+
+     // QR-Code Bild unten rechts einfügen
+    $qrCodePath = __DIR__.'/../image/QR-Code-HU-AU-109Euro.png'; // Pfad zum QR-Code Bild
+    $qrCodeWidth = 40;  // Breite des QR-Codes in mm
+    $qrCodeHeight = 40; // Höhe des QR-Codes in mm
+    $xPosition = $pdf->GetPageWidth() - $qrCodeWidth - 20; // x-Position unten rechts (20 mm Seitenrand)
+    $yPosition = $pdf->GetPageHeight() - $qrCodeHeight - 65; // y-Position unten rechts (40 mm Seitenrand)
+
+    $pdf->Image( $qrCodePath, $xPosition, $yPosition, $qrCodeWidth, $qrCodeHeight );
+    //Verabschiedung
+    //$pdf->setXY( $pdf->left, 180 );
+    //$pdf-> MultiCell( 170, 5, utf8_decode( $externaldata['goodbye']."\n".$_SESSION['userConfig']['name'] ), $pdf->debug, 'L' );
     //update timestamp in lxc_cars
   }
 
