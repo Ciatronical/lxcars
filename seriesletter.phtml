@@ -62,7 +62,7 @@
     $( '#generate, #sendPIN' ).button().click( function(){
       //var id = $(this)[0].id;
       //var params = $( "#mytable :input" ).serialize();
-      var selectedArray = $('input[type=checkbox]:checked').map( function(){ return  this.id }).get();
+      var selectedArray = $('input[type=checkbox]:checked').not('#selectAll').map( function(){ return  this.id }).get();
       var notSelectedArray = $('input[type=checkbox]:not(:checked)').map( function(){ return  this.id }).get();
       selectedArray.push( $(this)[0].id );
       selectedArray.push( $( '#month :selected' ).text() + '_' + year );
@@ -98,6 +98,13 @@
         }//if
       })
     })
+
+    // Select All Checkbox Toggle
+    $('#selectAll').on('change', function() {
+      const isChecked = $(this).is(':checked');
+      $('#mytable input[type=checkbox]').prop('checked', isChecked);
+    });
+
 
   });
 
@@ -136,7 +143,7 @@
     <table id="mytable" class="letter ui-widget">
       <thead class="ui-widget-header">
         <tr>
-          <th>Auswahl</th>
+          <th><input type="checkbox" id="selectAll" checked /></th>
           <th>Kennzeichen</th>
           <th>Name</th>
           <th>Straße</th>

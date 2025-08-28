@@ -272,6 +272,37 @@ function GetCars ( $owner, $owner_name ) {
     </html>
     <?php
 }
+
+function ShowCarLight($c_id) {
+    $c_id = (int)$c_id;
+    $sql = "
+        SELECT
+            COALESCE(oe.km_stnd, 0)             AS km_s,  -- letzter km-Stand (falls NULL → 0)
+            c.c_ln,                                       -- Kennzeichen
+            to_char(c.c_d, 'DD.MM.YYYY')        AS c_d,   -- Erstzulassung formatiert (DD.MM.YYYY)
+            substr(c.c_fin, 1, 17)              AS fin,   -- VIN auf 17 Zeichen gekürzt
+            c.c_em,                                       -- Emissionsschlüssel
+            COALESCE(NULLIF(k.d1, ''), k.marke) AS cm,    -- Hersteller: nimm d1, sonst marke (leerer String → NULL)
+            k.d2                                AS ct,    -- Typ/Bezeichnung aus KBA (Spalte d2)
+            c.c_2,                                        -- Hersteller-Nr. (HSN)
+            c.c_3                                         -- Typnummer (TSN)
+        FROM lxc_cars c
+        LEFT JOIN lxckba k ON c.kba_id = k.id             -- KBA-Daten zum Fahrzeug (kann fehlen → LEFT JOIN)
+        LEFT JOIN LATERAL (                               -- pro Auto: Subquery, die auf c.* zugreifen darf
+            SELECT km_stnd
+            FROM oe
+            WHERE c_id = c.c_id                           -- nur Einträge zum aktuellen Auto
+            ORDER BY id DESC                              -- „letzter“ Eintrag (größte ID)
+            LIMIT 1                                       -- genau eine Zeile zurückgeben
+        ) oe ON TRUE                                      -- Ergebnis immer an c anheften (auch wenn leer)
+        WHERE c.c_id = $c_id                              -- genau dieses Fahrzeug
+        LIMIT 1                                           -- maximal eine Ergebniszeile
+    ";
+    $rows = $GLOBALS['dbh']->getAll($sql);
+    return ($rows && isset($rows[0])) ? $rows[0] : array();
+}
+
+
 function ShowCar ( $c_id ) {
     //fragt die DB an, schreibt, die Daten nach c_t und zeigt diese im tpl an
 

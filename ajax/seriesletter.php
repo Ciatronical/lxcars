@@ -1,8 +1,10 @@
 <?php
-use setasign\Fpdi\Fpdi;
 require_once __DIR__.'/../../inc/stdLib.php'; // for debug
 require_once __DIR__.'/../../inc/crmLib.php';
 require_once __DIR__.'/../inc/ajax2function.php';
+
+
+/*apt-get install cm-super texlive-fonts-recommended texlive-fonts-extra*/
 
 function getData( $data ){
   $sql = "SELECT  c_id, c_hu, c_ln, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE EXTRACT( YEAR FROM c_hu ) = ".$data['year']." AND EXTRACT( MONTH FROM c_hu ) = ".$data['month']." + 1 AND zipcode != '00000'";
@@ -15,116 +17,140 @@ function updateNotSelectedCars(){
 }
 
 function generatePdf( $data ){
+  //$qrcode = 'https://www.google.com/search?q=autoprofis+tüv+109€'; //eventuell in die DB speichern oder in config.php
+  $qrcode = 'https://www.google.com/search?q=autoprofis+t%C3%BCv+109%E2%82%AC';
+  $google_url = 'https://g.page/r/CZIH73280l-1EAE/review';
   $date   = array_pop( $data );
   $button = array_pop( $data );
-  $fileName = $date.'.pdf';
-  unlink( __DIR__.'/../seriesLetter/'.$fileName );
-  file_exists( __DIR__.'/../custom/data.php' ) ? require_once( __DIR__.'/../custom/data.php' ) : require_once( __DIR__.'/../default/data.php' );
-  require_once( "fpdf.php" );
-  //require_once( __DIR__.'/../../inc/ftpClient.php' );
+  $fileName = $date.'.tex';
 
-  $sql = "SELECT c_id, c_hu, c_ln, greeting, name, street, zipcode, city FROM lxc_cars JOIN customer ON( lxc_cars.c_ow = customer.id ) WHERE c_id IN( ".implode( ',', $data )." )";
+  $pdfFileName = $date.'.pdf';
+  //welches Template wird verwendet
+  $sql = 'SELECT templates FROM defaults';
+  $template = $GLOBALS['dbh']->getOne( $sql );
+
+  $outputPath = __DIR__.'/../../../kivitendo-erp/'.$template['templates'].'/';
+  $templateSourceTexFile = $outputPath.'hu-serienbrief.tex';
+
+  // Vorlage einlesen
+  $template = file_get_contents($templateSourceTexFile);
+
+  //Kundendaten, Mitarbeiterdaten und Anrede holen. Als Ansprechpartner wird der Mitarbeiter genommen, der den letzten Auftrag für den Kunden gemacht hat.
+  //Wenn kein Auftrag gefunden wird, wird 'Ronny Zimmermann' genommen.
+  $sql = "
+    SELECT
+        c.c_id,
+        c.c_hu,
+        c.c_ln,
+        cu.greeting,
+        cu.name,
+        cu.country,
+        cu.street,
+        cu.zipcode,
+        cu.city,
+        cu.customernumber,
+        cu.email,
+        COALESCE(oe_employee.name, e.name, 'Ronny Zimmermann') AS employee_name, -- Fallback zu 'Ronny Zimmermann' wenn kein Mitarbeiter gefunden wird
+        CASE
+            WHEN cu.greeting = 'Herr' THEN gt_male.translation
+            WHEN cu.greeting = 'Frau' THEN gt_female.translation
+            ELSE gt_general.translation
+        END AS salutation
+    FROM
+        lxc_cars c
+    JOIN
+        customer cu ON c.c_ow = cu.id
+    LEFT JOIN
+        generic_translations gt_male ON gt_male.translation_type = 'salutation_male'
+    LEFT JOIN
+        generic_translations gt_female ON gt_female.translation_type = 'salutation_female'
+    LEFT JOIN
+        generic_translations gt_general ON gt_general.translation_type = 'salutation_general'
+    LEFT JOIN
+        (
+            SELECT
+                o.customer_id,
+                o.employee_id,
+                e.name,
+                ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.itime DESC, o.id DESC) AS rn
+            FROM
+                oe o
+            LEFT JOIN
+                employee e ON o.employee_id = e.id
+        ) oe_employee
+        ON oe_employee.customer_id = cu.id AND oe_employee.rn = 1 -- Neuester Auftrag pro Kunde
+    LEFT JOIN
+        employee e ON cu.employee = e.id -- Fallback Verknüpfung mit employee, wenn kein Eintrag in der oe-Tabelle vorhanden ist
+    WHERE
+          c.c_id IN (" . implode(',', $data) . ")
+  ";
+
+
   $result = $GLOBALS['dbh']->getALL( $sql );
 
-  class PDF extends FPDF{
-    public $debug = 0;
-    public $left = 20;
-    public $head_margin_top = 20;
-    public $footer = 260;
-    public $mydata;
-    function Header(){ //Head
-      $logo = file_exists( __DIR__.'/../custom/logo.png' ) ? __DIR__.'/../custom/logo.png' : __DIR__.'/../default/LxCars-Logo.png';
-      $this->Image( $logo, $this->left, $this->head_margin_top, 70 );
-      $this->SetFont( 'Arial', '', 10 );
-      $this->setXY( 160, $this->head_margin_top );
-      $this->MultiCell( 50, 4, $this->mydata['headright'], $this->debug, 'L' );
-      $this->SetFont( 'Arial', '', 5 );
-      $this->setXY( $this->left, 62 ); //height address retur
-      $this->Cell( 80, 3, $this->mydata['retur'], $this->debug, 'L' );
+  //writeLogR( $result );
+  //writeLogR( $sql );
+  $latexContent = '';
+
+  $latexContent .= "\\newcommand{\\lxlangcode} {DE}\n";
+  $latexContent .= "\\newcommand{\\lxmedia} {print}\n";
+  $latexContent .= "\\newcommand{\\lxcurrency} {EUR}\n";
+  $latexContent .= "\\newcommand{\\kivicompany} {employee_company}\n";
+
+  // LaTeX-Datei erstellen
+  $latexContent .= "\\input{inheaders.tex}\n"; // ToDo!!!
+  $latexContent .= "\\input{insettings.tex}\n";
+
+  $latexContent .= "\\usepackage{graphicx}\n";
+  $latexContent .= "\\usepackage{longtable}\n";
+  $latexContent .= "\\usepackage{xcolor}\n";
+  $latexContent .= "\\usepackage{qrcode}\n";
+  $latexContent .= "\\usepackage{url}\n";
+  $latexContent .= "\\usepackage{hyperref}\n";
+  $latexContent .= "\\usepackage[utf8]{inputenc}\n";
+  $latexContent .= "\\begin{document}\n";
+  $latexContent .= "\\ourfont\n";
+
+  foreach($result as $row) {
+    foreach($row as $key => $value) {
+      $row[$key] = str_replace('&', '\\&', $value);
     }
-    function Footer(){
-      $this->SetFont( 'Arial','I', 8 );
-      $this->setXY( $this->left, $this->footer );
-      $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footerleft'] ), $this->debug, 'L' );
-      $this->setXY( $this->left + 60, $this->footer );
-      $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footermiddle'] ), $this->debug, 'L' );
-      $this->setXY( $this->left + 120, $this->footer );
-      $this->MultiCell( 50, 4, utf8_decode( $this->mydata['footerright'] ), $this->debug, 'L' );
-    }
+    $filledTemplate = $template;
+    $filledTemplate = str_replace('<%name%>', $row['name'], $filledTemplate);
+    $filledTemplate = str_replace('<%street%>', $row['street'], $filledTemplate);
+    $filledTemplate = str_replace('<%zipcode%>', $row['zipcode'], $filledTemplate);
+    $filledTemplate = str_replace('<%city%>', $row['city'], $filledTemplate);
+    $filledTemplate = str_replace('<%greeting%>', $row['greeting'], $filledTemplate);
+    $filledTemplate = str_replace('<%date%>', $row['c_hu'], $filledTemplate);
+    $filledTemplate = str_replace('<%car%>', $row['c_ln'], $filledTemplate);
+    $filledTemplate = str_replace('<%template_meta.language.template_code%>', 'de', $filledTemplate);
+    $filledTemplate = str_replace('<%media%>', 'print', $filledTemplate);
+    $filledTemplate = str_replace('<%currency%>', 'EUR', $filledTemplate);
+    $filledTemplate = str_replace('<%employee_company%>', 'employee_company', $filledTemplate);  //ToDo!!! für was ist das???
+    $filledTemplate = str_replace('<%country%>', $row['country'], $filledTemplate);
+    $filledTemplate = str_replace('<%customernumber%>', $row['customernumber'], $filledTemplate);
+    $filledTemplate = str_replace('<%employee_name%>', $row['employee_name'], $filledTemplate);
+    $filledTemplate = str_replace('<%salutation%>', $row['salutation'], $filledTemplate);
+    $filledTemplate = str_replace('<%qrcode%>', $qrcode, $filledTemplate);
+    $filledTemplate = str_replace('<%google_url%>', $google_url, $filledTemplate);
+
+    $latexContent .= $filledTemplate . "\n\n";
   }
-  
-  $pdf = new PDF();
-  $pdf->mydata = $externaldata;
-  foreach( $result as $customer ){
-    switch( $customer['greeting'] ){
-      case 'Herr' :  $salutation = $externaldata['male'];
-        break;
-      case 'Frau' : $salutation = $externaldata['female'];
-        break;
-      default : $salutation = $externaldata['other'];
-    }
-    $pdf->AddPage();
-    $pdf->setXY( $pdf->left, 67 ); //height address block
-    $pdf->SetFont( 'Arial', '', 11 );
-    $pdf->MultiCell( 170, 5, $customer['name']."\n".$customer['street']."\n".$customer['zipcode']." ".$customer['city'], $pdf->debug, 'L' );
-    // Betreff
-    $pdf->SetXY( $pdf->left, 100 );
-    $pdf->SetFont( 'Arial', 'B', 11 );
-    $pdf->Cell( 0, 5, utf8_decode( $externaldata['subject0'].$customer['c_ln'].$externaldata['subject1'] ), 0, 1, 'L' );
+  //writeLogR( $qrcode_text  );
+  $latexContent .= "\\end{document}";
 
-    //Anrede
-    $pdf->SetFont( 'Arial', '', 10 );
-    $pdf->setXY( $pdf->left, 113 );
-    $pdf-> Cell( 170, 5, utf8_decode( $salutation.$customer['name'].',' ), $pdf->debug, 'L' );
-    
-    //Text1
-    $pdf->setXY( $pdf->left, 120 );
-    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text0'].$customer['c_ln'].$externaldata['text1'] ), $pdf->debug, 'L' );
+  $outputFileName = $outputPath . $fileName; // Definiere den vollen Pfad zur Datei
+  file_put_contents($outputFileName, $latexContent);
 
-    //Angebot fett
-    $pdf->SetFont( 'Arial', 'B', 10 );
-    $pdf->setXY( $pdf->left, 140 );
-    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text_fett'] ), $pdf->debug, 'L' );
+  // PDF aus LaTeX-Datei erstellen
+  $command = "cd " . escapeshellarg($outputPath) . " && pdflatex -output-directory=" . escapeshellarg(__DIR__.'/../seriesLetter') . " " . $outputFileName; //$outputPath
+  writeLogR( $command );
+  shell_exec($command);
 
-    //text2
-    $pdf->SetFont( 'Arial', '', 10 );
-    $pdf->setXY( $pdf->left, 149 );
-    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text2'] ), $pdf->debug, 'L' );
+  // Optional: LaTeX-Datei löschen
+  //unlink($outputFileName);
 
-    //text3
-    $pdf->setXY( $pdf->left, 162 );
-    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text3'] ), $pdf->debug, 'L' );
-
-
-
-    //text_klein
-    $pdf->SetFont( 'Arial', '', 5 );
-    $pdf->setXY( $pdf->left, 190 );
-    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text_klein'] ), $pdf->debug, 'L' );
-
-            //text_url
-    $pdf->SetFont( 'Arial', '', 8 );
-    $pdf->setXY( $pdf->left + 112, 232 );
-    $pdf-> MultiCell( 170, 4.5, utf8_decode( $externaldata['text_url'] ), $pdf->debug, 'L' );
-
-
-
-     // QR-Code Bild unten rechts einfügen
-    $qrCodePath = __DIR__.'/../image/QR-Code-HU-AU-109Euro.png'; // Pfad zum QR-Code Bild
-    $qrCodeWidth = 40;  // Breite des QR-Codes in mm
-    $qrCodeHeight = 40; // Höhe des QR-Codes in mm
-    $xPosition = $pdf->GetPageWidth() - $qrCodeWidth - 20; // x-Position unten rechts (20 mm Seitenrand)
-    $yPosition = $pdf->GetPageHeight() - $qrCodeHeight - 65; // y-Position unten rechts (40 mm Seitenrand)
-
-    $pdf->Image( $qrCodePath, $xPosition, $yPosition, $qrCodeWidth, $qrCodeHeight );
-    //Verabschiedung
-    //$pdf->setXY( $pdf->left, 180 );
-    //$pdf-> MultiCell( 170, 5, utf8_decode( $externaldata['goodbye']."\n".$_SESSION['userConfig']['name'] ), $pdf->debug, 'L' );
-    //update timestamp in lxc_cars
-  }
-
-  $pdf->Output( __DIR__.'/../seriesLetter/'.$fileName, "F" );
-  $pdf->Output( __DIR__.'/../custom/seriesletter_'.date( 'F_Y' ).'.pdf',"F" );
+  // Rest des Codes
   if( $button == 'sendPIN' ){
     $ftpDefaults = getDefaultsByArray( array( 'eletter_hostname', 'eletter_username', 'eletter_folder', 'eletter_passwd') );
     require_once( __DIR__.'/../../inc/sftpClient.php' );
@@ -132,20 +158,58 @@ function generatePdf( $data ){
     try{
       $sftp = new SFTPConnection( $ftpDefaults['eletter_hostname'], 22 );
       $sftp->login( $ftpDefaults['eletter_username'], $ftpDefaults['eletter_passwd'] );
-      //$sftp->uploadFile( __DIR__.'/../testFile.txt', $ftpDefaults['eletter_folder'] );
-      $srcFile = __DIR__.'/../seriesLetter/'.$fileName;
-      $dstFile = '/'.$ftpDefaults['eletter_folder'].'/'.$fileName;
-      //writeLogR( 'Src: '.$srcFile );
-      //writeLogR( 'Dst: '.$dstFile );
+      $srcFile = __DIR__.'/../seriesLetter/'.$pdfFileName;
+      $dstFile = '/'.$ftpDefaults['eletter_folder'].'/'.$pdfFileName;
       $sftp->uploadFile( $srcFile,  $dstFile );
     }
     catch( Exception $e ){
-        writeLog( $e->getMessage() );
+      // Fehlerbehandlung
     }
+  }
+  /*******************************************************************************************************************************
+  * 1. PDF-Datei erstellen
+  * 2. PDF-Datei auf den Server laden
+  * 3. Twillo-Code ausführen
+  *********************************************************************************************************************************/
+  /*
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Rest/Client.php';
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Http/Client.php';
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Http/CurlClient.php';
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Http/Request.php';
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Http/Response.php';
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Exceptions/TwilioException.php';
+  require_once __DIR__ . '/twilio-sdk/src/Twilio/Values.php';
+  use Twilio\Rest\Client;
 
-  }//if
+  // Twilio-Anmeldeinformationen
+  $account_sid = 'XXXXXXXXXXXXXXXXXXXXXXX';
+  $auth_token = 'your_auth_token_here';
 
-  echo 1;
+  try {
+      // Twilio-Client initialisieren
+      $client = new Client($account_sid, $auth_token);
+
+      // Nachricht mit Bildanhang senden
+      $message = $client->messages->create(
+          'whatsapp:+491234567890', // Zielnummer
+          [
+              'from' => 'whatsapp:+14155238886', // Twilio-Nummer
+              'body' => 'Hier ist dein Bild 😎',
+              'mediaUrl' => ['https://via.placeholder.com/150'] //URL zum Bild auf dem Autoprofis-Server          ]
+      );
+
+      echo "Nachricht gesendet! SID: " . $message->sid;
+  } catch (Exception $e) {
+      echo "Fehler: " . $e->getMessage();
+  }
+  */
+
+  //Ok wir erstellen jetzt die einzelnen PDF-Dateien und laden sie auf den Server
+
+
+
+
+  echo '1';
 }
 
 ?>
